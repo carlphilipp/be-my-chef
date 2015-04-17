@@ -69,7 +69,6 @@ public class AccessRightsOrderIntegrationTest {
 		scriptCleanPath = prop.getProperty("script.clean");
 	}
 
-	
 	@AfterClass
 	public static void afterClass() throws IOException {
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
