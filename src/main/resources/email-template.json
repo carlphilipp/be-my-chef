@@ -1,0 +1,30 @@
+{
+	"registration":	{
+		"subject":"[@@TEAM_NAME@@] Registration - @@NAME@@",
+		"file":"registration.html"
+	},
+	"registration_admin":	{
+		"subject":"[@@TEAM_NAME@@] New Registration - @@NAME@@ - @@EMAIL@@",
+		"file":"registration_admin.html"
+	},
+	"order_user":	{
+		"subject":"[@@TEAM_NAME@@] Order #@@ORDER_ID@@",
+		"file":"order_user.html"
+	},
+	"order_fail_user":	{
+		"subject":"[@@TEAM_NAME@@] Order #@@ORDER_ID@@",
+		"file":"order_fail_user.html"
+	},
+	"order_caterer":	{
+		"subject":"[@@TEAM_NAME@@] Order #@@ORDER_ID@@",
+		"file":"order_caterer.html"
+	},
+	"order_admin":	{
+		"subject":"[@@TEAM_NAME@@] Order #@@ORDER_ID@@",
+		"file":"order_admin.html"
+	},
+	"order_fail_admin":	{
+		"subject":"[@@TEAM_NAME@@] Order Failed #@@ORDER_ID@@",
+		"file":"order_fail_admin.html"
+	}
+}

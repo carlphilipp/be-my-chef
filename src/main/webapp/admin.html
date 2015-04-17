@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {
+	font-family: sans-serif;
+}
+
+.main {
+	width: 100%;
+	height: 100%;
+}
+#user {
+    margin-bottom: 50px;
+}
+#caterer {
+    margin-bottom: 50px;
+}
+
+.left {
+    width: 25%;
+    float:  left;
+}
+.right {
+    overflow: hidden;
+}
+#results{
+	width: 100%;
+}
+
+pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+.string { color: green; }
+.number { color: darkorange; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: red; }
+
+</style>
+<script type="text/javascript">
+	function execute(requestType, endPoint, _id, json) {
+		var API_KEY = "e457149d0614b4389b29968f7b0fcd05";
+		var id = "";
+		if(_id!=null){
+			id = "/" + document.getElementById(_id).value;
+		}
+		var xmlhttp;
+		if (window.XMLHttpRequest) {
+			// code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp = new XMLHttpRequest();
+		} else {
+			// code for IE6, IE5
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4) {
+				// Convert text to Object
+				var obj = JSON.parse(xmlhttp.responseText);
+				// Convert Object to JSON
+				var json = JSON.stringify(obj, undefined, 4);
+				if(id == ""){
+					for(var i = 0; i < obj.length; i++) {
+						var temp = obj[i];
+						var option = document.createElement("option");
+						if(endPoint == 'caterers'){
+					    	var results = document.getElementById("selectCaterer");
+					    	option.text = temp.description + " - " + temp.location.address.city + " " + temp.location.address.country;
+					    	option.value = temp.id;
+					    	results.add(option);
+						}else if(endPoint == 'dishes'){
+					    	var results = document.getElementById("selectDish");
+					    	var option = document.createElement("option");
+					    	option.text = temp.description + " - " + temp.caterer.description;
+					    	option.value = temp.id;
+					    	results.add(option);
+						}else if(endPoint == 'users'){
+					    	var results = document.getElementById("selectUser");
+					    	var option = document.createElement("option");
+					    	option.text = temp.name + " - " + temp.email;
+					    	option.value = temp.id;
+					    	results.add(option);
+						}
+					}
+				} else {
+					if(endPoint == 'caterers'){
+						document.getElementById("catererResult").innerHTML = syntaxHighlight(json);
+			      var inputUpdateDishes = document.getElementById("updateCaterers");
+			      inputUpdateDishes.style.display = "inline";
+			      inputUpdateDishes.onclick = function(){
+			           var test = document.getElementById("catererResult").innerHTML;
+			           // Remove html tags. Can have issue with that + decode XML
+			           test = htmlDecode(test.replace(/<[^>]*>/g, ""));
+			           execute2('PUT', endPoint, test);
+			      }
+					} else if(endPoint == 'dishes'){
+						document.getElementById("dishResult").innerHTML = syntaxHighlight(json);
+						var inputUpdateDishes = document.getElementById("updateDishes");
+						inputUpdateDishes.style.display = "inline";
+						inputUpdateDishes.onclick = function(){
+							  var test = document.getElementById("dishResult").innerHTML;
+							  // Remove html tags. Can have issue with that + decode XML
+							  test = htmlDecode(test.replace(/<[^>]*>/g, ""));
+							  execute2('PUT', endPoint, test);
+						}
+					} else if(endPoint == 'users'){
+						document.getElementById("userResult").innerHTML = syntaxHighlight(json);
+						var inputUpdateDishes = document.getElementById("updateUsers");
+			      inputUpdateDishes.style.display = "inline";
+			      inputUpdateDishes.onclick = function(){
+			    	  var test = document.getElementById("userResult").innerHTML;
+			        // Remove html tags. Can have issue with that + decode XML
+			        test = htmlDecode(test.replace(/<[^>]*>/g, ""));
+			        execute2('PUT', endPoint, test);
+			      }
+					}
+				}
+			}
+		} 
+		xmlhttp.open(requestType, "http://localhost:8180/epickur/api/" + endPoint + id +"?key=" + API_KEY, true);
+		xmlhttp.send();
+	}
+	
+	function htmlDecode(input){
+		  var e = document.createElement('div');
+		  e.innerHTML = input;
+		  return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+		}
+	
+	function execute2(requestType, endPoint, json){
+		var API_KEY = "e457149d0614b4389b29968f7b0fcd05";
+		var xmlhttp;
+	    if (window.XMLHttpRequest) {
+	      // code for IE7+, Firefox, Chrome, Opera, Safari
+	      xmlhttp = new XMLHttpRequest();
+	    } else {
+	      // code for IE6, IE5
+	      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	    }
+	    xmlhttp.onreadystatechange = function() {
+	        if (xmlhttp.readyState == 4) {
+	          // Convert text to Object
+	          var obj = JSON.parse(xmlhttp.responseText);
+	          // Convert Object to JSON
+	          var json = JSON.stringify(obj, undefined, 4);
+	          console.debug(json);
+	        }
+	    }
+	    var obj = JSON.parse(json);  
+	    xmlhttp.open('PUT', "http://localhost:8180/epickur/api/" + endPoint +"?key=" + API_KEY, true);
+	    xmlhttp.setRequestHeader('Content-Type', 'application/json');
+	    var res = JSON.stringify(obj);
+	    xmlhttp.send(res);
+	}
+	
+	function clean(id, id2){
+		var select = document.getElementById(id);
+		var i;
+	    for(i=select.options.length-1;i>=0;i--) {
+	    	select.remove(i);
+	    }
+	    console.debug(id2);
+	    var pre = document.getElementById(id2);
+	    pre.innerHTML = "    ";
+	}
+	
+	// Highlight JSON color. http://stackoverflow.com/questions/4810841/how-can-i-pretty-print-json-using-javascript
+	function syntaxHighlight(json) {
+	    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+	        var cls = 'number';
+	        if (/^"/.test(match)) {
+	            if (/:$/.test(match)) {
+	                cls = 'key';
+	            } else {
+	                cls = 'string';
+	            }
+	        } else if (/true|false/.test(match)) {
+	            cls = 'boolean';
+	        } else if (/null/.test(match)) {
+	            cls = 'null';
+	        }
+	        return '<span class="' + cls + '">' + match + '</span>';
+	    });
+	}
+</script>
+<title>Epickur Admin</title>
+</head>
+<body onLoad="execute('GET', 'caterers');execute('GET', 'dishes');execute('GET', 'users');">
+	<div id="main">
+		<div>
+			<h1>Epickur Admin</h1>
+			<h2>Users</h2>
+			<button id="action" onclick="clean('selectUser', 'userResult');execute('GET', 'users');" >Reload</button>
+			<button id="updateUsers" onclick="" style="display: none;">Update</button>
+		</div>
+		<div id="user">
+			<div class="left">
+				<select size="3" id="selectUser" onchange="execute('GET', 'users', 'selectUser');">
+				</select>
+    		</div>
+		    <div class="right">
+		    	<pre id="userResult" contenteditable="true">    </pre>
+		    </div>
+		</div>
+		<div>
+			<h2>Caterers</h2>
+		</div>
+		<button id="action" onclick="clean('selectCaterer', 'catererResult');execute('GET', 'caterers');" >Reload</button>
+		<button id="updateCaterers" onclick="" style="display: none;">Update</button>
+		<div id="caterer">
+			<div class="left">
+				<select size="3" id="selectCaterer" onchange="execute('GET', 'caterers', 'selectCaterer');">
+				</select>
+    		</div>
+		    <div class="right">
+		    	<pre id="catererResult" contenteditable="true">    </pre>
+		    </div>
+		</div>
+		<div>
+			<h2>Dishes</h2>
+			<button id="action" onclick="clean('selectDish', 'dishResult');execute('GET', 'dishes');" >Reload</button>
+			<button id="updateDishes" style="display: none;">Update</button>
+		</div>
+		<div id="dish">
+			<div class="left">
+				<select size="3" id="selectDish" onchange="execute('GET', 'dishes', 'selectDish');">
+				</select>
+    		</div>
+		    <div class="right">
+		    	<pre id="dishResult" contenteditable="true">    </pre>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
