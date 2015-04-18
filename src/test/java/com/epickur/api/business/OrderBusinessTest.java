@@ -100,7 +100,6 @@ public class OrderBusinessTest {
 		toDeleteUser.add(userRes.getId());
 
 		Order order = TestUtils.generateRandomOrder();
-		order.setId(new ObjectId());
 
 		Stripe.apiKey = STRIPE_TEST_KEY;
 		Map<String, Object> tokenParams = new HashMap<String, Object>();
@@ -113,6 +112,7 @@ public class OrderBusinessTest {
 		Token token = Token.create(tokenParams);
 		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), true, true);
 		assertNotNull(res);
+		toDeleteOrder.add(res.getId().toHexString());
 		assertTrue("The payment has not been executed: " + res.toStringAPIView(), res.getPaid());
 	}
 
@@ -124,7 +124,6 @@ public class OrderBusinessTest {
 		toDeleteUser.add(userRes.getId());
 
 		Order order = TestUtils.generateRandomOrder();
-		order.setId(new ObjectId());
 		order.setAmount(-15);
 
 		Stripe.apiKey = STRIPE_TEST_KEY;
@@ -138,6 +137,7 @@ public class OrderBusinessTest {
 		Token token = Token.create(tokenParams);
 		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), true, true);
 		assertNotNull(res);
+		toDeleteOrder.add(res.getId().toHexString());
 		assertFalse(res.getPaid());
 	}
 

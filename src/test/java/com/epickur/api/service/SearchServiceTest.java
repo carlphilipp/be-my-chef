@@ -30,14 +30,18 @@ public class SearchServiceTest {
 
 	private static SearchService searchService;
 	private static DishService dishService;
+	private static CatererService catererService;
 	private static List<ObjectId> idsToDelete;
+	private static List<ObjectId> idsToDeleteCaterer;
 	private static ContainerRequestContext context;
 
 	@BeforeClass
 	public static void beforeClass() {
 		searchService = new SearchService();
 		dishService = new DishService();
+		catererService = new CatererService();
 		idsToDelete = new ArrayList<ObjectId>();
+		idsToDeleteCaterer = new ArrayList<ObjectId>();
 		context = mock(ContainerRequestContext.class);
 		Key key = TestUtils.generateRandomKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
@@ -47,6 +51,9 @@ public class SearchServiceTest {
 	public static void afterClass() throws EpickurException {
 		for (ObjectId id : idsToDelete) {
 			dishService.delete(id.toHexString(), context);
+		}
+		for (ObjectId id : idsToDeleteCaterer) {
+			catererService.delete(id.toHexString(), context);
 		}
 	}
 
@@ -64,6 +71,7 @@ public class SearchServiceTest {
 			Dish dishResult = (Dish) result.getEntity();
 			assertNotNull(dishResult.getId());
 			idsToDelete.add(dishResult.getId());
+			idsToDeleteCaterer.add(dishResult.getCaterer().getId());
 		} else {
 			fail("Dish returned is null");
 		}
@@ -84,7 +92,7 @@ public class SearchServiceTest {
 			Dish dishResult = (Dish) result.getEntity();
 			assertNotNull(dishResult.getId());
 			idsToDelete.add(dishResult.getId());
-
+			idsToDeleteCaterer.add(dishResult.getCaterer().getId());
 			Response result2 = searchService.search(dish.getType(), 100, "832 W. Wrightwood, Chicago", 3000);
 			if (result2.getEntity() != null) {
 				List<Dish> dishes = (List<Dish>) result2.getEntity();
