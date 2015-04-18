@@ -31,10 +31,12 @@ import com.epickur.api.enumeration.CurrencyTest;
 import com.epickur.api.enumeration.MeasurementUnitTest;
 import com.epickur.api.exception.mapper.EpickurDBExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurExceptionMapperTest;
+import com.epickur.api.exception.mapper.EpickurIOExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurIllegalArgumentMapperTest;
 import com.epickur.api.exception.mapper.ForbiddenExceptionMapperTest;
 import com.epickur.api.exception.mapper.IllegalArgumentExceptionMapperTest;
 import com.epickur.api.exception.mapper.JsonMappingExceptionMapperTest;
+import com.epickur.api.exception.mapper.NotAllowedExceptionMapperTest;
 import com.epickur.api.exception.mapper.NotFoundExceptionMapperTest;
 import com.epickur.api.exception.mapper.ThrowableExeptionMapperTest;
 import com.epickur.api.exception.mapper.UnrecognizedPropertyExceptionMapperTest;
@@ -99,6 +101,8 @@ import com.epickur.api.validator.UserValidatorTest;
 		EpickurDBExceptionMapperTest.class,
 		ForbiddenExceptionMapperTest.class,
 		IllegalArgumentExceptionMapperTest.class,
+		EpickurIOExceptionMapperTest.class,
+		NotAllowedExceptionMapperTest.class,
 
 		HeaderResponseFilterTest.class,
 		LogRequestFilterTest.class,
