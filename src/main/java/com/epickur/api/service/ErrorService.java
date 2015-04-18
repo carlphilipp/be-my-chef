@@ -57,4 +57,11 @@ public final class ErrorService {
 		bdb.put("message", message);
 		return Response.status(status.getStatusCode()).entity(bdb).build();
 	}
+
+	public static Response noResult() {
+		DBObject bdb = BasicDBObjectBuilder.start().get();
+		bdb.put("error", Response.Status.NO_CONTENT);
+		bdb.put("message", Response.Status.NO_CONTENT.getReasonPhrase());
+		return Response.status(Response.Status.NO_CONTENT).entity(bdb).build();
+	}
 }

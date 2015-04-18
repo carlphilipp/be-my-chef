@@ -287,4 +287,8 @@ public class CatererServiceTest {
 		}
 	}
 
+	@Test
+	public void testPaymentInfo(){
+		
+	}
 }

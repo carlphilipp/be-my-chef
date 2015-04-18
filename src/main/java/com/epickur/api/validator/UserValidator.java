@@ -134,7 +134,7 @@ public final class UserValidator extends Validator {
 	 * @param cardToken
 	 *            True if the card must be charged
 	 */
-	public void checkCreateOneOrder(final String id, final String token, final boolean cardToken) {
+	public void checkCreateOneOrder(final String id, final String token, final boolean cardToken, final Order order) {
 		if (StringUtils.isBlank(id)) {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
@@ -142,6 +142,12 @@ public final class UserValidator extends Validator {
 			if (StringUtils.isBlank(token)) {
 				throw new EpickurIllegalArgument(PARAM_TOKEN_NULL);
 			}
+		}
+		if (order == null) {
+			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
+		} else {
+			DishValidator validator = new DishValidator();
+			validator.checkCreateData(order.getDish());
 		}
 	}
 

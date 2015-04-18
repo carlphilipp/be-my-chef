@@ -30,20 +30,22 @@ public final class LogRequestFilter implements ContainerRequestFilter {
 
 	@Override
 	public void filter(final ContainerRequestContext requestContext) throws IOException {
-		UriInfo uriInfo = requestContext.getUriInfo();
-		StringBuilder stb = new StringBuilder();
-		stb.append(requestContext.getRequest().getMethod());
-		stb.append("|");
-		stb.append(uriInfo.getBaseUri());
-		stb.append(uriInfo.getPath() + "?");
-		MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
-		for (Entry<String, List<String>> s : params.entrySet()) {
-			stb.append(s.getKey() + "=" + s.getValue().get(0) + "&");
+		if (LOG.isDebugEnabled()) {
+			UriInfo uriInfo = requestContext.getUriInfo();
+			StringBuilder stb = new StringBuilder();
+			stb.append(requestContext.getRequest().getMethod());
+			stb.append("|");
+			stb.append(uriInfo.getBaseUri());
+			stb.append(uriInfo.getPath() + "?");
+			MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
+			for (Entry<String, List<String>> s : params.entrySet()) {
+				stb.append(s.getKey() + "=" + s.getValue().get(0) + "&");
+			}
+			stb.deleteCharAt(stb.length() - 1);
+			stb.append("|");
+			stb.append(requestContext.getHeaders());
+			LOG.trace(stb.toString());
 		}
-		stb.deleteCharAt(stb.length() - 1);
-		stb.append("|");
-		stb.append(requestContext.getHeaders());
-		LOG.debug(stb.toString());
 	}
 
 }

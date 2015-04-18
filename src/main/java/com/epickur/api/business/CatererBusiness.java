@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 
 import com.epickur.api.dao.mongo.CatererDaoImpl;
 import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Order;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
@@ -99,5 +100,18 @@ public class CatererBusiness {
 	 */
 	public final boolean delete(final String id) throws EpickurException {
 		return dao.delete(id);
+	}
+
+	/**
+	 * @param orders
+	 *            The orders
+	 * @return The addition of all orders amount
+	 */
+	public final Integer getAmount(final List<Order> orders) {
+		Integer amount = new Integer(0);
+		for (Order order : orders) {
+			amount += order.getAmount();
+		}
+		return amount;
 	}
 }

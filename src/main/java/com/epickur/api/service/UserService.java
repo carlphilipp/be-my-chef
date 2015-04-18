@@ -578,7 +578,7 @@ public final class UserService {
 			@DefaultValue("true") @HeaderParam("charge-agent") final boolean shouldCharge,
 			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
 			final Order order) throws EpickurException {
-		validator.checkCreateOneOrder(userId, cardToken, shouldCharge);
+		validator.checkCreateOneOrder(userId, cardToken, shouldCharge, order);
 		Order result = orderBusiness.create(userId, order, cardToken, shouldCharge, sendEmail);
 		return Response.ok().entity(result).build();
 	}

@@ -43,6 +43,8 @@ public final class SearchService {
 	 * @apiVersion 1.0.0
 	 * @apiName SearchDish
 	 * @apiGroup Search
+	 * @apiDescription Search a dish.
+	 * @apiPermission admin, super_user, user
 	 * 
 	 * @apiParam (Request: URL Parameter) {String} type Type of Dish to search (case sensitive for now).
 	 * @apiParam (Request: URL Parameter) {String} limit Limit of number of result.
@@ -146,8 +148,12 @@ public final class SearchService {
 			@DefaultValue("50") @QueryParam("limit") final Integer limit,
 			@QueryParam("address") final String address,
 			@DefaultValue("500") @QueryParam("distance") final Integer distance) throws EpickurException {
-		this.validator.checkSearch(type, address);
+		validator.checkSearch(type, address);
 		List<Dish> dishes = this.searchBusiness.search(type, limit, address, distance);
-		return Response.ok().entity(dishes).build();
+		if(dishes.size() != 0){
+			return Response.ok().entity(dishes).build();
+		}else{
+			return ErrorService.noResult();
+		}
 	}
 }

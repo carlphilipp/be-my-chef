@@ -224,3 +224,73 @@ db.dishes.insert(
     		"updatedAt": NumberLong(1424042592185)
   	}]
 )
+
+/** Insert Orders **/
+ db.orders.insert( 
+{
+    "description" : "A new order",
+    "amount" : 500,
+    "currency" : "AUD",
+    "dish" : {
+      "_id" : "553292c04c399b1733997513",
+	  	"name": "Thai Inbox",
+      "description": "Noodles with rice",
+      "type": "Meat",
+      "price": NumberLong(500),
+      "cookingTime": NumberLong(5),
+      "difficultyLevel": NumberLong(1),
+      "caterer": {
+          "_id" : "55328b1f875fecbf8442caa9",
+          "name": "Super Thai",
+          "description": "Super Thai - Noodles, Curry dishes",
+          "manager": "John Lee",
+          "email": "jlee@superthai.com",
+          "phone": "312-211-8911",
+          "location" : {
+            "address" : {
+              "label" : "House next to the police station",
+              "houseNumber" : "832",
+              "street" : "W. Wrightwood Avenue",
+              "city" : "Chicago",
+              "postalCode" : NumberLong(60614),
+              "state" : "Illinois",
+              "country" : "USA"
+            },
+            "geo" : {
+              "type" : "Point",
+              "coordinates" : [-87.6502373, 41.9282773]
+            }
+          },
+          "createdAt" : NumberLong(1424556053008),
+          "updatedAt" : NumberLong(1424556053008)
+        },
+    	"ingredients": 
+    		[{
+    			"name": "Noodles",
+    			"sequence": NumberLong(1),
+    			"quantity": 1.0
+    		},
+    		{
+    			"name": "Rice",
+    			"sequence": 2,
+    			"quantity": 1.0
+    		}],
+    	"nutritionFacts": 
+    		[{
+    			"name": "Calories",
+    			"value": 1250.0,
+    			"unit": "kJ"
+    		},
+    		{
+    			"name": "Proteins",
+    			"value": 750.5,
+    			"unit": "g"
+    		}],
+    	"videoUrl": "http://www.google.com",
+    	"createdAt": NumberLong(1424042592185),
+    	"updatedAt": NumberLong(1424042592185)
+    },
+    "createdBy" : "553292bd4c399700629d6f7c",
+    "createdAt" : NumberLong(1429377728692),
+    "updatedAt" : NumberLong(1429377728692)
+})

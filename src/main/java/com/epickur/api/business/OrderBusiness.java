@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
 
 import com.epickur.api.dao.mongo.OrderDaoImpl;
 import com.epickur.api.dao.mongo.UserDaoImpl;
@@ -150,6 +151,10 @@ public class OrderBusiness {
 	 */
 	public final List<Order> readAllWithUserId(final String userId) throws EpickurException {
 		return orderDao.readAllWithUserId(userId);
+	}
+
+	public final List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
+		return orderDao.readAllWithCatererId(catererId, start, end);
 	}
 
 	/**

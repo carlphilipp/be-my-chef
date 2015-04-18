@@ -10,14 +10,19 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTime;
+
 import com.epickur.api.business.CatererBusiness;
+import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Key;
+import com.epickur.api.entity.Order;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.validator.CatererValidator;
@@ -36,12 +41,15 @@ public final class CatererService {
 
 	/** Caterer Business **/
 	private CatererBusiness catererBusiness;
+	/** Order Business **/
+	private OrderBusiness orderBusiness;
 	/** Caterer validator **/
 	private CatererValidator validator;
 
 	/** Constructor **/
 	public CatererService() {
 		this.catererBusiness = new CatererBusiness();
+		this.orderBusiness = new OrderBusiness();
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
 
@@ -406,5 +414,57 @@ public final class CatererService {
 		validator.checkRightsBefore(key.getRole(), Crud.READ);
 		List<Caterer> caterers = catererBusiness.readAll();
 		return Response.ok().entity(caterers).build();
+	}
+
+	// @formatter:off
+	/**
+	 * @api {get} /caterers/:id/paymentInfo?start=:start&end=:end Obtain payement amount for a Caterer
+	 * @apiVersion 1.0.0
+	 * @apiName GetPayement
+	 * @apiGroup Caterers
+	 * @apiDescription Obtain payement amount for a Caterer within a time period.
+	 * @apiPermission admin
+	 * 
+	 * @apiParam (Request: URL Parameter) {String} id Id of the Caterer.
+	 *
+	 * @apiUse BadRequestError
+	 * @apiUse ForbiddenError
+	 * @apiUse InternalError
+	 */
+	// @formatter:on
+	@GET
+	@Path("/{id}/paymentInfo")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response paymentInfo(
+			@PathParam("id") final String id,
+			@QueryParam("start") final String start,
+			@QueryParam("end") final String end) throws EpickurException {
+		validator.checkId(id);
+		DateTime startDate = null;
+		DateTime endDate = null;
+		if(start != null){
+			startDate = new DateTime(start);
+		}
+		if(end != null){
+			endDate = new DateTime(end);
+		}
+		Caterer caterer = catererBusiness.read(id);
+		if (caterer == null) {
+			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.CATERER_NOT_FOUND);
+		} else {
+			List<Order> orders = orderBusiness.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
+			Integer amount = catererBusiness.getAmount(orders);
+			DBObject bdb = BasicDBObjectBuilder.start().get();
+			bdb.put("id", caterer.getId().toHexString());
+			bdb.put("name", caterer.getName());
+			if (start != null) {
+				bdb.put("start", start);
+			}
+			if (end != null) {
+				bdb.put("end", end);
+			}
+			bdb.put("amount", amount);
+			return Response.ok().entity(bdb).build();
+		}
 	}
 }

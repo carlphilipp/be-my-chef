@@ -44,7 +44,6 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 
 	@Override
 	public final Order create(final Order order) throws EpickurException {
-		// order.setId(new ObjectId());
 		DateTime time = new DateTime();
 		order.setCreatedAt(time);
 		order.setUpdatedAt(time);
@@ -118,11 +117,11 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 	 *            The User id
 	 * @return A list of Order
 	 * @throws EpickurException
-	 *             if an epickur exception occurred
+	 *             If an epickur exception occurred
 	 */
 	public final List<Order> readAllWithUserId(final String userId) throws EpickurException {
 		List<Order> orders = new ArrayList<Order>();
-		DBObject query = BasicDBObjectBuilder.start("userId", userId).get();
+		DBObject query = BasicDBObjectBuilder.start("createdBy", userId).get();
 		DBCursor cursor = null;
 		try {
 			cursor = getColl().find(query);
@@ -132,7 +131,35 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 				orders.add(user);
 			}
 		} catch (MongoException e) {
-			throw new EpickurDBException("readAll", e.getMessage(), userId, e);
+			throw new EpickurDBException("readAllWithUserId", e.getMessage(), userId, e);
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
+		return orders;
+	}
+
+	/**
+	 * @param catererId
+	 *            the Caterer Id.
+	 * @return A list of Order.
+	 * @throws EpickurException
+	 *             If an epickur exception occurred
+	 */
+	public final List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
+		List<Order> orders = new ArrayList<Order>();
+		DBObject query = BasicDBObjectBuilder.start("dish.caterer.id", catererId).get();
+		DBCursor cursor = null;
+		try {
+			cursor = getColl().find(query);
+			Iterator<DBObject> iterator = cursor.iterator();
+			while (iterator.hasNext()) {
+				Order user = Order.getObject(iterator.next());
+				orders.add(user);
+			}
+		} catch (MongoException e) {
+			throw new EpickurDBException("readAllWithCatererId", e.getMessage(), catererId, e);
 		} finally {
 			if (cursor != null) {
 				cursor.close();

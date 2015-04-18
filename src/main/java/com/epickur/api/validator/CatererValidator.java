@@ -73,6 +73,11 @@ public final class CatererValidator extends Validator {
 			throw new EpickurIllegalArgument("The parameter id and the field caterer.id should match");
 		}
 	}
+	
+	public void checkPaymentInfo(final String id, final String start, final String end){
+		checkId(id);
+		// TODO: continue here
+	}
 
 	protected void checkCaterer(final Caterer caterer) {
 		checkCaterer(caterer, null);
