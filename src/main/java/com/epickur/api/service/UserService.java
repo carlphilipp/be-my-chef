@@ -656,7 +656,11 @@ public final class UserService {
 		validator.checkRightsBefore(key.getRole(), Crud.UPDATE);
 		validator.checkUpdateOneOrder(id, orderId, order);
 		Order result = orderBusiness.update(order, key);
-		return Response.ok().entity(result).build();
+		if (result == null) {
+			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.ORDER_NOT_FOUND);
+		} else {
+			return Response.ok().entity(result).build();
+		}
 	}
 
 	// @formatter:off

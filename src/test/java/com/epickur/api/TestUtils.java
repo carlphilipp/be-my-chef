@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -17,6 +19,7 @@ import org.bson.types.ObjectId;
 
 import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
+import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
@@ -35,6 +38,12 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ObjectMapperWrapperAPI;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
+import com.stripe.model.Token;
 
 public class TestUtils {
 	/** Logger **/
@@ -274,6 +283,19 @@ public class TestUtils {
 		order.setCreatedBy(new ObjectId());
 		return order;
 	}
+	
+	public static Token generateRandomToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		Map<String, Object> cardParams = new HashMap<String, Object>();
+		cardParams.put("number", "4242424242424242");
+		cardParams.put("exp_month", 2);
+		cardParams.put("exp_year", 2016);
+		cardParams.put("cvc", "314");
+		tokenParams.put("card", cardParams);
+
+		Token token = Token.create(tokenParams);
+		return token;
+	}
 
 	public static Key generateRandomKey() {
 		Key key = new Key();
@@ -339,7 +361,6 @@ public class TestUtils {
 		return login;
 	}
 	
-
 	public static User getUser() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
@@ -381,5 +402,13 @@ public class TestUtils {
 		DishBusiness business = new DishBusiness();
 		Dish newDish = business.create(dish);
 		return newDish;
+	}
+	
+	public static Order getOrder(String userId) throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+		Token token = TestUtils.generateRandomToken();
+		Order order = TestUtils.generateRandomOrder();
+		OrderBusiness business = new OrderBusiness();
+		Order orderRes = business.create(userId, order, token.getId(), false, false);
+		return orderRes;
 	}
 }

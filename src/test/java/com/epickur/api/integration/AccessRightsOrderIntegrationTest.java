@@ -2,8 +2,6 @@ package com.epickur.api.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,13 +22,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.epickur.api.TestUtils;
-import com.epickur.api.business.UserBusiness;
-import com.epickur.api.entity.Key;
+import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
-import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stripe.Stripe;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
+import com.stripe.model.Token;
 
 public class AccessRightsOrderIntegrationTest {
 	private static String END_POINT;
@@ -38,20 +41,23 @@ public class AccessRightsOrderIntegrationTest {
 	private static String URL_NO_KEY;
 	private static String API_KEY;
 	private static String jsonMimeType;
+	private static String STRIPE_TEST_KEY;
 	private static String mongoPath;
 	private static String mongoAddress;
 	private static String mongoPort;
 	private static String mongoDbName;
 	private static String scriptCleanPath;
 	private static ObjectMapper mapper;
+	private static User user;
 
 	@BeforeClass
-	public static void beforeClass() throws IOException {
+	public static void beforeClass() throws IOException, EpickurException {
 		InputStreamReader in = new InputStreamReader(CatererIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 		String address = prop.getProperty("address");
 		String path = prop.getProperty("api.path");
+		STRIPE_TEST_KEY = prop.getProperty("stripe.key");
 		END_POINT = address + path;
 
 		in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
@@ -67,6 +73,8 @@ public class AccessRightsOrderIntegrationTest {
 		mongoPort = prop.getProperty("mongo.port");
 		mongoDbName = prop.getProperty("mongo.db.name");
 		scriptCleanPath = prop.getProperty("script.clean");
+
+		user = TestUtils.createUser();
 	}
 
 	@AfterClass
@@ -74,20 +82,25 @@ public class AccessRightsOrderIntegrationTest {
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
 		TestUtils.runShellCommand(cmd);
 	}
-	/*
+
 	// User Administrator
 	@Test
-	public void testAdministratorUserCreate() throws ClientProtocolException, IOException {
-		URL_NO_KEY = END_POINT + "/users";
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+	public void testAdministratorOrderCreate() throws ClientProtocolException, IOException, AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		// Create Stripe card token
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Token token = TestUtils.generateRandomToken();
 
-		User user = TestUtils.generateRandomUser();
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		Order order = TestUtils.generateRandomOrder();
+
+		StringEntity requestEntity = new StringEntity(order.toString());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("charge-agent", "true");
 		request.addHeader("email-agent", "false");
-		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
 
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -105,11 +118,43 @@ public class AccessRightsOrderIntegrationTest {
 	}
 
 	@Test
-	public void testAdministratorUserRead() throws ClientProtocolException, IOException, EpickurException {
-		String id = this.getIdNewUser();
+	public void testAdministratorOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Order order = TestUtils.getOrder(user.getId().toHexString());
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		Token token = TestUtils.generateRandomToken();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
+
+		HttpGet getReq = new HttpGet(URL);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		in.close();
+
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
+		assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
+	}
+
+	@Test
+	public void testAdministratorOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		// Create Stripe card token
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Token token = TestUtils.generateRandomToken();
+
+		String id = new ObjectId().toHexString();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + id;
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
 
 		HttpGet request = new HttpGet(URL);
 
@@ -122,19 +167,23 @@ public class AccessRightsOrderIntegrationTest {
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 404, statusCode);
 	}
 
 	@Test
-	public void testAdministratorUserUpdate() throws ClientProtocolException, IOException, EpickurException {
-		User normalUser = this.getNormalUser();
-		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+	public void testAdministratorOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Token token = TestUtils.generateRandomToken();
 
-		User user = TestUtils.generateRandomUser();
-		user.setId(normalUser.getId());
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		updatedOrder.setId(order.getId());
+
+		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -152,11 +201,43 @@ public class AccessRightsOrderIntegrationTest {
 	}
 
 	@Test
-	public void testAdministratorUserDelete() throws ClientProtocolException, IOException, EpickurException {
-		String id = this.getIdNewUser();
+	public void testAdministratorOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		ObjectId id = new ObjectId();
+		Token token = TestUtils.generateRandomToken();
+		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		updatedOrder.setId(id);
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
+
+		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		HttpPut request = new HttpPut(URL);
+		request.addHeader("content-type", jsonMimeType);
+		request.setEntity(requestEntity);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		in.close();
+
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 404, statusCode);
+	}
+
+	@Test
+	public void testAdministratorOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Token token = TestUtils.generateRandomToken();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
 
 		HttpDelete request = new HttpDelete(URL);
 
@@ -174,19 +255,24 @@ public class AccessRightsOrderIntegrationTest {
 
 	// User Super_User
 	@Test
-	public void testSuperUserCreate() throws ClientProtocolException, IOException, EpickurException {
-		String key = getSuperUser().getKey();
+	public void testSuperUserOrderCreate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		// Create Stripe card token
+		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		URL_NO_KEY = END_POINT + "/users";
-		URL = URL_NO_KEY + "?key=" + key;
+		user = TestUtils.getSuperUser();
 
-		User user = TestUtils.generateRandomUser();
+		Token token = TestUtils.generateRandomToken();
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
+		URL = URL_NO_KEY + "?key=" + user.getKey() + "&token=" + token.getId();
+
+		Order order = TestUtils.generateRandomOrder();
+		StringEntity requestEntity = new StringEntity(order.toString());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("charge-agent", "true");
 		request.addHeader("email-agent", "false");
-		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
 
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -198,78 +284,56 @@ public class AccessRightsOrderIntegrationTest {
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
-		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-	}
-
-	@Test
-	public void testSuperUserRead() throws ClientProtocolException, IOException, EpickurException {
-		// Read another user - should not pass it
-		String key = getSuperUser().getKey();
-		String id = getIdNewUser();
-
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
-
-		HttpGet request = new HttpGet(URL);
-
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-		in.close();
-
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
-		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-	}
-
-	@Test
-	public void testSuperUserRead2() throws ClientProtocolException, IOException, EpickurException {
-		// Read its own user - should pass it
-		User newUser = getSuperUser();
-		String key = newUser.getKey();
-		String id = newUser.getId().toHexString();
-
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
-
-		HttpGet request = new HttpGet(URL);
-
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-		in.close();
-
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertNotEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
 		assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 		assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
-	public void testSuperUserUpdate() throws ClientProtocolException, IOException, EpickurException {
-		// Update another user - should not pass it
-		User superUser = getSuperUser();
-		String key = superUser.getKey();
+	public void testSuperUserOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		user = TestUtils.getSuperUser();
 
-		User user = TestUtils.generateRandomUser();
-		user.setId(superUser.getId());
+		Order order = TestUtils.getOrder(user.getId().toHexString());
 
-		StringEntity requestEntity = new StringEntity(user.toString());
-		HttpPut request = new HttpPut(URL);
-		request.addHeader("content-type", jsonMimeType);
-		request.setEntity(requestEntity);
+		Token token = TestUtils.generateRandomToken();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + user.getKey() + "&token=" + token.getId();
+
+		HttpGet getReq = new HttpGet(URL);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		in.close();
+
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
+		assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
+	}
+
+	@Test
+	public void testSuperUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		user = TestUtils.getSuperUser();
+
+		// Create Stripe card token
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Token token = TestUtils.generateRandomToken();
+
+		String id = new ObjectId().toHexString();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + id;
+		URL = URL_NO_KEY + "?key=" + user.getKey() + "&token=" + token.getId();
+
+		HttpGet request = new HttpGet(URL);
 
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
@@ -280,28 +344,28 @@ public class AccessRightsOrderIntegrationTest {
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-		assertNotEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 404, statusCode);
 	}
 
 	@Test
-	public void testSuperUserUpdate2() throws ClientProtocolException, IOException, EpickurException {
-		// Update another user - should not pass it
-		User superUser = getSuperUser();
-		String key = superUser.getKey();
-		String id = getIdNewUser();
+	public void testSuperUserOrderRead3() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		user = TestUtils.getSuperUser();
 
-		User user = TestUtils.generateRandomUser();
-		user.setId(new ObjectId(id));
+		User otherUser = TestUtils.getUser();
 
-		StringEntity requestEntity = new StringEntity(user.toString());
-		HttpPut request = new HttpPut(URL);
-		request.addHeader("content-type", jsonMimeType);
-		request.setEntity(requestEntity);
+		Order order = TestUtils.getOrder(otherUser.getId().toHexString());
 
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		Token token = TestUtils.generateRandomToken();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + user.getKey() + "&token=" + token.getId();
+
+		HttpGet getReq = new HttpGet(URL);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
@@ -311,16 +375,79 @@ public class AccessRightsOrderIntegrationTest {
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
 		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
-		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
-	public void testSuperUserDelete() throws ClientProtocolException, IOException, EpickurException {
-		User superUser = getSuperUser();
+	public void testSuperUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		user = TestUtils.getSuperUser();
+		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Token token = TestUtils.generateRandomToken();
 
-		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + superUser.getKey();
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
+
+		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		updatedOrder.setId(order.getId());
+
+		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		HttpPut request = new HttpPut(URL);
+		request.addHeader("content-type", jsonMimeType);
+		request.setEntity(requestEntity);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		in.close();
+
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+	}
+
+	@Test
+	public void testSuperUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		user = TestUtils.getSuperUser();
+		ObjectId id = new ObjectId();
+		Token token = TestUtils.generateRandomToken();
+		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		updatedOrder.setId(id);
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
+
+		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		HttpPut request = new HttpPut(URL);
+		request.addHeader("content-type", jsonMimeType);
+		request.setEntity(requestEntity);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		in.close();
+
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 404, statusCode);
+	}
+
+	@Test
+	public void testSuperUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		user = TestUtils.getSuperUser();
+		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Token token = TestUtils.generateRandomToken();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
 
 		HttpDelete request = new HttpDelete(URL);
 
@@ -333,24 +460,29 @@ public class AccessRightsOrderIntegrationTest {
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
 	}
 
 	// User User
 	@Test
-	public void testUserCreate() throws ClientProtocolException, IOException, EpickurException {
-		String key = getNormalUser().getKey();
+	public void testUserOrderCreate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		// Create Stripe card token
+		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		URL_NO_KEY = END_POINT + "/users";
-		URL = URL_NO_KEY + "?key=" + key;
+		user = TestUtils.getUser();
 
-		User user = TestUtils.generateRandomUser();
+		Token token = TestUtils.generateRandomToken();
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
+		URL = URL_NO_KEY + "?key=" + user.getKey() + "&token=" + token.getId();
+
+		Order order = TestUtils.generateRandomOrder();
+		StringEntity requestEntity = new StringEntity(order.toString());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("charge-agent", "true");
 		request.addHeader("email-agent", "false");
-		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
 
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -362,78 +494,55 @@ public class AccessRightsOrderIntegrationTest {
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
-		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-	}
-
-	@Test
-	public void testUserRead() throws ClientProtocolException, IOException, EpickurException {
-		// Read another user - should not pass it
-		String key = getNormalUser().getKey();
-		String id = getIdNewUser();
-
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
-
-		HttpGet request = new HttpGet(URL);
-
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-		in.close();
-
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
-		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-	}
-
-	@Test
-	public void testUserRead2() throws ClientProtocolException, IOException, EpickurException {
-		// Read its own user - should pass it
-		User newUser = getNormalUser();
-		String key = newUser.getKey();
-		String id = newUser.getId().toHexString();
-
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
-
-		HttpGet request = new HttpGet(URL);
-
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-		in.close();
-
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertNotEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
 		assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 		assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
-	public void testUserUpdate() throws ClientProtocolException, IOException, EpickurException {
-		// Update another user - should not pass it
-		User normalUser = getNormalUser();
-		String key = normalUser.getKey();
+	public void testUserOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		user = TestUtils.getUser();
 
-		User user = TestUtils.generateRandomUser();
-		user.setId(normalUser.getId());
+		Order order = TestUtils.getOrder(user.getId().toHexString());
 
-		StringEntity requestEntity = new StringEntity(user.toString());
-		HttpPut request = new HttpPut(URL);
-		request.addHeader("content-type", jsonMimeType);
-		request.setEntity(requestEntity);
+		Token token = TestUtils.generateRandomToken();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + user.getKey() + "&token=" + token.getId();
+
+		HttpGet getReq = new HttpGet(URL);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		in.close();
+
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
+		assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
+	}
+
+	public void testUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		user = TestUtils.getUser();
+
+		// Create Stripe card token
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Token token = TestUtils.generateRandomToken();
+
+		String id = new ObjectId().toHexString();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + id;
+		URL = URL_NO_KEY + "?key=" + user.getKey() + "&token=" + token.getId();
+
+		HttpGet request = new HttpGet(URL);
 
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
@@ -444,28 +553,28 @@ public class AccessRightsOrderIntegrationTest {
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-		assertNotEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 404, statusCode);
 	}
 
 	@Test
-	public void testUserUpdate2() throws ClientProtocolException, IOException, EpickurException {
-		// Update another user - should not pass it
-		User normalUser = getNormalUser();
-		String key = normalUser.getKey();
-		String id = getIdNewUser();
+	public void testUserOrderRead3() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		user = TestUtils.getUser();
 
-		User user = TestUtils.generateRandomUser();
-		user.setId(new ObjectId(id));
+		User otherUser = TestUtils.getUser();
 
-		StringEntity requestEntity = new StringEntity(user.toString());
-		HttpPut request = new HttpPut(URL);
-		request.addHeader("content-type", jsonMimeType);
-		request.setEntity(requestEntity);
+		Order order = TestUtils.getOrder(otherUser.getId().toHexString());
 
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		Token token = TestUtils.generateRandomToken();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + user.getKey() + "&token=" + token.getId();
+
+		HttpGet getReq = new HttpGet(URL);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
@@ -475,16 +584,77 @@ public class AccessRightsOrderIntegrationTest {
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
 		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
-		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
-*/
-	@Test
-	public void testUserDelete() throws ClientProtocolException, IOException, EpickurException {
-		User superUser = getNormalUser();
 
-		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + superUser.getKey();
+	public void testUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		user = TestUtils.getUser();
+		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Token token = TestUtils.generateRandomToken();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
+
+		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		updatedOrder.setId(order.getId());
+
+		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		HttpPut request = new HttpPut(URL);
+		request.addHeader("content-type", jsonMimeType);
+		request.setEntity(requestEntity);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		in.close();
+
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+	}
+
+	@Test
+	public void testUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		user = TestUtils.getUser();
+		ObjectId id = new ObjectId();
+		Token token = TestUtils.generateRandomToken();
+		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		updatedOrder.setId(id);
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
+
+		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		HttpPut request = new HttpPut(URL);
+		request.addHeader("content-type", jsonMimeType);
+		request.setEntity(requestEntity);
+
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		in.close();
+
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 404, statusCode);
+	}
+
+	public void testUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+			InvalidRequestException, APIConnectionException, CardException, APIException {
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		user = TestUtils.getUser();
+		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Token token = TestUtils.generateRandomToken();
+
+		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
+		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
 
 		HttpDelete request = new HttpDelete(URL);
 
@@ -497,39 +667,6 @@ public class AccessRightsOrderIntegrationTest {
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
-	}
-
-	private String getIdNewUser() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, false, true);
-		return newUser.getId().toHexString();
-	}
-
-	private User getSuperUser() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		String password = new String(user.getPassword());
-		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, false, true);
-		newUser.setRole(Role.SUPER_USER);
-		Key key = TestUtils.generateRandomKey();
-		key.setRole(Role.ADMIN);
-		business.update(newUser, key);
-		User login = business.login(newUser.getEmail(), password);
-		return login;
-	}
-
-	private User getNormalUser() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		String password = new String(user.getPassword());
-		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, false, true);
-		newUser.setRole(Role.USER);
-		Key key = TestUtils.generateRandomKey();
-		key.setRole(Role.ADMIN);
-		business.update(newUser, key);
-		User login = business.login(newUser.getEmail(), password);
-		return login;
+		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
 	}
 }

@@ -459,7 +459,7 @@ public class UserIntegrationTest {
 		String orderId = jsonResult.get("id").asText();
 		assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
 		assertEquals("A new order", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("userId").asText());
+		assertEquals(id, jsonResult.get("createdBy").asText());
 		assertNotNull(jsonResult.get("createdAt").asText());
 		assertEquals("AUD", jsonResult.get("currency").asText());
 		assertNotNull(jsonResult.get("dish"));
@@ -575,7 +575,7 @@ public class UserIntegrationTest {
 		assertNotNull(orderId);
 		assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
 		assertEquals("A new order", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("userId").asText());
+		assertEquals(id, jsonResult.get("createdBy").asText());
 		assertNotNull(jsonResult.get("createdAt").asText());
 		assertNotNull(jsonResult.get("updatedAt").asText());
 		assertEquals("AUD", jsonResult.get("currency").asText());
@@ -676,7 +676,7 @@ public class UserIntegrationTest {
 		String orderId = jsonResult.get("id").asText();
 		assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
 		assertEquals("A new order", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("userId").asText());
+		assertEquals(id, jsonResult.get("createdBy").asText());
 		assertNotNull(jsonResult.get("createdAt"));
 		assertEquals("AUD", jsonResult.get("currency").asText());
 		assertNotNull(jsonResult.get("dish"));
@@ -784,7 +784,7 @@ public class UserIntegrationTest {
 		String orderId = jsonResult.get("id").asText();
 		assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
 		assertEquals("A new order", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("userId").asText());
+		assertEquals(id, jsonResult.get("createdBy").asText());
 		assertNotNull(jsonResult.get("createdAt").asText());
 		assertEquals("AUD", jsonResult.get("currency").asText());
 		assertNotNull(jsonResult.get("dish"));
@@ -813,7 +813,7 @@ public class UserIntegrationTest {
 		assertNotNull(jsonResult.get("id"));
 		assertEquals(new Long(600).longValue(), jsonResult.get("amount").asLong());
 		assertEquals("A new order modified", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("userId").asText());
+		assertEquals(id, jsonResult.get("createdBy").asText());
 		assertNotNull(jsonResult.get("createdAt").asText());
 		assertEquals("AUD", jsonResult.get("currency").asText());
 		assertNotNull(jsonResult.get("dish"));

@@ -39,8 +39,6 @@ public final class Order extends AbstractEntity {
 	private static final Logger LOG = LogManager.getLogger(Order.class.getSimpleName());
 	/** Id **/
 	private ObjectId id;
-	/** User id **/
-	private String userId;
 	/** Description **/
 	private String description;
 	/** Amount **/
@@ -94,21 +92,6 @@ public final class Order extends AbstractEntity {
 	 */
 	public void setDish(final Dish dish) {
 		this.dish = dish;
-	}
-
-	/**
-	 * @return The User id
-	 */
-	public String getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId
-	 *            The User id
-	 */
-	public void setUserId(final String userId) {
-		this.userId = userId;
 	}
 
 	/**
@@ -328,7 +311,6 @@ public final class Order extends AbstractEntity {
 		result = prime * result + ((paid == null) ? 0 : paid.hashCode());
 		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
 		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		return result;
 	}
 
@@ -408,13 +390,6 @@ public final class Order extends AbstractEntity {
 				return false;
 			}
 		} else if (!updatedAt.equals(other.updatedAt)) {
-			return false;
-		}
-		if (userId == null) {
-			if (other.userId != null) {
-				return false;
-			}
-		} else if (!userId.equals(other.userId)) {
 			return false;
 		}
 		return true;

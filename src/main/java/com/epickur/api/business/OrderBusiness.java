@@ -3,6 +3,8 @@ package com.epickur.api.business;
 import java.util.List;
 import java.util.Map;
 
+import org.bson.types.ObjectId;
+
 import com.epickur.api.dao.mongo.OrderDaoImpl;
 import com.epickur.api.dao.mongo.UserDaoImpl;
 import com.epickur.api.entity.Key;
@@ -61,7 +63,7 @@ public class OrderBusiness {
 	 */
 	public final Order create(final String userId, final Order order, final String cardToken, final boolean shouldCharge, final boolean sendEmail)
 			throws EpickurException {
-		order.setUserId(userId);
+		order.setCreatedBy(new ObjectId(userId));
 		User user = this.userDao.read(userId);
 		if (user == null) {
 			throw new EpickurException();
