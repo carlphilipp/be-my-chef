@@ -411,4 +411,13 @@ public class TestUtils {
 		Order orderRes = business.create(userId, order, token.getId(), false, false);
 		return orderRes;
 	}
+	
+	public static Order getOrder(String userId, String catererId) throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException, EpickurException{
+		Token token = TestUtils.generateRandomToken();
+		Order order = TestUtils.generateRandomOrder();
+		order.getDish().getCaterer().setId(new ObjectId(catererId));
+		OrderBusiness business = new OrderBusiness();
+		Order orderRes = business.create(userId, order, token.getId(), false, false);
+		return orderRes;
+	}
 }

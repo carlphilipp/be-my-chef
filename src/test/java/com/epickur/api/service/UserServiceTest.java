@@ -51,7 +51,6 @@ public class UserServiceTest {
 		for (ObjectId id : idsToDeleteUser) {
 			service.delete(id.toHexString(), context);
 		}
-
 		for (Entry<String, ObjectId> entry : idsToDeleteOrder.entrySet()) {
 			service.deleteOneOrder(entry.getKey(), entry.getValue().toHexString(), context);
 		}
@@ -462,15 +461,15 @@ public class UserServiceTest {
 			Order order = TestUtils.generateRandomOrder();
 			Response result2 = service.addOneOrder(userResult.getId().toHexString(), null, false, false, order);
 			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
+				Order orderResult = (Order) result2.getEntity();
+				assertNotNull(orderResult.getId());
+				idsToDeleteOrder.put(userResult.getId().toHexString(), orderResult.getId());
 
-				Response result3 = service.readOneOrder(userResult.getId().toHexString(), userResult2.getId().toHexString(), context);
+				Response result3 = service.readOneOrder(userResult.getId().toHexString(), orderResult.getId().toHexString(), context);
 				if (result3.getEntity() != null) {
 					Order userResult3 = (Order) result3.getEntity();
 					assertNotNull(userResult3.getId());
-					assertEquals(userResult2, userResult3);
+					assertEquals(orderResult, userResult3);
 				} else {
 					fail("Order returned is null");
 				}

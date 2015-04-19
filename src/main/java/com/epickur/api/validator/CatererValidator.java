@@ -4,6 +4,7 @@ import javax.ws.rs.ForbiddenException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
 
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
@@ -73,10 +74,23 @@ public final class CatererValidator extends Validator {
 			throw new EpickurIllegalArgument("The parameter id and the field caterer.id should match");
 		}
 	}
-	
-	public void checkPaymentInfo(final String id, final String start, final String end){
+
+	public void checkPaymentInfo(final String id, final DateTime start, final DateTime end) {
 		checkId(id);
-		// TODO: continue here
+		if(start == null && end != null){
+			throw new EpickurIllegalArgument("Start date missing");
+		}
+		if(start != null){
+			DateTime today = new DateTime();
+			if (start.isAfter(today)) {
+				throw new EpickurIllegalArgument("The start date can not be after today");
+			}
+		}
+		if (start != null && end != null) {
+			if (end.isBefore(start)) {
+				throw new EpickurIllegalArgument("The end date should be after the start date");
+			}
+		}
 	}
 
 	protected void checkCaterer(final Caterer caterer) {

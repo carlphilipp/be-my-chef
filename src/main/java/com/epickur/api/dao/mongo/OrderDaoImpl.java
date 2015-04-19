@@ -149,7 +149,17 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 	 */
 	public final List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
 		List<Order> orders = new ArrayList<Order>();
-		DBObject query = BasicDBObjectBuilder.start("dish.caterer.id", catererId).get();
+		DBObject query = BasicDBObjectBuilder.start("dish.caterer._id", catererId).get();
+		DBObject filter = BasicDBObjectBuilder.start().get();
+		if (start != null) {
+			filter.put("$gte", start.getMillis());
+		}
+		if (end != null) {
+			filter.put("$lte", end.getMillis());
+		}
+		if(filter.keySet().size() != 0){
+			query.put("createdAt", filter);
+		}
 		DBCursor cursor = null;
 		try {
 			cursor = getColl().find(query);

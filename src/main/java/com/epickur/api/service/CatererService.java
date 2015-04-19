@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -25,6 +26,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.CatererValidator;
 import com.epickur.api.validator.FactoryValidator;
 import com.mongodb.BasicDBObjectBuilder;
@@ -418,7 +420,7 @@ public final class CatererService {
 
 	// @formatter:off
 	/**
-	 * @api {get} /caterers/:id/paymentInfo?start=:start&end=:end Obtain payement amount for a Caterer
+	 * @api {get} /caterers/:id/paymentInfo?start=:start&end=:end&format=:format Obtain payement amount for a Caterer
 	 * @apiVersion 1.0.0
 	 * @apiName GetPayement
 	 * @apiGroup Caterers
@@ -438,16 +440,17 @@ public final class CatererService {
 	public Response paymentInfo(
 			@PathParam("id") final String id,
 			@QueryParam("start") final String start,
-			@QueryParam("end") final String end) throws EpickurException {
-		validator.checkId(id);
+			@QueryParam("end") final String end,
+			@DefaultValue("yyyy/MM/dd") @QueryParam("format") final String format) throws EpickurException {
 		DateTime startDate = null;
 		DateTime endDate = null;
-		if(start != null){
-			startDate = new DateTime(start);
+		if (start != null) {
+			startDate = Utils.parseDate(start, format);
 		}
-		if(end != null){
-			endDate = new DateTime(end);
+		if (end != null) {
+			endDate = Utils.parseDate(start, end);
 		}
+		validator.checkPaymentInfo(id, startDate, endDate);
 		Caterer caterer = catererBusiness.read(id);
 		if (caterer == null) {
 			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.CATERER_NOT_FOUND);
