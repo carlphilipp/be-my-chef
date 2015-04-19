@@ -60,6 +60,7 @@ import com.epickur.api.service.DishServiceTest;
 import com.epickur.api.service.LoginServiceTest;
 import com.epickur.api.service.LogoutServiceTest;
 import com.epickur.api.service.UserServiceTest;
+import com.epickur.api.utils.UtilsTest;
 import com.epickur.api.validator.CatererValidatorTest;
 import com.epickur.api.validator.DishValidatorTest;
 import com.epickur.api.validator.UserValidatorTest;
@@ -128,6 +129,8 @@ import com.epickur.api.validator.UserValidatorTest;
 		LoginServiceTest.class,
 		LogoutServiceTest.class,
 		UserServiceTest.class,
+		
+		UtilsTest.class,
 
 		CatererValidatorTest.class,
 		DishValidatorTest.class,

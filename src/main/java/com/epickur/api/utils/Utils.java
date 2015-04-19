@@ -11,10 +11,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurParsingException;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
@@ -182,5 +185,14 @@ public final class Utils {
 			}
 		}
 		return true;
+	}
+
+	public static DateTime parseDate(final String date, final String format) throws EpickurParsingException {
+		try {
+			DateTimeFormatter fmt = DateTimeFormat.forPattern(format);
+			return fmt.parseDateTime(date);
+		} catch (Exception e) {
+			throw new EpickurParsingException("Error while parsing date '" + date + "' with format '" + format + "'", e);
+		}
 	}
 }
