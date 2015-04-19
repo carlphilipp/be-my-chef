@@ -5,6 +5,7 @@ import java.util.List;
 import com.epickur.api.dao.mongo.DishDaoImpl;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.geocoder.IGeocoder;
 import com.epickur.api.geocoder.here.GeocoderHereImpl;
@@ -40,7 +41,7 @@ public final class SearchBusiness {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public List<Dish> search(final String type, final Integer limit, final String address, final int distance) throws EpickurException {
+	public List<Dish> search(final DishType type, final Integer limit, final String address, final int distance) throws EpickurException {
 		IGeocoder geocoder = new GeocoderHereImpl();
 		Geo geo = geocoder.getPosition(address);
 		return dishDao.search(type, limit, geo, distance);

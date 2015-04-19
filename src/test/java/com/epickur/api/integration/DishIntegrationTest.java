@@ -128,7 +128,7 @@ public class DishIntegrationTest {
 		// Create result
 		assertEquals(dish.getName(), jsonResult.get("name").asText());
 		assertEquals(dish.getDescription(), jsonResult.get("description").asText());
-		assertEquals(dish.getType(), jsonResult.get("type").asText());
+		assertEquals(dish.getType().toString(), jsonResult.get("type").asText());
 		assertEquals(new Long(dish.getPrice()), jsonResult.get("price").asLong(), 0.001);
 		assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
 		assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
@@ -156,14 +156,13 @@ public class DishIntegrationTest {
 
 	@Test
 	public void testReadOneDish() throws ClientProtocolException, IOException, EpickurException {
-		
+
 		Dish dish = TestUtils.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer cat = TestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
 		idsCatererToDelete.add(cat.getId());
-		
-		
+
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -203,7 +202,7 @@ public class DishIntegrationTest {
 
 		assertEquals(dish.getName(), jsonResult.get("name").asText());
 		assertEquals(dish.getDescription(), jsonResult.get("description").asText());
-		assertEquals(dish.getType(), jsonResult.get("type").asText());
+		assertEquals(dish.getType().toString(), jsonResult.get("type").asText());
 		assertEquals(new Long(dish.getPrice()), jsonResult.get("price").asLong(), 0.001);
 		assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
 		assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
@@ -255,7 +254,7 @@ public class DishIntegrationTest {
 		// Put
 		String namePut = "new name";
 		String descriptionPut = "new descr";
-		String typePut = "new descr";
+		String type = TestUtils.generateRandomDishType().toString();
 		Integer pricePut = 505;
 		int cookingTimePut = 50;
 		int difficultyLevelPut = 2;
@@ -280,7 +279,7 @@ public class DishIntegrationTest {
 		json.put("id", id);
 		json.put("name", namePut);
 		json.put("description", descriptionPut);
-		json.put("type", typePut);
+		json.put("type", type);
 		json.put("price", pricePut);
 		json.put("cookingTime", cookingTimePut);
 		json.put("difficultyLevel", difficultyLevelPut);
@@ -306,7 +305,7 @@ public class DishIntegrationTest {
 		assertEquals(descriptionPut, jsonResult.get("description").asText());
 		assertEquals(namePut, jsonResult.get("name").asText());
 		assertEquals(descriptionPut, jsonResult.get("description").asText());
-		assertEquals(typePut, jsonResult.get("type").asText());
+		assertEquals(type, jsonResult.get("type").asText());
 		assertEquals(new Long(pricePut), jsonResult.get("price").asLong(), 0.001);
 		assertEquals(new Long(cookingTimePut).longValue(), jsonResult.get("cookingTime").asLong(), 0.001);
 		assertEquals(new Long(difficultyLevelPut).longValue(), jsonResult.get("difficultyLevel").asLong(), 0.001);

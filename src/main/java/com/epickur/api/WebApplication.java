@@ -4,10 +4,13 @@ import javax.annotation.PostConstruct;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.BSON;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.quartz.SchedulerException;
 
 import com.epickur.api.cron.Jobs;
+import com.epickur.api.enumeration.DishType;
+import com.epickur.api.utils.EnumTransformer;
 
 /**
  * Resource configuration that starts Cron jobs
@@ -22,6 +25,8 @@ public class WebApplication extends ResourceConfig {
 
 	/** Constructor **/
 	public WebApplication() {
+		// Register new encoding to be able to serialize enum in MongoDB
+		BSON.addEncodingHook(DishType.class, new EnumTransformer());
 	}
 
 	/**

@@ -12,10 +12,13 @@ import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
-import com.epickur.api.entity.databind.DateSerializer;
 import com.epickur.api.entity.databind.DateDeserializer;
+import com.epickur.api.entity.databind.DateSerializer;
+import com.epickur.api.entity.databind.DishTypeDeserializer;
+import com.epickur.api.entity.databind.DishTypeSerializer;
 import com.epickur.api.entity.databind.ObjectIdDeserializer;
 import com.epickur.api.entity.databind.ObjectIdSerializer;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.View;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
@@ -49,7 +52,7 @@ public final class Dish extends AbstractEntity {
 	/** Description **/
 	private String description;
 	/** Type **/
-	private String type;
+	private DishType type;
 	/** Price **/
 	private Integer price;
 	/** Cooking time **/
@@ -157,7 +160,8 @@ public final class Dish extends AbstractEntity {
 	/**
 	 * @return The type
 	 */
-	public String getType() {
+	@JsonSerialize(using = DishTypeSerializer.class)
+	public DishType getType() {
 		return type;
 	}
 
@@ -165,7 +169,8 @@ public final class Dish extends AbstractEntity {
 	 * @param type
 	 *            The type
 	 */
-	public void setType(final String type) {
+	@JsonDeserialize(using = DishTypeDeserializer.class)
+	public void setType(final DishType type) {
 		this.type = type;
 	}
 

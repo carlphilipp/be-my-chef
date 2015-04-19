@@ -34,6 +34,7 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.entity.NutritionFact;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurParsingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -516,7 +517,7 @@ public class UserIntegrationTest {
 		dish.setCaterer(TestUtils.generateRandomCatererWithId());
 		dish.setName("Dish name");
 		dish.setDescription("A super cool dish");
-		dish.setType("Vegan");
+		dish.setType(DishType.VEGAN);
 		dish.setPrice(500);
 		dish.setCookingTime(5);
 		dish.setDifficultyLevel(8);
@@ -635,7 +636,7 @@ public class UserIntegrationTest {
 		Dish dish = new Dish();
 		dish.setName("Dish name");
 		dish.setDescription("A super cool dish");
-		dish.setType("Vegan");
+		dish.setType(DishType.VEGAN);
 		dish.setPrice(500);
 		dish.setCookingTime(5);
 		dish.setDifficultyLevel(8);
@@ -747,7 +748,7 @@ public class UserIntegrationTest {
 		Dish dish = new Dish();
 		dish.setName("Dish name");
 		dish.setDescription("A super cool dish");
-		dish.setType("Vegan");
+		dish.setType(DishType.VEGAN);
 		dish.setPrice(500);
 		dish.setCookingTime(5);
 		dish.setDifficultyLevel(8);

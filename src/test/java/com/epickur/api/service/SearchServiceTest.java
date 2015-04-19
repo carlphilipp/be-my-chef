@@ -21,6 +21,7 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 
@@ -114,29 +115,24 @@ public class SearchServiceTest {
 	public void testSearchFail() throws EpickurException {
 		searchService.search(null, null, null, null);
 	}
-	
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testSearchFail2() throws EpickurException {
-		searchService.search("", null, null, null);
-	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail3() throws EpickurException {
-		searchService.search("type", null, null, null);
+		searchService.search(DishType.FISH, null, null, null);
 	}
 	
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail4() throws EpickurException {
-		searchService.search("type", 8, "", null);
+		searchService.search(DishType.FISH, 8, "", null);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail5() throws EpickurException {
-		searchService.search("type", 0, null, null);
+		searchService.search(DishType.FISH, 0, null, null);
 	}
 	
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail6() throws EpickurException {
-		searchService.search("type", 0, "", null);
+		searchService.search(DishType.FISH, 0, "", null);
 	}
 }

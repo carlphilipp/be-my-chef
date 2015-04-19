@@ -84,7 +84,7 @@ public class DishValidator extends Validator {
 		if (StringUtils.isBlank(dish.getDescription())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "description"));
 		}
-		if (StringUtils.isBlank(dish.getType())) {
+		if (dish.getType() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "type"));
 		}
 		if (dish.getPrice() == null) {

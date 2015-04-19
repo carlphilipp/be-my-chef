@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.mongodb.BasicDBObject;
@@ -144,7 +145,7 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 	 * @throws EpickurException
 	 *             if an epickur exception occurred
 	 */
-	public List<Dish> search(final String type, final Integer limit, final Geo geo, final Integer distance) throws EpickurException {
+	public List<Dish> search(final DishType type, final Integer limit, final Geo geo, final Integer distance) throws EpickurException {
 		DBObject bdb = BasicDBObjectBuilder.start().get();
 		bdb.put("type", type);
 		bdb.put("caterer.location.geo", geo.getSearch(0, distance));
@@ -159,6 +160,8 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 			}
 		} catch (MongoException e) {
 			throw new EpickurDBException("search", e.getMessage(), bdb, e);
+		}catch(Exception e){
+			e.printStackTrace();
 		} finally {
 			if (cursor != null) {
 				cursor.close();

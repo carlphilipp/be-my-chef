@@ -108,7 +108,7 @@ db.dishes.insert(
   [{
 	  "name": "Thai Inbox",
     "description": "Noodles with rice",
-    "type": "Meat",
+    "type": "meat",
     "price": NumberLong(500),
     "cookingTime": NumberLong(5),
     "difficultyLevel": NumberLong(1),
@@ -167,7 +167,7 @@ db.dishes.insert(
   	{
 	  	"name": "Fish and Chips",
 	  	"description": "Fresh fish and chips",
-	  	"type": "Fish",
+	  	"type": "fish",
 	  	"price": NumberLong(500),
 	  	"cookingTime": NumberLong(5),
 	  	"difficultyLevel": NumberLong(1),
@@ -235,7 +235,7 @@ db.dishes.insert(
       "_id" : "553292c04c399b1733997513",
 	  	"name": "Thai Inbox",
       "description": "Noodles with rice",
-      "type": "Meat",
+      "type": "meat",
       "price": NumberLong(500),
       "cookingTime": NumberLong(5),
       "difficultyLevel": NumberLong(1),

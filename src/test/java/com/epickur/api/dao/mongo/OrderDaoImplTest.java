@@ -159,6 +159,7 @@ public class OrderDaoImplTest {
 		Order order2 = TestUtils.getOrder(user.getId().toHexString(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
+		// Test
 		OrderDaoImpl dao = new OrderDaoImpl();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);

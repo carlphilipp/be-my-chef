@@ -32,6 +32,7 @@ import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Currency;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.MeasurementUnit;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
@@ -134,7 +135,7 @@ public class TestUtils {
 		}
 		return null;
 	}
-	
+
 	public static Caterer generateRandomCatererWithId() {
 		Caterer caterer = generateRandomCatererWithoutId();
 		caterer.setId(new ObjectId());
@@ -190,10 +191,16 @@ public class TestUtils {
 		dish.setNutritionFacts(generateRandomListNutritionFact());
 		dish.setPrice(generateRandomInteger());
 		dish.setSteps(generateRandomListString());
-		dish.setType(generateRandomString());
+		dish.setType(generateRandomDishType());
 		dish.setVideoUrl(generateRandomString());
 		dish.setCreatedBy(new ObjectId());
 		return dish;
+	}
+
+	public static DishType generateRandomDishType() {
+		DishType[] types = DishType.values();
+		int max = RandomUtils.nextInt(0, types.length - 1);
+		return types[max];
 	}
 
 	public static List<NutritionFact> generateRandomListNutritionFact() {
@@ -283,8 +290,9 @@ public class TestUtils {
 		order.setCreatedBy(new ObjectId());
 		return order;
 	}
-	
-	public static Token generateRandomToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+
+	public static Token generateRandomToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
 		Map<String, Object> tokenParams = new HashMap<String, Object>();
 		Map<String, Object> cardParams = new HashMap<String, Object>();
 		cardParams.put("number", "4242424242424242");
@@ -304,23 +312,23 @@ public class TestUtils {
 		key.setRole(Role.ADMIN);
 		return key;
 	}
-	
+
 	// TODO Redesign and refactor that series of function.
-	
+
 	public static String getIdNewCaterer() throws EpickurException {
 		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
 		CatererBusiness business = new CatererBusiness();
 		Caterer newCat = business.create(caterer);
 		return newCat.getId().toHexString();
 	}
-	
+
 	public static Caterer getCaterer() throws EpickurException {
 		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
 		CatererBusiness business = new CatererBusiness();
 		Caterer newCaterer = business.create(caterer);
 		return newCaterer;
 	}
-	
+
 	public static Caterer getCatererWithUserId(final String userId) throws EpickurException {
 		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
 		caterer.setCreatedBy(new ObjectId(userId));
@@ -328,13 +336,13 @@ public class TestUtils {
 		Caterer newCaterer = business.create(caterer);
 		return newCaterer;
 	}
-	
-	public static Caterer createCaterer(Caterer caterer, ObjectId userId) throws EpickurException{
+
+	public static Caterer createCaterer(Caterer caterer, ObjectId userId) throws EpickurException {
 		CatererBusiness business = new CatererBusiness();
 		caterer.setCreatedBy(userId);
 		return business.create(caterer);
 	}
-	
+
 	public static User createUser() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
@@ -347,7 +355,7 @@ public class TestUtils {
 		User login = business.login(newUser.getEmail(), password);
 		return login;
 	}
-	
+
 	public static User getSuperUser() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
@@ -360,7 +368,7 @@ public class TestUtils {
 		User login = business.login(newUser.getEmail(), password);
 		return login;
 	}
-	
+
 	public static User getUser() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
@@ -373,22 +381,21 @@ public class TestUtils {
 		User login = business.login(newUser.getEmail(), password);
 		return login;
 	}
-	
+
 	public static String getIdNewDish() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
 		DishBusiness business = new DishBusiness();
 		Dish newDish = business.create(dish);
 		return newDish.getId().toHexString();
 	}
-	
+
 	public static String getIdNewUser() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		UserBusiness business = new UserBusiness();
 		User newUser = business.create(user, false, true);
 		return newUser.getId().toHexString();
 	}
-	
-	
+
 	public static Dish getDishUserId(final String userId) throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
 		dish.setCreatedBy(new ObjectId(userId));
@@ -396,23 +403,25 @@ public class TestUtils {
 		Dish newDish = business.create(dish);
 		return newDish;
 	}
-	
+
 	public static Dish getDish() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
 		DishBusiness business = new DishBusiness();
 		Dish newDish = business.create(dish);
 		return newDish;
 	}
-	
-	public static Order getOrder(String userId) throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+
+	public static Order getOrder(String userId) throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+			CardException, APIException {
 		Token token = TestUtils.generateRandomToken();
 		Order order = TestUtils.generateRandomOrder();
 		OrderBusiness business = new OrderBusiness();
 		Order orderRes = business.create(userId, order, token.getId(), false, false);
 		return orderRes;
 	}
-	
-	public static Order getOrder(String userId, String catererId) throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException, EpickurException{
+
+	public static Order getOrder(String userId, String catererId) throws AuthenticationException, InvalidRequestException, APIConnectionException,
+			CardException, APIException, EpickurException {
 		Token token = TestUtils.generateRandomToken();
 		Order order = TestUtils.generateRandomOrder();
 		order.getDish().getCaterer().setId(new ObjectId(catererId));

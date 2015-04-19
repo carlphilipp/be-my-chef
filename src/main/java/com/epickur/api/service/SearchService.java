@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import com.epickur.api.business.SearchBusiness;
 import com.epickur.api.entity.Dish;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.SearchValidator;
@@ -144,7 +145,7 @@ public final class SearchService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response search(
-			@QueryParam("type") final String type,
+			@QueryParam("type") final DishType type,
 			@DefaultValue("50") @QueryParam("limit") final Integer limit,
 			@QueryParam("address") final String address,
 			@DefaultValue("500") @QueryParam("distance") final Integer distance) throws EpickurException {

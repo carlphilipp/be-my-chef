@@ -27,6 +27,7 @@
 
 		<java.version>1.7</java.version>
 		<mongodb.version>2.12.3</mongodb.version>
+		<!--mongodb.version>3.0.0</mongodb.version -->
 
 		<jersey.version>2.17</jersey.version>
 		<junit.version>4.11</junit.version>
