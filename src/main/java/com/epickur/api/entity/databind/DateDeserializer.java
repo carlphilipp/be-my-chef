@@ -23,13 +23,22 @@ public final class DateDeserializer extends JsonDeserializer<DateTime> {
 		JsonNode date = null;
 		try {
 			date = jp.readValueAsTree();
-			if (date.isTextual()) {
-				return new DateTime(NumberUtils.toLong(date.asText()));
+			if (date.size() == 1) {
+				JsonNode node = date.get("$numberLong");
+				return getDateTime(node);
 			} else {
-				return new DateTime(date.asLong());
+				return getDateTime(date);
 			}
 		} catch (Exception e) {
 			throw new IOException();
+		}
+	}
+
+	private DateTime getDateTime(final JsonNode node) {
+		if (node.isTextual()) {
+			return new DateTime(NumberUtils.toLong(node.asText()));
+		} else {
+			return new DateTime(node.asLong());
 		}
 	}
 }

@@ -1,7 +1,8 @@
 package com.epickur.api.entity;
 
+import org.bson.Document;
+
 import com.epickur.api.exception.EpickurException;
-import com.mongodb.DBObject;
 
 /**
  * Entity interface
@@ -17,7 +18,7 @@ interface IEntity extends Cloneable {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	DBObject getAPIView() throws EpickurException;
+	Document getAPIView() throws EpickurException;
 
 	/**
 	 * Get an API view of the current object. For instance will provide field _id instead of id
@@ -26,5 +27,5 @@ interface IEntity extends Cloneable {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	DBObject getDBView() throws EpickurException;
+	Document getDBView() throws EpickurException;
 }

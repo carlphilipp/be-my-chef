@@ -1,6 +1,7 @@
 package com.epickur.api.exception;
 
-import com.mongodb.DBObject;
+import org.bson.Document;
+
 import com.mongodb.MongoException;
 
 /**
@@ -16,11 +17,11 @@ public final class EpickurDBException extends EpickurException {
 	/** Unexepcted exception **/
 	public static final String UNEXPECTED_EXCEPTION = "Unexpected error";
 	/** Dbo failed **/
-	private DBObject dbo;
+	private Document doc;
 	/** Id **/
 	private String id;
 	/** Update **/
-	private DBObject update;
+	private Document update;
 	/** Operation type **/
 	private String operation;
 
@@ -47,9 +48,9 @@ public final class EpickurDBException extends EpickurException {
 	 * @param message
 	 *            The message
 	 */
-	public EpickurDBException(final String operation, final String message, final DBObject dbo, final MongoException exception) {
+	public EpickurDBException(final String operation, final String message, final Document doc, final MongoException exception) {
 		super(message, exception);
-		this.dbo = dbo;
+		this.doc = doc;
 		this.operation = operation;
 	}
 
@@ -58,16 +59,16 @@ public final class EpickurDBException extends EpickurException {
 	 *            The operation type
 	 * @param message
 	 *            The message
-	 * @param dbo
+	 * @param doc
 	 *            The DBObject
 	 * @param update
 	 *            The update DBObject
 	 * @param exception
 	 *            The Exception
 	 */
-	public EpickurDBException(final String operation, final String message, final DBObject dbo, final DBObject update, final MongoException exception) {
+	public EpickurDBException(final String operation, final String message, final Document doc, final Document update, final MongoException exception) {
 		super(message, exception);
-		this.dbo = dbo;
+		this.doc = doc;
 		this.update = update;
 		this.operation = operation;
 	}
@@ -89,8 +90,8 @@ public final class EpickurDBException extends EpickurException {
 	/**
 	 * @return A DBObject
 	 */
-	public DBObject getDbo() {
-		return this.dbo;
+	public Document getDocument() {
+		return this.doc;
 	}
 
 	/**
@@ -103,7 +104,7 @@ public final class EpickurDBException extends EpickurException {
 	/**
 	 * @return The update query
 	 */
-	public DBObject getUpdate() {
+	public Document getUpdate() {
 		return update;
 	}
 

@@ -9,6 +9,9 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
@@ -26,9 +29,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 
 /**
  * Caterer entity
@@ -236,7 +236,7 @@ public final class Caterer extends AbstractEntity {
 	@JsonIgnore
 	public Map<String, Object> getUpdateListBasicDBObject(final String prefix) throws EpickurParsingException {
 		String str = toStringAPIView();
-		DBObject found = (DBObject) JSON.parse(str);
+		Document found = Document.parse(str);
 		Map<String, Object> res = new HashMap<String, Object>();
 		Set<String> set = found.keySet();
 		Iterator<String> iterator = set.iterator();
@@ -244,15 +244,15 @@ public final class Caterer extends AbstractEntity {
 			String key = iterator.next();
 			if (!key.equals("id")) {
 				if (key.equals("location")) {
-					Location loc = Location.getObject(found.get(key).toString());
+					Location loc = Location.getObject((Document) found.get(key));
 					Map<String, Object> locations = loc.getUpdateListBasicDBObject(prefix + ".location");
 					for (Entry<String, Object> entry : locations.entrySet()) {
 						Object entryValue = entry.getValue();
 						if (entryValue instanceof String) {
 							res.put(entry.getKey(), (String) entry.getValue());
 						} else {
-							// It can only be a tab of Float
-							res.put(entry.getKey(), (Float[]) entry.getValue());
+							// It can only be a tab of Double
+							res.put(entry.getKey(), (Double[]) entry.getValue());
 						}
 					}
 				} else {
@@ -269,11 +269,11 @@ public final class Caterer extends AbstractEntity {
 	 *             If an epickur exception occurred
 	 */
 	@JsonIgnore
-	public DBObject getUpdateBasicDBObject() throws EpickurParsingException {
+	public Document getUpdateBasicDBObject() throws EpickurParsingException {
 		String str = toStringAPIView();
-		DBObject found = (DBObject) JSON.parse(str);
-		DBObject arg = BasicDBObjectBuilder.start().get();
-		DBObject res = BasicDBObjectBuilder.start("$set", arg).get();
+		Document found = Document.parse(str);
+		Document arg = new Document();
+		Document res = new Document().append("$set", arg);
 		Set<String> set = found.keySet();
 		Iterator<String> iterator = set.iterator();
 		while (iterator.hasNext()) {
@@ -292,8 +292,8 @@ public final class Caterer extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an EpickurParsingException exception occurred
 	 */
-	public static Caterer getObject(final DBObject obj, final View view) throws EpickurParsingException {
-		return Caterer.getObject(obj.toString(), view);
+	public static Caterer getObject(final Document obj, final View view) throws EpickurParsingException {
+		return Caterer.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)), view);
 	}
 
 	/**

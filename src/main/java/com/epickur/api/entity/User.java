@@ -6,9 +6,13 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
+import com.epickur.api.entity.databind.DateDeserializer;
 import com.epickur.api.entity.databind.DateSerializer;
 import com.epickur.api.entity.databind.ObjectIdDeserializer;
 import com.epickur.api.entity.databind.ObjectIdSerializer;
@@ -24,9 +28,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 
 /**
  * User entity
@@ -158,6 +159,7 @@ public final class User extends AbstractEntity {
 	 * @param createdAt
 	 *            The creation date
 	 */
+	@JsonDeserialize(using = DateDeserializer.class)
 	public void setCreatedAt(final DateTime createdAt) {
 		this.createdAt = createdAt;
 	}
@@ -174,6 +176,7 @@ public final class User extends AbstractEntity {
 	 * @param updatedAt
 	 *            The updated date
 	 */
+	@JsonDeserialize(using = DateDeserializer.class)
 	public void setUpdatedAt(final DateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
@@ -247,8 +250,8 @@ public final class User extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static User getDBObject(final DBObject obj) throws EpickurParsingException {
-		return User.getDBObject(obj.toString());
+	public static User getDBObject(final Document obj) throws EpickurParsingException {
+		return User.getDBObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
@@ -275,11 +278,11 @@ public final class User extends AbstractEntity {
 	 *             If an epickur exception occurred
 	 */
 	@JsonIgnore
-	public DBObject getUpdateBasicDBObject() throws EpickurParsingException {
+	public Document getUpdateBasicDBObject() throws EpickurParsingException {
 		String str = toStringAPIView();
-		DBObject found = (DBObject) JSON.parse(str);
-		DBObject arg = BasicDBObjectBuilder.start().get();
-		DBObject res = BasicDBObjectBuilder.start("$set", arg).get();
+		Document found = Document.parse(str);
+		Document arg = new Document();
+		Document res = new Document().append("$set", arg);
 		Set<String> set = found.keySet();
 		Iterator<String> iterator = set.iterator();
 		while (iterator.hasNext()) {

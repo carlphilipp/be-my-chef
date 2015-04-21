@@ -1,22 +1,21 @@
 package com.epickur.api.dao.mongo;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 
 /**
  * User DAO access with CRUD operations.
@@ -44,19 +43,18 @@ public final class UserDaoImpl extends DaoCrud<User> {
 
 	@Override
 	public User create(final User user) throws EpickurException {
-		// user.setId(new ObjectId());
 		DateTime time = new DateTime();
 		user.setCreatedAt(time);
 		user.setUpdatedAt(time);
 		user.setKey(null);
-		DBObject dbo = null;
+		Document doc = null;
 		try {
-			dbo = user.getDBView();
+			doc = user.getDBView();
 			LOG.debug("Create user: " + user);
-			getColl().insert(dbo);
-			return User.getDBObject(dbo);
+			getColl().insertOne(doc);
+			return User.getDBObject(doc);
 		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), dbo, e);
+			throw new EpickurDBException("create", e.getMessage(), doc, e);
 		}
 	}
 
@@ -64,10 +62,12 @@ public final class UserDaoImpl extends DaoCrud<User> {
 	public User read(final String id) throws EpickurException {
 		try {
 			LOG.debug("Read user: " + id);
-			DBObject query = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
-			DBObject obj = (DBObject) getColl().findOne(query);
-			if (obj != null) {
-				return User.getDBObject(obj);
+			// DBObject query = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
+			// DBObject obj = (DBObject) getColl().findOne(query);
+			Document query = new Document().append("_id", new ObjectId(id));
+			Document find = getColl().find(query).first();
+			if (find != null) {
+				return User.getDBObject(find);
 			} else {
 				return null;
 			}
@@ -88,10 +88,12 @@ public final class UserDaoImpl extends DaoCrud<User> {
 	public User readWithName(final String name) throws EpickurException {
 		try {
 			LOG.debug("Read user name: " + name);
-			DBObject query = BasicDBObjectBuilder.start("name", name).get();
-			DBObject obj = (DBObject) getColl().findOne(query);
-			if (obj != null) {
-				return User.getDBObject(obj);
+			// DBObject query = BasicDBObjectBuilder.start("name", name).get();
+			// DBObject obj = (DBObject) getColl().findOne(query);
+			Document query = new Document().append("name", name);
+			Document find = getColl().find(query).first();
+			if (find != null) {
+				return User.getDBObject(find);
 			} else {
 				return null;
 			}
@@ -112,10 +114,12 @@ public final class UserDaoImpl extends DaoCrud<User> {
 	public User readWithEmail(final String email) throws EpickurException {
 		try {
 			LOG.debug("Read user email: " + email);
-			DBObject query = BasicDBObjectBuilder.start("email", email).get();
-			DBObject obj = (DBObject) getColl().findOne(query);
-			if (obj != null) {
-				return User.getDBObject(obj);
+			// DBObject query = BasicDBObjectBuilder.start("email", email).get();
+			// DBObject obj = (DBObject) getColl().findOne(query);
+			Document query = new Document().append("email", email);
+			Document find = getColl().find(query).first();
+			if (find != null) {
+				return User.getDBObject(find);
 			} else {
 				return null;
 			}
@@ -126,31 +130,34 @@ public final class UserDaoImpl extends DaoCrud<User> {
 
 	@Override
 	public User update(final User user) throws EpickurException {
-		BasicDBObject bdb = (BasicDBObject) BasicDBObjectBuilder.start("_id", user.getId()).get();
+		// BasicDBObject bdb = (BasicDBObject) BasicDBObjectBuilder.start("_id", user.getId()).get();
+		Document filter = new Document().append("_id", user.getId());
 		DateTime time = new DateTime();
 		user.setCreatedAt(null);
 		user.setUpdatedAt(time);
 		user.setKey(null);
 		LOG.debug("Update user: " + user);
-		DBObject update = user.getUpdateBasicDBObject();
+		Document update = user.getUpdateBasicDBObject();
 		try {
-			DBObject temp = getColl().findAndModify(bdb, null, null, false, update, true, false);
-			if (temp != null) {
-				return User.getDBObject(temp);
+			// DBObject temp = getColl().findAndModify(document, null, null, false, update, true, false);
+			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
+			if (updated != null) {
+				return User.getDBObject(updated);
 			} else {
 				return null;
 			}
 		} catch (MongoException e) {
-			throw new EpickurDBException("update", e.getMessage(), bdb, update, e);
+			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
 		}
 	}
 
 	@Override
 	public boolean delete(final String id) throws EpickurException {
 		try {
-			DBObject bdb = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
+			// DBObject bdb = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
+			Document filter = new Document().append("_id", new ObjectId(id));
 			LOG.debug("Delete user: " + id);
-			return this.succes(getColl().remove(bdb), "delete");
+			return this.isDeleted(getColl().deleteOne(filter), "delete");
 		} catch (MongoException e) {
 			throw new EpickurDBException("delete", e.getMessage(), id, e);
 		}
@@ -159,12 +166,14 @@ public final class UserDaoImpl extends DaoCrud<User> {
 	@Override
 	public List<User> readAll() throws EpickurException {
 		List<User> users = new ArrayList<User>();
-		DBCursor cursor = null;
+		// DBCursor cursor = null;
+		MongoCursor<Document> cursor = null;
 		try {
-			cursor = getColl().find();
-			Iterator<DBObject> iterator = cursor.iterator();
-			while (iterator.hasNext()) {
-				User user = User.getDBObject(iterator.next());
+			// cursor = getColl().find();
+			cursor = getColl().find().iterator();
+			// Iterator<DBObject> iterator = cursor.iterator();
+			while (cursor.hasNext()) {
+				User user = User.getDBObject(cursor.next());
 				users.add(user);
 			}
 		} catch (MongoException e) {

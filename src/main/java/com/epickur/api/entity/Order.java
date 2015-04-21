@@ -6,9 +6,13 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
+import com.epickur.api.entity.databind.DateDeserializer;
 import com.epickur.api.entity.databind.DateSerializer;
 import com.epickur.api.entity.databind.ObjectIdDeserializer;
 import com.epickur.api.entity.databind.ObjectIdSerializer;
@@ -21,9 +25,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 
 /**
  * Order entity
@@ -181,6 +182,7 @@ public final class Order extends AbstractEntity {
 	 * @param createdAt
 	 *            The creation date
 	 */
+	@JsonDeserialize(using = DateDeserializer.class)
 	public void setCreatedAt(final DateTime createdAt) {
 		this.createdAt = createdAt;
 	}
@@ -197,6 +199,7 @@ public final class Order extends AbstractEntity {
 	 * @param updatedAt
 	 *            The updated date
 	 */
+	@JsonDeserialize(using = DateDeserializer.class)
 	public void setUpdatedAt(final DateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
@@ -219,11 +222,11 @@ public final class Order extends AbstractEntity {
 	}
 
 	@JsonIgnore
-	public DBObject getUpdateBasicDBObject() throws EpickurParsingException {
+	public Document getUpdateBasicDBObject() throws EpickurParsingException {
 		String str = toStringAPIView();
-		DBObject found = (DBObject) JSON.parse(str);
-		DBObject orderDBObject = BasicDBObjectBuilder.start().get();
-		DBObject res = BasicDBObjectBuilder.start("$set", orderDBObject).get();
+		Document found = Document.parse(str);
+		Document orderDBObject = new Document();
+		Document res = new Document().append("$set", orderDBObject);
 		Set<String> set = found.keySet();
 		Iterator<String> iterator = set.iterator();
 		while (iterator.hasNext()) {
@@ -232,35 +235,35 @@ public final class Order extends AbstractEntity {
 				orderDBObject.put(key, found.get(key));
 			}
 			if (key.equals("dish")) {
-				DBObject dishDBObject = BasicDBObjectBuilder.start().get();
+				Document dishDBObject = new Document();
 				orderDBObject.put("dish", dishDBObject);
 
-				String dishStr = found.get("dish").toString();
-				DBObject dishFound = (DBObject) JSON.parse(dishStr);
-				Set<String> setDish = dishFound.keySet();
+				Document dishStr = (Document) found.get("dish");
+				//Document dishFound = dishStr.toJson(new JsonWriterSettings(JsonMode.STRICT));
+				Set<String> setDish = dishStr.keySet();
 				Iterator<String> iteratorDish = setDish.iterator();
 				while (iteratorDish.hasNext()) {
 					String key2 = iteratorDish.next();
 					if (key2.equals("id")) {
-						dishDBObject.put("_id", dishFound.get("id"));
+						dishDBObject.put("_id", dishStr.get("id"));
 					} else if (key2.equals("caterer")) {
-						DBObject catererDBObject = BasicDBObjectBuilder.start().get();
+						Document catererDBObject = new Document();
 						dishDBObject.put("caterer", catererDBObject);
 
-						String caterer = dishFound.get("caterer").toString();
-						DBObject catererFound = (DBObject) JSON.parse(caterer);
-						Set<String> setCaterer = catererFound.keySet();
+						Document caterer = (Document) dishStr.get("caterer");
+						//Document catererFound = Document.parse(caterer);
+						Set<String> setCaterer = caterer.keySet();
 						Iterator<String> iteratorCaterer = setCaterer.iterator();
 						while (iteratorCaterer.hasNext()) {
 							String key3 = iteratorCaterer.next();
 							if (key3.equals("id")) {
-								catererDBObject.put("_id", catererFound.get("id"));
+								catererDBObject.put("_id", caterer.get("id"));
 							} else {
-								catererDBObject.put(key3, catererFound.get(key3));
+								catererDBObject.put(key3, caterer.get(key3));
 							}
 						}
 					} else {
-						dishDBObject.put(key2, dishFound.get(key2));
+						dishDBObject.put(key2, dishStr.get(key2));
 					}
 				}
 			}
@@ -275,8 +278,8 @@ public final class Order extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Order getObject(final DBObject obj) throws EpickurParsingException {
-		return Order.getDBObject(obj.toString());
+	public static Order getObject(final Document obj) throws EpickurParsingException {
+		return Order.getDBObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**

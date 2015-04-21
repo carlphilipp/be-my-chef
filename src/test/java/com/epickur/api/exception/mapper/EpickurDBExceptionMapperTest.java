@@ -5,11 +5,11 @@ import static org.junit.Assert.assertNotNull;
 
 import javax.ws.rs.core.Response;
 
+import org.bson.Document;
 import org.junit.Test;
 
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.service.ErrorService;
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
@@ -18,7 +18,7 @@ public class EpickurDBExceptionMapperTest {
 	@Test
 	public void testCreate() {
 		EpickurDBExceptionMapper mapper = new EpickurDBExceptionMapper();
-		EpickurDBException exception = new EpickurDBException("read", "message", new BasicDBObject(), new BasicDBObject(), new MongoException("message"));
+		EpickurDBException exception = new EpickurDBException("read", "message", new Document(), new Document(), new MongoException("message"));
 		Response response = mapper.toResponse(exception);
 
 		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
@@ -30,7 +30,7 @@ public class EpickurDBExceptionMapperTest {
 		assertNotNull(dbo.get("message"));
 		assertEquals(ErrorService.INTERNAL_SERVER_ERROR, dbo.get("message"));
 	}
-	
+
 	@Test
 	public void testCreate2() {
 		EpickurDBExceptionMapper mapper = new EpickurDBExceptionMapper();

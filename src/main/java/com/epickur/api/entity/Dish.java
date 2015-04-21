@@ -9,6 +9,9 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
@@ -28,9 +31,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 
 /**
  * Dish entity
@@ -316,18 +316,18 @@ public final class Dish extends AbstractEntity {
 	}
 
 	@JsonIgnore
-	public DBObject getUpdateBasicDBObject() throws EpickurParsingException {
+	public Document getUpdateBasicDBObject() throws EpickurParsingException {
 		String str = toStringAPIView();
-		DBObject found = (DBObject) JSON.parse(str);
-		DBObject arg = BasicDBObjectBuilder.start().get();
-		DBObject res = BasicDBObjectBuilder.start("$set", arg).get();
+		Document found = Document.parse(str);
+		Document arg = new Document();
+		Document res = new Document().append("$set", arg);
 		Set<String> set = found.keySet();
 		Iterator<String> iterator = set.iterator();
 		while (iterator.hasNext()) {
 			String key = iterator.next();
 			if (!key.equals("id")) {
 				if (key.equals("caterer")) {
-					Caterer cat = Caterer.getObject(found.get(key).toString(), View.API);
+					Caterer cat = Caterer.getObject((Document) found.get(key), View.API);
 					Map<String, Object> caterers = cat.getUpdateListBasicDBObject("caterer");
 					for (Entry<String, Object> entry : caterers.entrySet()) {
 						arg.put(entry.getKey(), entry.getValue());
@@ -347,8 +347,8 @@ public final class Dish extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Dish getObject(final DBObject obj) throws EpickurParsingException {
-		return Dish.getObject(obj.toString());
+	public static Dish getObject(final Document obj) throws EpickurParsingException {
+		return Dish.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**

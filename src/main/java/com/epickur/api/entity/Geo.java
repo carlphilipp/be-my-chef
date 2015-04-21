@@ -6,13 +6,13 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bson.types.BasicBSONList;
+import org.bson.BsonArray;
+import org.bson.BsonDouble;
+import org.bson.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
 
 /**
  * Geo entity
@@ -30,20 +30,20 @@ public final class Geo extends AbstractEntity {
 	/** Type **/
 	private String type = "Point";
 	/** Coordinates [ longitude, latitude] **/
-	private Float[] coordinates;
+	private Double[] coordinates;
 
 	/** Constructor **/
 	public Geo() {
-		this.coordinates = new Float[2];
-		this.coordinates[0] = 0.0f;
-		this.coordinates[1] = 0.0f;
+		this.coordinates = new Double[2];
+		this.coordinates[0] = 0.0;
+		this.coordinates[1] = 0.0;
 	}
 
 	/**
 	 * @return The latitude
 	 */
 	@JsonIgnore
-	public Float getLatitude() {
+	public Double getLatitude() {
 		return coordinates[1];
 	}
 
@@ -51,7 +51,7 @@ public final class Geo extends AbstractEntity {
 	 * @param latitude
 	 *            The latitude
 	 */
-	public void setLatitude(final Float latitude) {
+	public void setLatitude(final Double latitude) {
 		this.coordinates[1] = latitude;
 	}
 
@@ -59,7 +59,7 @@ public final class Geo extends AbstractEntity {
 	 * @return The Longitude
 	 */
 	@JsonIgnore
-	public Float getLongitude() {
+	public Double getLongitude() {
 		return this.coordinates[0];
 	}
 
@@ -67,7 +67,7 @@ public final class Geo extends AbstractEntity {
 	 * @param longitude
 	 *            The Longitude
 	 */
-	public void setLongitude(final Float longitude) {
+	public void setLongitude(final Double longitude) {
 		this.coordinates[0] = longitude;
 	}
 
@@ -89,7 +89,7 @@ public final class Geo extends AbstractEntity {
 	/**
 	 * @return The coordinates
 	 */
-	public Float[] getCoordinates() {
+	public Double[] getCoordinates() {
 		return coordinates.clone();
 	}
 
@@ -97,7 +97,7 @@ public final class Geo extends AbstractEntity {
 	 * @param coordinates
 	 *            The coordinates
 	 */
-	public void setCoordinates(final Float[] coordinates) {
+	public void setCoordinates(final Double[] coordinates) {
 		this.coordinates = coordinates.clone();
 	}
 
@@ -125,13 +125,10 @@ public final class Geo extends AbstractEntity {
 	 *            The maximum distance
 	 * @return a BasicDBObject
 	 */
-	public BasicDBObject getSearch(final Integer minDistance,
-			final Integer maxDistance) {
-		BasicDBObject nearSphere = (BasicDBObject) BasicDBObjectBuilder.start().get();
-		BasicDBObject geometry = (BasicDBObject) BasicDBObjectBuilder.start().get();
-		BasicBSONList coord = new BasicBSONList();
-		coord.add(this.coordinates[0]);
-		coord.add(this.coordinates[1]);
+	public Document getSearch(final Integer minDistance, final Integer maxDistance) {
+		Document nearSphere = new Document();
+		Document geometry = new Document();
+		BsonArray coord = new BsonArray(Arrays.asList(new BsonDouble(this.coordinates[0]), new BsonDouble(this.coordinates[1])));
 		geometry.append("type", "Point");
 		geometry.append("coordinates", coord);
 		nearSphere.append("$nearSphere", geometry);

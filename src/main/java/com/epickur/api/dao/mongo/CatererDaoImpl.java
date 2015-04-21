@@ -1,11 +1,11 @@
 package com.epickur.api.dao.mongo;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
@@ -13,10 +13,10 @@ import com.epickur.api.entity.Caterer;
 import com.epickur.api.enumeration.View;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 
 /**
  * Caterer DAO access with CRUD operations.
@@ -48,13 +48,13 @@ public final class CatererDaoImpl extends DaoCrud<Caterer> {
 		caterer.setCreatedAt(time);
 		caterer.setUpdatedAt(time);
 		LOG.debug("Create caterer: " + caterer);
-		DBObject dbo = null;
+		Document doc = null;
 		try {
-			dbo = caterer.getDBView();
-			getColl().insert(dbo);
-			return Caterer.getObject(dbo, View.DB);
+			doc = caterer.getDBView();
+			getColl().insertOne(doc);
+			return Caterer.getObject(doc, View.DB);
 		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), dbo, e);
+			throw new EpickurDBException("create", e.getLocalizedMessage(), doc, e);
 		}
 	}
 
@@ -62,62 +62,67 @@ public final class CatererDaoImpl extends DaoCrud<Caterer> {
 	public Caterer read(final String id) throws EpickurException {
 		try {
 			LOG.debug("Read caterer: " + id);
-			DBObject query = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
-			DBObject obj = (DBObject) getColl().findOne(query);
-			if (obj != null) {
-				return Caterer.getObject(obj, View.DB);
+			// DBObject query = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
+			// DBObject obj = (DBObject) getColl().findOne(query);
+			Document query = new Document().append("_id", new ObjectId(id));
+			Document find = getColl().find(query).first();
+			if (find != null) {
+				return Caterer.getObject(find, View.DB);
 			} else {
 				return null;
 			}
 		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), id, e);
+			throw new EpickurDBException("read", e.getLocalizedMessage(), id, e);
 		}
 	}
 
 	@Override
 	public Caterer update(final Caterer caterer) throws EpickurException {
-		DBObject bdb = BasicDBObjectBuilder.start("_id", caterer.getId()).get();
+		// DBObject bdb = BasicDBObjectBuilder.start("_id", caterer.getId()).get();
+		Document filter = new Document().append("_id", caterer.getId());
 		DateTime time = new DateTime();
 		caterer.setCreatedAt(null);
 		caterer.setUpdatedAt(time);
 		LOG.debug("Update caterer: " + caterer);
-		DBObject update = caterer.getUpdateBasicDBObject();
+		Document update = caterer.getUpdateBasicDBObject();
 		try {
-			DBObject temp = getColl().findAndModify(bdb, null, null, false, update, true, false);
-			if (temp != null) {
-				return Caterer.getObject(temp, View.DB);
+			// DBObject temp = getColl().findAndModify(bdb, null, null, false, update, true, false);
+			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
+			if (updated != null) {
+				return Caterer.getObject(updated, View.DB);
 			} else {
 				return null;
 			}
 		} catch (MongoException e) {
-			throw new EpickurDBException("update", e.getMessage(), bdb, update, e);
+			throw new EpickurDBException("update", e.getLocalizedMessage(), filter, update, e);
 		}
 	}
 
 	@Override
 	public boolean delete(final String id) throws EpickurException {
 		try {
-			DBObject bdb = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
+			// DBObject bdb = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
+			Document filter = new Document().append("_id", new ObjectId(id));
 			LOG.debug("Delete caterer: " + id);
-			return this.succes(getColl().remove(bdb), "delete");
+			return this.isDeleted(getColl().deleteOne(filter), "delete");
 		} catch (MongoException e) {
-			throw new EpickurDBException("delete", e.getMessage(), id, e);
+			throw new EpickurDBException("delete", e.getLocalizedMessage(), id, e);
 		}
 	}
 
 	@Override
 	public List<Caterer> readAll() throws EpickurException {
 		List<Caterer> caterers = new ArrayList<Caterer>();
-		DBCursor cursor = null;
+		MongoCursor<Document> cursor = null;
 		try {
-			cursor = getColl().find();
-			Iterator<DBObject> iterator = cursor.iterator();
-			while (iterator.hasNext()) {
-				Caterer user = Caterer.getObject(iterator.next(), View.DB);
+			cursor = getColl().find().iterator();
+			// Iterator<DBObject> iterator = cursor.iterator();
+			while (cursor.hasNext()) {
+				Caterer user = Caterer.getObject(cursor.next(), View.DB);
 				caterers.add(user);
 			}
 		} catch (MongoException e) {
-			throw new EpickurDBException("readAll", e.getMessage(), e);
+			throw new EpickurDBException("readAll", e.getLocalizedMessage(), e);
 		} finally {
 			if (cursor != null) {
 				cursor.close();

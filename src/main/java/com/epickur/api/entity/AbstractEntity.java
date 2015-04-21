@@ -2,16 +2,14 @@ package com.epickur.api.entity;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
 
-import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperAPI;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 import com.mongodb.util.JSONParseException;
 
 /**
@@ -27,12 +25,13 @@ public abstract class AbstractEntity implements IEntity {
 
 	@JsonIgnore
 	@Override
-	public final DBObject getAPIView() throws EpickurParsingException {
+	public final Document getAPIView() throws EpickurParsingException {
 		String json = null;
 		try {
 			ObjectMapper om = ObjectMapperWrapperAPI.getInstance();
 			json = om.writeValueAsString(this);
-			return (DBObject) JSON.parse(json);
+			return Document.parse(json);
+			// return (Document) JSON.parse(json);
 		} catch (JsonProcessingException e) {
 			throw new EpickurParsingException("Can not convert object to string", e);
 		} catch (JSONParseException e) {
@@ -42,12 +41,12 @@ public abstract class AbstractEntity implements IEntity {
 
 	@JsonIgnore
 	@Override
-	public final DBObject getDBView() throws EpickurParsingException {
+	public final Document getDBView() throws EpickurParsingException {
 		String json = null;
 		try {
 			ObjectMapper om = ObjectMapperWrapperDB.getInstance();
 			json = om.writeValueAsString(this);
-			return (DBObject) JSON.parse(json);
+			return Document.parse(json);
 		} catch (JsonProcessingException e) {
 			throw new EpickurParsingException("Can not convert object to string", e);
 		} catch (JSONParseException e) {
@@ -61,14 +60,16 @@ public abstract class AbstractEntity implements IEntity {
 	 * @return a string
 	 */
 	public final String toStringAPIView() throws EpickurParsingException {
-		return getAPIView().toString();
+		return getAPIView().toJson();
 	}
 
 	@Override
 	public final String toString() {
 		try {
-			return toStringAPIView();
-		} catch (EpickurException e) {
+			// return toStringAPIView();
+			ObjectMapper om = ObjectMapperWrapperAPI.getInstance();
+			return om.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
 			LOG.error(e.getLocalizedMessage(), e);
 			return null;
 		}

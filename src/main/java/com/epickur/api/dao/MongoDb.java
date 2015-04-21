@@ -1,12 +1,17 @@
 package com.epickur.api.dao;
 
-import java.net.UnknownHostException;
 import java.util.Properties;
 
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+
+import com.epickur.api.dao.mongo.codec.CoordinatesCodec;
+import com.epickur.api.dao.mongo.codec.DishTypeCodec;
 import com.epickur.api.utils.Utils;
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
 
 /**
  * MongoDB Singleton
@@ -17,7 +22,9 @@ import com.mongodb.ServerAddress;
 public final class MongoDb {
 
 	/** Database **/
-	private static DB db;
+	private static MongoDatabase db;
+	/** Mongo Client **/
+	private static MongoClient mongoClient;
 	/** Lock object **/
 	private static final Object LOCK = new Object();
 
@@ -30,7 +37,7 @@ public final class MongoDb {
 	 * 
 	 * @return The DB instance
 	 */
-	public static DB getInstance() {
+	public static MongoDatabase getInstance() {
 		if (db == null) {
 			synchronized (LOCK) {
 				if (db == null) {
@@ -43,16 +50,30 @@ public final class MongoDb {
 
 	/** Create instance **/
 	private static void createInstance() {
-		try {
-			Properties prop = Utils.getEpickurProperties();
-			String address = prop.getProperty("mongo.address");
-			int port = Integer.parseInt(prop.getProperty("mongo.port"));
-			String dbName = prop.getProperty("mongo.db.name");
+		Properties prop = Utils.getEpickurProperties();
+		String address = prop.getProperty("mongo.address");
+		int port = Integer.parseInt(prop.getProperty("mongo.port"));
+		String dbName = prop.getProperty("mongo.db.name");
 
-			MongoClient mongoClient = new MongoClient(new ServerAddress(address, port));
-			db = mongoClient.getDB(dbName);
-		} catch (UnknownHostException e) {
-			throw new RuntimeException("Error while MongoDB init: " + e);
-		}
+		// Codec<Document> defaultDocumentCodec = MongoClient.getDefaultCodecRegistry().get(Document.class);
+
+		CoordinatesCodec coordinatesCodec = new CoordinatesCodec();
+		DishTypeCodec dishTypeCodec = new DishTypeCodec();
+
+		CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
+				MongoClient.getDefaultCodecRegistry(),
+				CodecRegistries.fromCodecs(coordinatesCodec),
+				CodecRegistries.fromCodecs(dishTypeCodec)
+				);
+
+		MongoClientOptions options = MongoClientOptions.builder().codecRegistry(codecRegistry).build();
+
+		mongoClient = new MongoClient(new ServerAddress(address, port), options);
+		db = mongoClient.getDatabase(dbName);
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		mongoClient.close();
 	}
 }

@@ -32,8 +32,8 @@ public class CatererBusinessTest {
 	private static final String name = "Caterer Name";
 	private static final String phone = "1112221111";
 
-	private static final Float latitude = 41.92901f;
-	private static final Float longitude = -87.650276f;
+	private static final Double latitude = 41.92901;
+	private static final Double longitude = -87.650276;
 	private static final String city = "Chicago";
 	private static final String country = "United States";
 	private static final String houseNumber = "5";

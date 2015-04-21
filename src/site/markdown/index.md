@@ -8,7 +8,7 @@ For full endpoint documentation please go [here](../../apidoc/index.html).
 ###Prerequisites:
 * Java SDK 7 http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
 * Tomcat8 http://tomcat.apache.org/download-80.cgi
-* MongoDB http://www.mongodb.org
+* MongoDB 3.0 http://www.mongodb.org
 * Any IDE with Maven https://eclipse.org
 
 ###Install

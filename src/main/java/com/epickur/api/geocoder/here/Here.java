@@ -163,8 +163,8 @@ public class Here {
 										if (location.containsField("displayPosition")) {
 											BasicBSONObject displayPosition = (BasicBSONObject) location.get("displayPosition");
 											geo = new Geo();
-											geo.setLatitude(Float.parseFloat(displayPosition.getString("latitude")));
-											geo.setLongitude(Float.parseFloat(displayPosition.getString("longitude")));
+											geo.setLatitude(Double.parseDouble(displayPosition.getString("latitude")));
+											geo.setLongitude(Double.parseDouble(displayPosition.getString("longitude")));
 										}
 									}
 								} else {

@@ -1,20 +1,18 @@
 package com.epickur.api.dao.mongo;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
 import org.joda.time.DateTime;
 
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import com.mongodb.client.MongoCursor;
 
 /**
  * Key DAO access with CRUD operations.
@@ -42,30 +40,31 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 
 	@Override
 	public Key create(final Key key) throws EpickurException {
-		// key.setId(new ObjectId());
 		DateTime time = new DateTime();
 		key.setCreatedAt(time);
 		key.setUpdatedAt(time);
 		LOG.debug("Create key: " + key);
-		DBObject dbo = null;
+		Document doc = null;
 		try {
-			dbo = key.getDBView();
-			getColl().insert(dbo);
-			return Key.getObject(dbo);
+			doc = key.getDBView();
+			getColl().insertOne(doc);
+			return Key.getObject(doc);
 		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), dbo, e);
+			throw new EpickurDBException("create", e.getMessage(), doc, e);
 		}
 	}
 
 	@Override
 	public Key read(final String key) throws EpickurException {
 		try {
-			DBObject query = BasicDBObjectBuilder.start("key", key).get();
+			// DBObject query = BasicDBObjectBuilder.start("key", key).get();
+			Document query = new Document().append("key", key);
 			LOG.debug("Read key: " + key);
 
-			DBObject dbo = (DBObject) getColl().findOne(query);
-			if (dbo != null) {
-				return Key.getObject(dbo);
+			// DBObject dbo = (DBObject) getColl().findOne(query);
+			Document find = getColl().find(query).first();
+			if (find != null) {
+				return Key.getObject(find);
 			} else {
 				return null;
 			}
@@ -85,12 +84,14 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 	 */
 	public Key readWithName(final String userName) throws EpickurException {
 		try {
-			DBObject query = BasicDBObjectBuilder.start("userName", userName).get();
+			// DBObject query = BasicDBObjectBuilder.start("userName", userName).get();
 			LOG.debug("Read key name: " + userName);
+			Document query = new Document().append("userName", userName);
 
-			DBObject obj = (DBObject) getColl().findOne(query);
-			if (obj != null) {
-				return Key.getObject(obj);
+			// DBObject obj = (DBObject) getColl().findOne(query);
+			Document find = getColl().find(query).first();
+			if (find != null) {
+				return Key.getObject(find);
 			} else {
 				return null;
 			}
@@ -110,9 +111,10 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 	@Override
 	public boolean delete(final String key) throws EpickurException {
 		try {
-			DBObject bdb = BasicDBObjectBuilder.start("key", key).get();
+			// DBObject bdb = BasicDBObjectBuilder.start("key", key).get();
+			Document filter = new Document().append("key", key);
 			LOG.debug("Delete key: " + key);
-			return this.succes(getColl().remove(bdb), "delete");
+			return this.isDeleted(getColl().deleteOne(filter), "delete");
 		} catch (MongoException e) {
 			throw new EpickurDBException("delete", e.getMessage(), key, e);
 		}
@@ -121,12 +123,12 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 	@Override
 	public List<Key> readAll() throws EpickurException {
 		List<Key> keys = new ArrayList<Key>();
-		DBCursor cursor = null;
+		MongoCursor<Document> cursor = null;
 		try {
-			cursor = getColl().find();
-			Iterator<DBObject> iterator = cursor.iterator();
-			while (iterator.hasNext()) {
-				Key key = Key.getObject(iterator.next());
+			cursor = getColl().find().iterator();
+			// Iterator<DBObject> iterator = cursor.iterator();
+			while (cursor.hasNext()) {
+				Key key = Key.getObject(cursor.next());
 				keys.add(key);
 			}
 		} catch (MongoException e) {

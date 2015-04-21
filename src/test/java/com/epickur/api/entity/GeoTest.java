@@ -32,7 +32,7 @@ public class GeoTest {
 		Map<String, Object> actual = geo.getUpdateListBasicDBObject("prefix");
 		assertEquals(2, actual.size());
 		assertEquals("Point", actual.get("prefix.type"));
-		assertEquals(new Float(0.0), ((Float[])actual.get("prefix.coordinates"))[0]);
-		assertEquals(new Float(0.0), ((Float[])actual.get("prefix.coordinates"))[1]);
+		assertEquals(new Double(0.0), ((Double[])actual.get("prefix.coordinates"))[0]);
+		assertEquals(new Double(0.0), ((Double[])actual.get("prefix.coordinates"))[1]);
 	}
 }

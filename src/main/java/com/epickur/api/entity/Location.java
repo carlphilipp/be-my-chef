@@ -6,6 +6,9 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
 
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
@@ -63,6 +66,10 @@ public final class Location extends AbstractEntity {
 	 */
 	public void setGeo(final Geo geo) {
 		this.geo = geo;
+	}
+	
+	public static Location getObject(final Document obj) throws EpickurParsingException {
+		return Location.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**

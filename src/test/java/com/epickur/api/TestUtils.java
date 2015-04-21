@@ -175,8 +175,8 @@ public class TestUtils {
 
 	public static Geo generateGeo() {
 		Geo geo = new Geo();
-		geo.setLatitude(41.92901f);
-		geo.setLongitude(-87.650276f);
+		geo.setLatitude(41.92901);
+		geo.setLongitude(-87.650276);
 		return geo;
 	}
 

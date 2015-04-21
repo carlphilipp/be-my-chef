@@ -270,8 +270,8 @@ public class DishIntegrationTest {
 		address2.setStreet("Wall Street");
 		location2.setAddress(address2);
 		Geo geo2 = new Geo();
-		geo2.setLatitude(41.9254048f);
-		geo2.setLongitude(-87.6482463f);
+		geo2.setLatitude(41.9254048);
+		geo2.setLongitude(-87.6482463);
 		location2.setGeo(geo2);
 		caterer2.setLocation(location2);
 

@@ -4,9 +4,13 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
+import com.epickur.api.entity.databind.DateDeserializer;
 import com.epickur.api.entity.databind.DateSerializer;
 import com.epickur.api.entity.databind.ObjectIdDeserializer;
 import com.epickur.api.entity.databind.ObjectIdSerializer;
@@ -20,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.mongodb.DBObject;
 
 /**
  * Key entity
@@ -112,6 +115,7 @@ public final class Key extends AbstractEntity {
 	 * @param createdAt
 	 *            The creation date
 	 */
+	@JsonDeserialize(using = DateDeserializer.class)
 	public void setCreatedAt(final DateTime createdAt) {
 		this.createdAt = createdAt;
 	}
@@ -128,6 +132,7 @@ public final class Key extends AbstractEntity {
 	 * @param updatedAt
 	 *            The updated date
 	 */
+	@JsonDeserialize(using = DateDeserializer.class)
 	public void setUpdatedAt(final DateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
@@ -156,8 +161,8 @@ public final class Key extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Key getObject(final DBObject obj) throws EpickurParsingException {
-		return Key.getObject(obj.toString());
+	public static Key getObject(final Document obj) throws EpickurParsingException {
+		return Key.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**

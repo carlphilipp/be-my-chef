@@ -25,8 +25,8 @@ public final class EpickurDBExceptionMapper implements ExceptionMapper<EpickurDB
 	@Override
 	public Response toResponse(final EpickurDBException exception) {
 		LOG.error("Request " + exception.getOperation() + " failed");
-		if (exception.getDbo() != null) {
-			LOG.error("With: " + exception.getDbo());
+		if (exception.getDocument() != null) {
+			LOG.error("With: " + exception.getDocument());
 		}
 		if (exception.getId() != null) {
 			LOG.error("Id: " + exception.getId());

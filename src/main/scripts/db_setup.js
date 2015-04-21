@@ -20,7 +20,7 @@ db.caterers.insert(
         "houseNumber" : "832",
         "street" : "W. Wrightwood Avenue",
         "city" : "Chicago",
-        "postalCode" : NumberLong(60614),
+        "postalCode" : NumberInt(60614),
         "state" : "Illinois",
         "country" : "USA"
       },
@@ -44,7 +44,7 @@ db.caterers.insert(
         "houseNumber" : "2622",
         "street" : "North Clark Street",
         "city" : "Chicago",
-        "postalCode" : NumberLong(60614),
+        "postalCode" : NumberInt(60614),
         "state" : "Illinois",
         "country" : "USA"
       },
@@ -68,7 +68,7 @@ db.caterers.insert(
         "houseNumber" : "1",
         "street" : "Elizabeth Street",
         "city" : "Melbourne",
-        "postalCode" : NumberLong(32901),
+        "postalCode" : NumberInt(32901),
         "state" : "Victoria",
         "country" : "Australia"
       },
@@ -109,9 +109,9 @@ db.dishes.insert(
 	  "name": "Thai Inbox",
     "description": "Noodles with rice",
     "type": "meat",
-    "price": NumberLong(500),
-    "cookingTime": NumberLong(5),
-    "difficultyLevel": NumberLong(1),
+    "price": NumberInt(500),
+    "cookingTime": NumberInt(5),
+    "difficultyLevel": NumberInt(1),
     "caterer": 
       {
         "_id" : "54e90015b634980ccd05e3bc",
@@ -126,7 +126,7 @@ db.dishes.insert(
             "houseNumber" : "832",
             "street" : "W. Wrightwood Avenue",
             "city" : "Chicago",
-            "postalCode" : NumberLong(60614),
+            "postalCode" : NumberInt(60614),
             "state" : "Illinois",
             "country" : "USA"
           },
@@ -141,12 +141,12 @@ db.dishes.insert(
   	"ingredients": 
   		[{
   			"name": "Noodles",
-  			"sequence": NumberLong(1),
+  			"sequence": NumberInt(1),
   			"quantity": 1.0
   		},
   		{
   			"name": "Rice",
-  			"sequence": 2,
+  			"sequence": NumberInt(2),
   			"quantity": 1.0
   		}],
   	"nutritionFacts": 
@@ -168,9 +168,9 @@ db.dishes.insert(
 	  	"name": "Fish and Chips",
 	  	"description": "Fresh fish and chips",
 	  	"type": "fish",
-	  	"price": NumberLong(500),
-	  	"cookingTime": NumberLong(5),
-	  	"difficultyLevel": NumberLong(1),
+	  	"price": NumberInt(500),
+	  	"cookingTime": NumberInt(5),
+	  	"difficultyLevel": NumberInt(1),
 	  	"caterer": 
         {
           "_id" : "54e90015b634980ccd05e3be",
@@ -185,7 +185,7 @@ db.dishes.insert(
               "houseNumber" : "1",
               "street" : "Elizabeth Street",
               "city" : "Melbourne",
-              "postalCode" : NumberLong(32901),
+              "postalCode" : NumberInt(32901),
               "state" : "Victoria",
               "country" : "Australia"
             },
@@ -200,12 +200,12 @@ db.dishes.insert(
     	"ingredients": 
     		[{
     			"name": "Fish",
-    			"sequence": NumberLong(1),
+    			"sequence": NumberInt(1),
     			"quantity": 1.0
     		},
     		{
     			"name": "Chips",
-    			"sequence": 2,
+    			"sequence": NumberInt(2),
     			"quantity": 1.0
     		}],
     	"nutritionFacts": 
@@ -229,16 +229,16 @@ db.dishes.insert(
  db.orders.insert( 
 {
     "description" : "A new order",
-    "amount" : 500,
+    "amount" : NumberInt(500),
     "currency" : "AUD",
     "dish" : {
       "_id" : "553292c04c399b1733997513",
 	  	"name": "Thai Inbox",
       "description": "Noodles with rice",
       "type": "meat",
-      "price": NumberLong(500),
-      "cookingTime": NumberLong(5),
-      "difficultyLevel": NumberLong(1),
+      "price": NumberInt(500),
+      "cookingTime": NumberInt(5),
+      "difficultyLevel": NumberInt(1),
       "caterer": {
           "_id" : "55328b1f875fecbf8442caa9",
           "name": "Super Thai",
@@ -252,7 +252,7 @@ db.dishes.insert(
               "houseNumber" : "832",
               "street" : "W. Wrightwood Avenue",
               "city" : "Chicago",
-              "postalCode" : NumberLong(60614),
+              "postalCode" : NumberInt(60614),
               "state" : "Illinois",
               "country" : "USA"
             },
@@ -267,12 +267,12 @@ db.dishes.insert(
     	"ingredients": 
     		[{
     			"name": "Noodles",
-    			"sequence": NumberLong(1),
+    			"sequence": NumberInt(1),
     			"quantity": 1.0
     		},
     		{
     			"name": "Rice",
-    			"sequence": 2,
+    			"sequence": NumberInt(2),
     			"quantity": 1.0
     		}],
     	"nutritionFacts": 
