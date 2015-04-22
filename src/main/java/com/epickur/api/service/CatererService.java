@@ -420,7 +420,7 @@ public final class CatererService {
 
 	// @formatter:off
 	/**
-	 * @api {get} /caterers/:id/paymentInfo?start=:start&end=:end&format=:format Obtain payement amount for a Caterer
+	 * @api {get} /caterers/:id/paymentInfo?startDate=:start&endDate=:end&formatDate=:format Payment amount for a Caterer
 	 * @apiVersion 1.0.0
 	 * @apiName GetPayement
 	 * @apiGroup Caterers
@@ -428,6 +428,17 @@ public final class CatererService {
 	 * @apiPermission admin
 	 * 
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Caterer.
+	 * 
+	 * @apiSuccessExample Success-Response:
+	 * HTTP/1.1 200 OK
+	 * {
+	 *      "id": "553700f7c0651c0e84609a4d",
+	 *      "name": "Kebab & company",
+	 *      "amount": 0,
+	 *      "start": "01/01/2015",
+	 *      "end": "01/02/2015",
+	 *      "format": "MM/dd/yyyy"
+	 * }
 	 *
 	 * @apiUse BadRequestError
 	 * @apiUse ForbiddenError
@@ -439,16 +450,16 @@ public final class CatererService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response paymentInfo(
 			@PathParam("id") final String id,
-			@QueryParam("start") final String start,
-			@QueryParam("end") final String end,
-			@DefaultValue("yyyy/MM/dd") @QueryParam("format") final String format) throws EpickurException {
+			@QueryParam("startDate") final String start,
+			@QueryParam("endDate") final String end,
+			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format) throws EpickurException {
 		DateTime startDate = null;
 		DateTime endDate = null;
 		if (start != null) {
 			startDate = Utils.parseDate(start, format);
 		}
 		if (end != null) {
-			endDate = Utils.parseDate(start, end);
+			endDate = Utils.parseDate(start, format);
 		}
 		validator.checkPaymentInfo(id, startDate, endDate);
 		Caterer caterer = catererBusiness.read(id);
@@ -460,13 +471,14 @@ public final class CatererService {
 			DBObject bdb = BasicDBObjectBuilder.start().get();
 			bdb.put("id", caterer.getId().toHexString());
 			bdb.put("name", caterer.getName());
+			bdb.put("amount", amount);
 			if (start != null) {
 				bdb.put("start", start);
 			}
 			if (end != null) {
 				bdb.put("end", end);
 			}
-			bdb.put("amount", amount);
+			bdb.put("format", format);
 			return Response.ok().entity(bdb).build();
 		}
 	}

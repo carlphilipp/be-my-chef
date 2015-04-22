@@ -3,6 +3,7 @@ package com.epickur.api.validator;
 import javax.ws.rs.ForbiddenException;
 
 import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,7 +18,6 @@ import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
-import com.epickur.api.validator.CatererValidator;
 
 public class CatererValidatorTest {
 
@@ -318,5 +318,54 @@ public class CatererValidatorTest {
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		caterer.setCreatedBy(userId);
 		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
+	}
+
+	@Test
+	public void testCheckPayementInfo() {
+		CatererValidator service = new CatererValidator();
+		String id = new ObjectId().toHexString();
+		DateTime start = new DateTime();
+		DateTime end = new DateTime();
+		end.plusMinutes(5);
+		service.checkPaymentInfo(id, start, end);
+	}
+	
+	@Test
+	public void testCheckPayementInfo2() {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("Start date missing");
+		
+		CatererValidator service = new CatererValidator();
+		String id = new ObjectId().toHexString();
+		DateTime start = null;
+		DateTime end = new DateTime();
+		end = end.plusMinutes(5);
+		service.checkPaymentInfo(id, start, end);
+	}
+	
+	@Test
+	public void testCheckPayementInfo3() {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The start date can not be after today");
+		
+		CatererValidator service = new CatererValidator();
+		String id = new ObjectId().toHexString();
+		DateTime start = new DateTime();
+		DateTime end = null;
+		start = start.plusHours(1);
+		service.checkPaymentInfo(id, start, end);
+	}
+	
+	@Test
+	public void testCheckPayementInfo4() {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The end date should be after the start date");
+		
+		CatererValidator service = new CatererValidator();
+		String id = new ObjectId().toHexString();
+		DateTime start = new DateTime();
+		DateTime end = new DateTime();;
+		end = end.minusHours(1);
+		service.checkPaymentInfo(id, start, end);
 	}
 }
