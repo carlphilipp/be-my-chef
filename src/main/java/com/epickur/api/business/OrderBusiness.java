@@ -105,7 +105,7 @@ public class OrderBusiness {
 					emailData = EmailTemplate.convertToDataOrderAdmin(user.getName(), res.getId().toHexString(), order.getDish().getName(), order
 							.getDish().getCaterer().getName());
 					// Send an email to The admins
-					Email.sendMail(EmailType.ORDER_ADMIN, emailData, Info.ADMINS.toArray(new String[Info.ADMINS.size()]));
+					Email.sendMail(EmailType.ORDER_ADMIN, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 				} else {
 					// Something went wrong. Let's email anyway
 
@@ -119,7 +119,7 @@ public class OrderBusiness {
 					emailData = EmailTemplate.convertToDataOrderAdmin(user.getName(), res.getId().toHexString(), order.getDish().getName(), order
 							.getDish().getCaterer().getName());
 					// Send an email to The admins
-					Email.sendMail(EmailType.ORDER_FAIL_ADMIN, emailData, Info.ADMINS.toArray(new String[Info.ADMINS.size()]));
+					Email.sendMail(EmailType.ORDER_FAIL_ADMIN, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 				}
 			}
 			return res;

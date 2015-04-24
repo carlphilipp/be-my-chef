@@ -9,13 +9,13 @@ import org.bson.Transformer;
  * @author cph
  *
  */
-public class EnumTransformer implements Transformer {
+public final class EnumTransformer implements Transformer {
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.bson.Transformer#transform(java.lang.Object)
 	 */
-	public Object transform(Object o) {
+	public Object transform(final Object o) {
 		return o.toString();
 	}
 }

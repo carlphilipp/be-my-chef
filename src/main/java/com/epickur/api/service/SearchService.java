@@ -151,9 +151,9 @@ public final class SearchService {
 			@DefaultValue("500") @QueryParam("distance") final Integer distance) throws EpickurException {
 		validator.checkSearch(type, address);
 		List<Dish> dishes = this.searchBusiness.search(type, limit, address, distance);
-		if(dishes.size() != 0){
+		if (dishes.size() != 0) {
 			return Response.ok().entity(dishes).build();
-		}else{
+		} else {
 			return ErrorService.noResult();
 		}
 	}

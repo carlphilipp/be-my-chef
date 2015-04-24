@@ -8,17 +8,17 @@ import org.bson.codecs.EncoderContext;
 
 import com.epickur.api.enumeration.DishType;
 
-public class DishTypeCodec implements Codec<DishType> {
+public final class DishTypeCodec implements Codec<DishType> {
 
 	@Override
-	public void encode(BsonWriter writer, DishType value, EncoderContext encoderContext) {
+	public void encode(final BsonWriter writer, final DishType value, final EncoderContext encoderContext) {
 		writer.writeStartDocument();
 		writer.writeString("dishType", value.getType());
 		writer.writeEndDocument();
 	}
 
 	@Override
-	public DishType decode(BsonReader reader, DecoderContext decoderContext) {
+	public DishType decode(final BsonReader reader, final DecoderContext decoderContext) {
 		return DishType.fromString(reader.readString("dishType"));
 	}
 
@@ -26,5 +26,4 @@ public class DishTypeCodec implements Codec<DishType> {
 	public Class<DishType> getEncoderClass() {
 		return DishType.class;
 	}
-
 }

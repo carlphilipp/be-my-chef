@@ -39,7 +39,7 @@ public final class Info {
 		NAME = prop.getProperty("name");
 		ADDRESS = prop.getProperty("address");
 		FOLDER = prop.getProperty("folder");
-		ADMINS = Collections.unmodifiableList(Arrays.asList(prop.getProperty("admins").split(";")));
+		admins = Collections.unmodifiableList(Arrays.asList(prop.getProperty("admins").split(";")));
 	}
 
 	/** Name of the webapp **/
@@ -49,6 +49,6 @@ public final class Info {
 	/** Current folder after the address **/
 	public static final String FOLDER;
 	/** Admins **/
-	public static List<String> ADMINS;
+	public static List<String> admins;
 
 }

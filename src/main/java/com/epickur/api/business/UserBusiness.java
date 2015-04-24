@@ -83,7 +83,7 @@ public final class UserBusiness {
 			// Convert data to use email template
 			Map<String, String> emailDataAdmin = EmailTemplate.convertToDataRegistrationAdmin(name, email);
 			// Send an email to admins
-			Email.sendMail(EmailType.REGISTRATION_ADMIN, emailDataAdmin, Info.ADMINS.toArray(new String[Info.ADMINS.size()]));
+			Email.sendMail(EmailType.REGISTRATION_ADMIN, emailDataAdmin, Info.admins.toArray(new String[Info.admins.size()]));
 		}
 		// We do not send back the password
 		res.setPassword(null);

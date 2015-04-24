@@ -12,10 +12,10 @@ import org.bson.codecs.EncoderContext;
  * @author cph
  * @version 1.0
  */
-public class CoordinatesCodec implements Codec<Double[]> {
+public final class CoordinatesCodec implements Codec<Double[]> {
 
 	@Override
-	public void encode(BsonWriter writer, Double[] value, EncoderContext encoderContext) {
+	public void encode(final BsonWriter writer, final Double[] value, final EncoderContext encoderContext) {
 		writer.writeStartArray();
 		writer.writeDouble(value[0]);
 		writer.writeDouble(value[1]);
@@ -23,7 +23,7 @@ public class CoordinatesCodec implements Codec<Double[]> {
 	}
 
 	@Override
-	public Double[] decode(BsonReader reader, DecoderContext decoderContext) {
+	public Double[] decode(final BsonReader reader, final DecoderContext decoderContext) {
 		Double[] res = new Double[2];
 		reader.readStartArray();
 		res[0] = reader.readDouble();
@@ -36,5 +36,4 @@ public class CoordinatesCodec implements Codec<Double[]> {
 	public Class<Double[]> getEncoderClass() {
 		return Double[].class;
 	}
-
 }

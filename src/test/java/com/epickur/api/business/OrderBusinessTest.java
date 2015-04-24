@@ -65,10 +65,10 @@ public class OrderBusinessTest {
 		}
 		toDeleteOrder = new ArrayList<String>();
 		toDeleteUser = new ArrayList<ObjectId>();
-		temp = new ArrayList<String>(Info.ADMINS);
+		temp = new ArrayList<String>(Info.admins);
 		List<String> list = new ArrayList<String>();
 		list.add("");
-		Info.ADMINS = list;
+		Info.admins = list;
 	}
 
 	@AfterClass
@@ -79,7 +79,7 @@ public class OrderBusinessTest {
 		for (ObjectId id : toDeleteUser) {
 			userBusiness.delete(id.toHexString());
 		}
-		Info.ADMINS = temp;
+		Info.admins = temp;
 	}
 
 	@Test

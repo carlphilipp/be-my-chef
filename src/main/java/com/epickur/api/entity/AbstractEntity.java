@@ -31,7 +31,6 @@ public abstract class AbstractEntity implements IEntity {
 			ObjectMapper om = ObjectMapperWrapperAPI.getInstance();
 			json = om.writeValueAsString(this);
 			return Document.parse(json);
-			// return (Document) JSON.parse(json);
 		} catch (JsonProcessingException e) {
 			throw new EpickurParsingException("Can not convert object to string", e);
 		} catch (JSONParseException e) {
@@ -57,7 +56,9 @@ public abstract class AbstractEntity implements IEntity {
 	/**
 	 * Get a api view for the current object
 	 * 
-	 * @return a string
+	 * @return
+	 * @throws EpickurParsingException
+	 *             If an epickur exception occurred
 	 */
 	public final String toStringAPIView() throws EpickurParsingException {
 		return getAPIView().toJson();
@@ -66,7 +67,6 @@ public abstract class AbstractEntity implements IEntity {
 	@Override
 	public final String toString() {
 		try {
-			// return toStringAPIView();
 			ObjectMapper om = ObjectMapperWrapperAPI.getInstance();
 			return om.writeValueAsString(this);
 		} catch (JsonProcessingException e) {

@@ -8,10 +8,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-public class DishTypeSerializer extends JsonSerializer<DishType> {
+/**
+ * Serialize a Dish type
+ * 
+ * @author cph
+ * @version 1.0
+ */
+public final class DishTypeSerializer extends JsonSerializer<DishType> {
 
 	@Override
-	public void serialize(DishType type, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+	public void serialize(final DishType type, final JsonGenerator jgen, final SerializerProvider provider) throws IOException,
+			JsonProcessingException {
 		try {
 			if (type == null) {
 				jgen.writeNull();
