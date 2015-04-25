@@ -110,7 +110,7 @@ public class CatererBusiness {
 	 * @return The addition of all orders amount
 	 */
 	public final Integer getAmount(final List<Order> orders) {
-		Integer amount = new Integer(0);
+		Integer amount = Integer.valueOf(0);
 		for (Order order : orders) {
 			amount += order.getAmount();
 		}

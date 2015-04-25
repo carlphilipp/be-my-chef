@@ -86,7 +86,7 @@ public abstract class Validator {
 		if (validatorType == null) {
 			type = getEntity();
 		} else {
-			type = new String(validatorType);
+			type = validatorType;
 		}
 		if (role != Role.ADMIN) {
 			if (type.equals("user")) {

@@ -29,6 +29,8 @@ public final class DateDeserializer extends JsonDeserializer<DateTime> {
 			} else {
 				return getDateTime(date);
 			}
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new IOException();
 		}

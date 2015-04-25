@@ -2,6 +2,7 @@ package com.epickur.api.entity;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -282,10 +283,11 @@ public final class User extends AbstractEntity {
 		Document found = Document.parse(str);
 		Document arg = new Document();
 		Document res = new Document().append("$set", arg);
-		Set<String> set = found.keySet();
-		Iterator<String> iterator = set.iterator();
+		Set<Entry<String, Object>> set = found.entrySet();
+		Iterator<Entry<String, Object>> iterator = set.iterator();
 		while (iterator.hasNext()) {
-			String k = iterator.next();
+			Entry<String, Object> entry = iterator.next();
+			String k = entry.getKey();
 			if (!k.equals("id")) {
 				arg.put(k, found.get(k));
 			}

@@ -238,10 +238,33 @@ public final class Caterer extends AbstractEntity {
 		String str = toStringAPIView();
 		Document found = Document.parse(str);
 		Map<String, Object> res = new HashMap<String, Object>();
-		Set<String> set = found.keySet();
+		/*Set<String> set = found.keySet();
 		Iterator<String> iterator = set.iterator();
 		while (iterator.hasNext()) {
 			String key = iterator.next();
+			if (!key.equals("id")) {
+				if (key.equals("location")) {
+					Location loc = Location.getObject((Document) found.get(key));
+					Map<String, Object> locations = loc.getUpdateListBasicDBObject(prefix + ".location");
+					for (Entry<String, Object> entry : locations.entrySet()) {
+						Object entryValue = entry.getValue();
+						if (entryValue instanceof String) {
+							res.put(entry.getKey(), (String) entry.getValue());
+						} else {
+							// It can only be a tab of Double
+							res.put(entry.getKey(), (Double[]) entry.getValue());
+						}
+					}
+				} else {
+					res.put("caterer." + key, found.get(key).toString());
+				}
+			}
+		}*/
+		Set<Entry<String, Object>> entrySet = found.entrySet();
+		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Object> en = iterator.next();
+			String key = en.getKey();
 			if (!key.equals("id")) {
 				if (key.equals("location")) {
 					Location loc = Location.getObject((Document) found.get(key));
@@ -274,10 +297,11 @@ public final class Caterer extends AbstractEntity {
 		Document found = Document.parse(str);
 		Document arg = new Document();
 		Document res = new Document().append("$set", arg);
-		Set<String> set = found.keySet();
-		Iterator<String> iterator = set.iterator();
-		while (iterator.hasNext()) {
-			String key = iterator.next();
+		Set<Entry<String, Object>> entrySet = found.entrySet();
+		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
+		while(iterator.hasNext()){
+			Entry<String, Object> temp = iterator.next();
+			String key = temp.getKey();
 			if (!key.equals("id")) {
 				arg.put(key, found.get(key));
 			}

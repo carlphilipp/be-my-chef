@@ -326,10 +326,11 @@ public final class Dish extends AbstractEntity {
 		Document found = Document.parse(str);
 		Document arg = new Document();
 		Document res = new Document().append("$set", arg);
-		Set<String> set = found.keySet();
-		Iterator<String> iterator = set.iterator();
+		Set<Entry<String, Object>> set = found.entrySet();
+		Iterator<Entry<String, Object>> iterator = set.iterator();
 		while (iterator.hasNext()) {
-			String key = iterator.next();
+			Entry<String, Object> en = iterator.next();
+			String key = en.getKey();
 			if (!key.equals("id")) {
 				if (key.equals("caterer")) {
 					Caterer cat = Caterer.getObject((Document) found.get(key), View.API);

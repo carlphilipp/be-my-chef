@@ -2,6 +2,7 @@ package com.epickur.api.entity;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -232,35 +233,34 @@ public final class Order extends AbstractEntity {
 		Document found = Document.parse(str);
 		Document orderDBObject = new Document();
 		Document res = new Document().append("$set", orderDBObject);
-		Set<String> set = found.keySet();
-		Iterator<String> iterator = set.iterator();
+		Set<Entry<String, Object>> set = found.entrySet();
+		Iterator<Entry<String, Object>> iterator = set.iterator();
 		while (iterator.hasNext()) {
-			String key = iterator.next();
+			Entry<String, Object> en = iterator.next();
+			String key = en.getKey();
 			if (!key.equals("id") && !key.equals("dish")) {
 				orderDBObject.put(key, found.get(key));
 			}
 			if (key.equals("dish")) {
 				Document dishDBObject = new Document();
 				orderDBObject.put("dish", dishDBObject);
-
 				Document dishStr = (Document) found.get("dish");
-				// Document dishFound = dishStr.toJson(new JsonWriterSettings(JsonMode.STRICT));
-				Set<String> setDish = dishStr.keySet();
-				Iterator<String> iteratorDish = setDish.iterator();
+				Set<Entry<String, Object>> setDish = dishStr.entrySet();
+				Iterator<Entry<String, Object>> iteratorDish = setDish.iterator();
 				while (iteratorDish.hasNext()) {
-					String key2 = iteratorDish.next();
+					Entry<String, Object> entry = iteratorDish.next();
+					String key2 = entry.getKey();
 					if (key2.equals("id")) {
 						dishDBObject.put("_id", dishStr.get("id"));
 					} else if (key2.equals("caterer")) {
 						Document catererDBObject = new Document();
 						dishDBObject.put("caterer", catererDBObject);
-
 						Document caterer = (Document) dishStr.get("caterer");
-						// Document catererFound = Document.parse(caterer);
-						Set<String> setCaterer = caterer.keySet();
-						Iterator<String> iteratorCaterer = setCaterer.iterator();
+						Set<Entry<String, Object>> setCaterer = caterer.entrySet();
+						Iterator<Entry<String, Object>> iteratorCaterer = setCaterer.iterator();
 						while (iteratorCaterer.hasNext()) {
-							String key3 = iteratorCaterer.next();
+							Entry<String, Object> entry2 = iteratorCaterer.next();
+							String key3 = entry2.getKey();
 							if (key3.equals("id")) {
 								catererDBObject.put("_id", caterer.get("id"));
 							} else {

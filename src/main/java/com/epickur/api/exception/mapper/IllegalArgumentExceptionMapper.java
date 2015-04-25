@@ -33,7 +33,7 @@ public final class IllegalArgumentExceptionMapper implements ExceptionMapper<Ill
 		if (exception != null && exception.getMessage() != null && !exception.getMessage().equals("")) {
 			bdb.put("description", exception.getMessage());
 		}
-		LOG.error(exception.getLocalizedMessage(), exception);
+		LOG.error("Error: ", exception);
 		return Response.status(Status.BAD_REQUEST).entity(bdb).build();
 	}
 }
