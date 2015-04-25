@@ -103,7 +103,7 @@ public class AccessRightsUserIntegrationTest {
 
 	@Test
 	public void testAdministratorUserRead() throws ClientProtocolException, IOException, EpickurException {
-		String id = TestUtils.getIdNewUser();
+		String id = TestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + API_KEY;
@@ -124,7 +124,7 @@ public class AccessRightsUserIntegrationTest {
 
 	@Test
 	public void testAdministratorUserUpdate() throws ClientProtocolException, IOException, EpickurException {
-		User normalUser = TestUtils.getUser();
+		User normalUser = TestUtils.createUserAndLogin();
 		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + API_KEY;
 
@@ -150,7 +150,7 @@ public class AccessRightsUserIntegrationTest {
 
 	@Test
 	public void testAdministratorUserDelete() throws ClientProtocolException, IOException, EpickurException {
-		String id = TestUtils.getIdNewUser();
+		String id = TestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + API_KEY;
@@ -172,7 +172,7 @@ public class AccessRightsUserIntegrationTest {
 	// User Super_User
 	@Test
 	public void testSuperUserCreate() throws ClientProtocolException, IOException, EpickurException {
-		String key = TestUtils.getUser().getKey();
+		String key = TestUtils.createUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/users";
 		URL = URL_NO_KEY + "?key=" + key;
@@ -203,8 +203,8 @@ public class AccessRightsUserIntegrationTest {
 	@Test
 	public void testSuperUserRead() throws ClientProtocolException, IOException, EpickurException {
 		// Read another user - should not pass it
-		String key = TestUtils.getUser().getKey();
-		String id = TestUtils.getIdNewUser();
+		String key = TestUtils.createUserAndLogin().getKey();
+		String id = TestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -228,7 +228,7 @@ public class AccessRightsUserIntegrationTest {
 	@Test
 	public void testSuperUserRead2() throws ClientProtocolException, IOException, EpickurException {
 		// Read its own user - should pass it
-		User newUser = TestUtils.getUser();
+		User newUser = TestUtils.createUserAndLogin();
 		String key = newUser.getKey();
 		String id = newUser.getId().toHexString();
 
@@ -254,7 +254,7 @@ public class AccessRightsUserIntegrationTest {
 	@Test
 	public void testSuperUserUpdate() throws ClientProtocolException, IOException, EpickurException {
 		// Update another user - should not pass it
-		User superUser = TestUtils.getUser();
+		User superUser = TestUtils.createUserAndLogin();
 		String key = superUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
@@ -283,9 +283,9 @@ public class AccessRightsUserIntegrationTest {
 	@Test
 	public void testSuperUserUpdate2() throws ClientProtocolException, IOException, EpickurException {
 		// Update another user - should not pass it
-		User superUser = TestUtils.getUser();
+		User superUser = TestUtils.createUserAndLogin();
 		String key = superUser.getKey();
-		String id = TestUtils.getIdNewUser();
+		String id = TestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -314,7 +314,7 @@ public class AccessRightsUserIntegrationTest {
 
 	@Test
 	public void testSuperUserDelete() throws ClientProtocolException, IOException, EpickurException {
-		User superUser = TestUtils.getUser();
+		User superUser = TestUtils.createUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();
@@ -336,7 +336,7 @@ public class AccessRightsUserIntegrationTest {
 	// User User
 	@Test
 	public void testUserCreate() throws ClientProtocolException, IOException, EpickurException {
-		String key = TestUtils.getUser().getKey();
+		String key = TestUtils.createUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/users";
 		URL = URL_NO_KEY + "?key=" + key;
@@ -367,8 +367,8 @@ public class AccessRightsUserIntegrationTest {
 	@Test
 	public void testUserRead() throws ClientProtocolException, IOException, EpickurException {
 		// Read another user - should not pass it
-		String key = TestUtils.getUser().getKey();
-		String id = TestUtils.getIdNewUser();
+		String key = TestUtils.createUserAndLogin().getKey();
+		String id = TestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -392,7 +392,7 @@ public class AccessRightsUserIntegrationTest {
 	@Test
 	public void testUserRead2() throws ClientProtocolException, IOException, EpickurException {
 		// Read its own user - should pass it
-		User newUser = TestUtils.getUser();
+		User newUser = TestUtils.createUserAndLogin();
 		String key = newUser.getKey();
 		String id = newUser.getId().toHexString();
 
@@ -418,7 +418,7 @@ public class AccessRightsUserIntegrationTest {
 	@Test
 	public void testUserUpdate() throws ClientProtocolException, IOException, EpickurException {
 		// Update another user - should not pass it
-		User normalUser = TestUtils.getUser();
+		User normalUser = TestUtils.createUserAndLogin();
 		String key = normalUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
@@ -447,9 +447,9 @@ public class AccessRightsUserIntegrationTest {
 	@Test
 	public void testUserUpdate2() throws ClientProtocolException, IOException, EpickurException {
 		// Update another user - should not pass it
-		User normalUser = TestUtils.getUser();
+		User normalUser = TestUtils.createUserAndLogin();
 		String key = normalUser.getKey();
-		String id = TestUtils.getIdNewUser();
+		String id = TestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -478,7 +478,7 @@ public class AccessRightsUserIntegrationTest {
 
 	@Test
 	public void testUserDelete() throws ClientProtocolException, IOException, EpickurException {
-		User superUser = TestUtils.getUser();
+		User superUser = TestUtils.createUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();

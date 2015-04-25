@@ -74,7 +74,7 @@ public class AccessRightsOrderIntegrationTest {
 		mongoDbName = prop.getProperty("mongo.db.name");
 		scriptCleanPath = prop.getProperty("script.clean");
 
-		user = TestUtils.createUser();
+		user = TestUtils.createUserAndLogin();
 	}
 
 	@AfterClass
@@ -121,7 +121,7 @@ public class AccessRightsOrderIntegrationTest {
 	public void testAdministratorOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 
 		Token token = TestUtils.generateRandomToken();
 
@@ -174,13 +174,13 @@ public class AccessRightsOrderIntegrationTest {
 	public void testAdministratorOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 		Token token = TestUtils.generateRandomToken();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
 
-		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
@@ -206,7 +206,7 @@ public class AccessRightsOrderIntegrationTest {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 		ObjectId id = new ObjectId();
 		Token token = TestUtils.generateRandomToken();
-		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
@@ -233,7 +233,7 @@ public class AccessRightsOrderIntegrationTest {
 	public void testAdministratorOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 		Token token = TestUtils.generateRandomToken();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
@@ -260,7 +260,7 @@ public class AccessRightsOrderIntegrationTest {
 		// Create Stripe card token
 		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		user = TestUtils.getSuperUser();
+		user = TestUtils.createSuperUser();
 
 		Token token = TestUtils.generateRandomToken();
 
@@ -294,9 +294,9 @@ public class AccessRightsOrderIntegrationTest {
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		user = TestUtils.getSuperUser();
+		user = TestUtils.createSuperUser();
 
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 
 		Token token = TestUtils.generateRandomToken();
 
@@ -322,7 +322,7 @@ public class AccessRightsOrderIntegrationTest {
 	@Test
 	public void testSuperUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.getSuperUser();
+		user = TestUtils.createSuperUser();
 
 		// Create Stripe card token
 		Stripe.apiKey = STRIPE_TEST_KEY;
@@ -352,11 +352,11 @@ public class AccessRightsOrderIntegrationTest {
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		user = TestUtils.getSuperUser();
+		user = TestUtils.createSuperUser();
 
-		User otherUser = TestUtils.getUser();
+		User otherUser = TestUtils.createUserAndLogin();
 
-		Order order = TestUtils.getOrder(otherUser.getId().toHexString());
+		Order order = TestUtils.createOrder(otherUser.getId());
 
 		Token token = TestUtils.generateRandomToken();
 
@@ -381,14 +381,14 @@ public class AccessRightsOrderIntegrationTest {
 	public void testSuperUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		user = TestUtils.getSuperUser();
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		user = TestUtils.createSuperUser();
+		Order order = TestUtils.createOrder(user.getId());
 		Token token = TestUtils.generateRandomToken();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
 
-		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
@@ -412,10 +412,10 @@ public class AccessRightsOrderIntegrationTest {
 	public void testSuperUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		user = TestUtils.getSuperUser();
+		user = TestUtils.createSuperUser();
 		ObjectId id = new ObjectId();
 		Token token = TestUtils.generateRandomToken();
-		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
@@ -442,8 +442,8 @@ public class AccessRightsOrderIntegrationTest {
 	public void testSuperUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		user = TestUtils.getSuperUser();
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		user = TestUtils.createSuperUser();
+		Order order = TestUtils.createOrder(user.getId());
 		Token token = TestUtils.generateRandomToken();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
@@ -470,7 +470,7 @@ public class AccessRightsOrderIntegrationTest {
 		// Create Stripe card token
 		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		user = TestUtils.getUser();
+		user = TestUtils.createUserAndLogin();
 
 		Token token = TestUtils.generateRandomToken();
 
@@ -504,9 +504,9 @@ public class AccessRightsOrderIntegrationTest {
 			APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		user = TestUtils.getUser();
+		user = TestUtils.createUserAndLogin();
 
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 
 		Token token = TestUtils.generateRandomToken();
 
@@ -531,7 +531,7 @@ public class AccessRightsOrderIntegrationTest {
 
 	public void testUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		user = TestUtils.getUser();
+		user = TestUtils.createUserAndLogin();
 
 		// Create Stripe card token
 		Stripe.apiKey = STRIPE_TEST_KEY;
@@ -561,11 +561,11 @@ public class AccessRightsOrderIntegrationTest {
 			APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		user = TestUtils.getUser();
+		user = TestUtils.createUserAndLogin();
 
-		User otherUser = TestUtils.getUser();
+		User otherUser = TestUtils.createUserAndLogin();
 
-		Order order = TestUtils.getOrder(otherUser.getId().toHexString());
+		Order order = TestUtils.createOrder(otherUser.getId());
 
 		Token token = TestUtils.generateRandomToken();
 
@@ -589,14 +589,14 @@ public class AccessRightsOrderIntegrationTest {
 	public void testUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		user = TestUtils.getUser();
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		user = TestUtils.createUserAndLogin();
+		Order order = TestUtils.createOrder(user.getId());
 		Token token = TestUtils.generateRandomToken();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + API_KEY + "&token=" + token.getId();
 
-		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
@@ -620,10 +620,10 @@ public class AccessRightsOrderIntegrationTest {
 	public void testUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		user = TestUtils.getUser();
+		user = TestUtils.createUserAndLogin();
 		ObjectId id = new ObjectId();
 		Token token = TestUtils.generateRandomToken();
-		Order updatedOrder = TestUtils.getOrder(user.getId().toHexString());
+		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
@@ -649,8 +649,8 @@ public class AccessRightsOrderIntegrationTest {
 	public void testUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		user = TestUtils.getUser();
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		user = TestUtils.createUserAndLogin();
+		Order order = TestUtils.createOrder(user.getId());
 		Token token = TestUtils.generateRandomToken();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();

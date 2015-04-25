@@ -24,9 +24,10 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.mongodb.DBObject;
 
 public class SearchServiceTest {
-	
+
 	// TODO add more tests
 
 	private static SearchService searchService;
@@ -102,13 +103,25 @@ public class SearchServiceTest {
 				Dish dish1 = dishes.get(0);
 				assertEquals(dishResult.getName(), dish1.getName());
 				assertEquals(dishResult.getPrice(), dish1.getPrice());
-			}else{
+			} else {
 				fail("List of dish returned is null");
 			}
 		} else {
 			fail("Dish returned is null");
 		}
+	}
 
+	@Test
+	public void testSearch3() throws EpickurException {
+		Dish dish = TestUtils.generateRandomDish();
+		Response result2 = searchService.search(dish.getType(), 100, "832 W. Wrightwood, Chicago", 3000);
+		if (result2.getEntity() != null) {
+			DBObject res = (DBObject) result2.getEntity();
+			assertNotNull(res);
+			assertEquals(Response.Status.NO_CONTENT, res.get("error"));
+		} else {
+			fail("List of dish returned is null");
+		}
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
@@ -120,7 +133,7 @@ public class SearchServiceTest {
 	public void testSearchFail3() throws EpickurException {
 		searchService.search(DishType.FISH, null, null, null);
 	}
-	
+
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail4() throws EpickurException {
 		searchService.search(DishType.FISH, 8, "", null);
@@ -130,7 +143,7 @@ public class SearchServiceTest {
 	public void testSearchFail5() throws EpickurException {
 		searchService.search(DishType.FISH, 0, null, null);
 	}
-	
+
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail6() throws EpickurException {
 		searchService.search(DishType.FISH, 0, "", null);

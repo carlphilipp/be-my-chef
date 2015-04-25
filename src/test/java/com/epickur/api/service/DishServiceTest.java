@@ -84,6 +84,23 @@ public class DishServiceTest {
 			fail("Fail");
 		}
 	}
+	
+	@Test
+	public void testCreateFail2() throws EpickurException {
+		Dish dish = TestUtils.generateRandomDish();
+		dish.getCaterer().setId(null);
+		Caterer cat = TestUtils.createCaterer(dish.getCaterer(), null);
+		dish.setCaterer(cat);
+		idsCatererToDelete.add(cat.getId());
+		cat.setId(new ObjectId());
+		Response result = service.create(dish, context);
+		if (result.getEntity() != null) {
+			int statusCode = result.getStatus();
+			assertEquals("Wrong status code: " + statusCode + " with " + result.getEntity(), 404, statusCode);
+		} else {
+			fail("Dish returned is null");
+		}
+	}
 
 	@Test
 	public void testRead() throws EpickurException {

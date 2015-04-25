@@ -772,6 +772,29 @@ public class UserServiceTest {
 	}
 
 	@Test
+	public void testUpdateOneOrderFail4() throws EpickurException {
+		User user = TestUtils.generateRandomUser();
+		Response result = service.create(false, false, user, context);
+		if (result.getEntity() != null) {
+			User userResult = (User) result.getEntity();
+			assertNotNull(userResult.getId());
+			idsToDeleteUser.add(userResult.getId());
+
+			Order order = TestUtils.generateRandomOrder();
+			order.setId(new ObjectId());
+			Response result3 = service.updateOneOrder(userResult.getId().toHexString(), order.getId().toHexString(), order, context);
+			if (result3.getEntity() != null) {
+				DBObject dbObject = (DBObject) result3.getEntity();
+				assertEquals(404, dbObject.get("error"));
+			} else {
+				fail("Order returned is null");
+			}
+		} else {
+			fail("User returned is null");
+		}
+	}
+
+	@Test
 	public void testdeleteOneOrder() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);

@@ -55,8 +55,6 @@ public final class MongoDb {
 		int port = Integer.parseInt(prop.getProperty("mongo.port"));
 		String dbName = prop.getProperty("mongo.db.name");
 
-		// Codec<Document> defaultDocumentCodec = MongoClient.getDefaultCodecRegistry().get(Document.class);
-
 		CoordinatesCodec coordinatesCodec = new CoordinatesCodec();
 		DishTypeCodec dishTypeCodec = new DishTypeCodec();
 

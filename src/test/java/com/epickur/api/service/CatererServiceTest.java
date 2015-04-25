@@ -43,7 +43,7 @@ import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 
 public class CatererServiceTest {
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -104,7 +104,7 @@ public class CatererServiceTest {
 	public void testCreateFail() throws EpickurException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("No caterer has been provided");
-		
+
 		Caterer caterer = null;
 		Response result = catererService.create(caterer, context);
 		if (result.getEntity() != null) {
@@ -140,7 +140,7 @@ public class CatererServiceTest {
 	public void testReadFail() throws EpickurException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.PARAM_ID_NULL);
-		
+
 		Response result = catererService.read(null);
 		if (result.getEntity() != null) {
 			DBObject obj = (DBObject) result.getEntity();
@@ -212,7 +212,7 @@ public class CatererServiceTest {
 	public void testUpdate2() throws EpickurException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The parameter id and the field caterer.id should match");
-		
+
 		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
 		Response result = catererService.create(caterer, context);
 		if (result.getEntity() != null) {
@@ -264,7 +264,7 @@ public class CatererServiceTest {
 	public void testFail() throws EpickurException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.PARAM_ID_NULL);
-		
+
 		Response result = catererService.update(null, null, context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
@@ -278,7 +278,7 @@ public class CatererServiceTest {
 	public void testFail2() throws EpickurException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_CATERER_PROVIDED);
-		
+
 		Response result = catererService.update("id", null, context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
@@ -292,13 +292,26 @@ public class CatererServiceTest {
 	public void testFail3() throws EpickurException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_CATERER_PROVIDED);
-		
+
 		Response result = catererService.update("id", null, context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
 			assertEquals(500, dbObject.get("error"));
 		} else {
 			fail("Caterer returned is null");
+		}
+	}
+
+	@Test
+	public void testFail4() throws EpickurException {
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		caterer.setId(new ObjectId());
+		Response result = catererService.update(caterer.getId().toHexString(), caterer, context);
+		if (result.getEntity() != null) {
+			DBObject dbObject = (DBObject) result.getEntity();
+			assertEquals(404, dbObject.get("error"));
+		} else {
+			fail("Caterer should not be found");
 		}
 	}
 
@@ -332,7 +345,7 @@ public class CatererServiceTest {
 	public void testDeleteFail() throws EpickurException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.PARAM_ID_NULL);
-		
+
 		Response result = catererService.delete(null, context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
@@ -345,14 +358,14 @@ public class CatererServiceTest {
 	@Test
 	public void testPaymentInfo() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
-		User user = TestUtils.getUser();
-		Caterer caterer = TestUtils.getCatererWithUserId(user.getId().toHexString());
+		User user = TestUtils.createUserAndLogin();
+		Caterer caterer = TestUtils.createCatererWithUserId(user.getId());
 		idsCaterers.add(caterer.getId());
-		Order order1 = TestUtils.getOrder(user.getId().toHexString(), caterer.getId().toHexString());
+		Order order1 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order1);
-		Order order2 = TestUtils.getOrder(user.getId().toHexString(), caterer.getId().toHexString());
+		Order order2 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order2);
-		Order order3 = TestUtils.getOrder(user.getId().toHexString(), caterer.getId().toHexString());
+		Order order3 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order3);
 
 		Response result = catererService.paymentInfo(caterer.getId().toHexString(), null, null, null);
@@ -363,23 +376,23 @@ public class CatererServiceTest {
 			assertTrue((int) entityResult.get("amount") > 0);
 		}
 	}
-	
+
 	@Test
 	public void testPaymentInfo2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
-		User user = TestUtils.getUser();
-		Caterer caterer = TestUtils.getCatererWithUserId(user.getId().toHexString());
+		User user = TestUtils.createUserAndLogin();
+		Caterer caterer = TestUtils.createCatererWithUserId(user.getId());
 		idsCaterers.add(caterer.getId());
-		Order order1 = TestUtils.getOrder(user.getId().toHexString(), caterer.getId().toHexString());
+		Order order1 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order1);
-		Order order2 = TestUtils.getOrder(user.getId().toHexString(), caterer.getId().toHexString());
+		Order order2 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order2);
-		Order order3 = TestUtils.getOrder(user.getId().toHexString(), caterer.getId().toHexString());
+		Order order3 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order3);
 
 		String start = "01/01/2015";
 		String defaultFormat = "MM/dd/yyyy";
-		
+
 		Response result = catererService.paymentInfo(caterer.getId().toHexString(), start, null, defaultFormat);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
@@ -388,24 +401,24 @@ public class CatererServiceTest {
 			assertTrue((int) entityResult.get("amount") > 0);
 		}
 	}
-	
+
 	@Test
 	public void testPaymentInfo3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
-		User user = TestUtils.getUser();
-		Caterer caterer = TestUtils.getCatererWithUserId(user.getId().toHexString());
+		User user = TestUtils.createUserAndLogin();
+		Caterer caterer = TestUtils.createCatererWithUserId(user.getId());
 		idsCaterers.add(caterer.getId());
-		Order order1 = TestUtils.getOrder(user.getId().toHexString(), caterer.getId().toHexString());
+		Order order1 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order1);
-		Order order2 = TestUtils.getOrder(user.getId().toHexString(), caterer.getId().toHexString());
+		Order order2 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order2);
-		Order order3 = TestUtils.getOrder(user.getId().toHexString(), caterer.getId().toHexString());
+		Order order3 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order3);
 
 		String start = "01/01/2015";
 		String end = "01/02/2015";
 		String defaultFormat = "MM/dd/yyyy";
-		
+
 		Response result = catererService.paymentInfo(caterer.getId().toHexString(), start, end, defaultFormat);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
@@ -413,14 +426,14 @@ public class CatererServiceTest {
 			assertEquals("Wrong status code: " + statusCode + " with " + entityResult, 200, statusCode);
 		}
 	}
-	
+
 	@Test
 	public void testPaymentInfo4() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
 		String start = "01/01/2015";
 		String end = "01/02/2015";
 		String defaultFormat = "MM/dd/yyyy";
-		
+
 		Response result = catererService.paymentInfo(new ObjectId().toHexString(), start, end, defaultFormat);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();

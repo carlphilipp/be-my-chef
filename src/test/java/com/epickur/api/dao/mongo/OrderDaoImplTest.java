@@ -75,16 +75,16 @@ public class OrderDaoImplTest {
 	public void readAllWithCatererIdTest() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		// Setup DB before test
-		User user = TestUtils.getUser();
+		User user = TestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
-		String catererId = order.getDish().getCaterer().getId().toHexString();
-		Order order2 = TestUtils.getOrder(user.getId().toHexString(), catererId);
+		ObjectId catererId = order.getDish().getCaterer().getId();
+		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		OrderDaoImpl dao = new OrderDaoImpl();
-		List<Order> orders = dao.readAllWithCatererId(catererId, null, null);
+		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), null, null);
 		assertNotNull(orders);
 		assertEquals(2, orders.size());
 	}
@@ -93,16 +93,16 @@ public class OrderDaoImplTest {
 	public void readAllWithCatererIdTestWithDates() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		// Setup DB before test
-		User user = TestUtils.getUser();
+		User user = TestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
-		String catererId = order.getDish().getCaterer().getId().toHexString();
-		Order order2 = TestUtils.getOrder(user.getId().toHexString(), catererId);
+		ObjectId catererId = order.getDish().getCaterer().getId();
+		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		OrderDaoImpl dao = new OrderDaoImpl();
-		List<Order> orders = dao.readAllWithCatererId(catererId, order.getCreatedAt(), order2.getCreatedAt());
+		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt(), order2.getCreatedAt());
 		assertNotNull(orders);
 		assertEquals(2, orders.size());
 	}
@@ -111,18 +111,18 @@ public class OrderDaoImplTest {
 	public void readAllWithCatererIdTestWithDates2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		// Setup DB before test
-		User user = TestUtils.getUser();
+		User user = TestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
-		String catererId = order.getDish().getCaterer().getId().toHexString();
-		Order order2 = TestUtils.getOrder(user.getId().toHexString(), catererId);
+		ObjectId catererId = order.getDish().getCaterer().getId();
+		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		OrderDaoImpl dao = new OrderDaoImpl();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);
-		List<Order> orders = dao.readAllWithCatererId(catererId, order.getCreatedAt().plus(1), order2.getCreatedAt());
+		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt().plus(1), order2.getCreatedAt());
 		assertNotNull(orders);
 		assertEquals(1, orders.size());
 	}
@@ -131,18 +131,18 @@ public class OrderDaoImplTest {
 	public void readAllWithCatererIdTestWithDates3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		// Setup DB before test
-		User user = TestUtils.getUser();
+		User user = TestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
-		String catererId = order.getDish().getCaterer().getId().toHexString();
-		Order order2 = TestUtils.getOrder(user.getId().toHexString(), catererId);
+		ObjectId catererId = order.getDish().getCaterer().getId();
+		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		OrderDaoImpl dao = new OrderDaoImpl();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);
-		List<Order> orders = dao.readAllWithCatererId(catererId, order.getCreatedAt(), order2.getCreatedAt().minus(1));
+		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt(), order2.getCreatedAt().minus(1));
 		assertNotNull(orders);
 		assertEquals(1, orders.size());
 	}
@@ -151,19 +151,19 @@ public class OrderDaoImplTest {
 	public void readAllWithCatererIdTestWithDates4() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		// Setup DB before test
-		User user = TestUtils.getUser();
+		User user = TestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		Order order = TestUtils.getOrder(user.getId().toHexString());
+		Order order = TestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
-		String catererId = order.getDish().getCaterer().getId().toHexString();
-		Order order2 = TestUtils.getOrder(user.getId().toHexString(), catererId);
+		ObjectId catererId = order.getDish().getCaterer().getId();
+		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		// Test
 		OrderDaoImpl dao = new OrderDaoImpl();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);
-		List<Order> orders = dao.readAllWithCatererId(catererId, order.getCreatedAt().plus(1), order2.getCreatedAt().minus(1));
+		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt().plus(1), order2.getCreatedAt().minus(1));
 		assertNotNull(orders);
 		assertEquals(0, orders.size());
 	}

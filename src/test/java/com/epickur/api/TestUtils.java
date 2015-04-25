@@ -313,28 +313,13 @@ public class TestUtils {
 		return key;
 	}
 
-	// TODO Redesign and refactor that series of function.
-
-	public static String getIdNewCaterer() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		CatererBusiness business = new CatererBusiness();
-		Caterer newCat = business.create(caterer);
-		return newCat.getId().toHexString();
+	public static Caterer createCaterer() throws EpickurException {
+		return createCatererWithUserId(new ObjectId());
 	}
 
-	public static Caterer getCaterer() throws EpickurException {
+	public static Caterer createCatererWithUserId(final ObjectId userId) throws EpickurException {
 		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		CatererBusiness business = new CatererBusiness();
-		Caterer newCaterer = business.create(caterer);
-		return newCaterer;
-	}
-
-	public static Caterer getCatererWithUserId(final String userId) throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		caterer.setCreatedBy(new ObjectId(userId));
-		CatererBusiness business = new CatererBusiness();
-		Caterer newCaterer = business.create(caterer);
-		return newCaterer;
+		return createCaterer(caterer, userId);
 	}
 
 	public static Caterer createCaterer(Caterer caterer, ObjectId userId) throws EpickurException {
@@ -342,8 +327,14 @@ public class TestUtils {
 		caterer.setCreatedBy(userId);
 		return business.create(caterer);
 	}
-
+	
 	public static User createUser() throws EpickurException {
+		User user = TestUtils.generateRandomUser();
+		UserBusiness business = new UserBusiness();
+		return business.create(user, false, true);
+	}
+
+	public static User createUserAndLogin() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
 		UserBusiness business = new UserBusiness();
@@ -356,7 +347,7 @@ public class TestUtils {
 		return login;
 	}
 
-	public static User getSuperUser() throws EpickurException {
+	public static User createSuperUser() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
 		UserBusiness business = new UserBusiness();
@@ -368,65 +359,35 @@ public class TestUtils {
 		User login = business.login(newUser.getEmail(), password);
 		return login;
 	}
-
-	public static User getUser() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		String password = new String(user.getPassword());
-		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, false, true);
-		newUser.setRole(Role.USER);
-		Key key = TestUtils.generateRandomKey();
-		key.setRole(Role.ADMIN);
-		business.update(newUser, key);
-		User login = business.login(newUser.getEmail(), password);
-		return login;
+	
+	public static Dish createDish() throws EpickurException {
+		return createDishWithUserId(new ObjectId());
 	}
 
-	public static String getIdNewDish() throws EpickurException {
+	public static Dish createDishWithUserId(final ObjectId userId) throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
-		DishBusiness business = new DishBusiness();
-		Dish newDish = business.create(dish);
-		return newDish.getId().toHexString();
-	}
-
-	public static String getIdNewUser() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, false, true);
-		return newUser.getId().toHexString();
-	}
-
-	public static Dish getDishUserId(final String userId) throws EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
-		dish.setCreatedBy(new ObjectId(userId));
+		dish.setCreatedBy(userId);
 		DishBusiness business = new DishBusiness();
 		Dish newDish = business.create(dish);
 		return newDish;
 	}
 
-	public static Dish getDish() throws EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
-		DishBusiness business = new DishBusiness();
-		Dish newDish = business.create(dish);
-		return newDish;
-	}
-
-	public static Order getOrder(String userId) throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+	public static Order createOrder(ObjectId userId) throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		Token token = TestUtils.generateRandomToken();
 		Order order = TestUtils.generateRandomOrder();
 		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId, order, token.getId(), false, false);
+		Order orderRes = business.create(userId.toHexString(), order, token.getId(), false, false);
 		return orderRes;
 	}
 
-	public static Order getOrder(String userId, String catererId) throws AuthenticationException, InvalidRequestException, APIConnectionException,
+	public static Order createOrder(ObjectId userId, ObjectId catererId) throws AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException, EpickurException {
 		Token token = TestUtils.generateRandomToken();
 		Order order = TestUtils.generateRandomOrder();
-		order.getDish().getCaterer().setId(new ObjectId(catererId));
+		order.getDish().getCaterer().setId(catererId);
 		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId, order, token.getId(), false, false);
+		Order orderRes = business.create(userId.toHexString(), order, token.getId(), false, false);
 		return orderRes;
 	}
 }
