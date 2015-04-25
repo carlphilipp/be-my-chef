@@ -79,5 +79,4 @@ public final class LoginService {
 		User user = this.userBusiness.login(email, password);
 		return Response.ok().entity(user).build();
 	}
-
 }

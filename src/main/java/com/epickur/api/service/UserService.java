@@ -238,9 +238,7 @@ public final class UserService {
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		validator.checkRightsBefore(key.getRole(), Crud.UPDATE);
-		// TODO check what checker to use
-		validator.checkUpdateUser(user);
-		validator.checkUpdateUser2(id, user);
+		validator.checkUpdateUser(id, user);
 		if (StringUtils.isNotBlank(user.getNewPassword())) {
 			userBusiness.injectNewPassword(user);
 		}

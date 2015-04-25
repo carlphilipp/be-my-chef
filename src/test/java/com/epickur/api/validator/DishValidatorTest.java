@@ -49,7 +49,7 @@ public class DishValidatorTest {
 		DishValidator validator = new DishValidator();
 		Dish dish = TestUtils.generateRandomDish();
 		dish.setId(null);
-		validator.checkUpdateData2("id", dish);
+		validator.checkUpdateData("id", dish);
 	}
 
 	@Test

@@ -52,29 +52,18 @@ public class DishValidator extends Validator {
 	}
 
 	/**
-	 * @param dish
-	 *            The Dish
-	 */
-	public final void checkUpdateData(final Dish dish) {
-		if (dish == null) {
-			throw new EpickurIllegalArgument(NO_DISH_PROVIDED);
-		}
-		if (dish.getId() == null) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "id"));
-		}
-	}
-
-	/**
 	 * @param id
 	 *            The Dish Id
 	 * @param dish
 	 *            The Dish
 	 */
-	public final void checkUpdateData2(final String id, final Dish dish) {
+	public final void checkUpdateData(final String id, final Dish dish) {
 		if (StringUtils.isBlank(id)) {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
-		// checkData(dish);
+		if (dish == null) {
+			throw new EpickurIllegalArgument(NO_DISH_PROVIDED);
+		}
 		if (dish.getId() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "id"));
 		}

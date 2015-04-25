@@ -263,7 +263,7 @@ public class CatererServiceTest {
 	@Test
 	public void testFail() throws EpickurException {
 		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage(Validator.NO_CATERER_PROVIDED);
+		thrown.expectMessage(Validator.PARAM_ID_NULL);
 		
 		Response result = catererService.update(null, null, context);
 		if (result.getEntity() != null) {
@@ -279,7 +279,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_CATERER_PROVIDED);
 		
-		Response result = catererService.update(null, null, context);
+		Response result = catererService.update("id", null, context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
 			assertEquals(500, dbObject.get("error"));
@@ -293,7 +293,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_CATERER_PROVIDED);
 		
-		Response result = catererService.update("", null, context);
+		Response result = catererService.update("id", null, context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
 			assertEquals(500, dbObject.get("error"));

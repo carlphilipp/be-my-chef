@@ -375,8 +375,7 @@ public final class DishService {
 	public Response update(@PathParam("id") final String id, final Dish dish, @Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		validator.checkRightsBefore(key.getRole(), Crud.UPDATE);
-		validator.checkUpdateData(dish);
-		validator.checkUpdateData2(id, dish);
+		validator.checkUpdateData(id, dish);
 		Dish result = dishBusiness.update(dish, key);
 		if (result == null) {
 			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.DISH_NOT_FOUND);

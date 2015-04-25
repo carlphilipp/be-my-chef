@@ -294,9 +294,7 @@ public final class CatererService {
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		validator.checkRightsBefore(key.getRole(), Crud.UPDATE);
-		// TODO check what metod to use
-		validator.checkUpdateCaterer(caterer);
-		validator.checkUpdateCaterer2(id, caterer);
+		validator.checkUpdateCaterer(id, caterer);
 		Caterer result = catererBusiness.update(caterer, key.getRole(), key.getUserId());
 		if (result == null) {
 			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.CATERER_NOT_FOUND);

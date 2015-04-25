@@ -15,7 +15,6 @@ import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
-import com.epickur.api.validator.UserValidator;
 
 public class UserValidatorTest {
 
@@ -64,7 +63,7 @@ public class UserValidatorTest {
 		User user = TestUtils.generateRandomUser();
 		user.setId(null);
 		user.setRole(Role.ADMIN);
-		validator.checkUpdateUser(user);
+		validator.checkUpdateUser("id", user);
 	}
 
 	@Test
@@ -74,7 +73,7 @@ public class UserValidatorTest {
 
 		UserValidator validator = new UserValidator();
 		;
-		validator.checkUpdateUser2("id", null);
+		validator.checkUpdateUser("id", null);
 	}
 
 	@Test
@@ -86,7 +85,7 @@ public class UserValidatorTest {
 		User user = TestUtils.generateRandomUser();
 		user.setNewPassword("test");
 		user.setPassword(null);
-		validator.checkUpdateUser2("id", user);
+		validator.checkUpdateUser("id", user);
 	}
 
 	@Test
@@ -97,16 +96,17 @@ public class UserValidatorTest {
 		UserValidator validator = new UserValidator();
 		User user = TestUtils.generateRandomUser();
 		user.setId(null);
-		validator.checkUpdateUser2("id", user);
+		validator.checkUpdateUser("id", user);
 	}
 
 	@Test
 	public void testCheckUpdateUser5() {
 		UserValidator validator = new UserValidator();
 		User user = TestUtils.generateRandomUser();
-		user.setId(new ObjectId());
+		ObjectId id = new ObjectId();
+		user.setId(id);
 		user.setRole(null);
-		validator.checkUpdateUser(user);
+		validator.checkUpdateUser(id.toHexString(), user);
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class UserValidatorTest {
 		User user = TestUtils.generateRandomUser();
 		user.setNewPassword("password");
 		user.setPassword("password");
-		validator.checkUpdateUser2("idid", user);
+		validator.checkUpdateUser("idid", user);
 	}
 
 	@Test
@@ -129,16 +129,17 @@ public class UserValidatorTest {
 		user.setNewPassword("password");
 		user.setPassword("password");
 		user.setAllow(null);
-		validator.checkUpdateUser2(user.getId().toHexString(), user);
+		validator.checkUpdateUser(user.getId().toHexString(), user);
 	}
 
 	@Test
 	public void testCheckUpdateUser8() {
 		UserValidator validator = new UserValidator();
 		User user = TestUtils.generateRandomUser();
-		user.setId(new ObjectId());
+		ObjectId id = new ObjectId();
+		user.setId(id);
 		user.setRole(Role.ADMIN);
-		validator.checkUpdateUser(user);
+		validator.checkUpdateUser(id.toHexString(), user);
 	}
 
 	@Test
@@ -149,7 +150,7 @@ public class UserValidatorTest {
 		UserValidator validator = new UserValidator();
 		User user = TestUtils.generateRandomUser();
 		user.setId(new ObjectId());
-		validator.checkUpdateUser2("id", user);
+		validator.checkUpdateUser("id", user);
 	}
 
 	@Test
@@ -312,7 +313,7 @@ public class UserValidatorTest {
 		UserValidator validator = new UserValidator();
 		validator.checkRightsBefore(Role.USER, Crud.DELETE, "unknown type");
 	}
-	
+
 	@Test
 	public void testCheckRightsAfter() throws EpickurException {
 		UserValidator validator = new UserValidator();
@@ -324,7 +325,7 @@ public class UserValidatorTest {
 		user.setId(userId);
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.READ);
 	}
-	
+
 	@Test
 	public void testCheckRightsAfter2() throws EpickurException {
 		UserValidator validator = new UserValidator();
@@ -336,7 +337,7 @@ public class UserValidatorTest {
 		user.setId(userId);
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.UPDATE);
 	}
-	
+
 	@Test
 	public void testCheckRightsAfter3() throws EpickurException {
 		UserValidator validator = new UserValidator();
@@ -348,7 +349,7 @@ public class UserValidatorTest {
 		user.setId(userId);
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.READ);
 	}
-	
+
 	@Test
 	public void testCheckRightsAfter4() throws EpickurException {
 		UserValidator validator = new UserValidator();
@@ -360,7 +361,7 @@ public class UserValidatorTest {
 		user.setId(userId);
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.UPDATE);
 	}
-	
+
 	@Test(expected = ForbiddenException.class)
 	public void testCheckRightsAfter5() throws EpickurException {
 		UserValidator validator = new UserValidator();

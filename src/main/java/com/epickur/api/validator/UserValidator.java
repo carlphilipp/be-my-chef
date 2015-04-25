@@ -56,34 +56,12 @@ public final class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param user
-	 *            The User
-	 */
-	public void checkUpdateUser(final User user) {
-		if (user == null) {
-			throw new EpickurIllegalArgument(NO_USER_PROVIDED);
-		}
-		if (StringUtils.isNotBlank(user.getNewPassword()) && StringUtils.isBlank(user.getPassword())) {
-			throw new EpickurIllegalArgument("The field " + getEntity() + ".password is mandatory when a new password is provided");
-		}
-		if (user.getId() == null) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "id"));
-		}
-		if (user.getAllow() != null) {
-			user.setAllow(null);
-		}
-		if (user.getRole() != null) {
-			user.setRole(null);
-		}
-	}
-
-	/**
 	 * @param id
 	 *            The User id
 	 * @param user
 	 *            The User
 	 */
-	public void checkUpdateUser2(final String id, final User user) {
+	public void checkUpdateUser(final String id, final User user) {
 		if (StringUtils.isBlank(id)) {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}

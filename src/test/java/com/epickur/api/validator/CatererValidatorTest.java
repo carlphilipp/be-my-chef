@@ -32,7 +32,7 @@ public class CatererValidatorTest {
 		CatererValidator validator = new CatererValidator();
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		caterer.setId(null);
-		validator.checkUpdateCaterer2("id", caterer);
+		validator.checkUpdateCaterer("id", caterer);
 	}
 
 	@Test
