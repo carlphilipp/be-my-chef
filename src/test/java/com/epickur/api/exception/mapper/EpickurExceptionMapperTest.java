@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.service.ErrorService;
+import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.DBObject;
 
 public class EpickurExceptionMapperTest {
@@ -25,7 +25,7 @@ public class EpickurExceptionMapperTest {
 		assertNotNull(dbo.get("error"));
 		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), dbo.get("error"));
 		assertNotNull(dbo.get("message"));
-		assertEquals(ErrorService.INTERNAL_SERVER_ERROR, dbo.get("message"));
+		assertEquals(ErrorUtils.INTERNAL_SERVER_ERROR, dbo.get("message"));
 	}
 
 }

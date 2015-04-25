@@ -11,6 +11,8 @@ import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurNotFoundException;
+import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Info;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.Utils;
@@ -216,7 +218,7 @@ public final class UserBusiness {
 		User found = this.readWithEmail(email);
 		if (found != null) {
 			if (!Utils.isPasswordCorrect(password, found)) {
-				throw new EpickurException();
+				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 			} else if (found.getAllow() == 1) {
 				String tempKey = Security.generateRandomMd5();
 				found.setKey(tempKey);
@@ -233,10 +235,10 @@ public final class UserBusiness {
 				found.setPassword(null);
 				found.setRole(null);
 			} else {
-				throw new EpickurException();
+				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 			}
 		} else {
-			throw new EpickurException();
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 		}
 		return found;
 	}
@@ -253,10 +255,10 @@ public final class UserBusiness {
 	public User injectNewPassword(final User user) throws EpickurException {
 		User found = this.readWithEmail(user.getEmail());
 		if (found == null) {
-			throw new EpickurException();
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getEmail());
 		} else {
 			if (!Utils.isPasswordCorrect(user.getPassword(), found)) {
-				throw new EpickurException();
+				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getEmail());
 			} else {
 				String newEnryptedPassword = Utils.getEncryptedPassword(user.getNewPassword());
 				user.setPassword(newEnryptedPassword);
@@ -281,13 +283,13 @@ public final class UserBusiness {
 		if (dbUser != null) {
 			String codeFound = Security.getUserCode(dbUser);
 			if (!codeFound.equals(code)) {
-				throw new EpickurException();
+				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, name);
 			} else {
 				dbUser.setAllow(1);
 				userDao.update(dbUser);
 			}
 		} else {
-			throw new EpickurException();
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, name);
 		}
 		dbUser.setPassword(null);
 		dbUser.setRole(null);

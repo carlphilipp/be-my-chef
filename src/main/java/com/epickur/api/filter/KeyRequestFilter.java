@@ -16,7 +16,7 @@ import com.epickur.api.dao.mongo.KeyDaoImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.service.ErrorService;
+import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 
 /**
@@ -46,7 +46,7 @@ public final class KeyRequestFilter implements ContainerRequestFilter {
 		String urlPath = requestContext.getUriInfo().getPath();
 		if (urlPath != null && !urlPath.equalsIgnoreCase("check")) {
 			if (paramKey == null) {
-				Response response = ErrorService.error(Response.Status.UNAUTHORIZED, ErrorService.MISSING_KEY);
+				Response response = ErrorUtils.error(Response.Status.UNAUTHORIZED, ErrorUtils.MISSING_KEY);
 				requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(response.getEntity()).build());
 			} else {
 
@@ -54,7 +54,7 @@ public final class KeyRequestFilter implements ContainerRequestFilter {
 				try {
 					Key key = keyDao.read(paramKey);
 					if (!paramKey.equals(apiKey) && !Utils.isValid(key)) {
-						Response response = ErrorService.error(Response.Status.UNAUTHORIZED, ErrorService.INVALID_KEY);
+						Response response = ErrorUtils.error(Response.Status.UNAUTHORIZED, ErrorUtils.INVALID_KEY);
 						requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(response.getEntity()).build());
 					} else if (paramKey.equals(apiKey)) {
 						Key keyAdmin = new Key();
@@ -65,7 +65,7 @@ public final class KeyRequestFilter implements ContainerRequestFilter {
 					}
 				} catch (EpickurException e) {
 					LOG.error(e.getLocalizedMessage(), e);
-					Response response = ErrorService.error(Response.Status.INTERNAL_SERVER_ERROR, ErrorService.INTERNAL_SERVER_ERROR);
+					Response response = ErrorUtils.error(Response.Status.INTERNAL_SERVER_ERROR, ErrorUtils.INTERNAL_SERVER_ERROR);
 					requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response.getEntity()).build());
 				}
 			}

@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
-import com.epickur.api.service.ErrorService;
+import com.epickur.api.utils.ErrorUtils;
 
 /**
  * Called whenever an Epickur Exception occurs. It logs an error and build the response.
@@ -33,7 +33,7 @@ public final class EpickurExceptionMapper implements ExceptionMapper<EpickurExce
 		} else {
 			LOG.error("Epickur exception: " + exception.getLocalizedMessage(), exception);
 		}
-		return ErrorService.error(Response.Status.INTERNAL_SERVER_ERROR, ErrorService.INTERNAL_SERVER_ERROR);
+		return ErrorUtils.error(Response.Status.INTERNAL_SERVER_ERROR, ErrorUtils.INTERNAL_SERVER_ERROR);
 	}
 
 }

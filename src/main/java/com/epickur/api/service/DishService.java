@@ -22,6 +22,7 @@ import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.validator.DishValidator;
 import com.epickur.api.validator.FactoryValidator;
 import com.mongodb.BasicDBObjectBuilder;
@@ -151,7 +152,7 @@ public final class DishService {
 		validator.checkCreateData(dish);
 		Caterer caterer = catererBusiness.read(dish.getCaterer().getId().toHexString());
 		if (caterer == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.CATERER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
 		}
 		validator.checkRightsBefore(key.getRole(), Crud.CREATE, dish, caterer, key);
 		Dish result = dishBusiness.create(dish);
@@ -256,7 +257,7 @@ public final class DishService {
 		validator.checkId(id);
 		Dish dish = dishBusiness.read(id);
 		if (dish == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.DISH_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.DISH_NOT_FOUND);
 		} else {
 			return Response.ok().entity(dish).build();
 		}
@@ -378,7 +379,7 @@ public final class DishService {
 		validator.checkUpdateData(id, dish);
 		Dish result = dishBusiness.update(dish, key);
 		if (result == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.DISH_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.DISH_NOT_FOUND);
 		} else {
 			return Response.ok().entity(result).build();
 		}
@@ -427,7 +428,7 @@ public final class DishService {
 			DBObject result = BasicDBObjectBuilder.start("id", id).add("deleted", isDeleted).get();
 			return Response.ok().entity(result).build();
 		} else {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.DISH_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.DISH_NOT_FOUND);
 		}
 	}
 

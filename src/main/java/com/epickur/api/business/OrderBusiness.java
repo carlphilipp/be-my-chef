@@ -13,7 +13,9 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.payment.stripe.StripePayment;
+import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Info;
 import com.epickur.api.utils.email.Email;
 import com.epickur.api.utils.email.EmailTemplate;
@@ -64,11 +66,11 @@ public class OrderBusiness {
 	 */
 	public final Order create(final String userId, final Order order, final String cardToken, final boolean shouldCharge, final boolean sendEmail)
 			throws EpickurException {
-		order.setCreatedBy(new ObjectId(userId));
 		User user = this.userDao.read(userId);
 		if (user == null) {
-			throw new EpickurException();
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
 		} else {
+			order.setCreatedBy(new ObjectId(userId));
 			if (shouldCharge) {
 				StripePayment stripe = new StripePayment();
 				try {

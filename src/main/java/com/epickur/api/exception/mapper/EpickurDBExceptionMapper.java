@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.epickur.api.exception.EpickurDBException;
-import com.epickur.api.service.ErrorService;
+import com.epickur.api.utils.ErrorUtils;
 
 /**
  * Called whenever a DB exception occurs. It logs an error and build the response.
@@ -35,6 +35,6 @@ public final class EpickurDBExceptionMapper implements ExceptionMapper<EpickurDB
 			LOG.error("Update: " + exception.getUpdate());
 		}
 		LOG.error(exception.getLocalizedMessage(), exception);
-		return ErrorService.error(Response.Status.INTERNAL_SERVER_ERROR, ErrorService.INTERNAL_SERVER_ERROR);
+		return ErrorUtils.error(Response.Status.INTERNAL_SERVER_ERROR, ErrorUtils.INTERNAL_SERVER_ERROR);
 	}
 }

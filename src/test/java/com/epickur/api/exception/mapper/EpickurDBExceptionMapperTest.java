@@ -9,7 +9,7 @@ import org.bson.Document;
 import org.junit.Test;
 
 import com.epickur.api.exception.EpickurDBException;
-import com.epickur.api.service.ErrorService;
+import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
@@ -28,7 +28,7 @@ public class EpickurDBExceptionMapperTest {
 		assertNotNull(dbo.get("error"));
 		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), dbo.get("error"));
 		assertNotNull(dbo.get("message"));
-		assertEquals(ErrorService.INTERNAL_SERVER_ERROR, dbo.get("message"));
+		assertEquals(ErrorUtils.INTERNAL_SERVER_ERROR, dbo.get("message"));
 	}
 
 	@Test
@@ -44,6 +44,6 @@ public class EpickurDBExceptionMapperTest {
 		assertNotNull(dbo.get("error"));
 		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), dbo.get("error"));
 		assertNotNull(dbo.get("message"));
-		assertEquals(ErrorService.INTERNAL_SERVER_ERROR, dbo.get("message"));
+		assertEquals(ErrorUtils.INTERNAL_SERVER_ERROR, dbo.get("message"));
 	}
 }

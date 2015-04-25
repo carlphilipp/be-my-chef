@@ -10,7 +10,7 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.epickur.api.service.ErrorService;
+import com.epickur.api.utils.ErrorUtils;
 
 /**
  * Called whenever an forbidden Exception occurs. It logs an error and build the response.
@@ -28,6 +28,6 @@ public final class ForbiddenExceptionMapper implements ExceptionMapper<Forbidden
 	@Override
 	public Response toResponse(final ForbiddenException exception) {
 		LOG.error("Forbidden exception: " + exception.getLocalizedMessage(), exception);
-		return ErrorService.error(Response.Status.FORBIDDEN, ErrorService.FORBIDDEN);
+		return ErrorUtils.error(Response.Status.FORBIDDEN, ErrorUtils.FORBIDDEN);
 	}
 }

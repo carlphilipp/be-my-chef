@@ -27,6 +27,7 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.mongodb.BasicDBObjectBuilder;
@@ -174,7 +175,7 @@ public final class UserService {
 		validator.checkId(id);
 		User user = userBusiness.read(id, key);
 		if (user == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.USER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.USER_NOT_FOUND);
 		} else {
 			return Response.ok().entity(user).build();
 		}
@@ -244,7 +245,7 @@ public final class UserService {
 		}
 		User result = userBusiness.update(user, key);
 		if (result == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.USER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.USER_NOT_FOUND);
 		} else {
 			return Response.ok().entity(result).build();
 		}
@@ -293,7 +294,7 @@ public final class UserService {
 			DBObject res = BasicDBObjectBuilder.start("id", id).add("deleted", isDeleted).get();
 			return Response.ok().entity(res).build();
 		} else {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.USER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.USER_NOT_FOUND);
 		}
 	}
 
@@ -414,7 +415,7 @@ public final class UserService {
 		validator.checkReadOneOrder(id, orderId);
 		Order order = orderBusiness.read(orderId, key);
 		if (order == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.ORDER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.ORDER_NOT_FOUND);
 		} else {
 			return Response.ok().entity(order).build();
 		}
@@ -666,7 +667,7 @@ public final class UserService {
 		validator.checkUpdateOneOrder(id, orderId, order);
 		Order result = orderBusiness.update(order, key);
 		if (result == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.ORDER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.ORDER_NOT_FOUND);
 		} else {
 			return Response.ok().entity(result).build();
 		}
@@ -724,7 +725,7 @@ public final class UserService {
 			DBObject result = BasicDBObjectBuilder.start("id", id).add("deleted", isDeleted).get();
 			return Response.ok().entity(result).build();
 		} else {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.ORDER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.ORDER_NOT_FOUND);
 		}
 	}
 }

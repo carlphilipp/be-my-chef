@@ -23,6 +23,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.integration.UserIntegrationTest;
 import com.epickur.api.utils.Info;
 import com.stripe.Stripe;
@@ -141,11 +142,10 @@ public class OrderBusinessTest {
 		assertFalse(res.getPaid());
 	}
 
-	@Test(expected = EpickurException.class)
+	@Test(expected = EpickurNotFoundException.class)
 	public void testCreate3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
 		Order order = TestUtils.generateRandomOrder();
 		orderBusiness.create(new ObjectId().toHexString(), order, "token", true, true);
 	}
-
 }

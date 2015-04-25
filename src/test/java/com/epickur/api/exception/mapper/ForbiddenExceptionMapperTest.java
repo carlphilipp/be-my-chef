@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
-import com.epickur.api.service.ErrorService;
+import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.DBObject;
 
 public class ForbiddenExceptionMapperTest {
@@ -25,6 +25,6 @@ public class ForbiddenExceptionMapperTest {
 		assertNotNull(dbo.get("error"));
 		assertEquals(Response.Status.FORBIDDEN.getStatusCode(), dbo.get("error"));
 		assertNotNull(dbo.get("message"));
-		assertEquals(ErrorService.FORBIDDEN, dbo.get("message"));
+		assertEquals(ErrorUtils.FORBIDDEN, dbo.get("message"));
 	}
 }

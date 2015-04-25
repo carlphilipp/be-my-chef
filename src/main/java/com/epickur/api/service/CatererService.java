@@ -26,6 +26,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.CatererValidator;
 import com.epickur.api.validator.FactoryValidator;
@@ -205,7 +206,7 @@ public final class CatererService {
 		validator.checkId(id);
 		Caterer caterer = catererBusiness.read(id);
 		if (caterer == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.CATERER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
 		} else {
 			return Response.ok().entity(caterer).build();
 		}
@@ -297,7 +298,7 @@ public final class CatererService {
 		validator.checkUpdateCaterer(id, caterer);
 		Caterer result = catererBusiness.update(caterer, key.getRole(), key.getUserId());
 		if (result == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.CATERER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
 		} else {
 			return Response.ok().entity(result).build();
 		}
@@ -352,7 +353,7 @@ public final class CatererService {
 			DBObject result = BasicDBObjectBuilder.start("id", id).add("deleted", resBool).get();
 			return Response.ok().entity(result).build();
 		} else {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.CATERER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
 		}
 	}
 
@@ -483,7 +484,7 @@ public final class CatererService {
 		validator.checkPaymentInfo(id, startDate, endDate);
 		Caterer caterer = catererBusiness.read(id);
 		if (caterer == null) {
-			return ErrorService.error(Response.Status.NOT_FOUND, ErrorService.CATERER_NOT_FOUND);
+			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
 		} else {
 			List<Order> orders = orderBusiness.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
 			Integer amount = catererBusiness.getAmount(orders);

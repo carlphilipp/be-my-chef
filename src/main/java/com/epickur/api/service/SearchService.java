@@ -14,6 +14,7 @@ import com.epickur.api.business.SearchBusiness;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.SearchValidator;
 
@@ -154,7 +155,7 @@ public final class SearchService {
 		if (dishes.size() != 0) {
 			return Response.ok().entity(dishes).build();
 		} else {
-			return ErrorService.noResult();
+			return ErrorUtils.noResult();
 		}
 	}
 }

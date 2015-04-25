@@ -1,4 +1,4 @@
-package com.epickur.api.service;
+package com.epickur.api.utils;
 
 import javax.ws.rs.core.Response;
 
@@ -11,7 +11,7 @@ import com.mongodb.DBObject;
  * @author cph
  * @version 1.0
  */
-public final class ErrorService {
+public final class ErrorUtils {
 
 	/** Dish not found **/
 	public static final String DISH_NOT_FOUND = "Dish not found";
@@ -39,7 +39,7 @@ public final class ErrorService {
 	/**
 	 * Private Constructor
 	 */
-	private ErrorService() {
+	private ErrorUtils() {
 	}
 
 	/**
