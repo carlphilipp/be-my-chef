@@ -319,6 +319,34 @@ public class CatererValidatorTest {
 		caterer.setCreatedBy(userId);
 		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
 	}
+	
+	@Test
+	public void testCheckRightsAfter3() throws EpickurException {
+		thrown.expect(ForbiddenException.class);
+		
+		CatererValidator service = new CatererValidator();
+		Key key = TestUtils.generateRandomKey();
+		key.setRole(Role.SUPER_USER);
+		ObjectId userId = new ObjectId();
+		key.setUserId(userId);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
+	}
+	
+	@Test
+	public void testCheckRightsAfter4() throws EpickurException {
+		thrown.expect(EpickurException.class);
+		thrown.expectMessage("Rights issue. This case should not happen");
+		
+		CatererValidator service = new CatererValidator();
+		Key key = TestUtils.generateRandomKey();
+		key.setRole(Role.USER);
+		ObjectId userId = new ObjectId();
+		key.setUserId(userId);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		caterer.setCreatedBy(userId);
+		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
+	}
 
 	@Test
 	public void testCheckPayementInfo() {

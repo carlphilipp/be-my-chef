@@ -194,9 +194,19 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckCreateOneOrder2() {
+	public void testCheckCreateOneOrder() {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
+		validator.checkCreateOneOrder("id", null, order);
+	}
+	
+	@Test
+	public void testCheckCreateOneOrder2() {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage(Validator.NO_ORDER_PROVIDED);
+		
+		UserValidator validator = new UserValidator();
+		Order order = null;
 		validator.checkCreateOneOrder("id", null, order);
 	}
 
@@ -381,5 +391,19 @@ public class UserValidatorTest {
 		key.setRole(Role.USER);
 		User user = TestUtils.generateRandomUser();
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.CREATE);
+	}
+	
+	@Test(expected = ForbiddenException.class)
+	public void testCheckOrderRightsAfter(){
+		UserValidator validator = new UserValidator();
+		Order order = TestUtils.generateRandomOrder();
+		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Crud.READ);
+	}
+	
+	@Test(expected = ForbiddenException.class)
+	public void testCheckOrderRightsAfter2(){
+		UserValidator validator = new UserValidator();
+		Order order = TestUtils.generateRandomOrder();
+		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Crud.DELETE);
 	}
 }

@@ -24,7 +24,7 @@ import com.epickur.api.exception.EpickurIllegalArgument;
  * @version 1.0
  *
  */
-public class DishValidator extends Validator {
+public final class DishValidator extends Validator {
 
 	/**
 	 * Constructor
@@ -37,7 +37,7 @@ public class DishValidator extends Validator {
 	 * @param dish
 	 *            The Dish
 	 */
-	public final void checkCreateData(final Dish dish) {
+	public void checkCreateData(final Dish dish) {
 		checkData(dish);
 	}
 
@@ -45,7 +45,7 @@ public class DishValidator extends Validator {
 	 * @param id
 	 *            The Dish id
 	 */
-	public final void checkId(final String id) {
+	public void checkId(final String id) {
 		if (StringUtils.isBlank(id)) {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
@@ -57,7 +57,7 @@ public class DishValidator extends Validator {
 	 * @param dish
 	 *            The Dish
 	 */
-	public final void checkUpdateData(final String id, final Dish dish) {
+	public void checkUpdateData(final String id, final Dish dish) {
 		if (StringUtils.isBlank(id)) {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
@@ -76,7 +76,7 @@ public class DishValidator extends Validator {
 	 * @param dish
 	 *            The dish
 	 */
-	private void checkData(final Dish dish) {
+	protected void checkData(final Dish dish) {
 		if (dish == null) {
 			throw new EpickurIllegalArgument(NO_DISH_PROVIDED);
 		}
@@ -191,7 +191,7 @@ public class DishValidator extends Validator {
 	 * @throws EpickurException
 	 *             If an EpickurExeption occured
 	 */
-	public final void checkRightsBefore(final Role role, final Crud action, final Dish dish, final Caterer catererDB, final Key key)
+	public void checkRightsBefore(final Role role, final Crud action, final Dish dish, final Caterer catererDB, final Key key)
 			throws EpickurException {
 		if (role == Role.SUPER_USER && action == Crud.CREATE && !key.getUserId().equals(catererDB.getCreatedBy())) {
 			throw new ForbiddenException();
@@ -209,7 +209,7 @@ public class DishValidator extends Validator {
 	 * @param action
 	 *            The action
 	 */
-	public final void checkRightsAfter(final Role role, final ObjectId userId, final Dish dish, final Crud action) {
+	public void checkRightsAfter(final Role role, final ObjectId userId, final Dish dish, final Crud action) {
 		if (role != Role.ADMIN) {
 			if ((action == Crud.UPDATE || action == Crud.DELETE) && !dish.getCreatedBy().equals(userId)) {
 				throw new ForbiddenException();
