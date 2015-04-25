@@ -62,8 +62,6 @@ public final class CatererDaoImpl extends DaoCrud<Caterer> {
 	public Caterer read(final String id) throws EpickurException {
 		try {
 			LOG.debug("Read caterer: " + id);
-			// DBObject query = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
-			// DBObject obj = (DBObject) getColl().findOne(query);
 			Document query = new Document().append("_id", new ObjectId(id));
 			Document find = getColl().find(query).first();
 			if (find != null) {
@@ -78,7 +76,6 @@ public final class CatererDaoImpl extends DaoCrud<Caterer> {
 
 	@Override
 	public Caterer update(final Caterer caterer) throws EpickurException {
-		// DBObject bdb = BasicDBObjectBuilder.start("_id", caterer.getId()).get();
 		Document filter = new Document().append("_id", caterer.getId());
 		DateTime time = new DateTime();
 		caterer.setCreatedAt(null);
@@ -86,7 +83,6 @@ public final class CatererDaoImpl extends DaoCrud<Caterer> {
 		LOG.debug("Update caterer: " + caterer);
 		Document update = caterer.getUpdateBasicDBObject();
 		try {
-			// DBObject temp = getColl().findAndModify(bdb, null, null, false, update, true, false);
 			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
 			if (updated != null) {
 				return Caterer.getObject(updated, View.DB);
@@ -101,7 +97,6 @@ public final class CatererDaoImpl extends DaoCrud<Caterer> {
 	@Override
 	public boolean delete(final String id) throws EpickurException {
 		try {
-			// DBObject bdb = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
 			Document filter = new Document().append("_id", new ObjectId(id));
 			LOG.debug("Delete caterer: " + id);
 			return this.isDeleted(getColl().deleteOne(filter), "delete");
@@ -116,7 +111,6 @@ public final class CatererDaoImpl extends DaoCrud<Caterer> {
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find().iterator();
-			// Iterator<DBObject> iterator = cursor.iterator();
 			while (cursor.hasNext()) {
 				Caterer user = Caterer.getObject(cursor.next(), View.DB);
 				caterers.add(user);

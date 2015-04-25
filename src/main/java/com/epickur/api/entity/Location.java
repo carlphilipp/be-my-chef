@@ -67,7 +67,14 @@ public final class Location extends AbstractEntity {
 	public void setGeo(final Geo geo) {
 		this.geo = geo;
 	}
-	
+
+	/**
+	 * @param obj
+	 *            The Document to convert to Location
+	 * @return The Location
+	 * @throws EpickurParsingException
+	 *             If a parsing exception occured
+	 */
 	public static Location getObject(final Document obj) throws EpickurParsingException {
 		return Location.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}

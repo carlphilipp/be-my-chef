@@ -129,6 +129,8 @@ public class OrderBusiness {
 	/**
 	 * @param id
 	 *            The Order id
+	 * @param key
+	 *            The key
 	 * @return An Order
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -153,6 +155,17 @@ public class OrderBusiness {
 		return orderDao.readAllWithUserId(userId);
 	}
 
+	/**
+	 * @param catererId
+	 *            The Caterer Id
+	 * @param start
+	 *            The start date
+	 * @param end
+	 *            The end date
+	 * @return A list of Order
+	 * @throws EpickurException
+	 *             If an epickur exception occurred
+	 */
 	public final List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
 		return orderDao.readAllWithCatererId(catererId, start, end);
 	}
@@ -160,6 +173,8 @@ public class OrderBusiness {
 	/**
 	 * @param order
 	 *            The Order
+	 * @param key
+	 *            The key
 	 * @return The updated Order
 	 * @throws EpickurException
 	 *             If an epickur exception occurred

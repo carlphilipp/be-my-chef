@@ -57,11 +57,8 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 	@Override
 	public Key read(final String key) throws EpickurException {
 		try {
-			// DBObject query = BasicDBObjectBuilder.start("key", key).get();
 			Document query = new Document().append("key", key);
 			LOG.debug("Read key: " + key);
-
-			// DBObject dbo = (DBObject) getColl().findOne(query);
 			Document find = getColl().find(query).first();
 			if (find != null) {
 				return Key.getObject(find);
@@ -84,11 +81,8 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 	 */
 	public Key readWithName(final String userName) throws EpickurException {
 		try {
-			// DBObject query = BasicDBObjectBuilder.start("userName", userName).get();
 			LOG.debug("Read key name: " + userName);
 			Document query = new Document().append("userName", userName);
-
-			// DBObject obj = (DBObject) getColl().findOne(query);
 			Document find = getColl().find(query).first();
 			if (find != null) {
 				return Key.getObject(find);
@@ -111,7 +105,6 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 	@Override
 	public boolean delete(final String key) throws EpickurException {
 		try {
-			// DBObject bdb = BasicDBObjectBuilder.start("key", key).get();
 			Document filter = new Document().append("key", key);
 			LOG.debug("Delete key: " + key);
 			return this.isDeleted(getColl().deleteOne(filter), "delete");
@@ -126,7 +119,6 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find().iterator();
-			// Iterator<DBObject> iterator = cursor.iterator();
 			while (cursor.hasNext()) {
 				Key key = Key.getObject(cursor.next());
 				keys.add(key);

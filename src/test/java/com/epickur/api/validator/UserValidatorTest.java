@@ -158,7 +158,7 @@ public class UserValidatorTest {
 		thrown.expectMessage("The parameter token is not allowed to be null or empty");
 
 		UserValidator validator = new UserValidator();
-		validator.checkCreateOneOrder("id", null, true, null);
+		validator.checkCreateOneOrder("id", null, null);
 	}
 
 	@Test
@@ -205,7 +205,7 @@ public class UserValidatorTest {
 	public void testCheckCreateOneOrder2() {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
-		validator.checkCreateOneOrder("id", null, false, order);
+		validator.checkCreateOneOrder("id", null, order);
 	}
 
 	@Test

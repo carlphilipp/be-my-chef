@@ -6,12 +6,28 @@ package com.epickur.api.enumeration;
  */
 public enum DishType {
 
-	MEAT("meat"), FISH("fish"), VEGAN("vegan");
+	/** Meat **/
+	MEAT("meat"),
+	/** Fish **/
+	FISH("fish"),
+	/** Vegan **/
+	VEGAN("vegan");
 
+	/**
+	 * The constructor
+	 * 
+	 * @param type
+	 *            The type
+	 */
 	DishType(final String type) {
 		this.type = type;
 	}
 
+	/**
+	 * @param value
+	 *            The value to convert
+	 * @return A DishType
+	 */
 	public static DishType fromString(final String value) {
 		if (value == null) {
 			throw new IllegalArgumentException();
@@ -29,10 +45,14 @@ public enum DishType {
 		return super.toString().toLowerCase();
 	}
 
+	/**
+	 * @return A String
+	 */
 	public String getType() {
 		return type;
 	}
 
+	/** The type **/
 	private String type;
 
 }

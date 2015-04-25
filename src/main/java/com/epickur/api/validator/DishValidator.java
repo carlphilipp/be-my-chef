@@ -17,8 +17,18 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 
+/**
+ * The Dish Validator class
+ * 
+ * @author cph
+ * @version 1.0
+ *
+ */
 public class DishValidator extends Validator {
 
+	/**
+	 * Constructor
+	 */
 	protected DishValidator() {
 		super("dish");
 	}
@@ -43,6 +53,7 @@ public class DishValidator extends Validator {
 
 	/**
 	 * @param dish
+	 *            The Dish
 	 */
 	public final void checkUpdateData(final Dish dish) {
 		if (dish == null) {
@@ -55,7 +66,9 @@ public class DishValidator extends Validator {
 
 	/**
 	 * @param id
+	 *            The Dish Id
 	 * @param dish
+	 *            The Dish
 	 */
 	public final void checkUpdateData2(final String id, final Dish dish) {
 		if (StringUtils.isBlank(id)) {
@@ -123,6 +136,7 @@ public class DishValidator extends Validator {
 
 	/**
 	 * @param caterer
+	 *            The Caterer
 	 */
 	private void checkCatererData(final Caterer caterer) {
 		CatererValidator validator = (CatererValidator) FactoryValidator.getValidator("caterer");
@@ -134,6 +148,7 @@ public class DishValidator extends Validator {
 
 	/**
 	 * @param steps
+	 *            A list of step
 	 */
 	private void checkStepsData(final List<String> steps) {
 		if (steps.size() == 0) {
@@ -143,6 +158,7 @@ public class DishValidator extends Validator {
 
 	/**
 	 * @param ingredients
+	 *            The list of ingredients
 	 */
 	private void checkIngredientsData(final List<Ingredient> ingredients) {
 		if (ingredients.size() == 0) {
@@ -152,6 +168,7 @@ public class DishValidator extends Validator {
 
 	/**
 	 * @param nutritionFacts
+	 *            The list of NutritionFact
 	 */
 	private void checkNutritionFactsData(final List<NutritionFact> nutritionFacts) {
 		if (nutritionFacts.size() == 0) {
@@ -173,11 +190,17 @@ public class DishValidator extends Validator {
 
 	/**
 	 * @param role
+	 *            The Role
 	 * @param action
+	 *            The Crud Action
 	 * @param dish
+	 *            The Dish
 	 * @param catererDB
+	 *            The CatererDB
 	 * @param key
+	 *            The Key
 	 * @throws EpickurException
+	 *             If an EpickurExeption occured
 	 */
 	public final void checkRightsBefore(final Role role, final Crud action, final Dish dish, final Caterer catererDB, final Key key)
 			throws EpickurException {
@@ -191,9 +214,13 @@ public class DishValidator extends Validator {
 
 	/**
 	 * @param role
+	 *            The Role
 	 * @param userId
+	 *            The User Id
 	 * @param dish
+	 *            The Dish
 	 * @param action
+	 *            The action
 	 */
 	public final void checkRightsAfter(final Role role, final ObjectId userId, final Dish dish, final Crud action) {
 		if (role != Role.ADMIN) {

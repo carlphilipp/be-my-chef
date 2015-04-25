@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.epickur.api.enumeration.DishType;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public final class DishTypeDeserializer extends JsonDeserializer<DishType> {
 
 	@Override
-	public DishType deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
+	public DishType deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
 		try {
 			JsonNode objId = jp.readValueAsTree();
 			return DishType.fromString(objId.asText());

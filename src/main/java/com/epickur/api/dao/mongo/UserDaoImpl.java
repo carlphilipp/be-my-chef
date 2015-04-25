@@ -62,8 +62,6 @@ public final class UserDaoImpl extends DaoCrud<User> {
 	public User read(final String id) throws EpickurException {
 		try {
 			LOG.debug("Read user: " + id);
-			// DBObject query = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
-			// DBObject obj = (DBObject) getColl().findOne(query);
 			Document query = new Document().append("_id", new ObjectId(id));
 			Document find = getColl().find(query).first();
 			if (find != null) {
@@ -88,8 +86,6 @@ public final class UserDaoImpl extends DaoCrud<User> {
 	public User readWithName(final String name) throws EpickurException {
 		try {
 			LOG.debug("Read user name: " + name);
-			// DBObject query = BasicDBObjectBuilder.start("name", name).get();
-			// DBObject obj = (DBObject) getColl().findOne(query);
 			Document query = new Document().append("name", name);
 			Document find = getColl().find(query).first();
 			if (find != null) {
@@ -114,8 +110,6 @@ public final class UserDaoImpl extends DaoCrud<User> {
 	public User readWithEmail(final String email) throws EpickurException {
 		try {
 			LOG.debug("Read user email: " + email);
-			// DBObject query = BasicDBObjectBuilder.start("email", email).get();
-			// DBObject obj = (DBObject) getColl().findOne(query);
 			Document query = new Document().append("email", email);
 			Document find = getColl().find(query).first();
 			if (find != null) {
@@ -130,7 +124,6 @@ public final class UserDaoImpl extends DaoCrud<User> {
 
 	@Override
 	public User update(final User user) throws EpickurException {
-		// BasicDBObject bdb = (BasicDBObject) BasicDBObjectBuilder.start("_id", user.getId()).get();
 		Document filter = new Document().append("_id", user.getId());
 		DateTime time = new DateTime();
 		user.setCreatedAt(null);
@@ -139,7 +132,6 @@ public final class UserDaoImpl extends DaoCrud<User> {
 		LOG.debug("Update user: " + user);
 		Document update = user.getUpdateBasicDBObject();
 		try {
-			// DBObject temp = getColl().findAndModify(document, null, null, false, update, true, false);
 			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
 			if (updated != null) {
 				return User.getDBObject(updated);
@@ -154,7 +146,6 @@ public final class UserDaoImpl extends DaoCrud<User> {
 	@Override
 	public boolean delete(final String id) throws EpickurException {
 		try {
-			// DBObject bdb = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
 			Document filter = new Document().append("_id", new ObjectId(id));
 			LOG.debug("Delete user: " + id);
 			return this.isDeleted(getColl().deleteOne(filter), "delete");
@@ -166,12 +157,9 @@ public final class UserDaoImpl extends DaoCrud<User> {
 	@Override
 	public List<User> readAll() throws EpickurException {
 		List<User> users = new ArrayList<User>();
-		// DBCursor cursor = null;
 		MongoCursor<Document> cursor = null;
 		try {
-			// cursor = getColl().find();
 			cursor = getColl().find().iterator();
-			// Iterator<DBObject> iterator = cursor.iterator();
 			while (cursor.hasNext()) {
 				User user = User.getDBObject(cursor.next());
 				users.add(user);

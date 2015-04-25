@@ -13,6 +13,11 @@ import org.apache.logging.log4j.Logger;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 
+/**
+ * @author cph
+ * @author 1.0
+ * 
+ */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public final class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalArgumentException> {

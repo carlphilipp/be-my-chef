@@ -307,7 +307,7 @@ public final class Dish extends AbstractEntity {
 	}
 
 	/**
-	 * @param ownerId
+	 * @param createdBy
 	 *            The user id
 	 */
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
@@ -315,6 +315,11 @@ public final class Dish extends AbstractEntity {
 		this.createdBy = createdBy;
 	}
 
+	/**
+	 * @return a Document
+	 * @throws EpickurParsingException
+	 *             If a parsing exception happened
+	 */
 	@JsonIgnore
 	public Document getUpdateBasicDBObject() throws EpickurParsingException {
 		String str = toStringAPIView();

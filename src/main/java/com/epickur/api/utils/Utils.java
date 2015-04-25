@@ -187,6 +187,15 @@ public final class Utils {
 		return true;
 	}
 
+	/**
+	 * @param date
+	 *            The date
+	 * @param format
+	 *            The date format
+	 * @return A DateTime
+	 * @throws EpickurParsingException
+	 *             If a parsing exception occured
+	 */
 	public static DateTime parseDate(final String date, final String format) throws EpickurParsingException {
 		try {
 			DateTimeFormatter fmt = DateTimeFormat.forPattern(format);

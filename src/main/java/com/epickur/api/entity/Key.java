@@ -80,7 +80,7 @@ public final class Key extends AbstractEntity {
 	}
 
 	/**
-	 * @param userEmail
+	 * @param userId
 	 *            The User id
 	 */
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
@@ -166,8 +166,8 @@ public final class Key extends AbstractEntity {
 	}
 
 	/**
-	 * @param obj
-	 *            The DBObject
+	 * @param json
+	 *            The json String
 	 * @return The Key
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred

@@ -32,10 +32,14 @@ public final class EpickurDBException extends EpickurException {
 	}
 
 	/**
+	 * Constructor
+	 * 
+	 * @param operation
+	 *            The operation
 	 * @param message
 	 *            The message
 	 * @param exception
-	 *            The MongoException
+	 *            If a MongoException occured
 	 */
 	public EpickurDBException(final String operation, final String message, final MongoException exception) {
 		super(message, exception);
@@ -43,10 +47,14 @@ public final class EpickurDBException extends EpickurException {
 	}
 
 	/**
-	 * Constructor
-	 * 
+	 * @param operation
+	 *            The operation
 	 * @param message
 	 *            The message
+	 * @param doc
+	 *            The document
+	 * @param exception
+	 *            The MongoException
 	 */
 	public EpickurDBException(final String operation, final String message, final Document doc, final MongoException exception) {
 		super(message, exception);
@@ -74,6 +82,8 @@ public final class EpickurDBException extends EpickurException {
 	}
 
 	/**
+	 * @param operation
+	 *            The operation
 	 * @param message
 	 *            The message
 	 * @param id

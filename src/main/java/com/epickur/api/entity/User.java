@@ -19,7 +19,6 @@ import com.epickur.api.entity.databind.ObjectIdSerializer;
 import com.epickur.api.entity.databind.RoleDeserializer;
 import com.epickur.api.entity.databind.RoleSerializer;
 import com.epickur.api.enumeration.Role;
-import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -273,8 +272,8 @@ public final class User extends AbstractEntity {
 	}
 
 	/**
-	 * @return a DBObject
-	 * @throws EpickurException
+	 * @return a Document
+	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
 	@JsonIgnore

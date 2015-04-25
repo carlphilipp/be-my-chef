@@ -213,7 +213,7 @@ public final class Order extends AbstractEntity {
 	}
 
 	/**
-	 * @param ownerId
+	 * @param createdBy
 	 *            The user id
 	 */
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
@@ -221,6 +221,11 @@ public final class Order extends AbstractEntity {
 		this.createdBy = createdBy;
 	}
 
+	/**
+	 * @return The Document
+	 * @throws EpickurParsingException
+	 *             If a parsing exception occured
+	 */
 	@JsonIgnore
 	public Document getUpdateBasicDBObject() throws EpickurParsingException {
 		String str = toStringAPIView();
@@ -239,7 +244,7 @@ public final class Order extends AbstractEntity {
 				orderDBObject.put("dish", dishDBObject);
 
 				Document dishStr = (Document) found.get("dish");
-				//Document dishFound = dishStr.toJson(new JsonWriterSettings(JsonMode.STRICT));
+				// Document dishFound = dishStr.toJson(new JsonWriterSettings(JsonMode.STRICT));
 				Set<String> setDish = dishStr.keySet();
 				Iterator<String> iteratorDish = setDish.iterator();
 				while (iteratorDish.hasNext()) {
@@ -251,7 +256,7 @@ public final class Order extends AbstractEntity {
 						dishDBObject.put("caterer", catererDBObject);
 
 						Document caterer = (Document) dishStr.get("caterer");
-						//Document catererFound = Document.parse(caterer);
+						// Document catererFound = Document.parse(caterer);
 						Set<String> setCaterer = caterer.keySet();
 						Iterator<String> iteratorCaterer = setCaterer.iterator();
 						while (iteratorCaterer.hasNext()) {

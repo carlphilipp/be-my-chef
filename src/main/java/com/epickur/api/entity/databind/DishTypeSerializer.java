@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.epickur.api.enumeration.DishType;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -17,8 +16,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 public final class DishTypeSerializer extends JsonSerializer<DishType> {
 
 	@Override
-	public void serialize(final DishType type, final JsonGenerator jgen, final SerializerProvider provider) throws IOException,
-			JsonProcessingException {
+	public void serialize(final DishType type, final JsonGenerator jgen, final SerializerProvider provider) throws IOException {
 		try {
 			if (type == null) {
 				jgen.writeNull();

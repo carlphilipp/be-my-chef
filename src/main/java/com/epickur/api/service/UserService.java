@@ -94,9 +94,9 @@ public final class UserService {
 	 */
 	// @formatter:on
 	/**
-	 * @param emailAgent
+	 * @param sendEmail
 	 *            The email agent. Can only be true or false
-	 * @param validateAgent
+	 * @param autoValidate
 	 *            The valide agent. Can onlybe true or false
 	 * @param user
 	 *            The User
@@ -222,6 +222,8 @@ public final class UserService {
 	 *            The User id
 	 * @param user
 	 *            The User
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -275,6 +277,8 @@ public final class UserService {
 	/**
 	 * @param id
 	 *            The User id
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -328,7 +332,8 @@ public final class UserService {
 	 */
 	// @formatter:on
 	/**
-	 * 
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return A list of User
@@ -393,6 +398,8 @@ public final class UserService {
 	 *            The User id
 	 * @param orderId
 	 *            The Orderid
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -480,6 +487,8 @@ public final class UserService {
 	/**
 	 * @param id
 	 *            The User id
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The list of Order for this User
@@ -558,9 +567,9 @@ public final class UserService {
 	 *            The User id
 	 * @param cardToken
 	 *            The Stripe card token
-	 * @param chargeHeader
+	 * @param shouldCharge
 	 *            The charge header. Can only be true or false
-	 * @param emailAgent
+	 * @param sendEmail
 	 *            The email agent. Can only be true or false
 	 * @param order
 	 *            The Order
@@ -578,7 +587,7 @@ public final class UserService {
 			@DefaultValue("true") @HeaderParam("charge-agent") final boolean shouldCharge,
 			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
 			final Order order) throws EpickurException {
-		validator.checkCreateOneOrder(userId, cardToken, shouldCharge, order);
+		validator.checkCreateOneOrder(userId, cardToken, order);
 		Order result = orderBusiness.create(userId, order, cardToken, shouldCharge, sendEmail);
 		return Response.ok().entity(result).build();
 	}
@@ -639,6 +648,8 @@ public final class UserService {
 	 *            The Order id
 	 * @param order
 	 *            The Order
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -694,6 +705,8 @@ public final class UserService {
 	 *            The User id
 	 * @param orderId
 	 *            The Order id
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse

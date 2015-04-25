@@ -43,7 +43,8 @@ public final class StripePayment {
 	 * @param currency
 	 *            the currency
 	 * @return a charge
-	 * @throws com.epickur.api.exception.StripeException
+	 * @throws StripeException
+	 *             If a StripException occured
 	 */
 	public Charge chargeCard(final String cardToken, final int amount, final Currency currency) throws StripeException {
 		Charge charge = null;

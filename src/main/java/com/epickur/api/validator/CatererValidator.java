@@ -48,6 +48,7 @@ public final class CatererValidator extends Validator {
 
 	/**
 	 * @param caterer
+	 *            The Caterer to check
 	 */
 	public void checkUpdateCaterer(final Caterer caterer) {
 		if (caterer == null) {
@@ -60,7 +61,9 @@ public final class CatererValidator extends Validator {
 
 	/**
 	 * @param id
+	 *            The caterer Id
 	 * @param caterer
+	 *            The Caterer
 	 */
 	public void checkUpdateCaterer2(final String id, final Caterer caterer) {
 		if (StringUtils.isBlank(id)) {
@@ -75,12 +78,20 @@ public final class CatererValidator extends Validator {
 		}
 	}
 
+	/**
+	 * @param id
+	 *            The Caterer Id
+	 * @param start
+	 *            The start date
+	 * @param end
+	 *            The end date
+	 */
 	public void checkPaymentInfo(final String id, final DateTime start, final DateTime end) {
 		checkId(id);
-		if(start == null && end != null){
+		if (start == null && end != null) {
 			throw new EpickurIllegalArgument("Start date missing");
 		}
-		if(start != null){
+		if (start != null) {
 			DateTime today = new DateTime();
 			if (start.isAfter(today)) {
 				throw new EpickurIllegalArgument("The start date can not be after today");
@@ -93,12 +104,19 @@ public final class CatererValidator extends Validator {
 		}
 	}
 
+	/**
+	 * @param caterer
+	 *            The caterer to check
+	 */
 	protected void checkCaterer(final Caterer caterer) {
 		checkCaterer(caterer, null);
 	}
 
 	/**
 	 * @param caterer
+	 *            The caterer to check
+	 * @param prefix
+	 *            The prefix
 	 */
 	protected void checkCaterer(final Caterer caterer, final String prefix) {
 		String entity = getEntity();
@@ -167,6 +185,18 @@ public final class CatererValidator extends Validator {
 		}
 	}
 
+	/**
+	 * @param role
+	 *            The role
+	 * @param userId
+	 *            The User Id
+	 * @param caterer
+	 *            The Caterer
+	 * @param action
+	 *            The action
+	 * @throws EpickurException
+	 *             If an EpickurException occured
+	 */
 	public void checkRightsAfter(final Role role, final ObjectId userId, final Caterer caterer, final Crud action) throws EpickurException {
 		if (role != Role.ADMIN) {
 			if (action != Crud.READ) {

@@ -137,6 +137,8 @@ public final class DishService {
 	/**
 	 * @param dish
 	 *            The Dish
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The response
@@ -360,6 +362,8 @@ public final class DishService {
 	 *            The Dish id
 	 * @param dish
 	 *            The Dish
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -406,6 +410,8 @@ public final class DishService {
 	/**
 	 * @param id
 	 *            The Dish id
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse

@@ -8,6 +8,12 @@ import org.bson.codecs.EncoderContext;
 
 import com.epickur.api.enumeration.DishType;
 
+/**
+ * A codec to serialize and deserialize at MongoDB level
+ * 
+ * @author cph
+ * @version 1.0
+ */
 public final class DishTypeCodec implements Codec<DishType> {
 
 	@Override

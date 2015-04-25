@@ -34,6 +34,13 @@ public final class DateDeserializer extends JsonDeserializer<DateTime> {
 		}
 	}
 
+	/**
+	 * Get a DateTime from a JsonNode
+	 * 
+	 * @param node
+	 *            The JsonNode to convert
+	 * @return A DateTime
+	 */
 	private DateTime getDateTime(final JsonNode node) {
 		if (node.isTextual()) {
 			return new DateTime(NumberUtils.toLong(node.asText()));

@@ -72,7 +72,9 @@ public class DishBusiness {
 	 * Update a Dish
 	 * 
 	 * @param dish
-	 *            the Dish
+	 *            The Dish
+	 * @param key
+	 *            The Key
 	 * @return the updated Dish
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -88,6 +90,8 @@ public class DishBusiness {
 	 * 
 	 * @param id
 	 *            the id of the Dish
+	 * @param key
+	 *            The Key
 	 * @return true if the Dish has been deleted
 	 * @throws EpickurException
 	 *             If an epickur exception occurred

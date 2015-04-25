@@ -56,7 +56,7 @@ public abstract class AbstractEntity implements IEntity {
 	/**
 	 * Get a api view for the current object
 	 * 
-	 * @return
+	 * @return A String
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */

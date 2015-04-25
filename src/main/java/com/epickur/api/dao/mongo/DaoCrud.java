@@ -47,11 +47,11 @@ public abstract class DaoCrud<T extends AbstractEntity> implements IDaoCrud<T> {
 	/**
 	 * Check if the query is a succes
 	 * 
-	 * @param wr
+	 * @param deleteResult
 	 *            The result of the query
 	 * @param type
 	 *            The type of the query
-	 * @return True if the query is a succes
+	 * @return True if the query is a success
 	 */
 	protected final boolean isDeleted(final DeleteResult deleteResult, final String type) {
 		boolean res = true;

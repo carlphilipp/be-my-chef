@@ -61,7 +61,7 @@ public final class Email {
 	private String message;
 	/** The list of sender **/
 	private String[] sendTo;
-	
+
 	/**
 	 * @param emailSubjectTxt
 	 *            The subject
@@ -131,8 +131,6 @@ public final class Email {
 	 *            the email content
 	 * @param sendTo
 	 *            the recipients
-	 * @param attachFile
-	 *            the attach files
 	 */
 	public static void sendMail(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
 		new Email(emailSubjectTxt, emailMsgTxt, sendTo).send();

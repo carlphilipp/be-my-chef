@@ -61,8 +61,6 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 	public final Order read(final String id) throws EpickurException {
 		try {
 			LOG.debug("Read order: " + id);
-			// DBObject query = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
-			// DBObject obj = (DBObject) getColl().findOne(query);
 			Document query = new Document().append("_id", new ObjectId(id));
 			Document find = getColl().find(query).first();
 			if (find != null) {
@@ -77,16 +75,13 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 
 	@Override
 	public final Order update(final Order order) throws EpickurException {
-		// BasicDBObject bdb = (BasicDBObject) BasicDBObjectBuilder.start("_id", order.getId()).get();
 		Document filter = new Document().append("_id", order.getId());
 		DateTime time = new DateTime();
 		order.setCreatedAt(null);
 		order.setUpdatedAt(time);
 		LOG.debug("Update order: " + order);
-		// DBObject update = order.getUpdateBasicDBObject();
 		Document update = order.getUpdateBasicDBObject();
 		try {
-			// DBObject temp = getColl().findAndModify(bdb, null, null, false, update, true, false);
 			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
 			if (updated != null) {
 				return Order.getObject(updated);
@@ -101,7 +96,6 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 	@Override
 	public final boolean delete(final String id) throws EpickurException {
 		try {
-			// DBObject bdb = BasicDBObjectBuilder.start("_id", new ObjectId(id)).get();
 			Document filter = new Document().append("_id", new ObjectId(id));
 			LOG.debug("Delete order: " + id);
 			return this.isDeleted(getColl().deleteOne(filter), "delete");
@@ -126,12 +120,10 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 	 */
 	public final List<Order> readAllWithUserId(final String userId) throws EpickurException {
 		List<Order> orders = new ArrayList<Order>();
-		// DBObject query = BasicDBObjectBuilder.start("createdBy", userId).get();
 		Document query = new Document().append("createdBy", userId);
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find(query).iterator();
-			// Iterator<DBObject> iterator = cursor.iterator();
 			while (cursor.hasNext()) {
 				Order user = Order.getObject(cursor.next());
 				orders.add(user);
@@ -149,15 +141,17 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 	/**
 	 * @param catererId
 	 *            the Caterer Id.
-	 * @return A list of Order.
+	 * @param start
+	 *            The start date to filter on
+	 * @param end
+	 *            The start end to filter on
+	 * @return A list of Orders
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
 	public final List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
 		List<Order> orders = new ArrayList<Order>();
-		// DBObject query = BasicDBObjectBuilder.start("dish.caterer._id", catererId).get();
 		Document query = new Document().append("dish.caterer._id", catererId);
-		// DBObject filter = BasicDBObjectBuilder.start().get();
 		Document filter = new Document();
 		if (start != null) {
 			filter.put("$gte", start.getMillis());
@@ -171,7 +165,6 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find(query).iterator();
-			// Iterator<DBObject> iterator = cursor.iterator();
 			while (cursor.hasNext()) {
 				Order user = Order.getObject(cursor.next());
 				orders.add(user);

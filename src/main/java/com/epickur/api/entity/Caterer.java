@@ -288,6 +288,7 @@ public final class Caterer extends AbstractEntity {
 	/**
 	 * @param obj
 	 *            The DBObject
+	 * @param view The View
 	 * @return the Caterer
 	 * @throws EpickurParsingException
 	 *             If an EpickurParsingException exception occurred
@@ -299,6 +300,7 @@ public final class Caterer extends AbstractEntity {
 	/**
 	 * @param json
 	 *            The json string
+	 * @param view The View
 	 * @return the Caterer
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred

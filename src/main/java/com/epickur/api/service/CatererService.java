@@ -119,6 +119,8 @@ public final class CatererService {
 	/**
 	 * @param caterer
 	 *            The Caterer
+	 * @param context
+	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The response
@@ -276,6 +278,8 @@ public final class CatererService {
 	 *            The Caterer id
 	 * @param caterer
 	 *            The Caterer
+	 * @param context
+	 *            The container context that contains the Key
 	 * @return The response
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -330,6 +334,8 @@ public final class CatererService {
 	/**
 	 * @param id
 	 *            The Caterer id
+	 * @param context
+	 *            The container context that contains the Key
 	 * @return The response
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -405,6 +411,8 @@ public final class CatererService {
 	 */
 	// @formatter:on
 	/**
+	 * @param context
+	 *            The container context that contains the Key
 	 * @return The reponse
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -445,6 +453,19 @@ public final class CatererService {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+	/**
+	 * @param id
+	 *            The Caterer id
+	 * @param start
+	 *            The start date to filter on
+	 * @param end
+	 *            The end date to filter on
+	 * @param format
+	 *            The date format
+	 * @return A Response
+	 * @throws EpickurException
+	 *             If an EpickurException occured
+	 */
 	@GET
 	@Path("/{id}/paymentInfo")
 	@Produces(MediaType.APPLICATION_JSON)

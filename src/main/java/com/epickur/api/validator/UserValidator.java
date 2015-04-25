@@ -13,8 +13,15 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 
+/**
+ * @author cph
+ * @version 1.0
+ */
 public final class UserValidator extends Validator {
 
+	/**
+	 * Constructor
+	 */
 	protected UserValidator() {
 		super("user");
 	}
@@ -112,13 +119,15 @@ public final class UserValidator extends Validator {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
 		if (StringUtils.isBlank(orderId)) {
-			throw new EpickurIllegalArgument(PARAM_ORDERID_NULL);
+			throw new EpickurIllegalArgument(PARAM_ORDER_ID_NULL);
 		}
 	}
 
 	/**
 	 * @param id
 	 *            The User id
+	 * @param key
+	 *            The Key
 	 */
 	public void checkReadAllOrder(final String id, final Key key) {
 		if (StringUtils.isBlank(id)) {
@@ -131,17 +140,12 @@ public final class UserValidator extends Validator {
 	 *            The User id
 	 * @param token
 	 *            The Stripe token
-	 * @param cardToken
-	 *            True if the card must be charged
+	 * @param order
+	 *            The Order
 	 */
-	public void checkCreateOneOrder(final String id, final String token, final boolean cardToken, final Order order) {
+	public void checkCreateOneOrder(final String id, final String token, final Order order) {
 		if (StringUtils.isBlank(id)) {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
-		if (cardToken) {
-			if (StringUtils.isBlank(token)) {
-				throw new EpickurIllegalArgument(PARAM_TOKEN_NULL);
-			}
 		}
 		if (order == null) {
 			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
@@ -164,7 +168,7 @@ public final class UserValidator extends Validator {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
 		if (StringUtils.isBlank(orderId)) {
-			throw new EpickurIllegalArgument(PARAM_ORDERID_NULL);
+			throw new EpickurIllegalArgument(PARAM_ORDER_ID_NULL);
 		}
 		if (order == null) {
 			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
@@ -188,7 +192,7 @@ public final class UserValidator extends Validator {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
 		if (StringUtils.isBlank(orderId)) {
-			throw new EpickurIllegalArgument(PARAM_ORDERID_NULL);
+			throw new EpickurIllegalArgument(PARAM_ORDER_ID_NULL);
 		}
 	}
 
@@ -222,6 +226,18 @@ public final class UserValidator extends Validator {
 		}
 	}
 
+	/**
+	 * @param role
+	 *            The Role
+	 * @param userId
+	 *            The User Id
+	 * @param user
+	 *            The User
+	 * @param action
+	 *            The Crud action
+	 * @throws EpickurException
+	 *             If a EpickurException occured
+	 */
 	public void checkUserRightsAfter(final Role role, final ObjectId userId, final User user, final Crud action) throws EpickurException {
 		if (role != Role.ADMIN) {
 			if ((action == Crud.READ && (role == Role.USER || role == Role.SUPER_USER))
@@ -235,6 +251,16 @@ public final class UserValidator extends Validator {
 		}
 	}
 
+	/**
+	 * @param role
+	 *            The Role
+	 * @param userId
+	 *            The User Id
+	 * @param order
+	 *            The Order
+	 * @param action
+	 *            The Crud action
+	 */
 	public void checkOrderRightsAfter(final Role role, final ObjectId userId, final Order order, final Crud action) {
 		if (role != Role.ADMIN) {
 			if (action == Crud.DELETE) {

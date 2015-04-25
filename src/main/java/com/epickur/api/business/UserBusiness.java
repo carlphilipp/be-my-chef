@@ -51,6 +51,8 @@ public final class UserBusiness {
 	 *            The User
 	 * @param sendEmail
 	 *            True if you want to trigger an email
+	 * @param autoValidate
+	 *            True if you want to auto validate the User
 	 * @return The User created
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -97,6 +99,17 @@ public final class UserBusiness {
 	 * 
 	 * @param id
 	 *            the User id to read
+	 * @return The User
+	 * @throws EpickurException
+	 *             If an epickur exception occurred
+	 */
+	/**
+	 * Read a User
+	 * 
+	 * @param id
+	 *            the User id to read
+	 * @param key
+	 *            The Key
 	 * @return The User
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -155,10 +168,10 @@ public final class UserBusiness {
 	}
 
 	/**
-	 * Update a User
-	 * 
 	 * @param user
-	 *            The User tot update
+	 *            The User to update
+	 * @param key
+	 *            The key
 	 * @return The User updated
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -168,7 +181,7 @@ public final class UserBusiness {
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), read, Crud.UPDATE);
 		User res = userDao.update(user);
 		if (res != null) {
-			// We do not send back the password
+			// We do not send back the password or the role
 			res.setPassword(null);
 			res.setRole(null);
 		}

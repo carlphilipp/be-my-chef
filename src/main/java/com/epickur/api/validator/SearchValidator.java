@@ -12,10 +12,19 @@ import com.epickur.api.exception.EpickurIllegalArgument;
  */
 public final class SearchValidator extends Validator {
 
+	/**
+	 * Constructor
+	 */
 	protected SearchValidator() {
 		super("search");
 	}
 
+	/**
+	 * @param type
+	 *            The Dish type
+	 * @param address
+	 *            The address
+	 */
 	public void checkSearch(final DishType type, final String address) {
 		if (type == null) {
 			throw new EpickurIllegalArgument("The parameter type is not allowed to be null");

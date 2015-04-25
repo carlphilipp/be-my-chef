@@ -72,11 +72,13 @@ public class CatererBusiness {
 	}
 
 	/**
-	 * Update a Caterer
-	 * 
 	 * @param caterer
 	 *            The Caterer
-	 * @return a Caterer
+	 * @param role
+	 *            The Role
+	 * @param userId
+	 *            The User Id
+	 * @return The updated Caterer
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */

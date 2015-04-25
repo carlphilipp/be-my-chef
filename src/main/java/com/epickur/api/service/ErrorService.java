@@ -58,6 +58,9 @@ public final class ErrorService {
 		return Response.status(status.getStatusCode()).entity(bdb).build();
 	}
 
+	/**
+	 * @return The response
+	 */
 	public static Response noResult() {
 		DBObject bdb = BasicDBObjectBuilder.start().get();
 		bdb.put("error", Response.Status.NO_CONTENT);
