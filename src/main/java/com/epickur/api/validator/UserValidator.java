@@ -63,10 +63,8 @@ public final class UserValidator extends Validator {
 		if (user == null) {
 			throw new EpickurIllegalArgument(NO_USER_PROVIDED);
 		}
-		if (StringUtils.isNotBlank(user.getNewPassword())) {
-			if (StringUtils.isBlank(user.getPassword())) {
-				throw new EpickurIllegalArgument("The field " + getEntity() + ".password is mandatory when a new password is provided");
-			}
+		if (StringUtils.isNotBlank(user.getNewPassword()) && StringUtils.isBlank(user.getPassword())) {
+			throw new EpickurIllegalArgument("The field " + getEntity() + ".password is mandatory when a new password is provided");
 		}
 		if (user.getId() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "id"));
@@ -92,10 +90,8 @@ public final class UserValidator extends Validator {
 		if (user == null) {
 			throw new EpickurIllegalArgument(NO_USER_PROVIDED);
 		}
-		if (StringUtils.isNotBlank(user.getNewPassword())) {
-			if (StringUtils.isBlank(user.getPassword())) {
-				throw new EpickurIllegalArgument("The field " + getEntity() + ".password is mandatory when a new password is provided");
-			}
+		if (StringUtils.isNotBlank(user.getNewPassword()) && StringUtils.isBlank(user.getPassword())) {
+			throw new EpickurIllegalArgument("The field " + getEntity() + ".password is mandatory when a new password is provided");
 		}
 		if (user.getId() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "id"));

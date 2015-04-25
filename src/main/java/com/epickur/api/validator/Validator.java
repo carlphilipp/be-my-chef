@@ -94,7 +94,7 @@ public abstract class Validator {
 					throw new ForbiddenException();
 				}
 			} else if (type.equals("caterer")) {
-				if (action == Crud.CREATE || action == Crud.DELETE || (action == Crud.UPDATE && role == Role.USER)) {
+				if (action == Crud.CREATE || action == Crud.DELETE || action == Crud.UPDATE && role == Role.USER) {
 					throw new ForbiddenException();
 				}
 			} else if (type.equals("dish")) {

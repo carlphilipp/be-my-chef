@@ -204,10 +204,8 @@ public class DishValidator extends Validator {
 	 */
 	public final void checkRightsBefore(final Role role, final Crud action, final Dish dish, final Caterer catererDB, final Key key)
 			throws EpickurException {
-		if (role == Role.SUPER_USER && action == Crud.CREATE) {
-			if (!key.getUserId().equals(catererDB.getCreatedBy())) {
-				throw new ForbiddenException();
-			}
+		if (role == Role.SUPER_USER && action == Crud.CREATE && !key.getUserId().equals(catererDB.getCreatedBy())) {
+			throw new ForbiddenException();
 		}
 		super.checkRightsBefore(role, action);
 	}
@@ -224,10 +222,8 @@ public class DishValidator extends Validator {
 	 */
 	public final void checkRightsAfter(final Role role, final ObjectId userId, final Dish dish, final Crud action) {
 		if (role != Role.ADMIN) {
-			if (action == Crud.UPDATE || action == Crud.DELETE) {
-				if (!dish.getCreatedBy().equals(userId)) {
-					throw new ForbiddenException();
-				}
+			if ((action == Crud.UPDATE || action == Crud.DELETE) && !dish.getCreatedBy().equals(userId)) {
+				throw new ForbiddenException();
 			}
 		}
 	}

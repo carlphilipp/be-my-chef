@@ -97,10 +97,8 @@ public final class CatererValidator extends Validator {
 				throw new EpickurIllegalArgument("The start date can not be after today");
 			}
 		}
-		if (start != null && end != null) {
-			if (end.isBefore(start)) {
-				throw new EpickurIllegalArgument("The end date should be after the start date");
-			}
+		if (start != null && end != null && end.isBefore(start)) {
+			throw new EpickurIllegalArgument("The end date should be after the start date");
 		}
 	}
 
