@@ -250,8 +250,8 @@ public final class User extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static User getDBObject(final Document obj) throws EpickurParsingException {
-		return User.getDBObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
+	public static User getObject(final Document obj) throws EpickurParsingException {
+		return User.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
@@ -261,7 +261,7 @@ public final class User extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static User getDBObject(final String json) throws EpickurParsingException {
+	private static User getObject(final String json) throws EpickurParsingException {
 		User user = null;
 		try {
 			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
@@ -278,21 +278,21 @@ public final class User extends AbstractEntity {
 	 *             If an epickur exception occurred
 	 */
 	@JsonIgnore
-	public Document getUpdateBasicDBObject() throws EpickurParsingException {
-		String str = toStringAPIView();
-		Document found = Document.parse(str);
-		Document arg = new Document();
-		Document res = new Document().append("$set", arg);
+	public Document getUpdateDocument() throws EpickurParsingException {
+		String apiView = toStringAPIView();
+		Document found = Document.parse(apiView);
+		Document args = new Document();
+		Document result = new Document().append("$set", args);
 		Set<Entry<String, Object>> set = found.entrySet();
 		Iterator<Entry<String, Object>> iterator = set.iterator();
 		while (iterator.hasNext()) {
 			Entry<String, Object> entry = iterator.next();
 			String k = entry.getKey();
 			if (!k.equals("id")) {
-				arg.put(k, found.get(k));
+				args.put(k, found.get(k));
 			}
 		}
-		return res;
+		return result;
 	}
 
 	@Override

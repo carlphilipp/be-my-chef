@@ -106,7 +106,7 @@ public final class Location extends AbstractEntity {
 	public Map<String, Object> getUpdateListBasicDBObject(final String prefix) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		if (address != null) {
-			res.putAll(address.getUpdateListBasicDBObject(prefix + ".address"));
+			res.putAll(address.getUpdateMap(prefix + ".address"));
 		}
 		if (geo != null) {
 			res.putAll(geo.getUpdateListBasicDBObject(prefix + ".geo"));

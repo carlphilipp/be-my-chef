@@ -218,7 +218,7 @@ public class AddressTest {
 	@Test
 	public void testUpdate(){
 		Address address = new Address();
-		Map<String, String> res = address.getUpdateListBasicDBObject("prefix");
+		Map<String, String> res = address.getUpdateMap("prefix");
 		assertEquals(0, res.size());
 	}
 }

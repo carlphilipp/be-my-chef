@@ -152,7 +152,7 @@ public final class Address extends AbstractEntity {
 	 * @return A Map
 	 */
 	@JsonIgnore
-	public Map<String, String> getUpdateListBasicDBObject(final String prefix) {
+	public Map<String, String> getUpdateMap(final String prefix) {
 		Map<String, String> res = new HashMap<String, String>();
 		if (label != null) {
 			res.put(prefix + ".label", label);

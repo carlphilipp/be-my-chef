@@ -321,11 +321,11 @@ public final class Dish extends AbstractEntity {
 	 *             If a parsing exception happened
 	 */
 	@JsonIgnore
-	public Document getUpdateBasicDBObject() throws EpickurParsingException {
-		String str = toStringAPIView();
-		Document found = Document.parse(str);
-		Document arg = new Document();
-		Document res = new Document().append("$set", arg);
+	public Document getUpdateDocument() throws EpickurParsingException {
+		String apiView = toStringAPIView();
+		Document found = Document.parse(apiView);
+		Document args = new Document();
+		Document result = new Document().append("$set", args);
 		Set<Entry<String, Object>> set = found.entrySet();
 		Iterator<Entry<String, Object>> iterator = set.iterator();
 		while (iterator.hasNext()) {
@@ -334,21 +334,21 @@ public final class Dish extends AbstractEntity {
 			if (!key.equals("id")) {
 				if (key.equals("caterer")) {
 					Caterer cat = Caterer.getObject((Document) found.get(key), View.API);
-					Map<String, Object> caterers = cat.getUpdateListBasicDBObject("caterer");
+					Map<String, Object> caterers = cat.getUpdateMap("caterer");
 					for (Entry<String, Object> entry : caterers.entrySet()) {
-						arg.put(entry.getKey(), entry.getValue());
+						args.put(entry.getKey(), entry.getValue());
 					}
 				} else {
-					arg.put(key, found.get(key));
+					args.put(key, found.get(key));
 				}
 			}
 		}
-		return res;
+		return result;
 	}
 
 	/**
 	 * @param obj
-	 *            The DBObject
+	 *            The Document
 	 * @return The Dish
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
@@ -364,7 +364,7 @@ public final class Dish extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Dish getObject(final String json) throws EpickurParsingException {
+	private static Dish getObject(final String json) throws EpickurParsingException {
 		Dish dish = null;
 		try {
 			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();

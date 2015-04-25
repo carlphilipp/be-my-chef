@@ -228,22 +228,22 @@ public final class Order extends AbstractEntity {
 	 *             If a parsing exception occured
 	 */
 	@JsonIgnore
-	public Document getUpdateBasicDBObject() throws EpickurParsingException {
-		String str = toStringAPIView();
-		Document found = Document.parse(str);
-		Document orderDBObject = new Document();
-		Document res = new Document().append("$set", orderDBObject);
+	public Document getUpdateDocument() throws EpickurParsingException {
+		String apiView = toStringAPIView();
+		Document found = Document.parse(apiView);
+		Document resultSet = new Document();
+		Document result = new Document().append("$set", resultSet);
 		Set<Entry<String, Object>> set = found.entrySet();
 		Iterator<Entry<String, Object>> iterator = set.iterator();
 		while (iterator.hasNext()) {
 			Entry<String, Object> en = iterator.next();
 			String key = en.getKey();
 			if (!key.equals("id") && !key.equals("dish")) {
-				orderDBObject.put(key, found.get(key));
+				resultSet.put(key, found.get(key));
 			}
 			if (key.equals("dish")) {
 				Document dishDBObject = new Document();
-				orderDBObject.put("dish", dishDBObject);
+				resultSet.put("dish", dishDBObject);
 				Document dishStr = (Document) found.get("dish");
 				Set<Entry<String, Object>> setDish = dishStr.entrySet();
 				Iterator<Entry<String, Object>> iteratorDish = setDish.iterator();
@@ -273,7 +273,7 @@ public final class Order extends AbstractEntity {
 				}
 			}
 		}
-		return res;
+		return result;
 	}
 
 	/**
@@ -284,7 +284,7 @@ public final class Order extends AbstractEntity {
 	 *             If an epickur exception occurred
 	 */
 	public static Order getObject(final Document obj) throws EpickurParsingException {
-		return Order.getDBObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
+		return Order.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
@@ -294,7 +294,7 @@ public final class Order extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Order getDBObject(final String json) throws EpickurParsingException {
+	private static Order getObject(final String json) throws EpickurParsingException {
 		Order user = null;
 		try {
 			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();

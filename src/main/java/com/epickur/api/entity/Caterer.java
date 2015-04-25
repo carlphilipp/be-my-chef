@@ -234,32 +234,10 @@ public final class Caterer extends AbstractEntity {
 	 * 
 	 */
 	@JsonIgnore
-	public Map<String, Object> getUpdateListBasicDBObject(final String prefix) throws EpickurParsingException {
-		String str = toStringAPIView();
-		Document found = Document.parse(str);
-		Map<String, Object> res = new HashMap<String, Object>();
-		/*Set<String> set = found.keySet();
-		Iterator<String> iterator = set.iterator();
-		while (iterator.hasNext()) {
-			String key = iterator.next();
-			if (!key.equals("id")) {
-				if (key.equals("location")) {
-					Location loc = Location.getObject((Document) found.get(key));
-					Map<String, Object> locations = loc.getUpdateListBasicDBObject(prefix + ".location");
-					for (Entry<String, Object> entry : locations.entrySet()) {
-						Object entryValue = entry.getValue();
-						if (entryValue instanceof String) {
-							res.put(entry.getKey(), (String) entry.getValue());
-						} else {
-							// It can only be a tab of Double
-							res.put(entry.getKey(), (Double[]) entry.getValue());
-						}
-					}
-				} else {
-					res.put("caterer." + key, found.get(key).toString());
-				}
-			}
-		}*/
+	public Map<String, Object> getUpdateMap(final String prefix) throws EpickurParsingException {
+		String apiView = toStringAPIView();
+		Document found = Document.parse(apiView);
+		Map<String, Object> result = new HashMap<String, Object>();
 		Set<Entry<String, Object>> entrySet = found.entrySet();
 		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
 		while (iterator.hasNext()) {
@@ -272,46 +250,46 @@ public final class Caterer extends AbstractEntity {
 					for (Entry<String, Object> entry : locations.entrySet()) {
 						Object entryValue = entry.getValue();
 						if (entryValue instanceof String) {
-							res.put(entry.getKey(), (String) entry.getValue());
+							result.put(entry.getKey(), (String) entry.getValue());
 						} else {
 							// It can only be a tab of Double
-							res.put(entry.getKey(), (Double[]) entry.getValue());
+							result.put(entry.getKey(), (Double[]) entry.getValue());
 						}
 					}
 				} else {
-					res.put("caterer." + key, found.get(key).toString());
+					result.put("caterer." + key, found.get(key).toString());
 				}
 			}
 		}
-		return res;
+		return result;
 	}
 
 	/**
-	 * @return a DBObject
+	 * @return a Document
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
 	@JsonIgnore
-	public Document getUpdateBasicDBObject() throws EpickurParsingException {
-		String str = toStringAPIView();
-		Document found = Document.parse(str);
-		Document arg = new Document();
-		Document res = new Document().append("$set", arg);
+	public Document getUpdateDocument() throws EpickurParsingException {
+		String apiView = toStringAPIView();
+		Document found = Document.parse(apiView);
+		Document args = new Document();
+		Document result = new Document().append("$set", args);
 		Set<Entry<String, Object>> entrySet = found.entrySet();
 		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
 		while(iterator.hasNext()){
 			Entry<String, Object> temp = iterator.next();
 			String key = temp.getKey();
 			if (!key.equals("id")) {
-				arg.put(key, found.get(key));
+				args.put(key, found.get(key));
 			}
 		}
-		return res;
+		return result;
 	}
 
 	/**
 	 * @param obj
-	 *            The DBObject
+	 *            The Document
 	 * @param view The View
 	 * @return the Caterer
 	 * @throws EpickurParsingException
@@ -329,7 +307,7 @@ public final class Caterer extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Caterer getObject(final String json, final View view) throws EpickurParsingException {
+	private static Caterer getObject(final String json, final View view) throws EpickurParsingException {
 		Caterer caterer = null;
 		try {
 			ObjectMapper om = null;

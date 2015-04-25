@@ -82,7 +82,7 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 		dish.setCreatedAt(null);
 		dish.setUpdatedAt(time);
 		LOG.debug("Update dish: " + dish);
-		Document update = dish.getUpdateBasicDBObject();
+		Document update = dish.getUpdateDocument();
 		try {
 			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
 			if (updated != null) {

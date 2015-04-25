@@ -52,7 +52,7 @@ public final class UserDaoImpl extends DaoCrud<User> {
 			doc = user.getDBView();
 			LOG.debug("Create user: " + user);
 			getColl().insertOne(doc);
-			return User.getDBObject(doc);
+			return User.getObject(doc);
 		} catch (MongoException e) {
 			throw new EpickurDBException("create", e.getMessage(), doc, e);
 		}
@@ -65,7 +65,7 @@ public final class UserDaoImpl extends DaoCrud<User> {
 			Document query = new Document().append("_id", new ObjectId(id));
 			Document find = getColl().find(query).first();
 			if (find != null) {
-				return User.getDBObject(find);
+				return User.getObject(find);
 			} else {
 				return null;
 			}
@@ -89,7 +89,7 @@ public final class UserDaoImpl extends DaoCrud<User> {
 			Document query = new Document().append("name", name);
 			Document find = getColl().find(query).first();
 			if (find != null) {
-				return User.getDBObject(find);
+				return User.getObject(find);
 			} else {
 				return null;
 			}
@@ -113,7 +113,7 @@ public final class UserDaoImpl extends DaoCrud<User> {
 			Document query = new Document().append("email", email);
 			Document find = getColl().find(query).first();
 			if (find != null) {
-				return User.getDBObject(find);
+				return User.getObject(find);
 			} else {
 				return null;
 			}
@@ -130,11 +130,11 @@ public final class UserDaoImpl extends DaoCrud<User> {
 		user.setUpdatedAt(time);
 		user.setKey(null);
 		LOG.debug("Update user: " + user);
-		Document update = user.getUpdateBasicDBObject();
+		Document update = user.getUpdateDocument();
 		try {
 			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
 			if (updated != null) {
-				return User.getDBObject(updated);
+				return User.getObject(updated);
 			} else {
 				return null;
 			}
@@ -161,7 +161,7 @@ public final class UserDaoImpl extends DaoCrud<User> {
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
-				User user = User.getDBObject(cursor.next());
+				User user = User.getObject(cursor.next());
 				users.add(user);
 			}
 		} catch (MongoException e) {

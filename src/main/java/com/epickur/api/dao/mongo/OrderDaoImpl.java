@@ -80,7 +80,7 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 		order.setCreatedAt(null);
 		order.setUpdatedAt(time);
 		LOG.debug("Update order: " + order);
-		Document update = order.getUpdateBasicDBObject();
+		Document update = order.getUpdateDocument();
 		try {
 			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
 			if (updated != null) {

@@ -81,7 +81,7 @@ public final class CatererDaoImpl extends DaoCrud<Caterer> {
 		caterer.setCreatedAt(null);
 		caterer.setUpdatedAt(time);
 		LOG.debug("Update caterer: " + caterer);
-		Document update = caterer.getUpdateBasicDBObject();
+		Document update = caterer.getUpdateDocument();
 		try {
 			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
 			if (updated != null) {
