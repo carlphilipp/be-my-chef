@@ -153,15 +153,6 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckCreateOneOrder() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The parameter token is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		validator.checkCreateOneOrder("id", null, null);
-	}
-
-	@Test
 	public void testCheckUpdateOneOrder() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.id is not allowed to be null or empty");
