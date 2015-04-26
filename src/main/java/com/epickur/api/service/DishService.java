@@ -152,7 +152,7 @@ public final class DishService {
 		validator.checkCreateData(dish);
 		Caterer caterer = catererBusiness.read(dish.getCaterer().getId().toHexString());
 		if (caterer == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, dish.getCaterer().getId().toHexString());
 		}
 		validator.checkRightsBefore(key.getRole(), Crud.CREATE, dish, caterer, key);
 		Dish result = dishBusiness.create(dish);
@@ -257,7 +257,7 @@ public final class DishService {
 		validator.checkId(id);
 		Dish dish = dishBusiness.read(id);
 		if (dish == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.DISH_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.DISH_NOT_FOUND, id);
 		} else {
 			return Response.ok().entity(dish).build();
 		}
@@ -379,7 +379,7 @@ public final class DishService {
 		validator.checkUpdateData(id, dish);
 		Dish result = dishBusiness.update(dish, key);
 		if (result == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.DISH_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.DISH_NOT_FOUND, id);
 		} else {
 			return Response.ok().entity(result).build();
 		}
@@ -428,7 +428,7 @@ public final class DishService {
 			DBObject result = BasicDBObjectBuilder.start("id", id).add("deleted", isDeleted).get();
 			return Response.ok().entity(result).build();
 		} else {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.DISH_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.DISH_NOT_FOUND, id);
 		}
 	}
 

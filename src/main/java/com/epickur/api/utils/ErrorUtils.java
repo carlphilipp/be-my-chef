@@ -57,6 +57,14 @@ public final class ErrorUtils {
 		bdb.put("message", message);
 		return Response.status(status.getStatusCode()).entity(bdb).build();
 	}
+	
+	public static Response notFound(final String message, final String id) {
+		DBObject bdb = BasicDBObjectBuilder.start().get();
+		bdb.put("error", Response.Status.NOT_FOUND.getStatusCode());
+		bdb.put("message", Response.Status.NOT_FOUND.getReasonPhrase());
+		bdb.put("description", message + ": " + id);
+		return Response.status(Response.Status.NOT_FOUND).entity(bdb).build();
+	}
 
 	/**
 	 * @return The response

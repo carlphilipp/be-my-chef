@@ -206,7 +206,7 @@ public final class CatererService {
 		validator.checkId(id);
 		Caterer caterer = catererBusiness.read(id);
 		if (caterer == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
 		} else {
 			return Response.ok().entity(caterer).build();
 		}
@@ -298,7 +298,7 @@ public final class CatererService {
 		validator.checkUpdateCaterer(id, caterer);
 		Caterer result = catererBusiness.update(caterer, key.getRole(), key.getUserId());
 		if (result == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
 		} else {
 			return Response.ok().entity(result).build();
 		}
@@ -353,7 +353,7 @@ public final class CatererService {
 			DBObject result = BasicDBObjectBuilder.start("id", id).add("deleted", resBool).get();
 			return Response.ok().entity(result).build();
 		} else {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
 		}
 	}
 
@@ -484,7 +484,7 @@ public final class CatererService {
 		validator.checkPaymentInfo(id, startDate, endDate);
 		Caterer caterer = catererBusiness.read(id);
 		if (caterer == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.CATERER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
 		} else {
 			List<Order> orders = orderBusiness.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
 			Integer amount = catererBusiness.getAmount(orders);

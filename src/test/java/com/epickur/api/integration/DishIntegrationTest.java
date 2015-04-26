@@ -41,7 +41,6 @@ import com.epickur.api.entity.Location;
 import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.CatererService;
-import com.epickur.api.utils.ErrorUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -381,6 +380,6 @@ public class DishIntegrationTest {
 		mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), Integer.valueOf(jsonResult.get("error").toString()).intValue());
-		assertEquals(ErrorUtils.DISH_NOT_FOUND, jsonResult.get("message").asText());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
 	}
 }

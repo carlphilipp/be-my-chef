@@ -696,7 +696,7 @@ public class UserIntegrationTest {
 
 		assertNotNull(jsonResult.get("error"));
 		assertEquals(new Long(404), jsonResult.get("error").asLong(), 0.01);
-		assertEquals("Order not found", jsonResult.get("message").asText());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
 
 		// Delete this user
 		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);

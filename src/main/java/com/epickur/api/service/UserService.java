@@ -175,7 +175,7 @@ public final class UserService {
 		validator.checkId(id);
 		User user = userBusiness.read(id, key);
 		if (user == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.USER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
 		} else {
 			return Response.ok().entity(user).build();
 		}
@@ -245,7 +245,7 @@ public final class UserService {
 		}
 		User result = userBusiness.update(user, key);
 		if (result == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.USER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
 		} else {
 			return Response.ok().entity(result).build();
 		}
@@ -294,7 +294,7 @@ public final class UserService {
 			DBObject res = BasicDBObjectBuilder.start("id", id).add("deleted", isDeleted).get();
 			return Response.ok().entity(res).build();
 		} else {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.USER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
 		}
 	}
 
@@ -415,7 +415,7 @@ public final class UserService {
 		validator.checkReadOneOrder(id, orderId);
 		Order order = orderBusiness.read(orderId, key);
 		if (order == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.ORDER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, id);
 		} else {
 			return Response.ok().entity(order).build();
 		}
@@ -667,7 +667,7 @@ public final class UserService {
 		validator.checkUpdateOneOrder(id, orderId, order);
 		Order result = orderBusiness.update(order, key);
 		if (result == null) {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.ORDER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, orderId);
 		} else {
 			return Response.ok().entity(result).build();
 		}
@@ -725,7 +725,7 @@ public final class UserService {
 			DBObject result = BasicDBObjectBuilder.start("id", id).add("deleted", isDeleted).get();
 			return Response.ok().entity(result).build();
 		} else {
-			return ErrorUtils.error(Response.Status.NOT_FOUND, ErrorUtils.ORDER_NOT_FOUND);
+			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, orderId);
 		}
 	}
 }
