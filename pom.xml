@@ -26,28 +26,28 @@
 		<failsafe.version>2.17</failsafe.version>
 		<findbugs.version>3.0.0</findbugs.version>
 		<hamcrest.version>1.3</hamcrest.version>
-		<httpclient.version>4.4</httpclient.version>
+		<httpclient.version>4.4.1</httpclient.version>
 		<info.version>2.8</info.version>
 		<io.version>2.4</io.version>
 		<java.version>1.7</java.version>
 		<javadoc.version>2.10.1</javadoc.version>
 		<javancss.version>2.1</javancss.version>
-		<jackson.version>2.3.0</jackson.version>
+		<jackson.version>2.5.3</jackson.version>
 		<jersey.version>2.17</jersey.version>
 		<joda.version>2.7</joda.version>
-		<junit.version>4.11</junit.version>
-		<lang3.version>3.3.2</lang3.version>
+		<junit.version>4.12</junit.version>
+		<lang3.version>3.4</lang3.version>
 		<log4j.version>2.2</log4j.version>
-		<mandrill.version>1.0.1</mandrill.version>
+		<mandrill.version>1.1</mandrill.version>
 		<mockito.version>1.10.19</mockito.version>
 		<mongodb.version>3.0.0</mongodb.version>
-		<plexus.version>1.5.12</plexus.version>
+		<plexus.version>3.0.22</plexus.version>
 		<pmd.version>3.4</pmd.version>
 		<properties.version>1.0-alpha-2</properties.version>
 		<quartz.version>2.2.1</quartz.version>
 		<site.version>3.4</site.version>
-		<slf4j.version>1.7.10</slf4j.version>
-		<stripe.version>1.19.1</stripe.version>
+		<slf4j.version>1.7.12</slf4j.version>
+		<stripe.version>1.27.1</stripe.version>
 		<surfire.version>2.17</surfire.version>
 		<tag.version>2.4</tag.version>
 		<versions.version>2.1</versions.version>

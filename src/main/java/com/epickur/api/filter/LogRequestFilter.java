@@ -47,5 +47,4 @@ public final class LogRequestFilter implements ContainerRequestFilter {
 			LOG.trace(stb.toString());
 		}
 	}
-
 }

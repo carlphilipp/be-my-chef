@@ -44,6 +44,7 @@ public final class CatererDaoImpl extends DaoCrud<Caterer> {
 
 	@Override
 	public Caterer create(final Caterer caterer) throws EpickurException {
+		caterer.setId(null);
 		DateTime time = new DateTime();
 		caterer.setCreatedAt(time);
 		caterer.setUpdatedAt(time);

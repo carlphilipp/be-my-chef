@@ -35,6 +35,8 @@ public final class ErrorUtils {
 	public static final String IDS_DO_NOT_MATCH = "IDs provided do not match";
 	/** Basic error response **/
 	public static final String LOGIN_ERROR = "An error occurred while logging in";
+	/** Not implemented **/
+	public static final String NOT_IMPLEMENTED = "Not implemented";
 
 	/**
 	 * Private Constructor
@@ -57,7 +59,16 @@ public final class ErrorUtils {
 		bdb.put("message", message);
 		return Response.status(status.getStatusCode()).entity(bdb).build();
 	}
-	
+
+	/**
+	 * Not found
+	 * 
+	 * @param message
+	 *            The message
+	 * @param id
+	 *            The Id
+	 * @return The Response
+	 */
 	public static Response notFound(final String message, final String id) {
 		DBObject bdb = BasicDBObjectBuilder.start().get();
 		bdb.put("error", Response.Status.NOT_FOUND.getStatusCode());

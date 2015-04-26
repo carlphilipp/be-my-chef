@@ -45,6 +45,7 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 
 	@Override
 	public Dish create(final Dish dish) throws EpickurException {
+		dish.setId(null);
 		DateTime time = new DateTime();
 		dish.setCreatedAt(time);
 		dish.setUpdatedAt(time);

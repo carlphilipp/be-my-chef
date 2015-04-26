@@ -277,7 +277,7 @@ public final class Caterer extends AbstractEntity {
 		Document result = new Document().append("$set", args);
 		Set<Entry<String, Object>> entrySet = found.entrySet();
 		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
-		while(iterator.hasNext()){
+		while (iterator.hasNext()) {
 			Entry<String, Object> temp = iterator.next();
 			String key = temp.getKey();
 			if (!key.equals("id")) {
@@ -290,7 +290,8 @@ public final class Caterer extends AbstractEntity {
 	/**
 	 * @param obj
 	 *            The Document
-	 * @param view The View
+	 * @param view
+	 *            The View
 	 * @return the Caterer
 	 * @throws EpickurParsingException
 	 *             If an EpickurParsingException exception occurred
@@ -302,7 +303,8 @@ public final class Caterer extends AbstractEntity {
 	/**
 	 * @param json
 	 *            The json string
-	 * @param view The View
+	 * @param view
+	 *            The View
 	 * @return the Caterer
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred

@@ -43,6 +43,7 @@ public final class UserDaoImpl extends DaoCrud<User> {
 
 	@Override
 	public User create(final User user) throws EpickurException {
+		user.setId(null);
 		DateTime time = new DateTime();
 		user.setCreatedAt(time);
 		user.setUpdatedAt(time);

@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
 
@@ -40,6 +41,7 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 
 	@Override
 	public Key create(final Key key) throws EpickurException {
+		key.setId(null);
 		DateTime time = new DateTime();
 		key.setCreatedAt(time);
 		key.setUpdatedAt(time);
@@ -96,10 +98,8 @@ public final class KeyDaoImpl extends DaoCrud<Key> {
 
 	@Override
 	public Key update(final Key key) throws EpickurException {
-		DateTime time = new DateTime();
-		key.setCreatedAt(null);
-		key.setUpdatedAt(time);
-		throw new EpickurDBException();
+		// Not implemented
+		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
 	}
 
 	@Override

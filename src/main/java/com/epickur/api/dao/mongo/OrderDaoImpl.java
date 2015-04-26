@@ -43,6 +43,7 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 
 	@Override
 	public final Order create(final Order order) throws EpickurException {
+		order.setId(null);
 		DateTime time = new DateTime();
 		order.setCreatedAt(time);
 		order.setUpdatedAt(time);
