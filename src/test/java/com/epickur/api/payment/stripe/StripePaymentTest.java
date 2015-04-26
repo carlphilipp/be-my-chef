@@ -58,6 +58,7 @@ public class StripePaymentTest {
 		StripePayment payment = new StripePayment();
 		Charge charge = payment.chargeCard(token.getId(), 1500, Currency.AUD);
 		assertEquals(true, charge.getPaid());
+		assertEquals(1500, charge.getAmount().intValue());
 	}
 
 	@Test(expected = StripeException.class)

@@ -260,6 +260,10 @@ public class TestUtils {
 	public static Integer generateRandomInteger() {
 		return RandomUtils.nextInt(0, 500);
 	}
+	
+	public static Integer generateRandomStripAmount() {
+		return RandomUtils.nextInt(100, 5000);
+	}
 
 	public static Double generateRandomDouble() {
 		Integer res = generateRandomInteger();
@@ -283,7 +287,7 @@ public class TestUtils {
 
 	public static Order generateRandomOrder() {
 		Order order = new Order();
-		order.setAmount(generateRandomInteger());
+		order.setAmount(generateRandomStripAmount());
 		order.setCurrency(generateRandomCurrency());
 		order.setDescription(generateRandomString());
 		order.setDish(generateRandomDish());

@@ -155,5 +155,4 @@ public class AllTests {
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
 		TestUtils.runShellCommand(cmd);
 	}
-
 }
