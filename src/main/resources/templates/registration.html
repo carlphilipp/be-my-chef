@@ -1,17 +1,132 @@
-<!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
-<meta charset="ISO-8859-1">
+<style>
+#container {
+  background-color:#f2f2f2;
+  width:100%;
+  height:100%;
+}
+
+#main {
+  padding-top:100px;
+}
+
+#logoTable{
+  margin:auto;
+  border:0;
+  cellpadding:0;
+  cellspacing:0;
+  width:600px;
+}
+
+#dataTable{
+  border:0;
+  cellpadding:0;
+  cellspacing:0;
+  width:600px;
+  border-radius:6px;
+  background-color:#ffffff;
+  margin:auto;"
+}
+
+#dataTable td{
+  line-height:150%;
+  font-family:Verdana;
+  font-size:14px;
+  color:#333333;
+  padding:20px;
+  valign: top;
+  align: left;
+}
+
+.downText{
+  padding:0 0 10px 0;
+}
+
+#button{
+  color:#ffffff!important;
+  display:inline-block;
+  font-weight:500;
+  font-size:16px;
+  line-height:42px;
+  font-family:'Helvetica',Arial,sans-serif;
+  width:auto;
+  white-space:nowrap;
+  min-height:42px;
+  margin:12px 5px 12px 0;
+  padding:0 22px;
+  text-decoration:none;
+  text-align:center;
+  border:0;
+  border-radius:3px;
+  vertical-align:top;
+  background-color:#2db2ea!important;
+}
+
+#button span{
+  display:inline;
+  font-family:'Helvetica',Arial,sans-serif;
+  text-decoration:none;
+  font-weight:500;
+  font-style:normal;
+  font-size:16px;
+  line-height:42px;
+  border:none;
+  background-color:#2db2ea!important;
+  color:#ffffff!important
+}
+
+#email{
+  color:#336699;
+}
+
+h2{
+  font-size:22px;
+  line-height:28px;
+  margin:0 0 12px 0;
+}
+
+img{
+  width: 580px
+}
+
+</style>
 </head>
 <body>
-Welcome <b>@@NAME@@</b>,
-<br/>
-<br/>
-Please valid your account by clicking on that link: @@ADDRESS@@@@FOLDER@@/check?name=@@NAME@@&amp;check=@@CHECK@@.
-<br/>
-<br/>
-Best regards,
-<br/>
-The @@TEAM_NAME@@ team.
+<div id="container">
+  <div id="main">
+    <table id="logoTable">
+      <tbody>
+        <tr>
+          <td>
+            <img src="http://www.bemychef.com.au/assets/img/logo/logo-color-L.png" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table id="dataTable">
+      <tbody>
+        <tr>
+          <td>
+            <h2>Welcome @@NAME@@</h2>
+            <a id="button" href="@@ADDRESS@@@@FOLDER@@/check?name=@@NAME@@&amp;check=@@CHECK@@" target="_blank">
+              <span>
+                Yes, validate my account.
+              </span>
+            </a>
+            <div>
+              <p class="downText">If you received this email by mistake, simply delete it.</p>
+              <p class="downText">For questions about this email, please contact:
+                <br>
+                <a id="email" href="mailto:hello@bemychef.com.au" target="_blank">hello@bemychef.com.au</a>
+              </p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  
 </body>
 </html>

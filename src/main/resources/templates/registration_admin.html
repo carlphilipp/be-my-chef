@@ -1,9 +1,93 @@
-<!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
-<meta charset="ISO-8859-1">
+<style>
+#container {
+  background-color:#f2f2f2;
+  width:100%;
+  height:100%;
+}
+
+#main {
+  padding-top:100px;
+}
+
+#logoTable{
+  margin:auto;
+  border:0;
+  cellpadding:0;
+  cellspacing:0;
+  width:600px;
+}
+
+#dataTable{
+  border:0;
+  cellpadding:0;
+  cellspacing:0;
+  width:600px;
+  border-radius:6px;
+  background-color:#ffffff;
+  margin:auto;"
+}
+
+#dataTable td{
+  line-height:150%;
+  font-family:Verdana;
+  font-size:14px;
+  color:#333333;
+  padding:20px;
+  valign: top;
+  align: left;
+}
+
+.downText{
+  padding:0 0 10px 0;
+}
+
+#email{
+  color:#336699;
+}
+
+h2{
+  font-size:22px;
+  line-height:28px;
+  margin:0 0 12px 0;
+}
+
+img{
+  width: 580px
+}
+
+</style>
 </head>
 <body>
-New user registred: @@NAME@@ - @@EMAIL@@
+<div id="container">
+  <div id="main">
+    <table id="logoTable">
+      <tbody>
+        <tr>
+          <td>
+            <img src="http://www.bemychef.com.au/assets/img/logo/logo-color-L.png" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table id="dataTable">
+      <tbody>
+        <tr>
+          <td>
+            <h2>Yay!</h2>
+            <div>
+                <p class="downText">New user on board: @@NAME@@ - @@EMAIL@@.</p>
+                <p class="downText">For questions about this email, please contact:
+                <br>
+                <a id="email" href="mailto:hello@bemychef.com.au" target="_blank">hello@bemychef.com.au</a></p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  
 </body>
 </html>
