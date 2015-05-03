@@ -1,7 +1,10 @@
 package com.epickur.api.dao;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 
@@ -10,6 +13,7 @@ import com.epickur.api.dao.mongo.codec.DishTypeCodec;
 import com.epickur.api.utils.Utils;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
@@ -54,6 +58,8 @@ public final class MongoDb {
 		String address = prop.getProperty("mongo.address");
 		int port = Integer.parseInt(prop.getProperty("mongo.port"));
 		String dbName = prop.getProperty("mongo.db.name");
+		String userName = prop.getProperty("mongo.user.login");
+		String password = prop.getProperty("mongo.user.password");
 
 		CoordinatesCodec coordinatesCodec = new CoordinatesCodec();
 		DishTypeCodec dishTypeCodec = new DishTypeCodec();
@@ -66,7 +72,14 @@ public final class MongoDb {
 
 		MongoClientOptions options = MongoClientOptions.builder().codecRegistry(codecRegistry).build();
 
-		mongoClient = new MongoClient(new ServerAddress(address, port), options);
+		if (!StringUtils.isBlank(userName) && !StringUtils.isBlank(password)) {
+			MongoCredential credential = MongoCredential.createCredential(userName, dbName, password.toCharArray());
+			List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+			credentials.add(credential);
+			mongoClient = new MongoClient(new ServerAddress(address, port), credentials, options);
+		} else {
+			mongoClient = new MongoClient(new ServerAddress(address, port), options);
+		}
 		db = mongoClient.getDatabase(dbName);
 	}
 
