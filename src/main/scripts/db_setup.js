@@ -222,7 +222,65 @@ db.dishes.insert(
     		"videoUrl": "http://www.google.com",
     		"createdAt": NumberLong(1424042592185),
     		"updatedAt": NumberLong(1424042592185)
-  	}]
+  	},{
+	  	"name": "Noodles Curry",
+	  	"description": "Fresh Noodles with curry",
+    	"type": "meat",
+    	"price": NumberInt(500),
+    	"cookingTime": NumberInt(5),
+    	"difficultyLevel": NumberInt(1),
+    	"caterer": 
+      {
+        "_id" : "54e90015b634980ccd05e3be",
+        "name": "Fish & Chips",
+        "description": "The bast Fish & Chips down under",
+        "manager": "Dean Prob",
+        "email": "dprob@fishchips.com",
+        "phone": "312-211-8913",
+        "location" : {
+          "address" : {
+            "label" : "Downtown area",
+            "houseNumber" : "1",
+            "street" : "Elizabeth Street",
+            "city" : "Melbourne",
+            "postalCode" : NumberInt(32901),
+            "state" : "Victoria",
+            "country" : "Australia"
+          },
+          "geo" : {
+            "type" : "Point",
+            "coordinates" : [144.963280, -37.814107]
+          }
+        },
+        "createdAt" : NumberLong(1424042592185),
+        "updatedAt" : NumberLong(1424042592185)
+     },
+  	"ingredients": 
+  		[{
+  			"name": "Fish",
+  			"sequence": NumberInt(1),
+  			"quantity": 1.0
+  		},
+  		{
+  			"name": "Chips",
+  			"sequence": NumberInt(2),
+  			"quantity": 1.0
+  		}],
+  	"nutritionFacts": 
+  		[{
+  			"name": "Calories",
+  			"value": 1250.0,
+  			"unit": "kJ"
+  		},
+  		{
+  			"name": "Proteins",
+  			"value": 750.5,
+  			"unit": "g"
+  		}],
+  		"videoUrl": "http://www.google.com",
+  		"createdAt": NumberLong(1424042592185),
+  		"updatedAt": NumberLong(1424042592185)
+	}]
 )
 
 /** Insert Orders **/

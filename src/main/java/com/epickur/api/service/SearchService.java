@@ -10,11 +10,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.epickur.api.business.SearchBusiness;
 import com.epickur.api.entity.Dish;
+import com.epickur.api.entity.Geo;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.SearchValidator;
 
@@ -41,17 +45,18 @@ public final class SearchService {
 	// @formatter:off
 	/** 
 	 * 
-	 * @api {get} /search?type=:type&limit=:limit&address=:address&distance=:distance Search a dish
+	 * @api {get} /search?types=:type1,type2,...,typeN&limit=:limit&at=:lat,:long&searchtext=:searchtext&distance=:distance Search a dish
 	 * @apiVersion 1.0.0
 	 * @apiName SearchDish
 	 * @apiGroup Search
 	 * @apiDescription Search a dish.
 	 * @apiPermission admin, super_user, user
 	 * 
-	 * @apiParam (Request: URL Parameter) {String} type Type of Dish to search (case sensitive for now).
-	 * @apiParam (Request: URL Parameter) {String} limit Limit of number of result.
-	 * @apiParam (Request: URL Parameter) {String} address Address where to search nextby.
-	 * @apiParam (Request: URL Parameter) {String} distance Distance from the origin point to search (in meter) (optional).
+	 * @apiParam (Request: URL Parameter) {String} types list of Dish type to search.
+	 * @apiParam (Request: URL Parameter) {String} limit Limit of number of result (default is 50).
+	 * @apiParam (Request: URL Parameter) {String} at Geocoordinates to use (latitude, longitude).
+	 * @apiParam (Request: URL Parameter) {String} searchtext Searchtext to geocode.
+	 * @apiParam (Request: URL Parameter) {String} distance Distance from the origin point to search (in meter) (default is 500).
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the Dish.
 	 * @apiSuccess (Response: JSON Object) {String} name Name of the Dish.
@@ -131,11 +136,11 @@ public final class SearchService {
 	 */
 	// @formatter:on
 	/**
-	 * @param type
-	 *            The Dish type
+	 * @param types
+	 *            The list of Dish type
 	 * @param limit
 	 *            The limit ammount of result
-	 * @param address
+	 * @param searchtext
 	 *            The address
 	 * @param distance
 	 *            The distance
@@ -146,12 +151,18 @@ public final class SearchService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response search(
-			@QueryParam("type") final DishType type,
+			@QueryParam("types") final String types,
 			@DefaultValue("50") @QueryParam("limit") final Integer limit,
-			@QueryParam("address") final String address,
+			@QueryParam("at") final String at,
+			@QueryParam("searchtext") final String searchtext,
 			@DefaultValue("500") @QueryParam("distance") final Integer distance) throws EpickurException {
-		validator.checkSearch(type, address);
-		List<Dish> dishes = this.searchBusiness.search(type, limit, address, distance);
+		validator.checkSearch(types, at, searchtext);
+		List<DishType> dishTypes = Utils.stringToListDishType(types);
+		Geo geo = null;
+		if (!StringUtils.isBlank(at)) {
+			geo = Utils.stringToGeo(at);
+		}
+		List<Dish> dishes = this.searchBusiness.search(dishTypes, limit, geo, searchtext, distance);
 		if (dishes.size() != 0) {
 			return Response.ok().entity(dishes).build();
 		} else {

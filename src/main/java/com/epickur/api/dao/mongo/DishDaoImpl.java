@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.BsonArray;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -131,7 +134,7 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 	/**
 	 * Search a list of Dish
 	 * 
-	 * @param type
+	 * @param types
 	 *            The type of Dish to search
 	 * @param limit
 	 *            The max result returned
@@ -143,20 +146,31 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 	 * @throws EpickurException
 	 *             if an epickur exception occurred
 	 */
-	public List<Dish> search(final DishType type, final Integer limit, final Geo geo, final Integer distance) throws EpickurException {
-		Document document = new Document();
-		document.append("type", type.getType());
-		document.put("caterer.location.geo", geo.getSearch(0, distance));
+	public List<Dish> search(final List<DishType> types, final Integer limit, final Geo geo, final Integer distance) throws EpickurException {
+		Document find = new Document();
+		if (types.size() == 1) {
+			find.append("type", types.get(0).getType());
+		} else {
+			// db.dishes.find({$or: [{type:'meat'},{type:'fish'}]})
+			BsonArray or = new BsonArray();
+			for (DishType type : types) {
+				BsonDocument content = new BsonDocument();
+				content.append("type", new BsonString(type.getType()));
+				or.add(content);
+			}
+			find.append("$or", or);
+		}
+		find.put("caterer.location.geo", geo.getSearch(0, distance));
 		List<Dish> dishes = new ArrayList<Dish>();
 		MongoCursor<Document> cursor = null;
 		try {
-			cursor = getColl().find(document).limit(limit).iterator();
+			cursor = getColl().find(find).limit(limit).iterator();
 			while (cursor.hasNext()) {
 				Dish dish = Dish.getObject(cursor.next());
 				dishes.add(dish);
 			}
 		} catch (MongoException e) {
-			throw new EpickurDBException("search", e.getMessage(), document, e);
+			throw new EpickurDBException("search", e.getMessage(), find, e);
 		} finally {
 			if (cursor != null) {
 				cursor.close();

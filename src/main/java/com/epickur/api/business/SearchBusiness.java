@@ -33,7 +33,7 @@ public final class SearchBusiness {
 	 *            The type of Dish
 	 * @param limit
 	 *            The number max of result
-	 * @param address
+	 * @param searchtext
 	 *            The address
 	 * @param distance
 	 *            The distance
@@ -41,9 +41,14 @@ public final class SearchBusiness {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public List<Dish> search(final DishType type, final Integer limit, final String address, final int distance) throws EpickurException {
-		IGeocoder geocoder = new GeocoderHereImpl();
-		Geo geo = geocoder.getPosition(address);
-		return dishDao.search(type, limit, geo, distance);
+	public List<Dish> search(final List<DishType> type, final Integer limit, final Geo geo, final String searchtext, final int distance)
+			throws EpickurException {
+		if (geo == null) {
+			IGeocoder geocoder = new GeocoderHereImpl();
+			Geo geoFound = geocoder.getPosition(searchtext);
+			return dishDao.search(type, limit, geoFound, distance);
+		} else {
+			return dishDao.search(type, limit, geo, distance);
+		}
 	}
 }

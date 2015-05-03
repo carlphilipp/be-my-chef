@@ -95,7 +95,7 @@ public class SearchServiceTest {
 			assertNotNull(dishResult.getId());
 			idsToDelete.add(dishResult.getId());
 			idsToDeleteCaterer.add(dishResult.getCaterer().getId());
-			Response result2 = searchService.search(dish.getType(), 100, "832 W. Wrightwood, Chicago", 3000);
+			Response result2 = searchService.search(dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000);
 			if (result2.getEntity() != null) {
 				List<Dish> dishes = (List<Dish>) result2.getEntity();
 				assertNotNull(dishes);
@@ -114,7 +114,7 @@ public class SearchServiceTest {
 	@Test
 	public void testSearch3() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
-		Response result2 = searchService.search(dish.getType(), 100, "832 W. Wrightwood, Chicago", 3000);
+		Response result2 = searchService.search(dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000);
 		if (result2.getEntity() != null) {
 			DBObject res = (DBObject) result2.getEntity();
 			assertNotNull(res);
@@ -126,26 +126,26 @@ public class SearchServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail() throws EpickurException {
-		searchService.search(null, null, null, null);
+		searchService.search(null, null, null, null, null);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail3() throws EpickurException {
-		searchService.search(DishType.FISH, null, null, null);
+		searchService.search(DishType.FISH.getType(), null, null, null, null);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail4() throws EpickurException {
-		searchService.search(DishType.FISH, 8, "", null);
+		searchService.search(DishType.FISH.getType(), 8, null, "", null);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail5() throws EpickurException {
-		searchService.search(DishType.FISH, 0, null, null);
+		searchService.search(DishType.FISH.getType(), 0, null, null, null);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail6() throws EpickurException {
-		searchService.search(DishType.FISH, 0, "", null);
+		searchService.search(DishType.FISH.getType(), 0, null, "", null);
 	}
 }

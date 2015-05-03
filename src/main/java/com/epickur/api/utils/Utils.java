@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -14,8 +16,10 @@ import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -203,5 +207,23 @@ public final class Utils {
 		} catch (Exception e) {
 			throw new EpickurParsingException("Error while parsing date '" + date + "' with format '" + format + "'", e);
 		}
+	}
+
+	public static List<DishType> stringToListDishType(final String types) {
+		List<DishType> res = new ArrayList<DishType>();
+		String[] typesArray = types.split(",");
+		for (String temp : typesArray) {
+			res.add(DishType.fromString(temp));
+		}
+		return res;
+	}
+
+	public static Geo stringToGeo(final String str) {
+		Geo geo = new Geo();
+		String[] geoArray = str.split(",");
+		// Not sure about 0 or 1
+		geo.setLatitude(Double.valueOf(geoArray[0]));
+		geo.setLongitude(Double.valueOf(geoArray[1]));
+		return geo;
 	}
 }

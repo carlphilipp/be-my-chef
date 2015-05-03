@@ -91,11 +91,13 @@ public class SearchIntegrationTest {
 		String type = "Meat";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
-		HttpGet request = new HttpGet(URL + "&type=" + type + "&limit=" + limit + "&address=" + URLEncoder.encode(address, "UTF-8"));
+		HttpGet request = new HttpGet(URL + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, 200, statusCode);
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
 		in.close();
@@ -104,18 +106,20 @@ public class SearchIntegrationTest {
 
 	@Test
 	public void testSearchAustralia() throws ClientProtocolException, IOException {
-		String type = "Fish";
+		String type = "Fish,Meat";
 		String limit = "100";
 		String address = "388 Bourke St Melbourne, Australia";
-		HttpGet request = new HttpGet(URL + "&type=" + type + "&limit=" + limit + "&address=" + URLEncoder.encode(address, "UTF-8"));
+		HttpGet request = new HttpGet(URL + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, 200, statusCode);
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
 		in.close();
-		Assert.assertThat(jsonResult.size(), is(1));
+		Assert.assertThat(jsonResult.size(), is(2));
 	}
 
 }
