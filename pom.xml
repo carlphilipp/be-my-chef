@@ -21,6 +21,7 @@
 		<cargo.port>8180</cargo.port>
 		<cobertura.version>2.6</cobertura.version>
 		<codec.version>1.10</codec.version>
+		<configuration.version>1.10</configuration.version>
 		<compiler.version>3.1</compiler.version>
 		<doxia.version>1.0</doxia.version>
 		<failsafe.version>2.17</failsafe.version>
@@ -117,14 +118,14 @@
 	</repositories>
 
 	<dependencies>
-	
+
 		<!-- Database MongoDB -->
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
 			<version>${mongodb.version}</version>
 		</dependency>
-		
+
 		<!-- Jersey and Jackson as JSON provider -->
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
@@ -136,7 +137,7 @@
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
-		
+
 		<!-- Unit testing -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -144,7 +145,7 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- Mock framework -->
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -152,14 +153,14 @@
 			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-		
+
 		<!-- Scheduler -->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -172,7 +173,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- Utils -->
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -205,14 +206,14 @@
 			<artifactId>slf4j-nop</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-		
+
 		<!-- Date framework -->
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>${joda.version}</version>
 		</dependency>
-		
+
 		<!-- Stripe payment -->
 		<dependency>
 			<groupId>com.stripe</groupId>
@@ -224,7 +225,7 @@
 			<artifactId>hamcrest-all</artifactId>
 			<version>${hamcrest.version}</version>
 		</dependency>
-		
+
 		<!-- Usefull for web site generated -->
 		<dependency>
 			<groupId>org.kohsuke</groupId>
@@ -242,7 +243,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- Mandrill Mails -->
 		<dependency>
 			<groupId>com.cribbstechnologies.clients</groupId>
@@ -271,13 +272,21 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>${configuration.version}</version>
+		</dependency>
 	</dependencies>
+
 	<build>
 		<finalName>epickur</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
 				<excludes>
+				  <exclude>env/**</exclude>
 					<exclude>epickur-checkstyle.xml</exclude>
 					<exclude>epickur-eclipse-profil.xml</exclude>
 					<exclude>epickur.template.properties</exclude>
@@ -285,8 +294,9 @@
 				</excludes>
 			</resource>
 		</resources>
+
 		<plugins>
-		
+
 			<!-- Compile -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -297,7 +307,7 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-			
+
 			<!-- Tests -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -412,27 +422,121 @@
 					<phase>site</phase> <goals> <goal>instrument</goal> <goal>cobertura</goal> 
 					</goals> </execution> </executions> -->
 			</plugin>
-
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>properties-maven-plugin</artifactId>
-				<version>${properties.version}</version>
-				<executions>
-					<execution>
-						<phase>initialize</phase>
-						<goals>
-							<goal>read-project-properties</goal>
-						</goals>
-						<configuration>
-							<files>
-								<file>${project.build.resources[0].directory}/epickur.properties</file>
-							</files>
-						</configuration>
-					</execution>
-				</executions>
+				<groupId>com.heroku.sdk</groupId>
+				<artifactId>heroku-maven-plugin</artifactId>
+				<version>0.3.7</version>
+				<configuration>
+					<appName>epickur-api</appName>
+					<jdkVersion>1.7</jdkVersion>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>properties-maven-plugin</artifactId>
+						<version>${properties.version}</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<goals>
+									<goal>read-project-properties</goal>
+								</goals>
+								<configuration>
+									<files>
+										<file>${project.build.resources[0].directory}/env/local.properties</file>
+									</files>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>heroku</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>${compiler.version}</version>
+						<configuration>
+							<source>${java.version}</source>
+							<target>${java.version}</target>
+						</configuration>
+					</plugin>
+					<plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>${properties.version}</version>
+            <executions>
+              <execution>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>read-project-properties</goal>
+                </goals>
+                <configuration>
+                  <files>
+                    <file>${project.build.resources[0].directory}/env/heroku.properties</file>
+                  </files>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>2.10</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>com.github.jsimone</groupId>
+											<artifactId>webapp-runner</artifactId>
+											<version>8.0.18.0-M1</version>
+											<destFileName>webapp-runner.jar</destFileName>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${surfire.version}</version>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>com.heroku.sdk</groupId>
+						<artifactId>heroku-maven-plugin</artifactId>
+						<configuration>
+							<appName>epickur-api</appName>
+							<jdkVersion>1.7</jdkVersion>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<reporting>
 		<plugins>

@@ -101,6 +101,22 @@ public final class Utils {
 		Properties prop = new Properties();
 		try {
 			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("epickur.properties"));
+			if (prop.getProperty("address").equals("${base.address}")) {
+				prop = derp();
+			}
+		} catch (IOException e) {
+			LOG.error(e.getLocalizedMessage(), e);
+		}
+		return prop;
+	}
+
+	private static Properties derp() {
+		Properties prop = new Properties();
+		try {
+			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("local.properties"));
+			if (prop.getProperty("address").equals("${base.address}")) {
+				prop = derp();
+			}
 		} catch (IOException e) {
 			LOG.error(e.getLocalizedMessage(), e);
 		}
