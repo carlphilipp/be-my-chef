@@ -23,6 +23,7 @@
 		<codec.version>1.10</codec.version>
 		<configuration.version>1.10</configuration.version>
 		<compiler.version>3.1</compiler.version>
+		<c3p0.version>0.9.1.1</c3p0.version>
 		<doxia.version>1.0</doxia.version>
 		<failsafe.version>2.17</failsafe.version>
 		<findbugs.version>3.0.0</findbugs.version>
@@ -674,7 +675,7 @@
 			<dependency>
 				<groupId>c3p0</groupId>
 				<artifactId>c3p0</artifactId>
-				<version>0.9.1.1</version>
+				<version>${c3p0.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
