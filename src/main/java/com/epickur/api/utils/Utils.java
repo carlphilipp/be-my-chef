@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -101,8 +102,8 @@ public final class Utils {
 		Properties prop = new Properties();
 		try {
 			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("epickur.properties"));
-			if (prop.getProperty("address").equals("${base.address}")) {
-				prop = derp();
+			if (prop.getProperty("address").equals("${address}")) {
+				prop = loadLocal(prop);
 			}
 		} catch (IOException e) {
 			LOG.error(e.getLocalizedMessage(), e);
@@ -110,17 +111,17 @@ public final class Utils {
 		return prop;
 	}
 
-	private static Properties derp() {
+	private static Properties loadLocal(Properties properties) {
 		Properties prop = new Properties();
 		try {
-			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("local.properties"));
-			if (prop.getProperty("address").equals("${base.address}")) {
-				prop = derp();
+			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("env/local.properties"));
+			for(Entry<Object, Object> e : prop.entrySet()){
+				properties.put(e.getKey(), e.getValue());
 			}
 		} catch (IOException e) {
-			LOG.error(e.getLocalizedMessage(), e);
+			LOG.error("Can't load resource env/local.properties. Please create it and put the right value in it.", e);
 		}
-		return prop;
+		return properties;
 	}
 
 	/**

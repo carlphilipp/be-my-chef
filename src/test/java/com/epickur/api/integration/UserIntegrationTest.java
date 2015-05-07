@@ -430,7 +430,7 @@ public class UserIntegrationTest {
 		json = mapper.createObjectNode();
 		Dish dish = TestUtils.generateRandomDish();
 		dish.setId(new ObjectId());
-		json.put("dish", mapper.readTree(dish.toStringAPIView()));
+		json.set("dish", mapper.readTree(dish.toStringAPIView()));
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
@@ -528,7 +528,7 @@ public class UserIntegrationTest {
 		List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
 		dish.setIngredients(ingredients);
 		dish.setVideoUrl("google.com");
-		json.put("dish", mapper.readTree(dish.toStringAPIView()));
+		json.set("dish", mapper.readTree(dish.toStringAPIView()));
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
@@ -648,7 +648,7 @@ public class UserIntegrationTest {
 		dish.setIngredients(ingredients);
 		dish.setVideoUrl("google.com");
 		dish.setCaterer(TestUtils.generateRandomCatererWithId());
-		json.put("dish", mapper.readTree(dish.toStringAPIView()));
+		json.set("dish", mapper.readTree(dish.toStringAPIView()));
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
@@ -760,7 +760,7 @@ public class UserIntegrationTest {
 		dish.setIngredients(ingredients);
 		dish.setVideoUrl("google.com");
 		dish.setCaterer(TestUtils.generateRandomCatererWithId());
-		json.put("dish", mapper.readTree(dish.toStringAPIView()));
+		json.set("dish", mapper.readTree(dish.toStringAPIView()));
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");

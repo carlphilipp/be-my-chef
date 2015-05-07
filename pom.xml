@@ -119,6 +119,12 @@
 
 	<dependencies>
 
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>2.17</version>
+		</dependency>
+
 		<!-- Database MongoDB -->
 		<dependency>
 			<groupId>org.mongodb</groupId>
@@ -241,6 +247,10 @@
 					<groupId>org.apache.httpcomponents</groupId>
 					<artifactId>httpclient</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -276,6 +286,12 @@
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
 			<version>${configuration.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -286,7 +302,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<excludes>
-				  <exclude>env/**</exclude>
+					<exclude>env/**</exclude>
 					<exclude>epickur-checkstyle.xml</exclude>
 					<exclude>epickur-eclipse-profil.xml</exclude>
 					<exclude>epickur.template.properties</exclude>
@@ -422,15 +438,9 @@
 					<phase>site</phase> <goals> <goal>instrument</goal> <goal>cobertura</goal> 
 					</goals> </execution> </executions> -->
 			</plugin>
-			<plugin>
-				<groupId>com.heroku.sdk</groupId>
-				<artifactId>heroku-maven-plugin</artifactId>
-				<version>0.3.7</version>
-				<configuration>
-					<appName>epickur-api</appName>
-					<jdkVersion>1.7</jdkVersion>
-				</configuration>
-			</plugin>
+			<!-- <plugin> <groupId>com.heroku.sdk</groupId> <artifactId>heroku-maven-plugin</artifactId> 
+				<version>0.3.7</version> <configuration> <appName>epickur-api</appName> <jdkVersion>1.7</jdkVersion> 
+				</configuration> </plugin> -->
 		</plugins>
 	</build>
 
@@ -477,23 +487,23 @@
 						</configuration>
 					</plugin>
 					<plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>properties-maven-plugin</artifactId>
-            <version>${properties.version}</version>
-            <executions>
-              <execution>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>read-project-properties</goal>
-                </goals>
-                <configuration>
-                  <files>
-                    <file>${project.build.resources[0].directory}/env/heroku.properties</file>
-                  </files>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>properties-maven-plugin</artifactId>
+						<version>${properties.version}</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<goals>
+									<goal>read-project-properties</goal>
+								</goals>
+								<configuration>
+									<files>
+										<file>${project.build.resources[0].directory}/env/heroku.properties</file>
+									</files>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
@@ -522,15 +532,20 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${surfire.version}</version>
 						<configuration>
+						  <!-- Do NEVER change this value to false, risk of losing data in prod DB -->
 							<skipTests>true</skipTests>
 						</configuration>
 					</plugin>
 					<plugin>
 						<groupId>com.heroku.sdk</groupId>
 						<artifactId>heroku-maven-plugin</artifactId>
+						<version>0.3.7</version>
 						<configuration>
 							<appName>epickur-api</appName>
 							<jdkVersion>1.7</jdkVersion>
+							<configVars>
+								<WEBAPP_RUNNER_OPTS>--expand-war</WEBAPP_RUNNER_OPTS>
+							</configVars>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -645,6 +660,21 @@
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
 				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>c3p0</groupId>
+				<artifactId>c3p0</artifactId>
+				<version>0.9.1.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

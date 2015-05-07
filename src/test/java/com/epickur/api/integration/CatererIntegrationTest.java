@@ -67,7 +67,7 @@ public class CatererIntegrationTest {
 		coord[1] = 40.77f;
 		coordinates.add(coord[0]);
 		coordinates.add(coord[1]);
-		geo.put("coordinates", coordinates);
+		geo.set("coordinates", coordinates);
 		address2.put("label", "carl");
 		address2.put("houseNumber", "832");
 		address2.put("street", "Wrightwood");
@@ -75,10 +75,10 @@ public class CatererIntegrationTest {
 		address2.put("postalCode", "60614");
 		address2.put("state", "Illinois");
 		address2.put("country", "USA");
-		location.put("address", address2);
-		location.put("geo", geo);
+		location.set("address", address2);
+		location.set("geo", geo);
 		caterer.put("name", name);
-		caterer.put("location", location);
+		caterer.set("location", location);
 		caterer.put("description", "Caterer description");
 		caterer.put("manager", "Manager name");
 		caterer.put("email", "email@email.com");
@@ -144,7 +144,7 @@ public class CatererIntegrationTest {
 		coord[1] = 40.77f;
 		coordinates.add(coord[0]);
 		coordinates.add(coord[1]);
-		geo.put("coordinates", coordinates);
+		geo.set("coordinates", coordinates);
 		address.put("label", "carl");
 		address.put("houseNumber", "832");
 		address.put("street", "Wrightwood");
@@ -152,10 +152,10 @@ public class CatererIntegrationTest {
 		address.put("postalCode", "60614");
 		address.put("state", "Illinois");
 		address.put("country", "USA");
-		location.put("address", address);
-		location.put("geo", geo);
+		location.set("address", address);
+		location.set("geo", geo);
 		caterer.put("name", name);
-		caterer.put("location", location);
+		caterer.set("location", location);
 		caterer.put("description", "Caterer description");
 		caterer.put("manager", "Manager name");
 		caterer.put("email", "email@email2.com");

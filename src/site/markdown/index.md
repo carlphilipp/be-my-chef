@@ -21,23 +21,23 @@ Add Tomcat8 in Eclipse as a server.
 ###Configure
 Two files need to be duplicated and renamed:
 
-`src/main/resources/epickur.template.properties`
+`src/main/resources/env/local.template.properties`
 
 to
 
-`src/main/resources/epickur.properties`
+`src/main/resources/env/local.properties`
 
 
 This file contains all the properties of the application. Some are linked with your environment like:
 
 ```
-	name      = Epickur
-	address	  = http://localhost:8380
-	folder    = /epickur/api
-	admins    = cp.harmant@gmail.com
+  address               = http://localhost:8180
+  folder                = /epickur/api
+  mongo.address         = localhost
+  mongo.port            = 27017
 ```
 
-Some of the properties need to be update to fit your environment.
+All those properties need to be updated to fit your environment.
 
 There is also the same things for the test file:
 
@@ -46,6 +46,18 @@ There is also the same things for the test file:
 to
 
 `src/test/resources/test.properties`
+
+Another notable file:
+
+`src/main/resources/epickur.properties`
+
+This file contains all the application properties. Maven will inject the value of your local.properties into this fiel. The properties of that file should not be modified.
+
+###Maven
+
+Two profils are definied in pom.xml: 
+* local: The default one that should be used in local. 
+* heroku: Here to deploy in heroku.
 
 ###Test
 
@@ -60,20 +72,44 @@ Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and 
 
 MongoDB must be started.
 
-Unit testing: `mvn test`
+Unit testing: `mvn test -P local`
 
-Integration testing: `mvn integration-test`
+Integration testing: `mvn integration-test -P local`
 
 
 ###Build
 ####From Maven:
 
-Generate war: `mvn warify`
+Generate war with Maven: `mvn warify -P local`
 
-Generate Maven documentation: `mvn site`
+Generate documentation with Maven: `mvn site -P local`
 
 Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Windows or `src/main/scripts/generate-api.sh` from Linux or OSX.
 
+###Heroku
+
+To deploy on heroku:
+
+`mvn heroku deploy-war -P heroku`
+
+To resolve an issue, I had to configure heroku with:
+
+`heroku config:set WEBAPP_RUNNER_OPTS="--expand-war` or in the pom.xml:
+
+```
+<plugin>
+  <groupId>com.heroku.sdk</groupId>
+  <artifactId>heroku-maven-plugin</artifactId>
+  <version>0.3.7</version>
+  <configuration>
+    <appName>epickur-api</appName>
+    <jdkVersion>1.7</jdkVersion>
+    <configVars>
+      <WEBAPP_RUNNER_OPTS>--expand-war</WEBAPP_RUNNER_OPTS>
+    </configVars>
+   </configuration>
+</plugin>
+```
 
 ###Known issue with Eclipse
 Issue with Maven dependencies not deployed

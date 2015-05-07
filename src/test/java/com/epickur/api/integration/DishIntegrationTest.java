@@ -283,7 +283,7 @@ public class DishIntegrationTest {
 		json.put("cookingTime", cookingTimePut);
 		json.put("difficultyLevel", difficultyLevelPut);
 		json.put("videoUrl", videoURLPut);
-		json.put("caterer", mapper.readTree(caterer2.toStringAPIView()));
+		json.set("caterer", mapper.readTree(caterer2.toStringAPIView()));
 		requestEntity = new StringEntity(json.toString());
 
 		HttpPut putRequest = new HttpPut(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
