@@ -63,7 +63,7 @@ public final class UserBusiness {
 	public User create(final User user, final boolean sendEmail, final boolean autoValidate) throws EpickurException {
 		if (userDao.exists(user.getName(), user.getEmail())) {
 			throw new EpickurDuplicateKeyException("The user already exists");
-		}
+		} 
 		if (autoValidate) {
 			user.setAllow(1);
 		} else {
