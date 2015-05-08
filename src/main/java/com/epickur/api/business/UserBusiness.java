@@ -10,6 +10,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
+import com.epickur.api.exception.EpickurDuplicateKeyException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.utils.ErrorUtils;
@@ -60,6 +61,9 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User create(final User user, final boolean sendEmail, final boolean autoValidate) throws EpickurException {
+		if (userDao.exists(user.getName(), user.getEmail())) {
+			throw new EpickurDuplicateKeyException("The user already exists");
+		}
 		if (autoValidate) {
 			user.setAllow(1);
 		} else {

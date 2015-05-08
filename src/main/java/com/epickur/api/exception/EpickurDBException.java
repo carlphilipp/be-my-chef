@@ -10,7 +10,7 @@ import com.mongodb.MongoException;
  * @author cph
  * @version 1.0
  */
-public final class EpickurDBException extends EpickurException {
+public class EpickurDBException extends EpickurException {
 
 	/** Serializer **/
 	private static final long serialVersionUID = 1L;
@@ -29,6 +29,16 @@ public final class EpickurDBException extends EpickurException {
 	 * Constructor
 	 */
 	public EpickurDBException() {
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param message
+	 *            The message
+	 */
+	public EpickurDBException(final String message) {
+		super(message);
 	}
 
 	/**
@@ -100,28 +110,28 @@ public final class EpickurDBException extends EpickurException {
 	/**
 	 * @return A DBObject
 	 */
-	public Document getDocument() {
+	public final Document getDocument() {
 		return this.doc;
 	}
 
 	/**
 	 * @return The id of the product
 	 */
-	public String getId() {
+	public final String getId() {
 		return id;
 	}
 
 	/**
 	 * @return The update query
 	 */
-	public Document getUpdate() {
+	public final Document getUpdate() {
 		return update;
 	}
 
 	/**
 	 * @return The operation type
 	 */
-	public String getOperation() {
+	public final String getOperation() {
 		return operation;
 	}
 }

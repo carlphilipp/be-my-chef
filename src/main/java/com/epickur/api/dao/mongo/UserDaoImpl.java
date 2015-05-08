@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.BsonArray;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -173,5 +176,23 @@ public final class UserDaoImpl extends DaoCrud<User> {
 			}
 		}
 		return users;
+	}
+
+	public boolean exists(final String name, final String email) {
+		boolean res = false;
+		Document find = new Document();
+		BsonArray or = new BsonArray();
+		BsonDocument bsonName = new BsonDocument();
+		bsonName.append("name", new BsonString(name));
+		BsonDocument bsonEmail = new BsonDocument();
+		bsonEmail.append("email", new BsonString(email));
+		or.add(bsonName);
+		or.add(bsonEmail);
+		find.append("$or", or);
+		Document found = getColl().find(find).first();
+		if (found != null) {
+			res = true;
+		}
+		return res;
 	}
 }
