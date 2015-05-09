@@ -290,7 +290,7 @@ public final class UserBusiness {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, name);
 			} else {
 				dbUser.setAllow(1);
-				userDao.update(dbUser);
+				dbUser = userDao.update(dbUser);
 			}
 		} else {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, name);

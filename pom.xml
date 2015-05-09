@@ -415,7 +415,9 @@
 						<directory>src/main/resources</directory>
 						<filtering>true</filtering>
 						<excludes>
-							<exclude>env/**</exclude>
+							<exclude>env/heroku.properties</exclude>
+							<exclude>env/local.template.properties</exclude>
+							<exclude>env/log4j2.prod.xml</exclude>
 							<exclude>epickur-checkstyle.xml</exclude>
 							<exclude>epickur-eclipse-profil.xml</exclude>
 							<exclude>epickur.template.properties</exclude>

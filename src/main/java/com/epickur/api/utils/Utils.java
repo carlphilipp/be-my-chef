@@ -115,10 +115,10 @@ public final class Utils {
 		Properties prop = new Properties();
 		try {
 			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("env/local.properties"));
-			for(Entry<Object, Object> e : prop.entrySet()){
+			for (Entry<Object, Object> e : prop.entrySet()) {
 				properties.put(e.getKey(), e.getValue());
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LOG.error("Can't load resource env/local.properties. Please create it and put the right value in it.", e);
 		}
 		return properties;
