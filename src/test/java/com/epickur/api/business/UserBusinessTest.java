@@ -102,6 +102,7 @@ public class UserBusinessTest {
 		business.injectNewPassword(temp);
 	}
 
+	@Test
 	public void testCheckCode() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String name = new String(user.getName());

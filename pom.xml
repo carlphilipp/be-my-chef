@@ -452,6 +452,20 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+						<excludes>
+							<exclude>env/heroku.properties</exclude>
+							<exclude>env/local.template.properties</exclude>
+							<exclude>epickur-checkstyle.xml</exclude>
+							<exclude>epickur-eclipse-profil.xml</exclude>
+							<exclude>epickur.template.properties</exclude>
+							<exclude>stylesheet.css</exclude>
+						</excludes>
+					</resource>
+				</resources>
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -533,7 +547,8 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${surfire.version}</version>
 						<configuration>
-						  <!-- Do NEVER change this value to false, risk of losing data in prod DB -->
+							<!-- Do NEVER change this value to false, risk of losing data in prod 
+								DB -->
 							<skipTests>true</skipTests>
 						</configuration>
 					</plugin>
