@@ -90,41 +90,7 @@
 		</developer>
 	</developers>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>codehaus-snapshots</id>
-			<name>Codehaus Snapshots</name>
-			<url>http://nexus.codehaus.org/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-
-	<repositories>
-		<repository>
-			<id>codehaus-snapshots</id>
-			<name>Codehaus Snapshots</name>
-			<url>http://nexus.codehaus.org/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
 	<dependencies>
-
-		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>2.17</version>
-		</dependency>
 
 		<!-- Database MongoDB -->
 		<dependency>
@@ -294,23 +260,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<!-- Java mail needed for log4j -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.5.0-b01</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
 		<finalName>epickur</finalName>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<excludes>
-					<exclude>env/**</exclude>
-					<exclude>epickur-checkstyle.xml</exclude>
-					<exclude>epickur-eclipse-profil.xml</exclude>
-					<exclude>epickur.template.properties</exclude>
-					<exclude>stylesheet.css</exclude>
-				</excludes>
-			</resource>
-		</resources>
 
 		<plugins>
 
@@ -439,9 +400,6 @@
 					<phase>site</phase> <goals> <goal>instrument</goal> <goal>cobertura</goal> 
 					</goals> </execution> </executions> -->
 			</plugin>
-			<!-- <plugin> <groupId>com.heroku.sdk</groupId> <artifactId>heroku-maven-plugin</artifactId> 
-				<version>0.3.7</version> <configuration> <appName>epickur-api</appName> <jdkVersion>1.7</jdkVersion> 
-				</configuration> </plugin> -->
 		</plugins>
 	</build>
 
@@ -457,8 +415,7 @@
 						<directory>src/main/resources</directory>
 						<filtering>true</filtering>
 						<excludes>
-							<exclude>env/heroku.properties</exclude>
-							<exclude>env/local.template.properties</exclude>
+							<exclude>env/**</exclude>
 							<exclude>epickur-checkstyle.xml</exclude>
 							<exclude>epickur-eclipse-profil.xml</exclude>
 							<exclude>epickur.template.properties</exclude>
@@ -491,16 +448,48 @@
 		<profile>
 			<id>heroku</id>
 			<build>
+
+				<!-- Remove resources env and log4j.xml -->
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+						<excludes>
+							<exclude>env/**</exclude>
+							<exclude>epickur-checkstyle.xml</exclude>
+							<exclude>epickur-eclipse-profil.xml</exclude>
+							<exclude>epickur.template.properties</exclude>
+							<exclude>stylesheet.css</exclude>
+							<exclude>log4j2.xml</exclude>
+						</excludes>
+					</resource>
+				</resources>
+
 				<plugins>
+
+					<!-- Inject log4j.prod.xml into build directory -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>${compiler.version}</version>
-						<configuration>
-							<source>${java.version}</source>
-							<target>${java.version}</target>
-						</configuration>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<id>copy-dependencies</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy file="src/main/resources/env/log4j2.prod.xml"
+											tofile="target/epickur/WEB-INF/classes/log4j2.xml" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
+
+					<!-- Inject heroku properties into project -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>properties-maven-plugin</artifactId>
@@ -519,6 +508,8 @@
 							</execution>
 						</executions>
 					</plugin>
+
+					<!-- Webapp Runner -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
@@ -542,16 +533,19 @@
 							</execution>
 						</executions>
 					</plugin>
+
+					<!-- Skip tests -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${surfire.version}</version>
 						<configuration>
-							<!-- Do NEVER change this value to false, risk of losing data in prod 
-								DB -->
+							<!-- Do NEVER change this value to false, risk of losing data -->
 							<skipTests>true</skipTests>
 						</configuration>
 					</plugin>
+
+					<!-- Heroku deployment -->
 					<plugin>
 						<groupId>com.heroku.sdk</groupId>
 						<artifactId>heroku-maven-plugin</artifactId>
@@ -665,6 +659,7 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Appenders>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{dd/MM/yyyy HH:mm:ss}{America/Chicago} - %-5p [%c{1}:%L] %m%n" />
+		</Console>
+		<SMTP 
+		    name ="EMAIL" 
+		    subject="[Epickur] Log Exception"
+		    from="carl@bemychef.com.au" 
+		    to="cp.harmant@gmail.com"
+		    smtpProtocol="smtps"
+		    smtpHost="smtp.zoho.com"
+		    smtpPort="465" 
+		    smtpUsername="carl@bemychef.com.au"
+		    smtpPassword="a3842100"
+		    smtpDebug="true"
+		    bufferSize="512"
+		    >
+		    <PatternLayout pattern="%d{dd/MM/yyyy HH:mm:ss}{America/Chicago} - %-5p [%c{1}:%L] %m%n" />
+		</SMTP>
+	</Appenders>
+	<Loggers>
+		<Root level="trace">
+			<AppenderRef ref="STDOUT" level="debug" />
+			<AppenderRef ref="EMAIL" level="error" />
+		</Root>
+	</Loggers>
+</Configuration>
