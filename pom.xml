@@ -475,7 +475,7 @@
 						<executions>
 							<execution>
 								<id>copy-dependencies</id>
-								<phase>prepare-package</phase>
+								<phase>validate</phase>
 								<goals>
 									<goal>run</goal>
 								</goals>
