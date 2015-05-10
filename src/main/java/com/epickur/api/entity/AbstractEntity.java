@@ -71,7 +71,7 @@ public abstract class AbstractEntity implements IEntity {
 			return om.writeValueAsString(this);
 		} catch (JsonProcessingException e) {
 			LOG.error(e.getLocalizedMessage(), e);
-			return null;
+			return "error";
 		}
 	}
 

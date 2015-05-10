@@ -13,7 +13,7 @@ import com.epickur.api.utils.ErrorUtils;
  *
  */
 @Provider
-public class EpickurDuplicateKeyExceptionMapper implements ExceptionMapper<EpickurDuplicateKeyException> {
+public final class EpickurDuplicateKeyExceptionMapper implements ExceptionMapper<EpickurDuplicateKeyException> {
 
 	@Override
 	public Response toResponse(final EpickurDuplicateKeyException exception) {

@@ -111,7 +111,14 @@ public final class Utils {
 		return prop;
 	}
 
-	private static Properties loadLocal(Properties properties) {
+	/**
+	 * Get properties from a the local file. Used only to inject param at run time for eclipse. Not needed for Maven
+	 * 
+	 * @param properties
+	 *            The properties we want to inject some new properties in.
+	 * @return The new properties
+	 */
+	private static Properties loadLocal(final Properties properties) {
 		Properties prop = new Properties();
 		try {
 			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("env/local.properties"));
@@ -226,6 +233,13 @@ public final class Utils {
 		}
 	}
 
+	/**
+	 * Convert String to list of dish type
+	 * 
+	 * @param types
+	 *            The String to convert
+	 * @return The list of DishType created
+	 */
 	public static List<DishType> stringToListDishType(final String types) {
 		List<DishType> res = new ArrayList<DishType>();
 		String[] typesArray = types.split(",");
@@ -235,10 +249,17 @@ public final class Utils {
 		return res;
 	}
 
+	/**
+	 * Convert a string to Geo object.
+	 * 
+	 * @param str
+	 *            the string
+	 * @return A Geo object
+	 */
 	public static Geo stringToGeo(final String str) {
 		Geo geo = new Geo();
 		String[] geoArray = str.split(",");
-		// Not sure about 0 or 1
+		// TODO: Not sure about 0 or 1, check which one is correct
 		geo.setLatitude(Double.valueOf(geoArray[0]));
 		geo.setLongitude(Double.valueOf(geoArray[1]));
 		return geo;

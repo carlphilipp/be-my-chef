@@ -123,6 +123,7 @@ public class SearchServiceTest {
 				assertEquals(Response.Status.NO_CONTENT, res.get("error"));
 			} catch (Exception e) {
 				e.printStackTrace();
+				fail("error");
 			}
 		} else {
 			fail("List of dish returned is null");

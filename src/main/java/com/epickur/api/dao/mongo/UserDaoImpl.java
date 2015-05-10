@@ -178,6 +178,15 @@ public final class UserDaoImpl extends DaoCrud<User> {
 		return users;
 	}
 
+	/**
+	 * Check if a user exists with it's name or email
+	 * 
+	 * @param name
+	 *            The User name
+	 * @param email
+	 *            The User email
+	 * @return true if the user if found
+	 */
 	public boolean exists(final String name, final String email) {
 		boolean res = false;
 		Document find = new Document();

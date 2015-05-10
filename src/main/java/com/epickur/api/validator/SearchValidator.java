@@ -18,12 +18,14 @@ public final class SearchValidator extends Validator {
 	protected SearchValidator() {
 		super("search");
 	}
-
+	
 	/**
-	 * @param type
-	 *            The Dish type
+	 * @param types
+	 *            The list of dish type
+	 * @param at
+	 *            The geo coordinate
 	 * @param searchtext
-	 *            The address
+	 *            The address to search
 	 */
 	public void checkSearch(final String types, final String at, final String searchtext) {
 		if (StringUtils.isBlank(types)) {

@@ -35,6 +35,8 @@ public final class SearchBusiness {
 	 *            The number max of result
 	 * @param searchtext
 	 *            The address
+	 * @param geo
+	 *            The geo location
 	 * @param distance
 	 *            The distance
 	 * @return A list of Dish

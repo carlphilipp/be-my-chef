@@ -142,6 +142,8 @@ public final class SearchService {
 	 *            The limit ammount of result
 	 * @param searchtext
 	 *            The address
+	 * @param at
+	 *            A geo localisation coordinate. lat,long
 	 * @param distance
 	 *            The distance
 	 * @throws EpickurException
