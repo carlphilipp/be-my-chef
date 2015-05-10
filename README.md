@@ -116,6 +116,11 @@ Issue with Maven dependencies not deployed
 
 Bug in m2Clipse
 
+###Known issue with Jersey
+Some errors are not properly routed like #API-22.
+See ticket in Jersey Jira: https://java.net/jira/browse/JERSEY-2722
+It's not a big deal, the developer needs to pass a correctly formed request anyway.
+
 ###Credits
 
 [@cpharmant](https://twitter.com/cpharmant)
