@@ -82,7 +82,7 @@ public final class ErrorUtils {
 	 */
 	public static Response noResult() {
 		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.NO_CONTENT);
+		bdb.put("error", Response.Status.NO_CONTENT.getStatusCode());
 		bdb.put("message", Response.Status.NO_CONTENT.getReasonPhrase());
 		return Response.status(Response.Status.NO_CONTENT).entity(bdb).build();
 	}

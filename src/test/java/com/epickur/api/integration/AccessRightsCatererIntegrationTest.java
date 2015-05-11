@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
@@ -34,11 +36,6 @@ public class AccessRightsCatererIntegrationTest {
 	private static String URL_NO_KEY;
 	private static String API_KEY;
 	private static String jsonMimeType;
-	private static String mongoPath;
-	private static String mongoAddress;
-	private static String mongoPort;
-	private static String mongoDbName;
-	private static String scriptCleanPath;
 	private static ObjectMapper mapper;
 
 	@BeforeClass
@@ -57,18 +54,12 @@ public class AccessRightsCatererIntegrationTest {
 
 		jsonMimeType = "application/json";
 		mapper = new ObjectMapper();
-
-		mongoPath = prop.getProperty("mongo.path");
-		mongoAddress = prop.getProperty("mongo.address");
-		mongoPort = prop.getProperty("mongo.port");
-		mongoDbName = prop.getProperty("mongo.db.name");
-		scriptCleanPath = prop.getProperty("script.clean");
+		TestUtils.setupDB();
 	}
 
 	@AfterClass
 	public static void afterClass() throws IOException {
-		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
-		TestUtils.runShellCommand(cmd);
+		TestUtils.cleanDB();
 	}
 
 	// User Administrator
@@ -88,12 +79,10 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 		assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
 	}
@@ -111,12 +100,9 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 	}
 
 	@Test
@@ -137,12 +123,9 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 	}
 
 	@Test
@@ -158,12 +141,9 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 	}
 
 	// User Super_User
@@ -185,12 +165,10 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
 		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
@@ -210,12 +188,9 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 	}
 
 	@Test
@@ -237,12 +212,9 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
 	}
 
 	@Test
@@ -265,12 +237,9 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 	}
 
 	@Test
@@ -287,12 +256,9 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
 	}
 
 	// User User
@@ -314,12 +280,10 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
 		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
@@ -339,12 +303,9 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 200, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 	}
 
 	@Test
@@ -366,12 +327,9 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
 	}
 
 	@Test
@@ -388,11 +346,8 @@ public class AccessRightsCatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
-
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-		assertEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
 	}
 }

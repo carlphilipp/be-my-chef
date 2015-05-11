@@ -165,8 +165,10 @@ public class UserIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
 
 		// Create result
 		assertEquals(name, jsonResult.get("name").asText());
@@ -208,8 +210,10 @@ public class UserIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
 
 		// Create result
 		assertEquals(name, jsonResult.get("name").asText());
@@ -237,8 +241,10 @@ public class UserIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
-		jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.CONFLICT.getStatusCode(), statusCode2);
+		jsonResult = mapper.readTree(obj);
 
 		// Delete this user
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
@@ -261,9 +267,11 @@ public class UserIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
+		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 
 		JsonNode jsonResult = mapper.readTree(obj);
-		in.close();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 
@@ -297,8 +305,10 @@ public class UserIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
 
 		String id = jsonResult.get("id").asText();
 
@@ -318,8 +328,10 @@ public class UserIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
-		jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+		jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -357,8 +369,11 @@ public class UserIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		
+		JsonNode jsonResult = mapper.readTree(obj);
 
 		String id = jsonResult.get("id").asText();
 
@@ -375,11 +390,11 @@ public class UserIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
+		in.close();
+		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode2);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
-
-		// Read result
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
 	}
 
 	/**
@@ -412,9 +427,11 @@ public class UserIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
-
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
+		
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
 		// Create result
@@ -446,8 +463,10 @@ public class UserIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
-		jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+		jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -497,8 +516,10 @@ public class UserIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -558,8 +579,10 @@ public class UserIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
-		jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+		jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -617,9 +640,10 @@ public class UserIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
-
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
 		// Create result
@@ -664,6 +688,9 @@ public class UserIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
+		in.close();
+		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
 		jsonResult = mapper.readTree(obj);
 		in.close();
 
@@ -691,8 +718,10 @@ public class UserIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
-		jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode3 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode3);
+		jsonResult = mapper.readTree(obj);
 
 		assertNotNull(jsonResult.get("error"));
 		assertEquals(new Long(404), jsonResult.get("error").asLong(), 0.01);
@@ -729,8 +758,10 @@ public class UserIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -776,8 +807,10 @@ public class UserIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
-		jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+		jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -806,8 +839,10 @@ public class UserIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
-		jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode3 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode3);
+		jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 

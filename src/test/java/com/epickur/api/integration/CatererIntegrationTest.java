@@ -95,8 +95,10 @@ public class CatererIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
 		// Create result
 		id = ((JsonNode) jsonResult.get("id")).asText();
@@ -171,8 +173,10 @@ public class CatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
 		// Create result
 		assertEquals(name, jsonResult.get("name").asText());
@@ -221,10 +225,13 @@ public class CatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
+		
+		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-		in.close();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 

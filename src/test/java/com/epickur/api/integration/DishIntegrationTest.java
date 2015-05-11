@@ -40,7 +40,6 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Location;
 import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.service.CatererService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -50,7 +49,6 @@ public class DishIntegrationTest {
 	private static String URL_NO_KEY;
 	private static String API_KEY;
 	private static List<ObjectId> idsCatererToDelete;
-	private static CatererService catererService;
 	private static ContainerRequestContext context;
 	private static String jsonMimeType = "application/json";
 
@@ -59,6 +57,7 @@ public class DishIntegrationTest {
 		InputStreamReader in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
+		in.close();
 		String address = prop.getProperty("address");
 		String path = prop.getProperty("api.path");
 		URL_NO_KEY = address + path + "/dishes";
@@ -69,18 +68,20 @@ public class DishIntegrationTest {
 		in.close();
 		URL = URL_NO_KEY + "?key=" + API_KEY;
 
-		catererService = new CatererService();
 		idsCatererToDelete = new ArrayList<ObjectId>();
 		context = mock(ContainerRequestContext.class);
 		Key key = TestUtils.generateRandomKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
+
+		TestUtils.setupDB();
 	}
 
 	@AfterClass
-	public static void afterClass() throws EpickurException {
-		for (ObjectId id : idsCatererToDelete) {
-			catererService.delete(id.toHexString(), context);
-		}
+	public static void afterClass() throws EpickurException, IOException {
+		/*
+		 * for (ObjectId id : idsCatererToDelete) { catererService.delete(id.toHexString(), context); }
+		 */
+		TestUtils.cleanDB();
 	}
 
 	@Test
@@ -119,8 +120,10 @@ public class DishIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -175,8 +178,10 @@ public class DishIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -243,8 +248,10 @@ public class DishIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -339,8 +346,10 @@ public class DishIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		JsonNode jsonResult = mapper.readTree(obj);
 		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -353,6 +362,9 @@ public class DishIntegrationTest {
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);
 		obj = br.readLine();
+		in.close();
+		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+		assertEquals(Response.Status.OK.getStatusCode(), statusCode2);
 		jsonResult = mapper.readTree(obj);
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));

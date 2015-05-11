@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -36,6 +37,7 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.MeasurementUnit;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.integration.SearchIntegrationTest;
 import com.epickur.api.utils.ObjectMapperWrapperAPI;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +51,38 @@ import com.stripe.model.Token;
 public class TestUtils {
 	/** Logger **/
 	private static final Logger LOG = LogManager.getLogger(TestUtils.class.getSimpleName());
+
+	public static void setupDB() throws IOException {
+		InputStreamReader in = new InputStreamReader(SearchIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+		Properties prop = new Properties();
+		prop.load(in);
+		in.close();
+
+		String mongoPath = prop.getProperty("mongo.path");
+		String mongoAddress = prop.getProperty("mongo.address");
+		String mongoPort = prop.getProperty("mongo.port");
+		String mongoDbName = prop.getProperty("mongo.db.name");
+		String scriptSetupPath = prop.getProperty("script.setup");
+		
+		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptSetupPath;
+		TestUtils.runShellCommand(cmd);
+	}
+	
+	public static void cleanDB() throws IOException{
+		InputStreamReader in = new InputStreamReader(SearchIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+		Properties prop = new Properties();
+		prop.load(in);
+		in.close();
+
+		String mongoPath = prop.getProperty("mongo.path");
+		String mongoAddress = prop.getProperty("mongo.address");
+		String mongoPort = prop.getProperty("mongo.port");
+		String mongoDbName = prop.getProperty("mongo.db.name");
+		String scriptCleanPath = prop.getProperty("script.clean");
+		
+		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
+		TestUtils.runShellCommand(cmd);
+	}
 
 	public static Caterer getCaererObject(final String json) throws EpickurException {
 		Caterer caterer = null;
@@ -260,7 +294,7 @@ public class TestUtils {
 	public static Integer generateRandomInteger() {
 		return RandomUtils.nextInt(0, 500);
 	}
-	
+
 	public static Integer generateRandomStripAmount() {
 		return RandomUtils.nextInt(100, 5000);
 	}
@@ -331,7 +365,7 @@ public class TestUtils {
 		caterer.setCreatedBy(userId);
 		return business.create(caterer);
 	}
-	
+
 	public static User createUser() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		UserBusiness business = new UserBusiness();
@@ -363,7 +397,7 @@ public class TestUtils {
 		User login = business.login(newUser.getEmail(), password);
 		return login;
 	}
-	
+
 	public static Dish createDish() throws EpickurException {
 		return createDishWithUserId(new ObjectId());
 	}
@@ -376,7 +410,8 @@ public class TestUtils {
 		return newDish;
 	}
 
-	public static Order createOrder(ObjectId userId) throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+	public static Order createOrder(ObjectId userId) throws EpickurException, AuthenticationException, InvalidRequestException,
+			APIConnectionException,
 			CardException, APIException {
 		Token token = TestUtils.generateRandomToken();
 		Order order = TestUtils.generateRandomOrder();
@@ -385,7 +420,8 @@ public class TestUtils {
 		return orderRes;
 	}
 
-	public static Order createOrder(ObjectId userId, ObjectId catererId) throws AuthenticationException, InvalidRequestException, APIConnectionException,
+	public static Order createOrder(ObjectId userId, ObjectId catererId) throws AuthenticationException, InvalidRequestException,
+			APIConnectionException,
 			CardException, APIException, EpickurException {
 		Token token = TestUtils.generateRandomToken();
 		Order order = TestUtils.generateRandomOrder();

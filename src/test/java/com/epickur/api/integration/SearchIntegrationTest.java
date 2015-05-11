@@ -32,18 +32,12 @@ public class SearchIntegrationTest {
 	private static String URL_NO_KEY;
 	private static String API_KEY;
 
-	private static String mongoPath;
-	private static String mongoAddress;
-	private static String mongoPort;
-	private static String mongoDbName;
-	private static String scriptSetupPath;
-	private static String scriptCleanPath;
-
 	@BeforeClass
 	public static void beforeClass() throws IOException {
 		InputStreamReader in = new InputStreamReader(SearchIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
+		in.close();
 		String address = prop.getProperty("address");
 		String path = prop.getProperty("api.path");
 		URL_NO_KEY = address + path + "/search";
@@ -53,21 +47,12 @@ public class SearchIntegrationTest {
 		API_KEY = br.readLine();
 		in.close();
 		URL = URL_NO_KEY + "?key=" + API_KEY;
-
-		mongoPath = prop.getProperty("mongo.path");
-		mongoAddress = prop.getProperty("mongo.address");
-		mongoPort = prop.getProperty("mongo.port");
-		mongoDbName = prop.getProperty("mongo.db.name");
-		scriptSetupPath = prop.getProperty("script.setup");
-		scriptCleanPath = prop.getProperty("script.clean");
-		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptSetupPath;
-		TestUtils.runShellCommand(cmd);
+		TestUtils.setupDB();
 	}
 
 	@AfterClass
 	public static void afterClass() throws IOException {
-		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
-		TestUtils.runShellCommand(cmd);
+		TestUtils.cleanDB();
 	}
 
 	@Test
@@ -96,11 +81,11 @@ public class SearchIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
+		in.close();
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, 200, statusCode);
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
-		in.close();
 		Assert.assertThat(jsonResult.size(), is(1));
 	}
 
@@ -114,11 +99,11 @@ public class SearchIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
+		in.close();
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, 200, statusCode);
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
-		in.close();
 		Assert.assertThat(jsonResult.size(), is(2));
 	}
 

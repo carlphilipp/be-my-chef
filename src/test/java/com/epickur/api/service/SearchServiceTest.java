@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,18 +113,19 @@ public class SearchServiceTest {
 	}
 
 	@Test
-	public void testSearch3() throws EpickurException {
+	public void testSearch3() throws EpickurException, IOException {
+		TestUtils.cleanDB();
 		Dish dish = TestUtils.generateRandomDish();
-		Response result2 = searchService.search(dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000);
-		if (result2.getEntity() != null) {
+		Response result = searchService.search(dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000);
+		if (result.getEntity() != null) {
+			DBObject res = null;
 			try {
-				DBObject res = (DBObject) result2.getEntity();
+				res = (DBObject) result.getEntity();
 
 				assertNotNull(res);
-				assertEquals(Response.Status.NO_CONTENT, res.get("error"));
+				assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res.get("error"));
 			} catch (Exception e) {
-				e.printStackTrace();
-				fail("error");
+				fail(result.getEntity() + " has been returned. We should have had a no content error");
 			}
 		} else {
 			fail("List of dish returned is null");
