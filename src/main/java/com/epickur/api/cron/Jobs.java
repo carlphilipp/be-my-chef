@@ -17,7 +17,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import com.epickur.api.utils.Utils;
 
 /**
- * Cron jobs
+ * The goal of this class is to run {@link CleanKeysJob} that clean the keys into MongodDB
  * 
  * @author cph
  * @version 1.0
@@ -36,7 +36,7 @@ public class Jobs {
 	}
 
 	/**
-	 * Function that starts the cron jobs
+	 * Function that starts the cron job {@link CleanKeysJob}
 	 * 
 	 * @throws SchedulerException
 	 *             If an error occurred while running jobs

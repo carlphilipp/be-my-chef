@@ -14,20 +14,20 @@ import com.epickur.api.validator.CatererValidator;
 import com.epickur.api.validator.FactoryValidator;
 
 /**
- * Caterer business layer. Access Caterer DAO layer and execute logic.
+ * {@link Caterer} business layer. Execute logic and access {@link CatererDaoImpl} layer to update the database.
  * 
  * @author cph
  * @version 1.0
  */
 public class CatererBusiness {
 
-	/** Caterer dao **/
+	/** The DAO {@link CatererDaoImpl} **/
 	private CatererDaoImpl dao;
-	/** Caterer validator **/
+	/** The validator {@link CatererValidator} **/
 	private CatererValidator validator;
 
 	/**
-	 * The constructor
+	 * Construct a Caterer Business
 	 */
 	public CatererBusiness() {
 		this.dao = new CatererDaoImpl();
@@ -35,24 +35,24 @@ public class CatererBusiness {
 	}
 
 	/**
-	 * Create a Caterer
+	 * Create a {@link Caterer}
 	 * 
 	 * @param caterer
-	 *            The Caterer
-	 * @return the Caterer created
+	 *            The {@link Caterer}
+	 * @return The {@link Caterer} created
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Caterer create(final Caterer caterer) throws EpickurException {
 		return dao.create(caterer);
 	}
 
 	/**
-	 * Read a Caterer
+	 * Read a {@link Caterer}
 	 * 
 	 * @param id
-	 *            The id of the Caterer
-	 * @return a Caterer
+	 *            The id of the {@link Caterer}
+	 * @return a {@link Caterer}
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
@@ -63,9 +63,9 @@ public class CatererBusiness {
 	/**
 	 * Read all the Caterers
 	 * 
-	 * @return a list of Caterer
+	 * @return a list of {@link Caterer}
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final List<Caterer> readAll() throws EpickurException {
 		return dao.readAll();
@@ -73,14 +73,14 @@ public class CatererBusiness {
 
 	/**
 	 * @param caterer
-	 *            The Caterer
+	 *            The {@link Caterer}
 	 * @param role
 	 *            The Role
 	 * @param userId
 	 *            The User Id
-	 * @return The updated Caterer
+	 * @return The updated {@link Caterer}
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Caterer update(final Caterer caterer, final Role role, final ObjectId userId) throws EpickurException {
 		Caterer read = dao.read(caterer.getId().toHexString());
@@ -92,13 +92,13 @@ public class CatererBusiness {
 	}
 
 	/**
-	 * Delete a Caterer
+	 * Delete a {@link Caterer}
 	 * 
 	 * @param id
-	 *            The id of the Caterer
-	 * @return true if the Caterer has been deleted
+	 *            The id of the {@link Caterer}
+	 * @return true if the {@link Caterer} has been deleted
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final boolean delete(final String id) throws EpickurException {
 		return dao.delete(id);

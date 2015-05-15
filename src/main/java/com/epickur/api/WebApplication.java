@@ -13,7 +13,7 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.utils.EnumTransformer;
 
 /**
- * Resource configuration that starts Cron jobs
+ * Resource configuration that starts {@link Jobs}
  * 
  * @author cph
  * @version 1.0

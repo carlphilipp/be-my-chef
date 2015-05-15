@@ -31,7 +31,7 @@ public final class KeyBusiness {
 	 *            the Key
 	 * @return the Key created
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public Key create(final Key key) throws EpickurException {
 		return this.keyDao.create(key);
@@ -44,7 +44,7 @@ public final class KeyBusiness {
 	 *            the name of the Key
 	 * @return the Key found
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public Key readWithName(final String name) throws EpickurException {
 		return this.keyDao.readWithName(name);
@@ -56,7 +56,7 @@ public final class KeyBusiness {
 	 * @param id
 	 *            the id of the Key
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public void delete(final String id) throws EpickurException {
 		this.keyDao.delete(id);
@@ -65,7 +65,7 @@ public final class KeyBusiness {
 	/**
 	 * @return A list of Key
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public List<Key> readAll() throws EpickurException {
 		return this.keyDao.readAll();

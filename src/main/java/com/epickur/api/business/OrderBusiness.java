@@ -62,7 +62,7 @@ public class OrderBusiness {
 	 *            True if you want send all emails
 	 * @return an Order
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Order create(final String userId, final Order order, final String cardToken, final boolean shouldCharge, final boolean sendEmail)
 			throws EpickurException {
@@ -135,7 +135,7 @@ public class OrderBusiness {
 	 *            The key
 	 * @return An Order
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Order read(final String id, final Key key) throws EpickurException {
 		Order order = orderDao.read(id);
@@ -151,7 +151,7 @@ public class OrderBusiness {
 	 *            The user id
 	 * @return a list of Order
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final List<Order> readAllWithUserId(final String userId) throws EpickurException {
 		return orderDao.readAllWithUserId(userId);
@@ -166,7 +166,7 @@ public class OrderBusiness {
 	 *            The end date
 	 * @return A list of Order
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
 		return orderDao.readAllWithCatererId(catererId, start, end);
@@ -179,7 +179,7 @@ public class OrderBusiness {
 	 *            The key
 	 * @return The updated Order
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Order update(final Order order, final Key key) throws EpickurException {
 		Order read = orderDao.read(order.getId().toHexString());
@@ -195,7 +195,7 @@ public class OrderBusiness {
 	 *            The Order id
 	 * @return True if The Order has been deleted
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final boolean delete(final String id) throws EpickurException {
 		return orderDao.delete(id);

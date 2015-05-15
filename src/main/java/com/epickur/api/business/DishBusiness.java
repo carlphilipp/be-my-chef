@@ -11,20 +11,20 @@ import com.epickur.api.validator.DishValidator;
 import com.epickur.api.validator.FactoryValidator;
 
 /**
- * Dish business layer. Access Dish DAO layer and execute logic.
+ * {@link Dish} business layer. Execute logic and access {@link DishDaoImpl} layer to update the database.
  * 
  * @author cph
  * @version 1.0
  */
 public class DishBusiness {
 
-	/** Dish dao **/
+	/** The DAO {@link DishDaoImpl}. **/
 	private DishDaoImpl dao;
-	/** Service validator **/
+	/** The validator {@link DishValidator}. **/
 	private DishValidator validator;
 
 	/**
-	 * The constructor
+	 * Construct a Dish Business.
 	 */
 	public DishBusiness() {
 		this.dao = new DishDaoImpl();
@@ -32,26 +32,26 @@ public class DishBusiness {
 	}
 
 	/**
-	 * Create a Dish
+	 * Create a {@link Dish}
 	 * 
 	 * @param dish
-	 *            the Dish
-	 * @return the Dish created
+	 *            the {@link Dish}
+	 * @return the {@link Dish} created
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Dish create(final Dish dish) throws EpickurException {
 		return dao.create(dish);
 	}
 
 	/**
-	 * Read a Dish
+	 * Read a {@link Dish}
 	 * 
 	 * @param id
-	 *            the id of the Dish
-	 * @return the Dish
+	 *            the id of the {@link Dish}
+	 * @return the {@link Dish}
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Dish read(final String id) throws EpickurException {
 		return dao.read(id);
@@ -60,24 +60,24 @@ public class DishBusiness {
 	/**
 	 * Read all Dishes
 	 * 
-	 * @return a list of Dish
+	 * @return a list of {@link Dish}
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final List<Dish> readAll() throws EpickurException {
 		return dao.readAll();
 	}
 
 	/**
-	 * Update a Dish
+	 * Update a {@link Dish}
 	 * 
 	 * @param dish
-	 *            The Dish
+	 *            The {@link Dish}
 	 * @param key
 	 *            The Key
-	 * @return the updated Dish
+	 * @return the updated {@link Dish}
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Dish update(final Dish dish, final Key key) throws EpickurException {
 		Dish read = dao.read(dish.getId().toHexString());
@@ -86,15 +86,15 @@ public class DishBusiness {
 	}
 
 	/**
-	 * Delete a Dish
+	 * Delete a {@link Dish}
 	 * 
 	 * @param id
-	 *            the id of the Dish
+	 *            the id of the {@link Dish}
 	 * @param key
 	 *            The Key
-	 * @return true if the Dish has been deleted
+	 * @return true if the {@link Dish} has been deleted
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an ${@link EpickurException} occurred
 	 */
 	public final boolean delete(final String id, final Key key) throws EpickurException {
 		Dish read = dao.read(id);
