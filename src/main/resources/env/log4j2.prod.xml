@@ -17,6 +17,12 @@
     <Logger name="com.epickur.api" level="info">
       <AppenderRef ref="Console" />
     </Logger>
+    <Logger name="org.mongodb.driver" level="warn">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.quartz" level="warn">
+      <AppenderRef ref="Console" />
+    </Logger>
     <Root level="info">
       <AppenderRef ref="Console" />
       <AppenderRef ref="Email" level="error" />
