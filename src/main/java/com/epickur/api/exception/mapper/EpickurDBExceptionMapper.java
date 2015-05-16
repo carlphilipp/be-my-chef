@@ -1,5 +1,7 @@
 package com.epickur.api.exception.mapper;
 
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -17,6 +19,7 @@ import com.epickur.api.utils.ErrorUtils;
  * @version 1.0
  */
 @Provider
+@Produces(MediaType.APPLICATION_JSON)
 public final class EpickurDBExceptionMapper implements ExceptionMapper<EpickurDBException> {
 
 	/** Logger **/

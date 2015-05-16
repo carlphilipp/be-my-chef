@@ -8,7 +8,7 @@
 		<servlet-name>myrest</servlet-name>
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 
-		<!-- Possibility to configure trae via HTTP Header. See documentation -->
+		<!-- Possibility to configure trace via HTTP Header. See documentation -->
 		<init-param>
 			<param-name>jersey.config.server.tracing.type</param-name>
 			<param-value>OFF</param-value>

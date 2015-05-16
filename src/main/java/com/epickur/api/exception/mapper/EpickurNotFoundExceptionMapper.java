@@ -1,8 +1,11 @@
 package com.epickur.api.exception.mapper;
 
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.mongodb.BasicDBObjectBuilder;
@@ -13,6 +16,8 @@ import com.mongodb.DBObject;
  * @version 1.0
  * 
  */
+@Provider
+@Produces(MediaType.APPLICATION_JSON)
 public final class EpickurNotFoundExceptionMapper implements ExceptionMapper<EpickurNotFoundException> {
 
 	@Override

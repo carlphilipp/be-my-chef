@@ -24,7 +24,7 @@ import com.epickur.api.utils.ErrorUtils;
 public final class EpickurExceptionMapper implements ExceptionMapper<EpickurException> {
 
 	/** Logger **/
-	private static final Logger LOG = LogManager.getLogger(ThrowableExeptionMapper.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(EpickurExceptionMapper.class.getSimpleName());
 
 	@Override
 	public Response toResponse(final EpickurException exception) {

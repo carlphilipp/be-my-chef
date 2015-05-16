@@ -1,5 +1,7 @@
 package com.epickur.api.exception.mapper;
 
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -19,6 +21,7 @@ import com.mongodb.DBObject;
  * @version 1.0
  */
 @Provider
+@Produces(MediaType.APPLICATION_JSON)
 public final class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingException> {
 
 	/** Logger **/
