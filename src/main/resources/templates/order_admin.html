@@ -1,24 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-</head>
-<body>
-Welcome <b>@@NAME@@</b>,
-<br/>
-<br/>
-New order:
-<br/>Id: @@ORDER_ID@@
-<br/>
-User: @@USER_NAME@@ 
-<br/>
-Dish: @@DISH_NAME@@
-<br/>
-Caterer: @@CATERER_NAME@@
-<br/>
-<br/>
-Best regards,
-<br/>
-The @@TEAM_NAME@@ team.
-</body>
-</html>
+Name: @@NAME@@<br>
+Id: @@ORDER_ID@@<br>
+User: @@USER_NAME@@<br>
+Dish: @@DISH_NAME@@<br>
+Caterer: @@CATERER_NAME@@<br>
+Team: @@TEAM_NAME@@<br>
+
+<div id="container"
+  style="background-color: #f2f2f2; width: 100%; height: 600px;">
+  <div id="main" style="padding-top: 100px;">
+    <table id="logoTable"
+      style="margin: auto; border: 0; cellpadding: 0; cellspacing: 0; width: 600px;">
+      <tbody>
+        <tr>
+          <td><img style="width: 580px"
+            src="http://www.bemychef.com.au/assets/img/logo/logo-color-L.png" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table id="dataTable"
+      style="border: 0; cellpadding: 0; cellspacing: 0; width: 600px; border-radius: 6px; background-color: #ffffff; margin: auto;">
+      <tbody>
+        <tr>
+          <td style="line-height: 150%; font-family: Verdana; font-size: 14px; color: #333333; padding: 20px; valign: top; align: left;">
+            <h2>New Order: </h2>
+            <div>
+              <p style="padding: 0 0 10px 0;">
+                Order id: @@ORDER_ID@@<br>
+                User: @@USER_NAME@@<br>
+                Dish: @@DISH_NAME@@<br>
+                Caterer: @@CATERER_NAME@@<br>
+              </p>
+            </div>
+            <div>
+              <p style="padding: 0 0 10px 0;">If you received this email by mistake, simply delete it.</p>
+              <p style="padding: 0 0 10px 0;"> For questions about this email, please contact: <br> 
+                <a id="email" style="color: #336699;" href="mailto:hello@bemychef.com.au" target="_blank">hello@bemychef.com.au</a>
+              </p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

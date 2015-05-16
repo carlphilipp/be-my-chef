@@ -1,55 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-</head>
-<body>
-Name: @@NAME@@,
-<br/>
-<br/>
-Thank you for ordering.
-<br/>
-Dish name: @@DISH_NAME@@.
-<br/><br/>
-Team name: @@TEAM_NAME@@
+Name: @@NAME@@<br>
+Dish name: @@DISH_NAME@@<br>
+Team name: @@TEAM_NAME@@<br>
 
-<div id="container" style="background-color:#f2f2f2;width:100%;height:600px;">
-  <div id="main" style="padding-top:100px;">
-    <table id="logoTable" style="margin:auto;border:0;cellpadding:0;cellspacing:0;width:600px;">
-      <tbody>
-        <tr>
-          <td>
-            <img style="width: 580px" src="http://www.bemychef.com.au/assets/img/logo/logo-color-L.png" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <table id="dataTable" style="border:0;cellpadding:0;cellspacing:0;width:600px;border-radius:6px;background-color:#ffffff;margin:auto;">
-      <tbody>
-        <tr>
-          <td style="line-height:150%;font-family:Verdana; font-size:14px;color:#333333;padding:20px;valign: top;align: left;">
-            <h2>You have a new order for @@USER_NAME@@</h2>
-            Dish: @@DISH_NAME@@.<br>
-            Do you accept the order?<br>
-            <a id="button" style=" color:#ffffff!important;display:inline-block;font-weight:500;font-size:16px;line-height:42px;font-family:'Helvetica',Arial,sans-serif;width:auto;white-space:nowrap;min-height:42px;margin:12px 5px 12px 0;padding:0 22px;text-decoration:none;text-align:center;border:0;border-radius:3px;vertical-align:top;background-color:green!important;" href="http://www.google.com.au" target="_blank">
-              <span style="display:inline;font-family:'Helvetica',Arial,sans-serif;text-decoration:none;font-weight:500;font-style:normal;font-size:16px;line-height:42px;border:none;background-color:green!important;color:#ffffff!important">
-                Yes
-              </span>
-            </a>
-            <a id="button" style=" color:#ffffff!important;display:inline-block;font-weight:500;font-size:16px;line-height:42px;font-family:'Helvetica',Arial,sans-serif;width:auto;white-space:nowrap;min-height:42px;margin:12px 5px 12px 0;padding:0 22px;text-decoration:none;text-align:center;border:0;border-radius:3px;vertical-align:top;background-color:red!important;" href="http://www.google.com.au" target="_blank">
-              <span style="display:inline;font-family:'Helvetica',Arial,sans-serif;text-decoration:none;font-weight:500;font-style:normal;font-size:16px;line-height:42px;border:none;background-color:red!important;color:#ffffff!important">
-                No
-              </span>
-            </a>
-            <div>
-              <p style="padding:0 0 10px 0;">For questions about this email, please contact:
-                <br>
-                <a id="email" style="color:#336699;" href="mailto:hello@bemychef.com.au" target="_blank">hello@bemychef.com.au</a>
-              </p>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+<div id="container"
+	style="background-color: #f2f2f2; width: 100%; height: 600px;">
+	<div id="main" style="padding-top: 100px;">
+		<table id="logoTable"
+			style="margin: auto; border: 0; cellpadding: 0; cellspacing: 0; width: 600px;">
+			<tbody>
+				<tr>
+					<td><img style="width: 580px"
+						src="http://www.bemychef.com.au/assets/img/logo/logo-color-L.png" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<table id="dataTable"
+			style="border: 0; cellpadding: 0; cellspacing: 0; width: 600px; border-radius: 6px; background-color: #ffffff; margin: auto;">
+			<tbody>
+				<tr>
+					<td
+						style="line-height: 150%; font-family: Verdana; font-size: 14px; color: #333333; padding: 20px; valign: top; align: left;">
+						<h2>Thank you for ordering</h2>
+						<div>
+							<p style="padding: 0 0 10px 0;">We are contacting the restaurant for you. You will receive an email as soon as the restaurant accepted the order.</p>
+						</div>
+						<div>
+							<p style="padding: 0 0 10px 0;">If you received this email by
+								mistake, simply delete it.</p>
+							<p style="padding: 0 0 10px 0;">
+								For questions about this email, please contact: <br> <a
+									id="email" style="color: #336699;"
+									href="mailto:hello@bemychef.com.au" target="_blank">hello@bemychef.com.au</a>
+							</p>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
