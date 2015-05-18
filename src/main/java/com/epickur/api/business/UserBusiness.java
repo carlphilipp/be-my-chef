@@ -1,7 +1,6 @@
 package com.epickur.api.business;
 
 import java.util.List;
-import java.util.Map;
 
 import org.joda.time.DateTime;
 
@@ -14,12 +13,9 @@ import com.epickur.api.exception.EpickurDuplicateKeyException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.utils.ErrorUtils;
-import com.epickur.api.utils.Info;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.Utils;
-import com.epickur.api.utils.email.Email;
-import com.epickur.api.utils.email.EmailTemplate;
-import com.epickur.api.utils.email.EmailType;
+import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 
@@ -63,7 +59,7 @@ public final class UserBusiness {
 	public User create(final User user, final boolean sendEmail, final boolean autoValidate) throws EpickurException {
 		if (userDao.exists(user.getName(), user.getEmail())) {
 			throw new EpickurDuplicateKeyException("The user already exists");
-		} 
+		}
 		if (autoValidate) {
 			user.setAllow(1);
 		} else {
@@ -83,15 +79,7 @@ public final class UserBusiness {
 		User res = userDao.create(user);
 
 		if (sendEmail) {
-			// Convert data to use email template
-			Map<String, String> emailData = EmailTemplate.convertToDataRegistration(name, code);
-			// Send an email to the user
-			Email.sendMail(EmailType.REGISTRATION, emailData, new String[] { email });
-
-			// Convert data to use email template
-			Map<String, String> emailDataAdmin = EmailTemplate.convertToDataRegistrationAdmin(name, email);
-			// Send an email to admins
-			Email.sendMail(EmailType.REGISTRATION_ADMIN, emailDataAdmin, Info.admins.toArray(new String[Info.admins.size()]));
+			EmailUtils.emailNewRegistration(name, code, email);
 		}
 		// We do not send back the password
 		res.setPassword(null);

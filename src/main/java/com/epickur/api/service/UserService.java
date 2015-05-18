@@ -411,7 +411,7 @@ public final class UserService {
 			@PathParam("orderId") final String orderId,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.READ);
+		validator.checkRightsBefore(key.getRole(), Crud.READ, "order");
 		validator.checkReadOneOrder(id, orderId);
 		Order order = orderBusiness.read(orderId, key);
 		if (order == null) {
@@ -499,7 +499,7 @@ public final class UserService {
 			@PathParam("id") final String id,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.READ);
+		validator.checkRightsBefore(key.getRole(), Crud.READ, "order");
 		validator.checkReadAllOrder(id, key);
 		List<Order> orders = orderBusiness.readAllWithUserId(id);
 		return Response.ok().entity(orders).build();
@@ -547,8 +547,7 @@ public final class UserService {
 	 *			"difficultyLevel" : 8, 
 	 *			"videoUrl" : "http://www.google.com/videos"
 	 *		}, 
-	 *		"chargeId": "ch_15bEfH21cpKR0BKmHimGtkgn",
-	 *		"paid": true,
+	 *		"chargeId": "ch_163baS21cpKR0BKmv00GWuLK",
 	 *		"createdAt" : 1424030102542, 
 	 *		"updatedAt" : 1424030102542
 	 *	}
@@ -566,8 +565,6 @@ public final class UserService {
 	 *            The User id
 	 * @param cardToken
 	 *            The Stripe card token
-	 * @param shouldCharge
-	 *            The charge header. Can only be true or false
 	 * @param sendEmail
 	 *            The email agent. Can only be true or false
 	 * @param order
@@ -583,11 +580,10 @@ public final class UserService {
 	public Response addOneOrder(
 			@PathParam("id") final String userId,
 			@QueryParam("token") final String cardToken,
-			@DefaultValue("true") @HeaderParam("charge-agent") final boolean shouldCharge,
 			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
 			final Order order) throws EpickurException {
-		validator.checkCreateOneOrder(userId, cardToken, order);
-		Order result = orderBusiness.create(userId, order, cardToken, shouldCharge, sendEmail);
+		validator.checkCreateOneOrder(userId, order);
+		Order result = orderBusiness.create(userId, order, cardToken, sendEmail);
 		return Response.ok().entity(result).build();
 	}
 
@@ -663,7 +659,7 @@ public final class UserService {
 			final Order order,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.UPDATE);
+		validator.checkRightsBefore(key.getRole(), Crud.UPDATE, "order");
 		validator.checkUpdateOneOrder(id, orderId, order);
 		Order result = orderBusiness.update(order, key);
 		if (result == null) {
@@ -718,7 +714,7 @@ public final class UserService {
 			@PathParam("orderId") final String orderId,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.DELETE);
+		validator.checkRightsBefore(key.getRole(), Crud.DELETE, "order");
 		validator.checkDeleteOneOrder(id, orderId);
 		boolean isDeleted = orderBusiness.delete(orderId);
 		if (isDeleted) {
@@ -727,5 +723,88 @@ public final class UserService {
 		} else {
 			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, orderId);
 		}
+	}
+
+	// @formatter:off
+	/** 
+	 * 
+	 * @api {get} /users/:id/orders/:orderId/execute?confirm=:confirm Execute an Order
+	 * @apiVersion 1.0.0
+	 * @apiName ExecuteOrder
+	 * @apiGroup Orders
+	 * @apiPermission admin, super_user (own order), user (own order)
+	 * 
+	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
+	 * @apiParam (Request: URL Parameter) {String} orderId Id of the Order.
+	 * @apiParam (Request: URL Parameter) {Boolean} confirm If the caterer accept the order or not
+	 *
+	 * @apiSuccess (Response: JSON Object) {Order} id Id of the Order.
+	 * @apiSuccess (Response: JSON Object) {String} userId Id of the User.
+	 * @apiSuccess (Response: JSON Object) {String} description Description of the Order.
+	 * @apiSuccess (Response: JSON Object) {Number} amount Price of the Order.
+	 * @apiSuccess (Response: JSON Object) {Dish} dish Dish of the Order.
+	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Order.
+	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Order.
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *	HTTP/1.1 200 OK
+	 *	{ 
+	 *		"id" : "54e0f996731e1b9f54451ef6",
+	 *		"userId" : "54e0f995731e1b9f54451ef5", 
+	 *		"description" : "A new order", 
+	 *		"amount" : 500 , 
+	 *		"currency" : "AUD", 
+	 *		"dish" : { 
+	 *			"name" : "Chicken Kebab", 
+	 *			"description" : "Fresh meat, served with fries", 
+	 *			"type" : "Vegan", 
+	 *			"price" : 5.0, 
+	 *			"cookingTime" : 5, 
+	 *			"difficultyLevel" : 8, 
+	 *			"videoUrl" : "http://www.google.com/videos"
+	 *		},
+	 *		"paid": true,
+	 *		"chargeId": "ch_163baS21cpKR0BKmv00GWuLK",
+	 *		"cardToken": "tok_163baP21cpKR0BKmxFStdlIc",
+	 *		"createdAt" : 1424030102542, 
+	 *		"updatedAt" : 1424030102542
+	 *	}
+	 *
+	 * @apiUse BadRequestError
+	 * @apiUse ForbiddenError
+	 * @apiUse InternalError
+	 */
+	// @formatter:on
+	/**
+	 * @param userId
+	 *            The User id
+	 * @param orderId
+	 *            The Order id
+	 * @param confirm
+	 *            If the caterer confirmed the order
+	 * @param sendEmail
+	 *            If we want to send the emails
+	 * @param shouldCharge
+	 *            If we charge the user
+	 * @param context
+	 *            The container context that contains the Key
+	 * @return The reponse
+	 * @throws EpickurException
+	 *             If an epickur exception occurred
+	 */
+	@GET
+	@Path("/{id}/orders/{orderId}/execute")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response executeOrder(
+			@PathParam("id") final String userId,
+			@PathParam("orderId") final String orderId,
+			@QueryParam("confirm") final boolean confirm,
+			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
+			@DefaultValue("true") @HeaderParam("charge-agent") final boolean shouldCharge,
+			@Context final ContainerRequestContext context) throws EpickurException {
+		Key key = (Key) context.getProperty("key");
+		validator.checkRightsBefore(key.getRole(), Crud.UPDATE, "order");
+		Order result = orderBusiness.chargeOneUser(userId, orderId, confirm, sendEmail, shouldCharge, key);
+		return Response.ok().entity(result).build();
 	}
 }

@@ -416,7 +416,7 @@ public class TestUtils {
 		Token token = TestUtils.generateRandomToken();
 		Order order = TestUtils.generateRandomOrder();
 		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId.toHexString(), order, token.getId(), false, false);
+		Order orderRes = business.create(userId.toHexString(), order, token.getId(), false);
 		return orderRes;
 	}
 
@@ -427,7 +427,7 @@ public class TestUtils {
 		Order order = TestUtils.generateRandomOrder();
 		order.getDish().getCaterer().setId(catererId);
 		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId.toHexString(), order, token.getId(), false, false);
+		Order orderRes = business.create(userId.toHexString(), order, token.getId(), false);
 		return orderRes;
 	}
 }

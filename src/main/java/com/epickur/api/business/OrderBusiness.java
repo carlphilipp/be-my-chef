@@ -1,7 +1,6 @@
 package com.epickur.api.business;
 
 import java.util.List;
-import java.util.Map;
 
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -16,10 +15,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.payment.stripe.StripePayment;
 import com.epickur.api.utils.ErrorUtils;
-import com.epickur.api.utils.Info;
-import com.epickur.api.utils.email.Email;
-import com.epickur.api.utils.email.EmailTemplate;
-import com.epickur.api.utils.email.EmailType;
+import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.stripe.exception.StripeException;
@@ -64,65 +60,17 @@ public class OrderBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final Order create(final String userId, final Order order, final String cardToken, final boolean shouldCharge, final boolean sendEmail)
+	public final Order create(final String userId, final Order order, final String cardToken, final boolean sendEmail)
 			throws EpickurException {
 		User user = this.userDao.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
 		} else {
 			order.setCreatedBy(new ObjectId(userId));
-			if (shouldCharge) {
-				StripePayment stripe = new StripePayment();
-				try {
-					Charge charge = stripe.chargeCard(cardToken, order.getAmount(), order.getCurrency());
-					if (charge == null) {
-						order.setPaid(false);
-					} else {
-						order.setChargeId(charge.getId());
-						order.setPaid(charge.getPaid());
-					}
-				} catch (StripeException e) {
-					order.setPaid(false);
-				}
-
-			}
+			order.setCardToken(cardToken);
 			Order res = this.orderDao.create(order);
-			if (shouldCharge && sendEmail) {
-				if (order.getPaid()) {
-					// Everything went fine. Let's email folks
-
-					// Convert data to use email template
-					Map<String, String> emailData = EmailTemplate.convertToDataOrderUser(user.getName(), res.getId().toHexString(), order.getDish()
-							.getName());
-					// Send an email to The user
-					Email.sendMail(EmailType.ORDER_USER, emailData, new String[] { user.getEmail() });
-
-					// Convert data to use email template
-					emailData = EmailTemplate.convertToDataOrderCaterer(user.getName(), res.getId().toHexString(), order.getDish().getName(), order
-							.getDish().getCaterer().getName());
-					// Send an email to The caterer
-					Email.sendMail(EmailType.ORDER_CATERER, emailData, new String[] { order.getDish().getCaterer().getEmail() });
-
-					// Convert data to use email template
-					emailData = EmailTemplate.convertToDataOrderAdmin(user.getName(), res.getId().toHexString(), order.getDish().getName(), order
-							.getDish().getCaterer().getName());
-					// Send an email to The admins
-					Email.sendMail(EmailType.ORDER_ADMIN, emailData, Info.admins.toArray(new String[Info.admins.size()]));
-				} else {
-					// Something went wrong. Let's email anyway
-
-					// Convert data to use email template
-					Map<String, String> emailData = EmailTemplate.convertToDataOrderUser(user.getName(), res.getId().toHexString(), order.getDish()
-							.getName());
-					// Send an email to The user
-					Email.sendMail(EmailType.ORDER_FAIL_USER, emailData, new String[] { user.getEmail() });
-
-					// Convert data to use email template
-					emailData = EmailTemplate.convertToDataOrderAdmin(user.getName(), res.getId().toHexString(), order.getDish().getName(), order
-							.getDish().getCaterer().getName());
-					// Send an email to The admins
-					Email.sendMail(EmailType.ORDER_FAIL_ADMIN, emailData, Info.admins.toArray(new String[Info.admins.size()]));
-				}
+			if (sendEmail) {
+				EmailUtils.emailNewOrder(user, order);
 			}
 			return res;
 		}
@@ -195,9 +143,72 @@ public class OrderBusiness {
 	 *            The Order id
 	 * @return True if The Order has been deleted
 	 * @throws EpickurException
-	 *             If an ${@link EpickurException} occurred
+	 *             If an EpickurException occurred
 	 */
 	public final boolean delete(final String id) throws EpickurException {
 		return orderDao.delete(id);
+	}
+
+	/**
+	 * @param userId
+	 *            The User id
+	 * @param orderId
+	 *            The Order id
+	 * @param confirm
+	 *            If the caterer confirmed the order
+	 * @param sendEmail
+	 *            If we want to send the emails
+	 * @param shouldCharge
+	 *            If we charge the user
+	 * @param key
+	 *            The key
+	 * @return The Updated order
+	 * @throws EpickurException
+	 *             If an EpickurException occurred
+	 */
+	public final Order chargeOneUser(final String userId, final String orderId, final boolean confirm, final boolean sendEmail,
+			final boolean shouldCharge, final Key key) throws EpickurException {
+		User user = userDao.read(userId);
+		if (user == null) {
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
+		} else {
+			Order order = orderDao.read(orderId);
+			if (order != null) {
+				validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Crud.UPDATE);
+				if (confirm) {
+					if (shouldCharge) {
+						StripePayment stripe = new StripePayment();
+						try {
+							Charge charge = stripe.chargeCard(order.getCardToken(), order.getAmount(), order.getCurrency());
+							if (charge == null) {
+								order.setPaid(false);
+							} else {
+								order.setChargeId(charge.getId());
+								order.setPaid(charge.getPaid());
+							}
+						} catch (StripeException e) {
+							order.setPaid(false);
+							// Send email to User, Caterer and admins - Order fail
+							if (sendEmail) {
+								EmailUtils.emailFailOrder(user, order);
+							}
+						}
+						order = orderDao.update(order);
+						// Send email to User, Caterer and admins - Order succe
+						if (sendEmail) {
+							EmailUtils.emailSuccessOrder(user, order);
+						}
+					}
+				} else {
+					// Send email to USER and ADMINS - Order decline
+					if (sendEmail) {
+						EmailUtils.emailDeclineOrder(user, order);
+					}
+				}
+				return order;
+			} else {
+				throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, orderId);
+			}
+		}
 	}
 }

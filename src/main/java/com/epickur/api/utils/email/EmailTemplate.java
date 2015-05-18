@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,7 +55,9 @@ public final class EmailTemplate {
 	 * Load template into HashMap
 	 */
 	private void loadTemplates() {
+		String base = getBaseTemplate();
 		InputStream is = null;
+		InputStream is2 = null;
 		Reader in = null;
 		try {
 			Charset charset = Charset.forName("UTF-8");
@@ -67,20 +70,46 @@ public final class EmailTemplate {
 				Entry<String, JsonNode> entry = iterator.next();
 				JsonNode node = entry.getValue();
 				String subject = node.get("subject").asText();
+				String folder = node.get("folder").asText();
 				String file = node.get("file").asText();
-				InputStream is2 = Utils.getResource("templates/" + file);
+				is2 = Utils.getResource("templates/" + folder + "/" + file);
 				String content = IOUtils.toString(is2);
+				String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
 				Map<String, String> res = new HashMap<String, String>();
 				res.put("subject", subject);
-				res.put("content", content);
+				res.put("content", newContent);
 				this.templates.put(entry.getKey(), res);
 			}
 		} catch (IOException e) {
-			LOG.error("Error while trying to access the email templates");
+			LOG.error("Error while trying to access the email templates", e);
+		} finally {
+			IOUtils.closeQuietly(is);
+			IOUtils.closeQuietly(in);
+			IOUtils.closeQuietly(is2);
+		}
+	}
+
+	/**
+	 * Load in memory the base template.
+	 * 
+	 * @return The base template.
+	 */
+	private String getBaseTemplate() {
+		String base = null;
+		InputStream is = null;
+		Reader in = null;
+		try {
+			Charset charset = Charset.forName("UTF-8");
+			is = Utils.getResource("templates/base.html");
+			in = new InputStreamReader(is, charset);
+			base = IOUtils.toString(in);
+		} catch (IOException e) {
+			LOG.error("Error while trying to access the base template", e);
 		} finally {
 			IOUtils.closeQuietly(is);
 			IOUtils.closeQuietly(in);
 		}
+		return base;
 	}
 
 	/**
@@ -99,6 +128,7 @@ public final class EmailTemplate {
 		}
 	}
 
+	// Registration
 	/**
 	 * Convert data to registration
 	 * 
@@ -108,7 +138,7 @@ public final class EmailTemplate {
 	 *            The code
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataRegistration(final String userName, final String code) {
+	public static Map<String, String> convertToDataNewRegistrationUser(final String userName, final String code) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@NAME@@", userName);
@@ -119,7 +149,7 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * Convert data to registration admin
+	 * Convert data to registration admins
 	 * 
 	 * @param userName
 	 *            The user name
@@ -127,7 +157,7 @@ public final class EmailTemplate {
 	 *            The email
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataRegistrationAdmin(final String userName, final String email) {
+	public static Map<String, String> convertToDataNewRegistrationAdmins(final String userName, final String email) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@NAME@@", userName);
 		data.put("@@EMAIL@@", email);
@@ -135,6 +165,7 @@ public final class EmailTemplate {
 		return data;
 	}
 
+	// ORDER: case 1 - New order
 	/**
 	 * Convert data to order user
 	 * 
@@ -146,7 +177,7 @@ public final class EmailTemplate {
 	 *            The Dish name
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataOrderUser(final String userName, final String orderId, final String dishName) {
+	public static Map<String, String> convertToDataNewOrderUser(final String userName, final String orderId, final String dishName) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@NAME@@", userName);
@@ -168,7 +199,7 @@ public final class EmailTemplate {
 	 *            The Caterer Name
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataOrderCaterer(final String userName, final String orderId, final String dishName,
+	public static Map<String, String> convertToDataNewOrderCaterer(final String userName, final String orderId, final String dishName,
 			final String catererName) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
@@ -180,7 +211,7 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * Convert data to Order admin
+	 * Convert data to Order admins
 	 * 
 	 * @param userName
 	 *            The user name
@@ -192,7 +223,7 @@ public final class EmailTemplate {
 	 *            The Caterer name
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataOrderAdmin(final String userName, final String orderId, final String dishName,
+	public static Map<String, String> convertToDataNewOrderAdmins(final String userName, final String orderId, final String dishName,
 			final String catererName) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
@@ -203,4 +234,72 @@ public final class EmailTemplate {
 		return data;
 	}
 
+	// ORDER: case 2 - Caterer declined the order
+	/**
+	 * Convert data for decline order user.
+	 * 
+	 * @return A map.
+	 */
+	public static Map<String, String> convertToDataDeclineOrderUser(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
+
+	/**
+	 * Convert data for decline order admins.
+	 * 
+	 * @return A map.
+	 */
+	public static Map<String, String> convertToDataDeclineOrderAdmins(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
+
+	// ORDER: case 3 - The order is a success
+	public static Map<String, String> convertToDataSuccessOrderUser(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
+	
+	public static Map<String, String> convertToDataSuccessOrderCaterer(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
+	
+	public static Map<String, String> convertToDataSuccessOrderAdmins(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
+
+	// ORDER: case 4 - The order has been accepted but the payment failed
+	public static Map<String, String> convertToDataFailOrderUser(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
+	
+	public static Map<String, String> convertToDataFailOrderCaterer(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
+	
+	public static Map<String, String> convertToDataFailOrderAdmins(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
 }

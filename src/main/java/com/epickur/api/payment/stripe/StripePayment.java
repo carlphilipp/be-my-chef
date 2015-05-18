@@ -61,6 +61,7 @@ public final class StripePayment {
 			LOG.error("Card declined: " + chargeMap);
 			LOG.error("Status is: " + e.getCode());
 			LOG.error("Message is: " + e.getParam());
+			LOG.error(e.getLocalizedMessage(), e);
 			throw e;
 		} catch (InvalidRequestException e) {
 			// Invalid parameters were supplied to Stripe's API

@@ -117,7 +117,7 @@ public final class UserValidator extends Validator {
 	 * @param order
 	 *            The Order
 	 */
-	public void checkCreateOneOrder(final String id, final String token, final Order order) {
+	public void checkCreateOneOrder(final String id, final Order order) {
 		if (StringUtils.isBlank(id)) {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
@@ -245,6 +245,12 @@ public final class UserValidator extends Validator {
 					throw new ForbiddenException();
 				}
 			}
+		}
+	}
+
+	public void checkExecuteOrder(final Role role, final String confirm) {
+		if(StringUtils.isBlank(confirm)){
+			
 		}
 	}
 }

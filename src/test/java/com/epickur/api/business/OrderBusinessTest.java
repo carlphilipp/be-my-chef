@@ -1,9 +1,6 @@
 package com.epickur.api.business;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +19,7 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.integration.UserIntegrationTest;
@@ -111,10 +109,10 @@ public class OrderBusinessTest {
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
 		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), true, true);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
-		assertTrue("The payment has not been executed: " + res.toStringAPIView(), res.getPaid());
+		assertEquals(token.getId(), res.getCardToken());
 	}
 
 	@Test
@@ -136,16 +134,187 @@ public class OrderBusinessTest {
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
 		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), true, true);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
-		assertFalse(res.getPaid());
 	}
 
 	@Test(expected = EpickurNotFoundException.class)
 	public void testCreate3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
 		Order order = TestUtils.generateRandomOrder();
-		orderBusiness.create(new ObjectId().toHexString(), order, "token", true, true);
+		orderBusiness.create(new ObjectId().toHexString(), order, "token", false);
+	}
+	
+	@Test
+	public void testChargeOneUser() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+		User user = TestUtils.generateRandomUser();
+		User userRes = userBusiness.create(user, true, false);
+		toDeleteUser.add(userRes.getId());
+		
+		Order order = TestUtils.generateRandomOrder();
+		order.setAmount(150);
+
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		Map<String, Object> cardParams = new HashMap<String, Object>();
+		cardParams.put("number", "4242424242424242");
+		cardParams.put("exp_month", 2);
+		cardParams.put("exp_year", 2016);
+		cardParams.put("cvc", "314");
+		tokenParams.put("card", cardParams);
+		Token token = Token.create(tokenParams);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		assertNotNull(res);
+		toDeleteOrder.add(res.getId().toHexString());
+		Key key = new Key();
+		key.setRole(Role.ADMIN);
+		key.setUserId(userRes.getId());
+		
+		Order orderAfterCharge = orderBusiness.chargeOneUser(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, key);
+		assertTrue(orderAfterCharge.getPaid());
+	}
+	
+	@Test
+	public void testChargeOneUserFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+		User user = TestUtils.generateRandomUser();
+		User userRes = userBusiness.create(user, true, false);
+		toDeleteUser.add(userRes.getId());
+		
+		Order order = TestUtils.generateRandomOrder();
+		order.setAmount(-15);
+
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		Map<String, Object> cardParams = new HashMap<String, Object>();
+		cardParams.put("number", "4242424242424242");
+		cardParams.put("exp_month", 2);
+		cardParams.put("exp_year", 2016);
+		cardParams.put("cvc", "314");
+		tokenParams.put("card", cardParams);
+		Token token = Token.create(tokenParams);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		assertNotNull(res);
+		toDeleteOrder.add(res.getId().toHexString());
+		Key key = new Key();
+		key.setRole(Role.ADMIN);
+		key.setUserId(userRes.getId());
+		
+		Order orderAfterCharge = orderBusiness.chargeOneUser(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, key);
+		assertFalse(orderAfterCharge.getPaid());
+	}
+	
+	@Test(expected=EpickurNotFoundException.class)
+	public void testChargeOneUserFail2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+		User user = TestUtils.generateRandomUser();
+		User userRes = userBusiness.create(user, true, false);
+		toDeleteUser.add(userRes.getId());
+		
+		Order order = TestUtils.generateRandomOrder();
+		order.setAmount(150);
+
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		Map<String, Object> cardParams = new HashMap<String, Object>();
+		cardParams.put("number", "4242424242424242");
+		cardParams.put("exp_month", 2);
+		cardParams.put("exp_year", 2016);
+		cardParams.put("cvc", "314");
+		tokenParams.put("card", cardParams);
+		Token token = Token.create(tokenParams);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		assertNotNull(res);
+		toDeleteOrder.add(res.getId().toHexString());
+		Key key = new Key();
+		key.setRole(Role.ADMIN);
+		key.setUserId(userRes.getId());
+		
+		orderBusiness.chargeOneUser(userRes.getId().toHexString(), new ObjectId().toHexString(), true, false, true, key);
+	}
+	
+	@Test(expected=EpickurNotFoundException.class)
+	public void testChargeOneUserFail3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+		User user = TestUtils.generateRandomUser();
+		User userRes = userBusiness.create(user, true, false);
+		toDeleteUser.add(userRes.getId());
+		
+		Order order = TestUtils.generateRandomOrder();
+		order.setAmount(150);
+
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		Map<String, Object> cardParams = new HashMap<String, Object>();
+		cardParams.put("number", "4242424242424242");
+		cardParams.put("exp_month", 2);
+		cardParams.put("exp_year", 2016);
+		cardParams.put("cvc", "314");
+		tokenParams.put("card", cardParams);
+		Token token = Token.create(tokenParams);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		assertNotNull(res);
+		toDeleteOrder.add(res.getId().toHexString());
+		Key key = new Key();
+		key.setRole(Role.ADMIN);
+		key.setUserId(userRes.getId());
+		
+		orderBusiness.chargeOneUser(new ObjectId().toHexString(), res.getId().toHexString(), true, false, true, key);
+	}
+	
+	@Test
+	public void testChargeOneUser2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+		User user = TestUtils.generateRandomUser();
+		User userRes = userBusiness.create(user, true, false);
+		toDeleteUser.add(userRes.getId());
+		
+		Order order = TestUtils.generateRandomOrder();
+		order.setAmount(150);
+
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		Map<String, Object> cardParams = new HashMap<String, Object>();
+		cardParams.put("number", "4242424242424242");
+		cardParams.put("exp_month", 2);
+		cardParams.put("exp_year", 2016);
+		cardParams.put("cvc", "314");
+		tokenParams.put("card", cardParams);
+		Token token = Token.create(tokenParams);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		assertNotNull(res);
+		toDeleteOrder.add(res.getId().toHexString());
+		Key key = new Key();
+		key.setRole(Role.ADMIN);
+		key.setUserId(userRes.getId());
+		
+		Order orderAfterCharge = orderBusiness.chargeOneUser(userRes.getId().toHexString(), res.getId().toHexString(), false, true, true, key);
+		assertNull(orderAfterCharge.getPaid());
+	}
+	
+	@Test
+	public void testChargeOneUser3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+		User user = TestUtils.generateRandomUser();
+		User userRes = userBusiness.create(user, true, false);
+		toDeleteUser.add(userRes.getId());
+		
+		Order order = TestUtils.generateRandomOrder();
+		order.setAmount(150);
+
+		Stripe.apiKey = STRIPE_TEST_KEY;
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		Map<String, Object> cardParams = new HashMap<String, Object>();
+		cardParams.put("number", "4242424242424242");
+		cardParams.put("exp_month", 2);
+		cardParams.put("exp_year", 2016);
+		cardParams.put("cvc", "314");
+		tokenParams.put("card", cardParams);
+		Token token = Token.create(tokenParams);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		assertNotNull(res);
+		toDeleteOrder.add(res.getId().toHexString());
+		Key key = new Key();
+		key.setRole(Role.ADMIN);
+		key.setUserId(userRes.getId());
+		
+		Order orderAfterCharge = orderBusiness.chargeOneUser(userRes.getId().toHexString(), res.getId().toHexString(), true, true, true, key);
+		assertTrue(orderAfterCharge.getPaid());
 	}
 }

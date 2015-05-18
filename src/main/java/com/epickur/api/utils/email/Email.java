@@ -107,14 +107,11 @@ public final class Email {
 		for (int i = 0; i < sendTo.length; i++) {
 			recipients[i] = new MandrillRecipient(null, sendTo[i]);
 		}
-
 		mess.setTo(recipients);
 		mess.setTrack_clicks(true);
-		mess.setTrack_opens(true);
-		String[] tags = new String[] { "tag1", "tag2", "tag3" };
+		String[] tags = new String[] { "bmc", "bemychef", "be my chef" };
 		mess.setTags(tags);
 		mmr.setMessage(mess);
-
 		try {
 			messagesRequest.sendMessage(mmr);
 		} catch (RequestFailedException e) {
@@ -132,7 +129,7 @@ public final class Email {
 	 * @param sendTo
 	 *            the recipients
 	 */
-	public static void sendMail(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
+	protected static void sendMail(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
 		new Email(emailSubjectTxt, emailMsgTxt, sendTo).send();
 	}
 
@@ -146,7 +143,7 @@ public final class Email {
 	 * @param sendTo
 	 *            An array of email
 	 */
-	public static void sendMail(final EmailType emailType, final Map<String, String> data, final String[] sendTo) {
+	protected static void sendMail(final EmailType emailType, final Map<String, String> data, final String[] sendTo) {
 		EmailTemplate emailTemplate = EmailTemplate.getInstance();
 		Map<String, String> template = emailTemplate.getTemplate(emailType);
 		if (!template.isEmpty()) {
@@ -156,15 +153,15 @@ public final class Email {
 				subject = StringUtils.replace(subject, entry.getKey(), entry.getValue());
 				content = StringUtils.replace(content, entry.getKey(), entry.getValue());
 			}
+			LOG.info("Subject: " + subject + " Send to: " + sendTo[0]);
 			sendMail(subject, content, sendTo);
 		} else {
-			LOG.error("Error while trying to access the email templates");
+			LOG.error("Error while trying to access the email templates for: " + emailType);
 		}
 	}
 
-	/*
-	 * public static void main(String[] args) throws IOException { Map<String, String> emailData = EmailTemplate.convertToDataRegistration("carl",
-	 * "SJDSJAHDOIHWOHDLKJLKDWJLK"); Email.sendMail(EmailType.REGISTRATION, emailData, new String[] { "cp.harmant@gmail.com" }); }
-	 */
-
+/*	public static void main(String[] args) throws IOException {
+		Map<String, String> emailData = EmailTemplate.convertToDataRegistration("carl","SJDSJAHDOIHWOHDLKJLKDWJLK");
+		Email.sendMail(EmailType.REGISTRATION_USER, emailData, new String[] { "cp.harmant@gmail.com" });
+	}*/
 }

@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "userId", "description", "amount", "currency", "chargeId", "paid", "dish", "createdBy", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "userId", "description", "amount", "currency", "cardToken", "chargeId", "paid", "dish", "createdBy", "createdAt", "updatedAt" })
 public final class Order extends AbstractEntity {
 
 	/** Logger **/
@@ -49,6 +49,8 @@ public final class Order extends AbstractEntity {
 	private Currency currency;
 	/** Dish **/
 	private Dish dish;
+	/** Stripe Card Token **/
+	private String cardToken;
 	/** ChargeId from Stripe **/
 	private String chargeId;
 	/** Indicate if paid **/
@@ -411,5 +413,13 @@ public final class Order extends AbstractEntity {
 			LOG.error("Error while cloning: " + e.getMessage(), e);
 			throw new RuntimeException();
 		}
+	}
+
+	public String getCardToken() {
+		return cardToken;
+	}
+
+	public void setCardToken(String cardToken) {
+		this.cardToken = cardToken;
 	}
 }

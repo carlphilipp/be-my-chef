@@ -456,6 +456,7 @@ public class UserIntegrationTest {
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
+		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create Order request
@@ -596,10 +597,7 @@ public class UserIntegrationTest {
 		assertNotNull(jsonResult.get("updatedAt").asText());
 		assertEquals("AUD", jsonResult.get("currency").asText());
 		assertNotNull(jsonResult.get("dish"));
-		boolean paid = jsonResult.get("paid").asBoolean();
-		assertNotNull(jsonResult.get("chargeId"));
-		assertNotNull(jsonResult.get("paid"));
-		assertEquals(true, paid);
+		assertNotNull(jsonResult.get("cardToken"));
 
 		// Delete this order
 
@@ -682,6 +680,7 @@ public class UserIntegrationTest {
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
 		request.addHeader("charge-agent", "false");
+		request.addHeader("email-agent", "false");
 
 		// Create Order request
 		httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -801,6 +800,7 @@ public class UserIntegrationTest {
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
 		request.addHeader("charge-agent", "false");
+		request.addHeader("email-agent", "false");
 
 		// Create Order request
 		httpResponse = HttpClientBuilder.create().build().execute(request);

@@ -197,7 +197,7 @@ public class UserValidatorTest {
 	public void testCheckCreateOneOrder() {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
-		validator.checkCreateOneOrder("id", null, order);
+		validator.checkCreateOneOrder("id", order);
 	}
 	
 	@Test
@@ -207,7 +207,7 @@ public class UserValidatorTest {
 		
 		UserValidator validator = new UserValidator();
 		Order order = null;
-		validator.checkCreateOneOrder("id", null, order);
+		validator.checkCreateOneOrder("id", order);
 	}
 
 	@Test
