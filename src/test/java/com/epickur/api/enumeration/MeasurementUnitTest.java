@@ -8,10 +8,10 @@ public class MeasurementUnitTest {
 
 	@Test
 	public void testCurrency1() {
-		MeasurementUnit mu = MeasurementUnit.KG;
+		MeasurementUnit mu = MeasurementUnit.kg;
 		assertEquals("KG", mu.getShortDescription());
-		assertEquals("Kilogrammes", mu.getDescription());
-		assertEquals("Kg", mu.getSymbol());
+		assertEquals("Kilogram", mu.getDescription());
+		assertEquals("kg", mu.getSymbol());
 		assertEquals(true, mu.isMetric());
 	}
 

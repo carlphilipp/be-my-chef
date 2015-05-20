@@ -59,6 +59,8 @@ public final class Dish extends AbstractEntity {
 	private Integer cookingTime;
 	/** Difficulty level **/
 	private Integer difficultyLevel;
+	/** Image After URL **/
+	private String imageAfterUrl;
 	/** Video URL **/
 	private String videoUrl;
 	/** Nutrition facts **/
@@ -249,6 +251,21 @@ public final class Dish extends AbstractEntity {
 		this.nutritionFacts = nutritionFacts;
 	}
 
+	/**
+	 * @return The image after url
+	 */
+	public String getImageAfterUrl() {
+		return imageAfterUrl;
+	}
+
+	/**
+	 * @param videoUrl
+	 *            The image after url
+	 */
+	public void setImageAfterUrl(final String imageAfterUrl) {
+		this.imageAfterUrl = imageAfterUrl;
+	}
+	
 	/**
 	 * @return The video url
 	 */

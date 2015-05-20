@@ -70,6 +70,7 @@ public final class DishService {
 	 * @apiSuccess (Response: JSON Object) {Caterer} caterer Caterer of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Ingredient[]} ingredients Ingredients of the Dish.
 	 * @apiSuccess (Response: JSON Object) {NutritionFact[]} nutritionFacts Nutrition fact of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} imageAfterUrl Image After URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
@@ -125,6 +126,7 @@ public final class DishService {
 	 *			"value": 750.5,
 	 *			"unit": "g"
 	 *		}],
+	 *		"imageAfterUrl": "http://www.flickr.com",
 	 *		"videoUrl": "http://www.google.com",
 	 *		"createdAt": 1424042592185,
 	 *		"updatedAt": 1424042592185
@@ -178,6 +180,7 @@ public final class DishService {
 	 * @apiSuccess (Response: JSON Object) {Caterer} caterer Caterer of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Ingredient[]} ingredients Ingredients of the Dish.
 	 * @apiSuccess (Response: JSON Object) {NutritionFact[]} nutritionFacts Nutrition fact of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} imageAfterUrl Image After URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
@@ -233,6 +236,7 @@ public final class DishService {
 	 *			"value": 750.5,
 	 *			"unit": "g"
 	 *		}],
+	 *		"imageAfterUrl": "http://www.flickr.com",
 	 *		"videoUrl": "http://www.google.com",
 	 *		"createdAt": 1424042592185,
 	 *		"updatedAt": 1424042592185
@@ -282,6 +286,7 @@ public final class DishService {
 	 * @apiParam (Request: JSON Object) {Caterer} caterer Caterer of the Dish.
 	 * @apiParam (Request: JSON Object) {Ingredient[]} ingredients Ingredients of the Dish.
 	 * @apiParam (Request: JSON Object) {NutritionFact[]} nutritionFacts Nutrition fact of the Dish.
+	 * @apiParam (Request: JSON Object) {String} imageAfterUrl Image After URL of the Dish.
 	 * @apiParam (Request: JSON Object) {String} videoUrl Video URL of the Dish.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the Dish.
@@ -293,6 +298,7 @@ public final class DishService {
 	 * @apiSuccess (Response: JSON Object) {Caterer} caterer Caterer of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Ingredient[]} ingredients Ingredients of the Dish.
 	 * @apiSuccess (Response: JSON Object) {NutritionFact[]} nutritionFacts Nutrition fact of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} imageAfterUrl Image After URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
@@ -348,6 +354,7 @@ public final class DishService {
 	 *			"value": 750.5,
 	 *			"unit": "g"
 	 *		}],
+	 *		"imageAfterUrl": "http://www.flickr.com",
 	 *		"videoUrl": "http://www.google.com",
 	 *		"createdAt": 1424042592185,
 	 *		"updatedAt": 1424042592185
@@ -449,6 +456,7 @@ public final class DishService {
 	 * @apiSuccess (Response: JSON Object) {Caterer} caterer Caterer of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Ingredient[]} ingredients Ingredients of the Dish.
 	 * @apiSuccess (Response: JSON Object) {NutritionFact[]} nutritionFacts Nutrition fact of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} imageAfterUrl Image After URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
@@ -504,6 +512,7 @@ public final class DishService {
 	 *			"value": 750.5,
 	 *			"unit": "g"
 	 *		}],
+	 *		"imageAfterUrl": "http://www.flickr.com",
 	 *		"videoUrl": "http://www.google.com",
 	 *		"createdAt": 1424042592185,
 	 *		"updatedAt": 1424042592185

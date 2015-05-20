@@ -226,6 +226,7 @@ public class TestUtils {
 		dish.setPrice(generateRandomInteger());
 		dish.setSteps(generateRandomListString());
 		dish.setType(generateRandomDishType());
+		dish.setImageAfterUrl(generateRandomString());
 		dish.setVideoUrl(generateRandomString());
 		dish.setCreatedBy(new ObjectId());
 		return dish;
