@@ -171,7 +171,7 @@ public class OrderBusinessTest {
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
 		
-		Order orderAfterCharge = orderBusiness.chargeOneUser(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, key);
+		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, key);
 		assertTrue(orderAfterCharge.getPaid());
 	}
 	
@@ -200,7 +200,7 @@ public class OrderBusinessTest {
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
 		
-		Order orderAfterCharge = orderBusiness.chargeOneUser(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, key);
+		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, key);
 		assertFalse(orderAfterCharge.getPaid());
 	}
 	
@@ -229,7 +229,7 @@ public class OrderBusinessTest {
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
 		
-		orderBusiness.chargeOneUser(userRes.getId().toHexString(), new ObjectId().toHexString(), true, false, true, key);
+		orderBusiness.executeOrder(userRes.getId().toHexString(), new ObjectId().toHexString(), true, false, true, key);
 	}
 	
 	@Test(expected=EpickurNotFoundException.class)
@@ -257,7 +257,7 @@ public class OrderBusinessTest {
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
 		
-		orderBusiness.chargeOneUser(new ObjectId().toHexString(), res.getId().toHexString(), true, false, true, key);
+		orderBusiness.executeOrder(new ObjectId().toHexString(), res.getId().toHexString(), true, false, true, key);
 	}
 	
 	@Test
@@ -285,7 +285,7 @@ public class OrderBusinessTest {
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
 		
-		Order orderAfterCharge = orderBusiness.chargeOneUser(userRes.getId().toHexString(), res.getId().toHexString(), false, true, true, key);
+		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), false, true, true, key);
 		assertNull(orderAfterCharge.getPaid());
 	}
 	
@@ -314,7 +314,7 @@ public class OrderBusinessTest {
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
 		
-		Order orderAfterCharge = orderBusiness.chargeOneUser(userRes.getId().toHexString(), res.getId().toHexString(), true, true, true, key);
+		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, true, true, key);
 		assertTrue(orderAfterCharge.getPaid());
 	}
 }

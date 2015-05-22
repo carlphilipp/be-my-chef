@@ -35,7 +35,7 @@ public class WebApplication extends ResourceConfig {
 	@PostConstruct
 	public static void initialize() {
 		try {
-			Jobs jobs = new Jobs();
+			Jobs jobs = Jobs.getInstance();
 			jobs.run();
 		} catch (SchedulerException e) {
 			LOG.error(e.getLocalizedMessage(), e);

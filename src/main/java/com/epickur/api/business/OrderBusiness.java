@@ -5,6 +5,7 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
+import com.epickur.api.cron.Jobs;
 import com.epickur.api.dao.mongo.OrderDaoImpl;
 import com.epickur.api.dao.mongo.UserDaoImpl;
 import com.epickur.api.entity.Key;
@@ -70,8 +71,9 @@ public class OrderBusiness {
 			order.setCardToken(cardToken);
 			Order res = this.orderDao.create(order);
 			if (sendEmail) {
-				EmailUtils.emailNewOrder(user, order);
+				EmailUtils.emailNewOrder(user, res);
 			}
+			Jobs.getInstance().addTemporaryOrderJob(res);
 			return res;
 		}
 	}
@@ -150,6 +152,8 @@ public class OrderBusiness {
 	}
 
 	/**
+	 * Execute order. Confirm or Cancel the order.
+	 * 
 	 * @param userId
 	 *            The User id
 	 * @param orderId
@@ -166,7 +170,7 @@ public class OrderBusiness {
 	 * @throws EpickurException
 	 *             If an EpickurException occurred
 	 */
-	public final Order chargeOneUser(final String userId, final String orderId, final boolean confirm, final boolean sendEmail,
+	public final Order executeOrder(final String userId, final String orderId, final boolean confirm, final boolean sendEmail,
 			final boolean shouldCharge, final Key key) throws EpickurException {
 		User user = userDao.read(userId);
 		if (user == null) {
@@ -205,6 +209,7 @@ public class OrderBusiness {
 						EmailUtils.emailDeclineOrder(user, order);
 					}
 				}
+				Jobs.getInstance().removeTemporaryOrderJob(orderId);
 				return order;
 			} else {
 				throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, orderId);

@@ -1,6 +1,6 @@
 {
 	"registration_user":	{
-		"subject":"Registration - @@EMAIL@@",
+		"subject":"Welcome to BE MY CHEF!",
 		"folder":"registration",
 		"file":"registration_user.html"
 	},
@@ -10,7 +10,7 @@
 		"file":"registration_admin.html"
 	},
 	"order_user_new":	{
-		"subject":"Order #@@ORDER_ID@@",
+		"subject":"We have received your BE MY CHEF order!",
 		"folder":"order/new",
 		"file":"order_user_new.html"
 	},
@@ -35,7 +35,7 @@
 		"file":"order_admins_declined.html"
 	},
 	"order_user_success":	{
-		"subject":"Order confirmed #@@ORDER_ID@@",
+		"subject":"Your BE MY CHEF order has been accepted!",
 		"folder":"order/accept/success",
 		"file":"order_user_success.html"
 	},

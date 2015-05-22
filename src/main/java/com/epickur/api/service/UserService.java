@@ -804,7 +804,7 @@ public final class UserService {
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		validator.checkRightsBefore(key.getRole(), Crud.UPDATE, "order");
-		Order result = orderBusiness.chargeOneUser(userId, orderId, confirm, sendEmail, shouldCharge, key);
+		Order result = orderBusiness.executeOrder(userId, orderId, confirm, sendEmail, shouldCharge, key);
 		return Response.ok().entity(result).build();
 	}
 }

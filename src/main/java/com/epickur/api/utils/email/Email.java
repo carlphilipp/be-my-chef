@@ -153,7 +153,6 @@ public final class Email {
 				subject = StringUtils.replace(subject, entry.getKey(), entry.getValue());
 				content = StringUtils.replace(content, entry.getKey(), entry.getValue());
 			}
-			LOG.info("Subject: " + subject + " Send to: " + sendTo[0]);
 			sendMail(subject, content, sendTo);
 		} else {
 			LOG.error("Error while trying to access the email templates for: " + emailType);

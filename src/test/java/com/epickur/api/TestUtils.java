@@ -228,6 +228,7 @@ public class TestUtils {
 		dish.setType(generateRandomDishType());
 		dish.setImageAfterUrl(generateRandomString());
 		dish.setVideoUrl(generateRandomString());
+		dish.setImageAfterUrl(generateRandomString());
 		dish.setCreatedBy(new ObjectId());
 		return dish;
 	}

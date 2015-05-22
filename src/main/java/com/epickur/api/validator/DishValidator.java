@@ -101,6 +101,14 @@ public final class DishValidator extends Validator {
 		if (StringUtils.isBlank(dish.getImageAfterUrl())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "imageAfterUrl"));
 		}
+		if (StringUtils.isBlank(dish.getVideoUrl())) {
+			throw new EpickurIllegalArgument(fieldNull(getEntity(), "videoUrl"));
+		}
+		if (dish.getNutritionFacts() != null) {
+			checkNutritionFactsData(dish.getNutritionFacts());
+		} else {
+			throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts"));
+		}
 		if (dish.getIngredients() != null) {
 			checkIngredientsData(dish.getIngredients());
 		} else {
@@ -154,6 +162,7 @@ public final class DishValidator extends Validator {
 	 * @param nutritionFacts
 	 *            The list of NutritionFact
 	 */
+
 	private void checkNutritionFactsData(final List<NutritionFact> nutritionFacts) {
 		if (nutritionFacts.size() == 0) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts"));
