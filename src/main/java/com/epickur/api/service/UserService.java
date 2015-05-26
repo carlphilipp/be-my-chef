@@ -240,8 +240,14 @@ public final class UserService {
 		Key key = (Key) context.getProperty("key");
 		validator.checkRightsBefore(key.getRole(), Crud.UPDATE);
 		validator.checkUpdateUser(id, user);
-		if (StringUtils.isNotBlank(user.getNewPassword())) {
+		if (StringUtils.isNotBlank(user.getPassword()) && StringUtils.isNotBlank(user.getNewPassword())) {
 			userBusiness.injectNewPassword(user);
+			user.setNewPassword(null);
+		} else {
+			// Set password to null to prevent from updating the field with
+			// whatever irrelevant value that could have been sent in request
+			// field "password".
+			user.setPassword(null);
 		}
 		User result = userBusiness.update(user, key);
 		if (result == null) {

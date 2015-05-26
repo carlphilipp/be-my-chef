@@ -61,7 +61,6 @@ public final class User extends AbstractEntity {
 	/** API key generated **/
 	private String key;
 	/** New password to check **/
-	@JsonIgnore
 	private String newPassword;
 	/** Role. Not exposed to User **/
 	private Role role;
