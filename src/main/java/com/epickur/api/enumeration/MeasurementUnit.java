@@ -8,19 +8,19 @@ package com.epickur.api.enumeration;
  */
 public enum MeasurementUnit {
 	/** The enum **/
-	g("g", "Gram", "g", true),
-	kg("KG", "Kilogram", "kg", true),
+	G("g", "Gram", "g", true),
+	KG("KG", "Kilogram", "kg", true),
 	
-	l("L", "Litre", "l", true),
-	ml("ML", "Millilitre", "ml", true),
+	L("L", "Litre", "l", true),
+	ML("ML", "Millilitre", "ml", true),
 	
-	cup("cup", "Cup", "cup", false),
-	tbsp("tbsp", "Tablespoon", "tbsp", false),
-	tsp("tsp", "Teaspoon", "tsp", false),
+	CUP("cup", "Cup", "cup", false),
+	TBSP("tbsp", "Tablespoon", "tbsp", false),
+	TSP("tsp", "Teaspoon", "tsp", false),
 	
-	each("each", "Each", "each", false),
+	EACH("each", "Each", "each", false),
 	
-	kj("kJ", "KiloJoules", "kJ", true);
+	KJ("kJ", "KiloJoules", "kJ", true);
 
 	/** Short description **/
 	private String shortDescription;

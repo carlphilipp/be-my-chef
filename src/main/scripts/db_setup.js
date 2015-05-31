@@ -142,25 +142,28 @@ db.dishes.insert(
   		[{
   			"name": "Noodles",
   			"sequence": NumberInt(1),
-  			"quantity": 1.0
+  			"quantity": 1.0,
+  			"measurementUnit": "G"
   		},
   		{
   			"name": "Rice",
   			"sequence": NumberInt(2),
-  			"quantity": 1.0
+  			"quantity": 1.0,
+  			"measurementUnit": "G"
   		}],
   	"nutritionFacts": 
   		[{
   			"name": "Calories",
   			"value": 1250.0,
-  			"unit": "kJ"
+  			"unit": "KJ"
   		},
   		{
   			"name": "Proteins",
   			"value": 750.5,
-  			"unit": "g"
+  			"unit": "G"
   		}],
   		"videoUrl": "http://www.google.com",
+  		"imageAfterUrl": "http://www.google.com",
   		"createdAt": NumberLong(1424042592185),
   		"updatedAt": NumberLong(1424042592185)
   	},
@@ -201,25 +204,28 @@ db.dishes.insert(
     		[{
     			"name": "Fish",
     			"sequence": NumberInt(1),
-    			"quantity": 1.0
+    			"quantity": 1.0,
+    			"measurementUnit": "G"
     		},
     		{
     			"name": "Chips",
     			"sequence": NumberInt(2),
-    			"quantity": 1.0
+    			"quantity": 1.0,
+    			"measurementUnit": "G"
     		}],
     	"nutritionFacts": 
     		[{
     			"name": "Calories",
     			"value": 1250.0,
-    			"unit": "kJ"
+    			"unit": "KJ"
     		},
     		{
     			"name": "Proteins",
     			"value": 750.5,
-    			"unit": "g"
+    			"unit": "G"
     		}],
     		"videoUrl": "http://www.google.com",
+    		"imageAfterUrl": "http://www.google.com",
     		"createdAt": NumberLong(1424042592185),
     		"updatedAt": NumberLong(1424042592185)
   	},{
@@ -259,25 +265,28 @@ db.dishes.insert(
   		[{
   			"name": "Fish",
   			"sequence": NumberInt(1),
-  			"quantity": 1.0
+  			"quantity": 1.0,
+  			"measurementUnit": "G"
   		},
   		{
   			"name": "Chips",
   			"sequence": NumberInt(2),
-  			"quantity": 1.0
+  			"quantity": 1.0,
+  			"measurementUnit": "G"
   		}],
   	"nutritionFacts": 
   		[{
   			"name": "Calories",
   			"value": 1250.0,
-  			"unit": "kJ"
+  			"unit": "KJ"
   		},
   		{
   			"name": "Proteins",
   			"value": 750.5,
-  			"unit": "g"
+  			"unit": "G"
   		}],
   		"videoUrl": "http://www.google.com",
+  		"imageAfterUrl": "http://www.google.com",
   		"createdAt": NumberLong(1424042592185),
   		"updatedAt": NumberLong(1424042592185)
 	}]
@@ -326,25 +335,28 @@ db.dishes.insert(
     		[{
     			"name": "Noodles",
     			"sequence": NumberInt(1),
-    			"quantity": 1.0
+    			"quantity": 1.0,
+    			"measurementUnit": "G"
     		},
     		{
     			"name": "Rice",
     			"sequence": NumberInt(2),
-    			"quantity": 1.0
+    			"quantity": 1.0,
+    			"measurementUnit": "G"
     		}],
     	"nutritionFacts": 
     		[{
     			"name": "Calories",
     			"value": 1250.0,
-    			"unit": "kJ"
+    			"unit": "KJ"
     		},
     		{
     			"name": "Proteins",
     			"value": 750.5,
-    			"unit": "g"
+    			"unit": "G"
     		}],
     	"videoUrl": "http://www.google.com",
+    	"imageAfterUrl": "http://www.google.com",
     	"createdAt": NumberLong(1424042592185),
     	"updatedAt": NumberLong(1424042592185)
     },
