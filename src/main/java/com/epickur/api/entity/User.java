@@ -36,7 +36,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "name", "password", "email", "allow", "key", "allow", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "allow", "key", "allow", "createdAt", "updatedAt" })
 public final class User extends AbstractEntity {
 
 	/** Logger **/
@@ -45,6 +45,10 @@ public final class User extends AbstractEntity {
 	private ObjectId id;
 	/** Name **/
 	private String name;
+	/** First **/
+	private String first;
+	/** Last **/
+	private String last;
 	/** Password **/
 	private String password;
 	/** Email **/
@@ -99,6 +103,36 @@ public final class User extends AbstractEntity {
 	 */
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return The first name.
+	 */
+	public String getFirst() {
+		return first;
+	}
+
+	/**
+	 * @param first
+	 *            The first name.
+	 */
+	public void setFirst(final String first) {
+		this.first = first;
+	}
+
+	/**
+	 * @return The last name.
+	 */
+	public String getLast() {
+		return last;
+	}
+
+	/**
+	 * @param last
+	 *            The last name.
+	 */
+	public void setLast(final String last) {
+		this.last = last;
 	}
 
 	/**
