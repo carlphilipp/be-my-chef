@@ -119,7 +119,7 @@ public class DishValidatorTest {
 		validator.checkData(dish);
 	}
 
-	@Test
+/*	@Test
 	public void testData6() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field dish.videoUrl is not allowed to be null or empty");
@@ -128,9 +128,9 @@ public class DishValidatorTest {
 		Dish dish = TestUtils.generateRandomDish();
 		dish.setVideoUrl(null);
 		validator.checkData(dish);
-	}
+	}*/
 
-	@Test
+/*	@Test
 	public void testData7() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field dish.nutritionFacts is not allowed to be null or empty");
@@ -139,9 +139,9 @@ public class DishValidatorTest {
 		Dish dish = TestUtils.generateRandomDish();
 		dish.setNutritionFacts(null);
 		validator.checkData(dish);
-	}
+	}*/
 	
-	@Test
+/*	@Test
 	public void testData71() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field dish.nutritionFacts is not allowed to be null or empty");
@@ -151,7 +151,7 @@ public class DishValidatorTest {
 		List<NutritionFact> list = new ArrayList<NutritionFact>();
 		dish.setNutritionFacts(list);
 		validator.checkData(dish);
-	}
+	}*/
 
 	@Test
 	public void testData8() {
@@ -221,7 +221,7 @@ public class DishValidatorTest {
 		validator.checkData(dish);
 	}
 
-	@Test
+/*	@Test
 	public void testData14() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field dish.nutritionFacts[0].name is not allowed to be null or empty");
@@ -231,9 +231,9 @@ public class DishValidatorTest {
 		List<NutritionFact> list = dish.getNutritionFacts();
 		list.get(0).setName(null);
 		validator.checkData(dish);
-	}
+	}*/
 
-	@Test
+/*	@Test
 	public void testData15() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field dish.nutritionFacts[0].value is not allowed to be null or empty");
@@ -243,9 +243,9 @@ public class DishValidatorTest {
 		List<NutritionFact> list = dish.getNutritionFacts();
 		list.get(0).setValue(null);
 		validator.checkData(dish);
-	}
+	}*/
 
-	@Test
+/*	@Test
 	public void testData16() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field dish.nutritionFacts[0].unit is not allowed to be null or empty");
@@ -255,7 +255,7 @@ public class DishValidatorTest {
 		List<NutritionFact> list = dish.getNutritionFacts();
 		list.get(0).setUnit(null);
 		validator.checkData(dish);
-	}
+	}*/
 
 	@Test
 	public void testCheckRightsBefore() throws EpickurException {
