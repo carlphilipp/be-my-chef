@@ -32,7 +32,7 @@ public class Here {
 	/** Logger **/
 	private static final Logger LOG = LogManager.getLogger(Here.class.getSimpleName());
 	/** Url base **/
-	private static final String URL_BASE = "http://geocoder.cit.api.here.com";
+	private static final String URL_BASE = "http://geocoder.api.here.com";
 	/** Url option **/
 	private static final String URL_APP_CODE = "app_code=";
 	/** Url option **/
