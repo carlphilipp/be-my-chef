@@ -73,7 +73,7 @@ public class OrderBusiness {
 			if (sendEmail) {
 				EmailUtils.emailNewOrder(user, res);
 			}
-			Jobs.getInstance().addTemporaryOrderJob(res);
+			Jobs.getInstance().addTemporaryOrderJob(user, res);
 			return res;
 		}
 	}

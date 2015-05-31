@@ -17,6 +17,7 @@ import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
 import com.epickur.api.entity.Order;
+import com.epickur.api.entity.User;
 import com.epickur.api.utils.Utils;
 
 /**
@@ -80,7 +81,8 @@ public class Jobs {
 		LOG.info("Scheduler started ");
 	}
 
-	public final void addTemporaryOrderJob(final Order order) {
+	public final void addTemporaryOrderJob(final User user, final Order order) {
+		String userId = user.getId().toHexString();
 		String orderId = order.getId().toHexString();
 		DateTime orderDate = order.getCreatedAt();
 		DateTime scheduleCancelDate = orderDate.plusMinutes(orderMaxTime);
@@ -88,6 +90,7 @@ public class Jobs {
 		JobDetail cancelOrder = JobBuilder.newJob(CancelOrderJob.class)
 				.withIdentity(identity)
 				.usingJobData("orderId", orderId)
+				.usingJobData("userId", userId)
 				.build();
 		Trigger triggerCancelOrder = TriggerBuilder.newTrigger()
 				.withIdentity(identity)

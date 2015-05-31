@@ -40,5 +40,12 @@ public enum EmailType {
 	ORDER_CATERER_FAIL,
 	/** Email sent to the admins when the caterer accepted the order but the charge failed **/
 	ORDER_ADMINS_FAIL,
+	
+	/** Email sent to the user when the caterer did not accept on time the order **/
+	ORDER_USER_CANCEL,
+	/** Email sent to the caterer when the caterer did not accept on time the order **/
+	ORDER_CATERER_CANCEL,
+	/** Email sent to the admins when the caterer did not accept on time the order **/
+	ORDER_ADMINS_CANCEL,
 
 }

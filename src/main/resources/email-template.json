@@ -1,15 +1,15 @@
 {
-	"registration_user":	{
+	"registration_user": {
 		"subject":"Welcome to BE MY CHEF!",
 		"folder":"registration",
 		"file":"registration_user.html"
 	},
-	"registration_admin":	{
+	"registration_admin": {
 		"subject":"New Registration - @@EMAIL@@",
 		"folder":"registration",
 		"file":"registration_admin.html"
 	},
-	"order_user_new":	{
+	"order_user_new": {
 		"subject":"We have received your BE MY CHEF order!",
 		"folder":"order/new",
 		"file":"order_user_new.html"
@@ -19,27 +19,27 @@
 		"folder":"order/new",
 		"file":"order_admins_new.html"
 	},
-	"order_caterer_new":	{
+	"order_caterer_new": {
 		"subject":"New order #@@ORDER_ID@@",
 		"folder":"order/new",
 		"file":"order_caterer_new.html"
 	},
-	"order_user_declined":	{
+	"order_user_declined": {
 		"subject":"Order declined #@@ORDER_ID@@",
 		"folder":"order/decline",
 		"file":"order_user_declined.html"
 	},
-	"order_admins_declined":	{
+	"order_admins_declined": {
 		"subject":"Order declined #@@ORDER_ID@@",
 		"folder":"order/decline",
 		"file":"order_admins_declined.html"
 	},
-	"order_user_success":	{
+	"order_user_success": {
 		"subject":"Your BE MY CHEF order has been accepted!",
 		"folder":"order/accept/success",
 		"file":"order_user_success.html"
 	},
-	"order_caterer_success":	{
+	"order_caterer_success": {
 		"subject":"Order confirmed #@@ORDER_ID@@",
 		"folder":"order/accept/success",
 		"file":"order_caterer_success.html"
@@ -49,19 +49,34 @@
 		"folder":"order/accept/success",
 		"file":"order_admins_success.html"
 	},
-	"order_user_fail":	{
+	"order_user_fail": {
 		"subject":"Order canceled #@@ORDER_ID@@",
 		"folder":"order/accept/fail",
 		"file":"order_user_fail.html"
 	},
-	"order_caterer_fail":	{
+	"order_caterer_fail": {
 		"subject":"Order canceled #@@ORDER_ID@@",
 		"folder":"order/accept/fail",
 		"file":"order_caterer_fail.html"
 	},
-	"order_admins_fail":	{
+	"order_admins_fail": {
 		"subject":"Order canceled #@@ORDER_ID@@",
 		"folder":"order/accept/fail",
 		"file":"order_admins_fail.html"
+	},
+	"order_user_cancel": {
+		"subject":"Order canceled #@@ORDER_ID@@",
+		"folder":"order/cancel",
+		"file":"order_user_cancel.html"
+	},
+	"order_caterer_cancel": {
+		"subject":"Order canceled #@@ORDER_ID@@",
+		"folder":"order/cancel",
+		"file":"order_caterer_cancel.html"
+	},
+	"order_admins_cancel": {
+		"subject":"Order canceled #@@ORDER_ID@@",
+		"folder":"order/cancel",
+		"file":"order_admins_cancel.html"
 	}
 }

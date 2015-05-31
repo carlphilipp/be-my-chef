@@ -302,4 +302,26 @@ public final class EmailTemplate {
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
+	
+	// ORDER: case 5 - The order has been received by the Caterer, but he did not answer it on time.
+	public static Map<String, String> convertToDataCancelOrderUser(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
+	
+	public static Map<String, String> convertToDataCancelOrderCaterer(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
+	
+	public static Map<String, String> convertToDataCancelOrderAdmins(final String orderId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@ORDER_ID@@", orderId);
+		return data;
+	}
 }
