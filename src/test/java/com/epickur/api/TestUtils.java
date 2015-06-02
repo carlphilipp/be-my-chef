@@ -32,6 +32,9 @@ import com.epickur.api.entity.Location;
 import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.times.Hours;
+import com.epickur.api.entity.times.TimeFrame;
+import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.Currency;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.MeasurementUnit;
@@ -185,7 +188,42 @@ public class TestUtils {
 		caterer.setName(generateRandomString());
 		caterer.setPhone(generateRandomString());
 		caterer.setCreatedBy(new ObjectId());
+		caterer.setWorkingTimes(generateRandomWorkingTime());
 		return caterer;
+	}
+
+	private static WorkingTimes generateRandomWorkingTime() {
+		WorkingTimes workingTimes = new WorkingTimes();
+		int num = RandomUtils.nextInt(0, 300);
+		workingTimes.setMinimumPreparationTime(num);
+		workingTimes.setHours(generateRandomHours());
+		return workingTimes;
+	}
+
+	private static Hours generateRandomHours() {
+		Hours hours = new Hours();
+		hours.setMon(generateRandomTimeFrame());
+		hours.setFri(generateRandomTimeFrame());
+		hours.setSat(generateRandomTimeFrame());
+		hours.setSun(generateRandomTimeFrame());
+		hours.setThu(generateRandomTimeFrame());
+		hours.setTue(generateRandomTimeFrame());
+		hours.setWed(generateRandomTimeFrame());
+		return hours;
+	}
+
+	private static List<TimeFrame> generateRandomTimeFrame() {
+		List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+		TimeFrame timeFrame1 = new TimeFrame();
+		timeFrame1.setOpen(RandomUtils.nextInt(350, 600));
+		timeFrame1.setClose(RandomUtils.nextInt(700, 900));
+		timeFrames.add(timeFrame1);
+		
+		TimeFrame timeFrame2 = new TimeFrame();
+		timeFrame2.setOpen(RandomUtils.nextInt(1020, 1080));
+		timeFrame2.setClose(RandomUtils.nextInt(1320, 1440));
+		timeFrames.add(timeFrame2);
+		return timeFrames;
 	}
 
 	public static Location generateRandomLocation() {

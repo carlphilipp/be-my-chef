@@ -109,7 +109,7 @@ public final class Location extends AbstractEntity {
 			res.putAll(address.getUpdateMap(prefix + ".address"));
 		}
 		if (geo != null) {
-			res.putAll(geo.getUpdateListBasicDBObject(prefix + ".geo"));
+			res.putAll(geo.getUpdateMap(prefix + ".geo"));
 		}
 		return res;
 	}

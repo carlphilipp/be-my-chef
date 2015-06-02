@@ -29,7 +29,7 @@ public class GeoTest {
 	@Test
 	public void testGeo2() throws EpickurException {
 		Geo geo = new Geo();
-		Map<String, Object> actual = geo.getUpdateListBasicDBObject("prefix");
+		Map<String, Object> actual = geo.getUpdateMap("prefix");
 		assertEquals(2, actual.size());
 		assertEquals("Point", actual.get("prefix.type"));
 		assertEquals(new Double(0.0), ((Double[])actual.get("prefix.coordinates"))[0]);

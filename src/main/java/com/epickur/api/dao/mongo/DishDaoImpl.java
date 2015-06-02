@@ -95,7 +95,7 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 				return null;
 			}
 		} catch (MongoException e) {
-			e.printStackTrace();
+			LOG.error(e.getLocalizedMessage(), e);
 			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
 		}
 	}

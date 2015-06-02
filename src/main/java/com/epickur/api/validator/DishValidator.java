@@ -11,7 +11,6 @@ import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.entity.Key;
-import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
@@ -163,7 +162,7 @@ public final class DishValidator extends Validator {
 	 *            The list of NutritionFact
 	 */
 
-	private void checkNutritionFactsData(final List<NutritionFact> nutritionFacts) {
+/*	private void checkNutritionFactsData(final List<NutritionFact> nutritionFacts) {
 		if (nutritionFacts.size() == 0) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts"));
 		} else {
@@ -179,7 +178,7 @@ public final class DishValidator extends Validator {
 				}
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * @param role

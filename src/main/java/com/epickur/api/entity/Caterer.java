@@ -19,6 +19,7 @@ import com.epickur.api.entity.databind.DateDeserializer;
 import com.epickur.api.entity.databind.DateSerializer;
 import com.epickur.api.entity.databind.ObjectIdDeserializer;
 import com.epickur.api.entity.databind.ObjectIdSerializer;
+import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.View;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperAPI;
@@ -37,7 +38,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "name", "description", "manager", "email", "phone", "location", "createdBy", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "name", "description", "manager", "email", "phone", "location", "workingTimes", "createdBy", "createdAt",
+		"updatedAt" })
 public final class Caterer extends AbstractEntity {
 
 	/** Logger **/
@@ -56,6 +58,8 @@ public final class Caterer extends AbstractEntity {
 	private String phone;
 	/** Location **/
 	private Location location;
+	/** Working times **/
+	private WorkingTimes workingTimes;
 	/** Owner id **/
 	private ObjectId createdBy;
 	/** Created at **/
@@ -191,6 +195,14 @@ public final class Caterer extends AbstractEntity {
 		this.location = location;
 	}
 
+	public WorkingTimes getWorkingTimes() {
+		return workingTimes;
+	}
+
+	public void setWorkingTimes(WorkingTimes workingTimes) {
+		this.workingTimes = workingTimes;
+	}
+
 	/**
 	 * @return The creation date
 	 */
@@ -256,6 +268,10 @@ public final class Caterer extends AbstractEntity {
 							result.put(entry.getKey(), (Double[]) entry.getValue());
 						}
 					}
+				} else if(key.equals("workingTimes")){
+					WorkingTimes wt = WorkingTimes.getObject((Document) found.get(key));
+					Map<String, Object> workingTimes = wt.getUpdateMapObject(prefix + ".workingTimes");
+					result.putAll(workingTimes);
 				} else {
 					result.put("caterer." + key, found.get(key).toString());
 				}
