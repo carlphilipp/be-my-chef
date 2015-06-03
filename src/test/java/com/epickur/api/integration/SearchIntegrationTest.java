@@ -76,7 +76,8 @@ public class SearchIntegrationTest {
 		String type = "Meat";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
-		HttpGet request = new HttpGet(URL + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		String pickupdate = "mon-19:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
@@ -94,7 +95,8 @@ public class SearchIntegrationTest {
 		String type = "Fish,Meat";
 		String limit = "100";
 		String address = "388 Bourke St Melbourne, Australia";
-		HttpGet request = new HttpGet(URL + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		String pickupdate = "mon-19:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);

@@ -153,12 +153,13 @@ public final class SearchService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response search(
+			@QueryParam("pickupdate") final String pickupdate,
 			@QueryParam("types") final String types,
 			@DefaultValue("50") @QueryParam("limit") final Integer limit,
 			@QueryParam("at") final String at,
 			@QueryParam("searchtext") final String searchtext,
 			@DefaultValue("500") @QueryParam("distance") final Integer distance) throws EpickurException {
-		validator.checkSearch(types, at, searchtext);
+		validator.checkSearch(pickupdate, types, at, searchtext);
 		List<DishType> dishTypes = Utils.stringToListDishType(types);
 		Geo geo = null;
 		if (!StringUtils.isBlank(at)) {

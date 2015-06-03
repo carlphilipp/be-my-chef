@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +56,8 @@ public class TestUtils {
 	/** Logger **/
 	private static final Logger LOG = LogManager.getLogger(TestUtils.class.getSimpleName());
 
+	private static final String[] pickupdateDays = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
+
 	public static void setupDB() throws IOException {
 		InputStreamReader in = new InputStreamReader(SearchIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
@@ -66,12 +69,12 @@ public class TestUtils {
 		String mongoPort = prop.getProperty("mongo.port");
 		String mongoDbName = prop.getProperty("mongo.db.name");
 		String scriptSetupPath = prop.getProperty("script.setup");
-		
+
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptSetupPath;
 		TestUtils.runShellCommand(cmd);
 	}
-	
-	public static void cleanDB() throws IOException{
+
+	public static void cleanDB() throws IOException {
 		InputStreamReader in = new InputStreamReader(SearchIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
@@ -82,7 +85,7 @@ public class TestUtils {
 		String mongoPort = prop.getProperty("mongo.port");
 		String mongoDbName = prop.getProperty("mongo.db.name");
 		String scriptCleanPath = prop.getProperty("script.clean");
-		
+
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
 		TestUtils.runShellCommand(cmd);
 	}
@@ -218,12 +221,23 @@ public class TestUtils {
 		timeFrame1.setOpen(RandomUtils.nextInt(350, 600));
 		timeFrame1.setClose(RandomUtils.nextInt(700, 900));
 		timeFrames.add(timeFrame1);
-		
+
 		TimeFrame timeFrame2 = new TimeFrame();
 		timeFrame2.setOpen(RandomUtils.nextInt(1020, 1080));
 		timeFrame2.setClose(RandomUtils.nextInt(1320, 1440));
 		timeFrames.add(timeFrame2);
 		return timeFrames;
+	}
+
+	public static String generateRandomPickupDate() {
+		DecimalFormat formatter = new DecimalFormat("00");
+		int index = RandomUtils.nextInt(0, pickupdateDays.length - 1);
+		String selected = pickupdateDays[index];
+		int hours = RandomUtils.nextInt(0, 23);
+		int minutes = RandomUtils.nextInt(0, 59);
+		String hoursFormatted = formatter.format(hours);
+		String minutesFormatted = formatter.format(minutes);
+		return selected + "-" + hoursFormatted + ":" + minutesFormatted;
 	}
 
 	public static Location generateRandomLocation() {

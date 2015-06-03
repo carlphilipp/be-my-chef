@@ -1,5 +1,8 @@
 package com.epickur.api.validator;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.epickur.api.enumeration.DishType;
@@ -18,8 +21,10 @@ public final class SearchValidator extends Validator {
 	protected SearchValidator() {
 		super("search");
 	}
-	
+
 	/**
+	 * @param pickupdate
+	 *            The pickupdate
 	 * @param types
 	 *            The list of dish type
 	 * @param at
@@ -27,7 +32,16 @@ public final class SearchValidator extends Validator {
 	 * @param searchtext
 	 *            The address to search
 	 */
-	public void checkSearch(final String types, final String at, final String searchtext) {
+	public void checkSearch(final String pickupdate, final String types, final String at, final String searchtext) {
+		if (StringUtils.isBlank(pickupdate)) {
+			throw new EpickurIllegalArgument("The parameter pickupdate is not allowed to be null");
+		} else {
+			Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-([0-1][0-9]|2[0-3]):[0-5][0-9]$");
+			Matcher matcher = pattern.matcher(pickupdate);
+			if(!matcher.matches()){
+				throw new EpickurIllegalArgument("The parameter pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: " + pickupdate);
+			}
+		}
 		if (StringUtils.isBlank(types)) {
 			throw new EpickurIllegalArgument("The parameter types is not allowed to be null");
 		} else {
