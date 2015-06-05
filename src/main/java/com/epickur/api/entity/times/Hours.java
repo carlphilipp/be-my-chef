@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.epickur.api.entity.AbstractEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Hours
@@ -129,7 +130,7 @@ public final class Hours extends AbstractEntity {
 		this.sun = sun;
 	}
 	
-
+	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		if(fri != null){

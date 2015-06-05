@@ -43,14 +43,15 @@ public final class SearchBusiness {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public List<Dish> search(final List<DishType> type, final Integer limit, final Geo geo, final String searchtext, final int distance)
+	public List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
+			final String searchtext, final int distance)
 			throws EpickurException {
 		if (geo == null) {
 			IGeocoder geocoder = new GeocoderHereImpl();
 			Geo geoFound = geocoder.getPosition(searchtext);
-			return dishDao.search(type, limit, geoFound, distance);
+			return dishDao.search(day, minutes, type, limit, geoFound, distance);
 		} else {
-			return dishDao.search(type, limit, geo, distance);
+			return dishDao.search(day, minutes, type, limit, geo, distance);
 		}
 	}
 }

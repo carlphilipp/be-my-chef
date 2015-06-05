@@ -79,12 +79,15 @@ public class SearchIntegrationTest {
 		String pickupdate = "mon-19:00";
 		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode, 200, statusCode);
+		
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
 		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, 200, statusCode);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
 		Assert.assertThat(jsonResult.size(), is(1));
@@ -98,12 +101,15 @@ public class SearchIntegrationTest {
 		String pickupdate = "mon-19:00";
 		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
+		
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
 		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, 200, statusCode);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
 		Assert.assertThat(jsonResult.size(), is(2));

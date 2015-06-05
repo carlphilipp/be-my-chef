@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.epickur.api.entity.AbstractEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * TimeFrame
@@ -47,6 +48,7 @@ public final class TimeFrame extends AbstractEntity {
 		this.close = close;
 	}
 
+	@JsonIgnore
 	public Map<String, String> getUpdateMap() {
 		Map<String, String> res = new HashMap<String, String>();
 		res.put("open", open + "");

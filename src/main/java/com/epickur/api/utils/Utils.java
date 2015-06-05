@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +42,7 @@ public final class Utils {
 	private static final Logger LOG = LogManager.getLogger(Utils.class.getSimpleName());
 
 	/** Session timeout **/
-	private static Integer sessionTimeout;
+	private static Integer SESSIONTIMEOUT;
 
 	/**
 	 * Private Constructor
@@ -50,7 +52,7 @@ public final class Utils {
 
 	static {
 		Properties prop = Utils.getEpickurProperties();
-		sessionTimeout = Integer.valueOf(prop.getProperty("session.timeout"));
+		SESSIONTIMEOUT = Integer.valueOf(prop.getProperty("session.timeout"));
 	}
 
 	/**
@@ -208,7 +210,7 @@ public final class Utils {
 			return false;
 		} else {
 			DateTime currentTime = new DateTime();
-			if (Days.daysBetween(key.getCreatedAt(), currentTime).getDays() > sessionTimeout) {
+			if (Days.daysBetween(key.getCreatedAt(), currentTime).getDays() > SESSIONTIMEOUT) {
 				return false;
 			}
 		}
@@ -263,5 +265,27 @@ public final class Utils {
 		geo.setLatitude(Double.valueOf(geoArray[0]));
 		geo.setLongitude(Double.valueOf(geoArray[1]));
 		return geo;
+	}
+
+	public static Object[] parsePickupdate(final String pickupdate) {
+		Object[] result = null;
+		if (pickupdate != null) {
+			Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):(([0-5][0-9])))$");
+			Matcher matcher = pattern.matcher(pickupdate);
+			if (matcher.matches()) {
+				result = new Object[2];
+				// Extract the day of the week
+				result[0] = matcher.group(1).toLowerCase();
+				// Convert in minutes the given time
+				result[1] = Integer.parseInt(matcher.group(3)) * 60 + Integer.parseInt(matcher.group(4));
+			}
+		}
+		return result;
+	}
+	
+	public static void main(String [] args){
+		Object[] derp = Utils.parsePickupdate("sun-22:15");
+		LOG.info(derp[0]);
+		LOG.info(derp[1]);
 	}
 }

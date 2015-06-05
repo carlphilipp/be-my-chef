@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.BsonArray;
 import org.bson.BsonDocument;
+import org.bson.BsonInt32;
 import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -146,7 +147,8 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 	 * @throws EpickurException
 	 *             if an epickur exception occurred
 	 */
-	public List<Dish> search(final List<DishType> types, final Integer limit, final Geo geo, final Integer distance) throws EpickurException {
+	public List<Dish> search(final String day, final Integer minutes, final List<DishType> types, final Integer limit, final Geo geo,
+			final Integer distance) throws EpickurException {
 		Document find = new Document();
 		if (types.size() == 1) {
 			find.append("type", types.get(0).getType());
@@ -161,6 +163,16 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 			find.append("$or", or);
 		}
 		find.put("caterer.location.geo", geo.getSearch(0, distance));
+		Document openClose = new Document();
+		Document elementMatch = new Document();
+		Document open =new Document();
+		open.put("$lt", new BsonInt32(minutes));
+		Document close =new Document();
+		close.put("$gt", new BsonInt32(minutes));
+		elementMatch.append("open", open);
+		elementMatch.append("close", close);
+		openClose.put("$elemMatch", elementMatch);
+		find.put("caterer.workingTimes.hours." + day, openClose);
 		List<Dish> dishes = new ArrayList<Dish>();
 		MongoCursor<Document> cursor = null;
 		try {

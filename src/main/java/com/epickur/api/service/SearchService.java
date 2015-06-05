@@ -165,7 +165,10 @@ public final class SearchService {
 		if (!StringUtils.isBlank(at)) {
 			geo = Utils.stringToGeo(at);
 		}
-		List<Dish> dishes = this.searchBusiness.search(dishTypes, limit, geo, searchtext, distance);
+		Object[] result = Utils.parsePickupdate(pickupdate);
+		String day = (String) result[0];
+		Integer minutes = (Integer) result[1];
+		List<Dish> dishes = this.searchBusiness.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
 		if (dishes.size() != 0) {
 			return Response.ok().entity(dishes).build();
 		} else {
