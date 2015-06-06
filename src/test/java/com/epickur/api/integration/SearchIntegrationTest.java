@@ -81,7 +81,7 @@ public class SearchIntegrationTest {
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode, 200, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
 		
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);

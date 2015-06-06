@@ -29,6 +29,25 @@ db.caterers.insert(
         "coordinates" : [-87.6502373, 41.9282773]
       }
     },
+    "workingTimes" : {
+      "hours" : {
+          "mon" : [{"open" : 492,"close" : 868}, 
+									{"open" : 1074,"close" : 1395}],
+          "tue" : [ {"open" : 517,"close" : 831}, 
+									{"open" : 1059,"close" : 1433}],
+          "wed" : [{"open" : 428,"close" : 711}, 
+									{"open" : 1052,"close" : 1397}],
+          "thu" : [{"open" : 529,"close" : 889},
+									{"open" : 1034,"close" : 1349}],
+          "fri" : [{"open" : 449,"close" : 810}, 
+									{"open" : 1076,"close" : 1373}],
+          "sat" : [{"open" : 448, "close" : 815},
+									{"open" : 1055,"close" : 1345}],
+          "sun" : [{"open" : 494,"close" : 880},
+									{"open" : 1065,"close" : 1356}]
+      },
+      "minimumPreparationTime" : 204
+  },
     "createdAt" : NumberLong(1424556053008),
     "updatedAt" : NumberLong(1424556053008)
   },
@@ -53,6 +72,15 @@ db.caterers.insert(
         "coordinates" : [-87.643631, 41.930149]
       }
     },
+    "workingTimes" : {
+      "hours" : {
+          "sat" : [{"open" : 448, "close" : 815},
+									{"open" : 1055,"close" : 1345}],
+          "sun" : [{"open" : 494,"close" : 880},
+									{"open" : 1065,"close" : 1356}]
+      },
+        "minimumPreparationTime" : 204
+    },  
     "createdAt" : NumberLong(1424556053009),
     "updatedAt" : NumberLong(1424556053009)
   },
@@ -76,6 +104,21 @@ db.caterers.insert(
         "type" : "Point",
         "coordinates" : [144.963280, -37.814107]
       }
+    },
+    "workingTimes" : {
+      "hours" : {
+          "mon" : [{"open" : 492,"close" : 868}, 
+									{"open" : 1074,"close" : 1395}],
+          "tue" : [ {"open" : 517,"close" : 831}, 
+									{"open" : 1059,"close" : 1433}],
+          "wed" : [{"open" : 428,"close" : 711}, 
+									{"open" : 1052,"close" : 1397}],
+          "thu" : [{"open" : 529,"close" : 889},
+									{"open" : 1034,"close" : 1349}],
+          "fri" : [{"open" : 449,"close" : 810}, 
+									{"open" : 1076,"close" : 1373}]
+       },
+        "minimumPreparationTime" : 204
     },
     "createdAt" : NumberLong(1424556053010),
     "updatedAt" : NumberLong(1424556053010)
@@ -135,6 +178,25 @@ db.dishes.insert(
             "coordinates" : [-87.6502373, 41.9282773]
           }
         },
+        "workingTimes" : {
+          "hours" : {
+              "mon" : [{"open" : 492,"close" : 868}, 
+    									{"open" : 1074,"close" : 1395}],
+              "tue" : [ {"open" : 517,"close" : 831}, 
+    									{"open" : 1059,"close" : 1433}],
+              "wed" : [{"open" : 428,"close" : 711}, 
+    									{"open" : 1052,"close" : 1397}],
+              "thu" : [{"open" : 529,"close" : 889},
+    									{"open" : 1034,"close" : 1349}],
+              "fri" : [{"open" : 449,"close" : 810}, 
+    									{"open" : 1076,"close" : 1373}],
+              "sat" : [{"open" : 448, "close" : 815},
+    									{"open" : 1055,"close" : 1345}],
+              "sun" : [{"open" : 494,"close" : 880},
+    									{"open" : 1065,"close" : 1356}]
+           },
+           "minimumPreparationTime" : 204
+        }, 
         "createdAt" : NumberLong(1424556053008),
         "updatedAt" : NumberLong(1424556053008)
       },
@@ -197,6 +259,21 @@ db.dishes.insert(
               "coordinates" : [144.963280, -37.814107]
             }
           },
+          "workingTimes" : {
+            "hours" : {
+                "mon" : [{"open" : 492,"close" : 868}, 
+      									{"open" : 1074,"close" : 1395}],
+                "tue" : [ {"open" : 517,"close" : 831}, 
+      									{"open" : 1059,"close" : 1433}],
+                "wed" : [{"open" : 428,"close" : 711}, 
+      									{"open" : 1052,"close" : 1397}],
+                "thu" : [{"open" : 529,"close" : 889},
+      									{"open" : 1034,"close" : 1349}],
+                "fri" : [{"open" : 449,"close" : 810}, 
+      									{"open" : 1076,"close" : 1373}]
+             },
+             "minimumPreparationTime" : 204
+          }, 
           "createdAt" : NumberLong(1424042592185),
           "updatedAt" : NumberLong(1424042592185)
        },
@@ -258,6 +335,21 @@ db.dishes.insert(
             "coordinates" : [144.963280, -37.814107]
           }
         },
+        "workingTimes" : {
+          "hours" : {
+              "mon" : [{"open" : 492,"close" : 868}, 
+    									{"open" : 1074,"close" : 1395}],
+              "tue" : [ {"open" : 517,"close" : 831}, 
+    									{"open" : 1059,"close" : 1433}],
+              "wed" : [{"open" : 428,"close" : 711}, 
+    									{"open" : 1052,"close" : 1397}],
+              "thu" : [{"open" : 529,"close" : 889},
+    									{"open" : 1034,"close" : 1349}],
+              "fri" : [{"open" : 449,"close" : 810}, 
+    									{"open" : 1076,"close" : 1373}]
+           },
+           "minimumPreparationTime" : 204
+        }, 
         "createdAt" : NumberLong(1424042592185),
         "updatedAt" : NumberLong(1424042592185)
      },
@@ -328,6 +420,25 @@ db.dishes.insert(
               "coordinates" : [-87.6502373, 41.9282773]
             }
           },
+          "workingTimes" : {
+            "hours" : {
+                "mon" : [{"open" : 492,"close" : 868}, 
+      									{"open" : 1074,"close" : 1395}],
+                "tue" : [ {"open" : 517,"close" : 831}, 
+      									{"open" : 1059,"close" : 1433}],
+                "wed" : [{"open" : 428,"close" : 711}, 
+      									{"open" : 1052,"close" : 1397}],
+                "thu" : [{"open" : 529,"close" : 889},
+      									{"open" : 1034,"close" : 1349}],
+                "fri" : [{"open" : 449,"close" : 810}, 
+      									{"open" : 1076,"close" : 1373}],
+                "sat" : [{"open" : 448, "close" : 815},
+      									{"open" : 1055,"close" : 1345}],
+                "sun" : [{"open" : 494,"close" : 880},
+      									{"open" : 1065,"close" : 1356}]
+             },
+             "minimumPreparationTime" : 204
+          	}, 
           "createdAt" : NumberLong(1424556053008),
           "updatedAt" : NumberLong(1424556053008)
         },

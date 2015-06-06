@@ -175,6 +175,7 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 		find.put("caterer.workingTimes.hours." + day, openClose);
 		List<Dish> dishes = new ArrayList<Dish>();
 		MongoCursor<Document> cursor = null;
+		LOG.debug("Searching: " + find);
 		try {
 			cursor = getColl().find(find).limit(limit).iterator();
 			while (cursor.hasNext()) {

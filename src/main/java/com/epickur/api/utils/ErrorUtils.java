@@ -81,9 +81,10 @@ public final class ErrorUtils {
 	 * @return The response
 	 */
 	public static Response noResult() {
+		// Change from no content to bad request because the entity is actually null in the answer when no content
 		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.NO_CONTENT.getStatusCode());
-		bdb.put("message", Response.Status.NO_CONTENT.getReasonPhrase());
-		return Response.status(Response.Status.NO_CONTENT).entity(bdb).build();
+		bdb.put("error", Response.Status.BAD_REQUEST.getStatusCode());
+		bdb.put("message", Response.Status.BAD_REQUEST.getReasonPhrase());
+		return Response.status(Response.Status.BAD_REQUEST).entity(bdb).build();
 	}
 }
