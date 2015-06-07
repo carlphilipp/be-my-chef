@@ -13,8 +13,11 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
+import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
+import com.epickur.api.entity.times.TimeFrame;
+import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
@@ -147,7 +150,7 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 	 * @throws EpickurException
 	 *             if an epickur exception occurred
 	 */
-	public List<Dish> search(final String day, final Integer minutes, final List<DishType> types, final Integer limit, final Geo geo,
+	public List<Dish> search(final String day, final Integer pickupdateMinutes, final List<DishType> types, final Integer limit, final Geo geo,
 			final Integer distance) throws EpickurException {
 		Document find = new Document();
 		if (types.size() == 1) {
@@ -165,10 +168,10 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 		find.put("caterer.location.geo", geo.getSearch(0, distance));
 		Document openClose = new Document();
 		Document elementMatch = new Document();
-		Document open =new Document();
-		open.put("$lt", new BsonInt32(minutes));
-		Document close =new Document();
-		close.put("$gt", new BsonInt32(minutes));
+		Document open = new Document();
+		open.put("$lt", new BsonInt32(pickupdateMinutes));
+		Document close = new Document();
+		close.put("$gt", new BsonInt32(pickupdateMinutes));
 		elementMatch.append("open", open);
 		elementMatch.append("close", close);
 		openClose.put("$elemMatch", elementMatch);
@@ -189,6 +192,26 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 				cursor.close();
 			}
 		}
-		return dishes;
+		// TODO: See how to optimize that and avoid doing that here.
+		// Should be doable in MongoDB.
+		List<Dish> res = new ArrayList<Dish>();
+		for (Dish dish : dishes) {
+			Caterer cat = dish.getCaterer();
+			WorkingTimes workingTimes = cat.getWorkingTimes();
+			int openTime = 0;
+			List<TimeFrame> timeFrames = workingTimes.getHours().get(day);
+			for (TimeFrame tf : timeFrames) {
+				// If the pickup date is in the current timeframe.
+				if (tf.getOpen() <= pickupdateMinutes && tf.getClose() >= pickupdateMinutes) {
+					openTime = tf.getOpen();
+					break;
+				}
+			}
+			// We keep this dish if the caterer has time to prepare it.
+			if (pickupdateMinutes.intValue() - workingTimes.getMinimumPreparationTime() >= openTime) {
+				res.add(dish);
+			}
+		}
+		return res;
 	}
 }

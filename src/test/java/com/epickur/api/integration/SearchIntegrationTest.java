@@ -23,6 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.epickur.api.TestUtils;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
@@ -77,6 +78,75 @@ public class SearchIntegrationTest {
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-19:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
+		
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
+		Assert.assertThat(jsonResult.size(), is(1));
+	}
+	
+	@Test
+	public void testSearchUsa2() throws ClientProtocolException, IOException {
+		// Same test with another pickupdate
+		String type = "Meat";
+		String limit = "100";
+		String address = "832 W. Wrightwood, Chicago, Illinois";
+		String pickupdate = "mon-16:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 400, statusCode);
+		
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		Assert.assertEquals(400, jsonResult.get("error").asInt());
+		Assert.assertEquals("Bad Request", jsonResult.get("message").asText());
+	}
+	
+	@Test
+	public void testSearchUsa3() throws ClientProtocolException, IOException {
+		String type = "Meat";
+		String limit = "100";
+		String address = "832 W. Wrightwood, Chicago, Illinois";
+		String pickupdate = "mon-18:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 400, statusCode);
+		
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		Assert.assertEquals(400, jsonResult.get("error").asInt());
+		Assert.assertEquals("Bad Request", jsonResult.get("message").asText());
+	}
+	
+	@Test
+	public void testSearchUsa4() throws ClientProtocolException, IOException {
+		String type = "Meat";
+		String limit = "100";
+		String address = "832 W. Wrightwood, Chicago, Illinois";
+		String pickupdate = "mon-22:00";
 		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		

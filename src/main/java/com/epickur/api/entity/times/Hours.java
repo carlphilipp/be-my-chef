@@ -129,60 +129,80 @@ public final class Hours extends AbstractEntity {
 	public final void setSun(final List<TimeFrame> sun) {
 		this.sun = sun;
 	}
-	
+
 	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) {
 		Map<String, Object> res = new HashMap<String, Object>();
-		if(fri != null){
+		if (fri != null) {
 			List<Object> objects = new ArrayList<Object>();
-			for(TimeFrame tf : fri){
+			for (TimeFrame tf : fri) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".fri", objects);
 		}
-		if(mon != null){
+		if (mon != null) {
 			List<Object> objects = new ArrayList<Object>();
-			for(TimeFrame tf : mon){
+			for (TimeFrame tf : mon) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".mon", objects);
 		}
-		if(tue != null){
+		if (tue != null) {
 			List<Object> objects = new ArrayList<Object>();
-			for(TimeFrame tf : tue){
+			for (TimeFrame tf : tue) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".tue", objects);
 		}
-		if(wed != null){
+		if (wed != null) {
 			List<Object> objects = new ArrayList<Object>();
-			for(TimeFrame tf : wed){
+			for (TimeFrame tf : wed) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".wed", objects);
 		}
-		if(thu != null){
+		if (thu != null) {
 			List<Object> objects = new ArrayList<Object>();
-			for(TimeFrame tf : thu){
+			for (TimeFrame tf : thu) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".thu", objects);
 		}
-		if(sat != null){
+		if (sat != null) {
 			List<Object> objects = new ArrayList<Object>();
-			for(TimeFrame tf : sat){
+			for (TimeFrame tf : sat) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".sat", objects);
 		}
-		if(sun != null){
+		if (sun != null) {
 			List<Object> objects = new ArrayList<Object>();
-			for(TimeFrame tf : sun){
+			for (TimeFrame tf : sun) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".sun", objects);
 		}
 		return res;
+	}
+
+	@JsonIgnore
+	public List<TimeFrame> get(final String str) {
+		if ("mon".equals(str)) {
+			return getMon();
+		} else if ("tue".equals(str)) {
+			return getTue();
+		} else if ("wed".equals(str)) {
+			return getWed();
+		} else if ("thu".equals(str)) {
+			return getThu();
+		} else if ("fri".equals(str)) {
+			return getFri();
+		} else if ("sat".equals(str)) {
+			return getSat();
+		} else if ("sun".equals(str)) {
+			return getSun();
+		}
+		return null;
 	}
 
 	@Override

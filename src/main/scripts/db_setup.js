@@ -46,7 +46,7 @@ db.caterers.insert(
           "sun" : [{"open" : 494,"close" : 880},
 									{"open" : 1065,"close" : 1356}]
       },
-      "minimumPreparationTime" : 204
+      "minimumPreparationTime" : 30
   },
     "createdAt" : NumberLong(1424556053008),
     "updatedAt" : NumberLong(1424556053008)
@@ -79,7 +79,7 @@ db.caterers.insert(
           "sun" : [{"open" : 494,"close" : 880},
 									{"open" : 1065,"close" : 1356}]
       },
-        "minimumPreparationTime" : 204
+        "minimumPreparationTime" : 30
     },  
     "createdAt" : NumberLong(1424556053009),
     "updatedAt" : NumberLong(1424556053009)
@@ -118,7 +118,7 @@ db.caterers.insert(
           "fri" : [{"open" : 449,"close" : 810}, 
 									{"open" : 1076,"close" : 1373}]
        },
-        "minimumPreparationTime" : 204
+        "minimumPreparationTime" : 30
     },
     "createdAt" : NumberLong(1424556053010),
     "updatedAt" : NumberLong(1424556053010)
@@ -195,7 +195,7 @@ db.dishes.insert(
               "sun" : [{"open" : 494,"close" : 880},
     									{"open" : 1065,"close" : 1356}]
            },
-           "minimumPreparationTime" : 204
+           "minimumPreparationTime" : 30
         }, 
         "createdAt" : NumberLong(1424556053008),
         "updatedAt" : NumberLong(1424556053008)
@@ -272,7 +272,7 @@ db.dishes.insert(
                 "fri" : [{"open" : 449,"close" : 810}, 
       									{"open" : 1076,"close" : 1373}]
              },
-             "minimumPreparationTime" : 204
+             "minimumPreparationTime" : 30
           }, 
           "createdAt" : NumberLong(1424042592185),
           "updatedAt" : NumberLong(1424042592185)
@@ -348,7 +348,7 @@ db.dishes.insert(
               "fri" : [{"open" : 449,"close" : 810}, 
     									{"open" : 1076,"close" : 1373}]
            },
-           "minimumPreparationTime" : 204
+           "minimumPreparationTime" : 30
         }, 
         "createdAt" : NumberLong(1424042592185),
         "updatedAt" : NumberLong(1424042592185)
@@ -437,7 +437,7 @@ db.dishes.insert(
                 "sun" : [{"open" : 494,"close" : 880},
       									{"open" : 1065,"close" : 1356}]
              },
-             "minimumPreparationTime" : 204
+             "minimumPreparationTime" : 30
           	}, 
           "createdAt" : NumberLong(1424556053008),
           "updatedAt" : NumberLong(1424556053008)
