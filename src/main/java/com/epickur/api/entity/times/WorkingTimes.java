@@ -2,6 +2,7 @@ package com.epickur.api.entity.times;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
@@ -11,6 +12,7 @@ import org.bson.json.JsonWriterSettings;
 import com.epickur.api.entity.AbstractEntity;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -53,6 +55,24 @@ public final class WorkingTimes extends AbstractEntity {
 	 */
 	public final int getMinimumPreparationTime() {
 		return minimumPreparationTime;
+	}
+	
+	@JsonIgnore
+	public boolean canBePickup(final String day, final Integer pickupdateMinutes){
+		int openTime = 0;
+		List<TimeFrame> timeFrames = getHours().get(day);
+		for (TimeFrame tf : timeFrames) {
+			// If the pickup date is in the current timeframe.
+			if (tf.getOpen() <= pickupdateMinutes && tf.getClose() >= pickupdateMinutes) {
+				openTime = tf.getOpen();
+				break;
+			}
+		}
+		// We keep this dish if the caterer has time to prepare it.
+		if (pickupdateMinutes.intValue() - getMinimumPreparationTime() >= openTime) {
+			return true;
+		}
+		return false;
 	}
 
 	public static WorkingTimes getObject(final Document obj) throws EpickurParsingException {

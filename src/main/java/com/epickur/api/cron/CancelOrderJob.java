@@ -39,8 +39,16 @@ public final class CancelOrderJob implements Job {
 			Order order = orderDao.read(orderId);
 			String userId = context.getJobDetail().getJobDataMap().getString("userId");
 			User user = userDao.read(userId);
-			LOG.info("Cancel order id: " + orderId + " with user: " + user + "  and order " + order);
-			EmailUtils.emailCancelOrder(user, order);
+			LOG.info("Cancel order id: " + orderId + " with user id: " + userId);
+			if (order == null) {
+				LOG.error("Trying to cancel order (" + orderId + "), but the order was not found.");
+			}
+			if (user == null) {
+				LOG.error("Trying to cancel order (" + orderId + "), but the user (" + userId + ") was not found.");
+			}
+			if (user != null && order != null) {
+				EmailUtils.emailCancelOrder(user, order);
+			}
 		} catch (EpickurException e) {
 			LOG.error(e.getLocalizedMessage(), e);
 		}

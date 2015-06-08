@@ -43,6 +43,7 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.integration.SearchIntegrationTest;
 import com.epickur.api.utils.ObjectMapperWrapperAPI;
+import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.APIConnectionException;
@@ -197,7 +198,7 @@ public class TestUtils {
 
 	public static WorkingTimes generateRandomWorkingTimes() {
 		WorkingTimes workingTimes = new WorkingTimes();
-		int num = RandomUtils.nextInt(0, 300);
+		int num = RandomUtils.nextInt(0, 60);
 		workingTimes.setMinimumPreparationTime(num);
 		workingTimes.setHours(generateRandomHours());
 		return workingTimes;
@@ -380,7 +381,18 @@ public class TestUtils {
 		order.setDescription(generateRandomString());
 		order.setDish(generateRandomDish());
 		order.setCreatedBy(new ObjectId());
-		order.setPickupdate(generateRandomPickupDate());
+		
+		String pickupdate = generateRandomPickupDate();
+		order.setPickupdate(pickupdate);
+		Object [] parsedPickupdate = Utils.parsePickupdate(pickupdate);
+		
+		WorkingTimes workingTimes = order.getDish().getCaterer().getWorkingTimes();
+		while(!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])){
+			WorkingTimes temp = generateRandomWorkingTimes();
+			order.getDish().getCaterer().setWorkingTimes(temp);
+			workingTimes = order.getDish().getCaterer().getWorkingTimes();
+			
+		}
 		return order;
 	}
 

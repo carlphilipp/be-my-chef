@@ -16,7 +16,6 @@ import org.joda.time.DateTime;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
-import com.epickur.api.entity.times.TimeFrame;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurDBException;
@@ -198,17 +197,7 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 		for (Dish dish : dishes) {
 			Caterer cat = dish.getCaterer();
 			WorkingTimes workingTimes = cat.getWorkingTimes();
-			int openTime = 0;
-			List<TimeFrame> timeFrames = workingTimes.getHours().get(day);
-			for (TimeFrame tf : timeFrames) {
-				// If the pickup date is in the current timeframe.
-				if (tf.getOpen() <= pickupdateMinutes && tf.getClose() >= pickupdateMinutes) {
-					openTime = tf.getOpen();
-					break;
-				}
-			}
-			// We keep this dish if the caterer has time to prepare it.
-			if (pickupdateMinutes.intValue() - workingTimes.getMinimumPreparationTime() >= openTime) {
+			if (workingTimes.canBePickup(day, pickupdateMinutes)) {
 				res.add(dish);
 			}
 		}

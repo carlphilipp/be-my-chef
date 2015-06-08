@@ -3,9 +3,11 @@ package com.epickur.api.validator;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 
+import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
@@ -124,6 +126,8 @@ public final class UserValidator extends Validator {
 		if (order == null) {
 			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
 		} else {
+			DishValidator validator = new DishValidator();
+			validator.checkCreateData(order.getDish());
 			if (StringUtils.isBlank(order.getDescription())) {
 				throw new EpickurIllegalArgument(fieldNull(getEntity(), "description"));
 			}
@@ -139,8 +143,14 @@ public final class UserValidator extends Validator {
 				Object[] result = Utils.parsePickupdate(order.getPickupdate());
 				if (result == null) {
 					throw new EpickurIllegalArgument(
-							"The parameter pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
+							"The field pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
 									+ order.getPickupdate());
+				} else {
+					Caterer caterer = order.getDish().getCaterer();
+					WorkingTimes workingTimes = caterer.getWorkingTimes();
+					if (!workingTimes.canBePickup((String) result[0], (Integer) result[1])) {
+						throw new EpickurIllegalArgument("The order has a wrong pickupdate.");
+					}
 				}
 			}
 			if (order.getPaid() != null) {
@@ -148,8 +158,6 @@ public final class UserValidator extends Validator {
 					throw new EpickurIllegalArgument("The field order.paid can not be true.");
 				}
 			}
-			DishValidator validator = new DishValidator();
-			validator.checkCreateData(order.getDish());
 		}
 	}
 

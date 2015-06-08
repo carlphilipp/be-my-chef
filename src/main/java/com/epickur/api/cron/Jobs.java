@@ -98,7 +98,7 @@ public class Jobs {
 				.build();
 		try {
 			scheduler.scheduleJob(cancelOrder, triggerCancelOrder);
-			LOG.info("Added job '" + identity + "' to the scheduler");
+			LOG.info("Added job '" + identity + "' to the scheduler with orderId " + orderId + " and userId " + userId);
 		} catch (SchedulerException se) {
 			LOG.error(se.getLocalizedMessage(), se);
 		}
