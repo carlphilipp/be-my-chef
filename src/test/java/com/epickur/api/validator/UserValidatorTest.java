@@ -1,7 +1,5 @@
 package com.epickur.api.validator;
 
-import javax.ws.rs.ForbiddenException;
-
 import org.bson.types.ObjectId;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,6 +13,7 @@ import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.exception.mapper.EpickurForbiddenException;
 
 public class UserValidatorTest {
 
@@ -199,12 +198,12 @@ public class UserValidatorTest {
 		Order order = TestUtils.generateRandomOrder();
 		validator.checkCreateOneOrder("id", order);
 	}
-	
+
 	@Test
 	public void testCheckCreateOneOrder2() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_ORDER_PROVIDED);
-		
+
 		UserValidator validator = new UserValidator();
 		Order order = null;
 		validator.checkCreateOneOrder("id", order);
@@ -216,7 +215,7 @@ public class UserValidatorTest {
 		validator.checkRightsBefore(Role.ADMIN, Crud.CREATE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRights2() throws EpickurException {
 		UserValidator validator = new UserValidator();
 		validator.checkRightsBefore(Role.SUPER_USER, Crud.CREATE, null);
@@ -234,13 +233,13 @@ public class UserValidatorTest {
 		validator.checkRightsBefore(Role.SUPER_USER, Crud.UPDATE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRights5() throws EpickurException {
 		UserValidator validator = new UserValidator();
 		validator.checkRightsBefore(Role.SUPER_USER, Crud.DELETE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRights6() throws EpickurException {
 		UserValidator validator = new UserValidator();
 		validator.checkRightsBefore(Role.USER, Crud.CREATE, null);
@@ -258,7 +257,7 @@ public class UserValidatorTest {
 		validator.checkRightsBefore(Role.USER, Crud.UPDATE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRights9() throws EpickurException {
 		UserValidator validator = new UserValidator();
 		validator.checkRightsBefore(Role.USER, Crud.DELETE, null);
@@ -288,7 +287,7 @@ public class UserValidatorTest {
 		validator.checkRightsBefore(Role.SUPER_USER, Crud.UPDATE, "order");
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRightsOrder5() throws EpickurException {
 		UserValidator validator = new UserValidator();
 		validator.checkRightsBefore(Role.SUPER_USER, Crud.DELETE, "order");
@@ -312,7 +311,7 @@ public class UserValidatorTest {
 		validator.checkRightsBefore(Role.USER, Crud.UPDATE, "order");
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRightsOrder9() throws EpickurException {
 		UserValidator validator = new UserValidator();
 		validator.checkRightsBefore(Role.USER, Crud.DELETE, "order");
@@ -372,7 +371,7 @@ public class UserValidatorTest {
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.UPDATE);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRightsAfter5() throws EpickurException {
 		UserValidator validator = new UserValidator();
 		Key key = TestUtils.generateRandomKey();
@@ -392,16 +391,16 @@ public class UserValidatorTest {
 		User user = TestUtils.generateRandomUser();
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.CREATE);
 	}
-	
-	@Test(expected = ForbiddenException.class)
-	public void testCheckOrderRightsAfter(){
+
+	@Test(expected = EpickurForbiddenException.class)
+	public void testCheckOrderRightsAfter() {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
 		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Crud.READ);
 	}
-	
-	@Test(expected = ForbiddenException.class)
-	public void testCheckOrderRightsAfter2(){
+
+	@Test(expected = EpickurForbiddenException.class)
+	public void testCheckOrderRightsAfter2() {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
 		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Crud.DELETE);

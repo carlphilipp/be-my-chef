@@ -583,7 +583,7 @@ public final class UserService {
 	@Path("/{id}/orders")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addOneOrder(
+	public Response createOneOrder(
 			@PathParam("id") final String userId,
 			@QueryParam("token") final String cardToken,
 			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,

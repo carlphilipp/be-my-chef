@@ -1,7 +1,5 @@
 package com.epickur.api.validator;
 
-import javax.ws.rs.ForbiddenException;
-
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.junit.Rule;
@@ -18,6 +16,7 @@ import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.exception.mapper.EpickurForbiddenException;
 
 public class CatererValidatorTest {
 
@@ -248,7 +247,7 @@ public class CatererValidatorTest {
 		service.checkRightsBefore(Role.ADMIN, Crud.CREATE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRights2() throws EpickurException {
 		CatererValidator service = new CatererValidator();
 		service.checkRightsBefore(Role.SUPER_USER, Crud.CREATE, null);
@@ -266,13 +265,13 @@ public class CatererValidatorTest {
 		service.checkRightsBefore(Role.SUPER_USER, Crud.UPDATE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRights5() throws EpickurException {
 		CatererValidator service = new CatererValidator();
 		service.checkRightsBefore(Role.SUPER_USER, Crud.DELETE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRights6() throws EpickurException {
 		CatererValidator service = new CatererValidator();
 		service.checkRightsBefore(Role.USER, Crud.CREATE, null);
@@ -284,13 +283,13 @@ public class CatererValidatorTest {
 		service.checkRightsBefore(Role.USER, Crud.READ, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRights8() throws EpickurException {
 		CatererValidator service = new CatererValidator();
 		service.checkRightsBefore(Role.USER, Crud.UPDATE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRights9() throws EpickurException {
 		CatererValidator service = new CatererValidator();
 		service.checkRightsBefore(Role.USER, Crud.DELETE, null);
@@ -319,11 +318,11 @@ public class CatererValidatorTest {
 		caterer.setCreatedBy(userId);
 		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
 	}
-	
+
 	@Test
 	public void testCheckRightsAfter3() throws EpickurException {
-		thrown.expect(ForbiddenException.class);
-		
+		thrown.expect(EpickurForbiddenException.class);
+
 		CatererValidator service = new CatererValidator();
 		Key key = TestUtils.generateRandomKey();
 		key.setRole(Role.SUPER_USER);
@@ -332,12 +331,12 @@ public class CatererValidatorTest {
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
 	}
-	
+
 	@Test
 	public void testCheckRightsAfter4() throws EpickurException {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage("Rights issue. This case should not happen");
-		
+
 		CatererValidator service = new CatererValidator();
 		Key key = TestUtils.generateRandomKey();
 		key.setRole(Role.USER);
@@ -357,12 +356,12 @@ public class CatererValidatorTest {
 		end.plusMinutes(5);
 		service.checkPaymentInfo(id, start, end);
 	}
-	
+
 	@Test
 	public void testCheckPayementInfo2() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("Start date missing");
-		
+
 		CatererValidator service = new CatererValidator();
 		String id = new ObjectId().toHexString();
 		DateTime start = null;
@@ -370,12 +369,12 @@ public class CatererValidatorTest {
 		end = end.plusMinutes(5);
 		service.checkPaymentInfo(id, start, end);
 	}
-	
+
 	@Test
 	public void testCheckPayementInfo3() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The start date can not be after today");
-		
+
 		CatererValidator service = new CatererValidator();
 		String id = new ObjectId().toHexString();
 		DateTime start = new DateTime();
@@ -383,16 +382,17 @@ public class CatererValidatorTest {
 		start = start.plusHours(1);
 		service.checkPaymentInfo(id, start, end);
 	}
-	
+
 	@Test
 	public void testCheckPayementInfo4() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The end date should be after the start date");
-		
+
 		CatererValidator service = new CatererValidator();
 		String id = new ObjectId().toHexString();
 		DateTime start = new DateTime();
-		DateTime end = new DateTime();;
+		DateTime end = new DateTime();
+		;
 		end = end.minusHours(1);
 		service.checkPaymentInfo(id, start, end);
 	}

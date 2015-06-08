@@ -39,7 +39,7 @@ public final class CancelOrderJob implements Job {
 			Order order = orderDao.read(orderId);
 			String userId = context.getJobDetail().getJobDataMap().getString("userId");
 			User user = userDao.read(userId);
-			LOG.info("Cancel order id: " + orderId);
+			LOG.info("Cancel order id: " + orderId + " with user: " + user + "  and order " + order);
 			EmailUtils.emailCancelOrder(user, order);
 		} catch (EpickurException e) {
 			LOG.error(e.getLocalizedMessage(), e);

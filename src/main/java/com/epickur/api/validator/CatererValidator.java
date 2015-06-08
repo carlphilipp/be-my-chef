@@ -1,6 +1,6 @@
 package com.epickur.api.validator;
 
-import javax.ws.rs.ForbiddenException;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -10,10 +10,14 @@ import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Location;
+import com.epickur.api.entity.times.Hours;
+import com.epickur.api.entity.times.TimeFrame;
+import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.exception.mapper.EpickurForbiddenException;
 
 /**
  * @author cph
@@ -168,6 +172,59 @@ public final class CatererValidator extends Validator {
 				}
 			}
 		}
+		checkWorkingHours(entity, caterer.getWorkingTimes());
+	}
+
+	private void checkWorkingHours(final String entity, final WorkingTimes workingTimes) {
+		if (workingTimes == null) {
+			throw new EpickurIllegalArgument(fieldNull(entity, "workingTimes"));
+		} else {
+			if (workingTimes.getHours() == null) {
+				throw new EpickurIllegalArgument(fieldNull(entity, "workingTimes.hours"));
+			} else {
+				Hours hours = workingTimes.getHours();
+				List<TimeFrame> mon = hours.getMon();
+				List<TimeFrame> tue = hours.getTue();
+				List<TimeFrame> wed = hours.getWed();
+				List<TimeFrame> thu = hours.getThu();
+				List<TimeFrame> fri = hours.getFri();
+				List<TimeFrame> sat = hours.getSat();
+				List<TimeFrame> sun = hours.getSun();
+				if (mon != null || tue != null || wed != null || thu != null || fri != null || sat != null || sun != null) {
+					if (mon != null) {
+						checkTimeFrames(entity, ".mon", mon);
+					}
+					if (tue != null) {
+						checkTimeFrames(entity, ".tue", tue);
+					}
+					if (wed != null) {
+						checkTimeFrames(entity, ".wed", wed);
+					}
+					if (thu != null) {
+						checkTimeFrames(entity, ".thu", thu);
+					}
+					if (fri != null) {
+						checkTimeFrames(entity, ".fri", fri);
+					}
+					if (sat != null) {
+						checkTimeFrames(entity, ".sat", sat);
+					}
+					if (sun != null) {
+						checkTimeFrames(entity, ".sun", sun);
+					}
+				}
+			}
+		}
+	}
+
+	private void checkTimeFrames(final String entity, final String suffix, final List<TimeFrame> timeFrames) {
+		int i = 0;
+		for (final TimeFrame tf : timeFrames) {
+			if (tf.getOpen() > tf.getClose()) {
+				throw new EpickurIllegalArgument(fieldNull(entity, "workingTimes.hours" + suffix + "[" + i + "]"));
+			}
+			i++;
+		}
 	}
 
 	/**
@@ -187,7 +244,7 @@ public final class CatererValidator extends Validator {
 			if (action != Crud.READ) {
 				if (action == Crud.UPDATE && role == Role.SUPER_USER) {
 					if (!caterer.getCreatedBy().equals(userId)) {
-						throw new ForbiddenException();
+						throw new EpickurForbiddenException();
 					}
 				} else {
 					throw new EpickurException("Rights issue. This case should not happen");

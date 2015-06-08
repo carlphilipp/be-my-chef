@@ -1,6 +1,5 @@
 package com.epickur.api.exception.mapper;
 
-import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -20,13 +19,13 @@ import com.epickur.api.utils.ErrorUtils;
  */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
-public final class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenException> {
+public final class EpickurForbiddenExceptionMapper implements ExceptionMapper<EpickurForbiddenException> {
 
 	/** Logger **/
-	private static final Logger LOG = LogManager.getLogger(ForbiddenExceptionMapper.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(EpickurForbiddenExceptionMapper.class.getSimpleName());
 
 	@Override
-	public Response toResponse(final ForbiddenException exception) {
+	public Response toResponse(final EpickurForbiddenException exception) {
 		LOG.error("Forbidden exception: " + exception.getLocalizedMessage(), exception);
 		return ErrorUtils.error(Response.Status.FORBIDDEN, ErrorUtils.FORBIDDEN);
 	}

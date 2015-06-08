@@ -2,8 +2,6 @@ package com.epickur.api.validator;
 
 import java.util.List;
 
-import javax.ws.rs.ForbiddenException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 
@@ -15,6 +13,7 @@ import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.exception.mapper.EpickurForbiddenException;
 
 /**
  * The Dish Validator class
@@ -100,14 +99,13 @@ public final class DishValidator extends Validator {
 		if (StringUtils.isBlank(dish.getImageAfterUrl())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "imageAfterUrl"));
 		}
-/*		if (StringUtils.isBlank(dish.getVideoUrl())) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "videoUrl"));
-		}*/
-		/*if (dish.getNutritionFacts() != null) {
-			checkNutritionFactsData(dish.getNutritionFacts());
-		} else {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts"));
-		}*/
+		/*
+		 * if (StringUtils.isBlank(dish.getVideoUrl())) { throw new EpickurIllegalArgument(fieldNull(getEntity(), "videoUrl")); }
+		 */
+		/*
+		 * if (dish.getNutritionFacts() != null) { checkNutritionFactsData(dish.getNutritionFacts()); } else { throw new
+		 * EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts")); }
+		 */
 		if (dish.getIngredients() != null) {
 			checkIngredientsData(dish.getIngredients());
 		} else {
@@ -162,23 +160,14 @@ public final class DishValidator extends Validator {
 	 *            The list of NutritionFact
 	 */
 
-/*	private void checkNutritionFactsData(final List<NutritionFact> nutritionFacts) {
-		if (nutritionFacts.size() == 0) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts"));
-		} else {
-			for (int i = 0; i < nutritionFacts.size(); i++) {
-				if (StringUtils.isBlank(nutritionFacts.get(i).getName())) {
-					throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts[" + i + "].name"));
-				}
-				if (nutritionFacts.get(i).getValue() == null) {
-					throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts[" + i + "].value"));
-				}
-				if (nutritionFacts.get(i).getUnit() == null) {
-					throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts[" + i + "].unit"));
-				}
-			}
-		}
-	}*/
+	/*
+	 * private void checkNutritionFactsData(final List<NutritionFact> nutritionFacts) { if (nutritionFacts.size() == 0) { throw new
+	 * EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts")); } else { for (int i = 0; i < nutritionFacts.size(); i++) { if
+	 * (StringUtils.isBlank(nutritionFacts.get(i).getName())) { throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts[" + i +
+	 * "].name")); } if (nutritionFacts.get(i).getValue() == null) { throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts[" + i +
+	 * "].value")); } if (nutritionFacts.get(i).getUnit() == null) { throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts[" + i +
+	 * "].unit")); } } } }
+	 */
 
 	/**
 	 * @param role
@@ -197,7 +186,7 @@ public final class DishValidator extends Validator {
 	public void checkRightsBefore(final Role role, final Crud action, final Dish dish, final Caterer catererDB, final Key key)
 			throws EpickurException {
 		if (role == Role.SUPER_USER && action == Crud.CREATE && !key.getUserId().equals(catererDB.getCreatedBy())) {
-			throw new ForbiddenException();
+			throw new EpickurForbiddenException();
 		}
 		super.checkRightsBefore(role, action);
 	}
@@ -215,7 +204,7 @@ public final class DishValidator extends Validator {
 	public void checkRightsAfter(final Role role, final ObjectId userId, final Dish dish, final Crud action) {
 		if (role != Role.ADMIN) {
 			if ((action == Crud.UPDATE || action == Crud.DELETE) && !dish.getCreatedBy().equals(userId)) {
-				throw new ForbiddenException();
+				throw new EpickurForbiddenException();
 			}
 		}
 	}

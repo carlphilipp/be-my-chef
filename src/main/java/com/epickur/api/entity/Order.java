@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "userId", "description", "amount", "currency", "cardToken", "chargeId", "paid", "dish", "createdBy", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "userId", "description", "amount", "currency", "pickupdate", "cardToken", "chargeId", "paid", "dish", "createdBy", "createdAt", "updatedAt" })
 public final class Order extends AbstractEntity {
 
 	/** Logger **/
@@ -47,6 +47,8 @@ public final class Order extends AbstractEntity {
 	private Integer amount;
 	/** Currency **/
 	private Currency currency;
+	/** Pickupdate **/
+	private String pickupdate;
 	/** Dish **/
 	private Dish dish;
 	/** Stripe Card Token **/
@@ -141,6 +143,21 @@ public final class Order extends AbstractEntity {
 	 */
 	public void setCurrency(final Currency currency) {
 		this.currency = currency;
+	}
+
+	/**
+	 * @return The pickupdate.
+	 */
+	public String getPickupdate() {
+		return pickupdate;
+	}
+	
+
+	/**
+	 * @param pickupdate The pickupdate.
+	 */
+	public void setPickupdate(final String pickupdate) {
+		this.pickupdate = pickupdate;
 	}
 
 	/**

@@ -24,6 +24,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.epickur.api.TestUtils;
+import com.epickur.api.entity.Address;
+import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Geo;
+import com.epickur.api.entity.Location;
+import com.epickur.api.entity.times.WorkingTimes;
+import com.epickur.api.exception.EpickurParsingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -38,7 +45,7 @@ public class CatererIntegrationTest {
 	private static String name;
 
 	@BeforeClass
-	public static void beforeClass() throws IOException {
+	public static void beforeClass() throws IOException, EpickurParsingException {
 		InputStreamReader in = new InputStreamReader(CatererIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
@@ -83,6 +90,9 @@ public class CatererIntegrationTest {
 		caterer.put("manager", "Manager name");
 		caterer.put("email", "email@email.com");
 		caterer.put("phone", "000011222");
+		WorkingTimes workingTimes = TestUtils.generateRandomWorkingTimes();
+		
+		caterer.set("workingTimes", mapper.readTree(workingTimes.toStringAPIView()));
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(caterer.toString());
@@ -106,11 +116,13 @@ public class CatererIntegrationTest {
 
 	@AfterClass
 	public static void afterClass() throws ClientProtocolException, IOException {
-		String jsonMimeType = "application/json";
-		// Delete
-		HttpDelete request = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(request);
+		if(id != null){
+			String jsonMimeType = "application/json";
+			// Delete
+			HttpDelete request = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(request);
+		}
 	}
 
 	@Test
@@ -135,33 +147,29 @@ public class CatererIntegrationTest {
 
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode caterer = mapper.createObjectNode();
-		ObjectNode location = mapper.createObjectNode();
-		ObjectNode address = mapper.createObjectNode();
-		ObjectNode geo = mapper.createObjectNode();
 		String name = RandomStringUtils.randomAlphabetic(10);
-		ArrayNode coordinates = mapper.createArrayNode();
-		Float[] coord = new Float[2];
-		coord[0] = -73.97f;
-		coord[1] = 40.77f;
-		coordinates.add(coord[0]);
-		coordinates.add(coord[1]);
-		geo.set("coordinates", coordinates);
-		address.put("label", "carl");
-		address.put("houseNumber", "832");
-		address.put("street", "Wrightwood");
-		address.put("city", "Chicago");
-		address.put("postalCode", "60614");
-		address.put("state", "Illinois");
-		address.put("country", "USA");
-		location.set("address", address);
-		location.set("geo", geo);
-		caterer.put("name", name);
-		caterer.set("location", location);
-		caterer.put("description", "Caterer description");
-		caterer.put("manager", "Manager name");
-		caterer.put("email", "email@email2.com");
-		caterer.put("phone", "000011222");
+		Caterer caterer = new Caterer();
+		caterer.setName(name);
+		caterer.setDescription("Caterer description");
+		caterer.setManager("Manager name");
+		caterer.setEmail("email@email2.com");
+		caterer.setPhone("000011222");
+		Location location = new Location();
+		Address address = new Address();
+		address.setCity("Chicago");
+		address.setCountry("USA");
+		address.setHouseNumber("832");
+		address.setLabel("carl");
+		address.setPostalCode(60614);
+		address.setState("Illinois");
+		address.setStreet("Wrightwood");
+		location.setAddress(address);
+		Geo geo = new Geo();
+		geo.setLongitude(-73.97);
+		geo.setLatitude(40.77);
+		location.setGeo(geo);
+		caterer.setLocation(location);
+		caterer.setWorkingTimes(TestUtils.generateRandomWorkingTimes());
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(caterer.toString());

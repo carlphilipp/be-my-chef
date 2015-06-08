@@ -1,10 +1,9 @@
 package com.epickur.api.validator;
 
-import javax.ws.rs.ForbiddenException;
-
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.mapper.EpickurForbiddenException;
 
 /**
  * @author cph
@@ -91,19 +90,19 @@ public abstract class Validator {
 		if (role != Role.ADMIN) {
 			if (type.equals("user")) {
 				if (action == Crud.CREATE || action == Crud.DELETE) {
-					throw new ForbiddenException();
+					throw new EpickurForbiddenException();
 				}
 			} else if (type.equals("caterer")) {
 				if (action == Crud.CREATE || action == Crud.DELETE || action == Crud.UPDATE && role == Role.USER) {
-					throw new ForbiddenException();
+					throw new EpickurForbiddenException();
 				}
 			} else if (type.equals("dish")) {
 				if (role == Role.USER && (action == Crud.CREATE || action == Crud.UPDATE || action == Crud.DELETE)) {
-					throw new ForbiddenException();
+					throw new EpickurForbiddenException();
 				}
 			} else if (type.equals("order")) {
 				if (action == Crud.DELETE) {
-					throw new ForbiddenException();
+					throw new EpickurForbiddenException();
 				}
 			} else {
 				throw new EpickurException("Type error while checking rights: " + type);

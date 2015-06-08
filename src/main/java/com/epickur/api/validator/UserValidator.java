@@ -1,7 +1,5 @@
 package com.epickur.api.validator;
 
-import javax.ws.rs.ForbiddenException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 
@@ -12,6 +10,8 @@ import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.exception.mapper.EpickurForbiddenException;
+import com.epickur.api.utils.Utils;
 
 /**
  * @author cph
@@ -110,20 +110,44 @@ public final class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param id
+	 * @param userId
 	 *            The User id
 	 * @param token
 	 *            The Stripe token
 	 * @param order
 	 *            The Order
 	 */
-	public void checkCreateOneOrder(final String id, final Order order) {
-		if (StringUtils.isBlank(id)) {
+	public void checkCreateOneOrder(final String userId, final Order order) {
+		if (StringUtils.isBlank(userId)) {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
 		if (order == null) {
 			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
 		} else {
+			if (StringUtils.isBlank(order.getDescription())) {
+				throw new EpickurIllegalArgument(fieldNull(getEntity(), "description"));
+			}
+			if (order.getAmount() == null) {
+				throw new EpickurIllegalArgument(fieldNull(getEntity(), "amount"));
+			}
+			if (order.getCurrency() == null) {
+				throw new EpickurIllegalArgument(fieldNull(getEntity(), "currency"));
+			}
+			if (StringUtils.isBlank(order.getPickupdate())) {
+				throw new EpickurIllegalArgument(fieldNull(getEntity(), "pickupdate"));
+			} else {
+				Object[] result = Utils.parsePickupdate(order.getPickupdate());
+				if (result == null) {
+					throw new EpickurIllegalArgument(
+							"The parameter pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
+									+ order.getPickupdate());
+				}
+			}
+			if (order.getPaid() != null) {
+				if (order.getPaid() == true) {
+					throw new EpickurIllegalArgument("The field order.paid can not be true.");
+				}
+			}
 			DishValidator validator = new DishValidator();
 			validator.checkCreateData(order.getDish());
 		}
@@ -217,7 +241,7 @@ public final class UserValidator extends Validator {
 			if ((action == Crud.READ && (role == Role.USER || role == Role.SUPER_USER))
 					|| (action == Crud.UPDATE && (role == Role.USER || role == Role.SUPER_USER))) {
 				if (!userId.equals(user.getId())) {
-					throw new ForbiddenException();
+					throw new EpickurForbiddenException();
 				}
 			} else {
 				throw new EpickurException("Rights issue. This case should not happen");
@@ -238,19 +262,19 @@ public final class UserValidator extends Validator {
 	public void checkOrderRightsAfter(final Role role, final ObjectId userId, final Order order, final Crud action) {
 		if (role != Role.ADMIN) {
 			if (action == Crud.DELETE) {
-				throw new ForbiddenException();
+				throw new EpickurForbiddenException();
 			}
 			if (action == Crud.READ || action == Crud.UPDATE) {
 				if (!userId.equals(order.getCreatedBy())) {
-					throw new ForbiddenException();
+					throw new EpickurForbiddenException();
 				}
 			}
 		}
 	}
 
 	public void checkExecuteOrder(final Role role, final String confirm) {
-		if(StringUtils.isBlank(confirm)){
-			
+		if (StringUtils.isBlank(confirm)) {
+
 		}
 	}
 }

@@ -191,11 +191,11 @@ public class TestUtils {
 		caterer.setName(generateRandomString());
 		caterer.setPhone(generateRandomString());
 		caterer.setCreatedBy(new ObjectId());
-		caterer.setWorkingTimes(generateRandomWorkingTime());
+		caterer.setWorkingTimes(generateRandomWorkingTimes());
 		return caterer;
 	}
 
-	private static WorkingTimes generateRandomWorkingTime() {
+	public static WorkingTimes generateRandomWorkingTimes() {
 		WorkingTimes workingTimes = new WorkingTimes();
 		int num = RandomUtils.nextInt(0, 300);
 		workingTimes.setMinimumPreparationTime(num);
@@ -380,6 +380,7 @@ public class TestUtils {
 		order.setDescription(generateRandomString());
 		order.setDish(generateRandomDish());
 		order.setCreatedBy(new ObjectId());
+		order.setPickupdate(generateRandomPickupDate());
 		return order;
 	}
 

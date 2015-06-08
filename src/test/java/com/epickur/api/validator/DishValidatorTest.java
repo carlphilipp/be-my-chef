@@ -3,8 +3,6 @@ package com.epickur.api.validator;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.ForbiddenException;
-
 import org.bson.types.ObjectId;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,11 +12,11 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.entity.Key;
-import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.exception.mapper.EpickurForbiddenException;
 
 public class DishValidatorTest {
 
@@ -119,39 +117,28 @@ public class DishValidatorTest {
 		validator.checkData(dish);
 	}
 
-/*	@Test
-	public void testData6() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field dish.videoUrl is not allowed to be null or empty");
+	/*
+	 * @Test public void testData6() { thrown.expect(EpickurIllegalArgument.class);
+	 * thrown.expectMessage("The field dish.videoUrl is not allowed to be null or empty");
+	 * 
+	 * DishValidator validator = new DishValidator(); Dish dish = TestUtils.generateRandomDish(); dish.setVideoUrl(null); validator.checkData(dish); }
+	 */
 
-		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
-		dish.setVideoUrl(null);
-		validator.checkData(dish);
-	}*/
+	/*
+	 * @Test public void testData7() { thrown.expect(EpickurIllegalArgument.class);
+	 * thrown.expectMessage("The field dish.nutritionFacts is not allowed to be null or empty");
+	 * 
+	 * DishValidator validator = new DishValidator(); Dish dish = TestUtils.generateRandomDish(); dish.setNutritionFacts(null);
+	 * validator.checkData(dish); }
+	 */
 
-/*	@Test
-	public void testData7() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field dish.nutritionFacts is not allowed to be null or empty");
-
-		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
-		dish.setNutritionFacts(null);
-		validator.checkData(dish);
-	}*/
-	
-/*	@Test
-	public void testData71() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field dish.nutritionFacts is not allowed to be null or empty");
-
-		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
-		List<NutritionFact> list = new ArrayList<NutritionFact>();
-		dish.setNutritionFacts(list);
-		validator.checkData(dish);
-	}*/
+	/*
+	 * @Test public void testData71() { thrown.expect(EpickurIllegalArgument.class);
+	 * thrown.expectMessage("The field dish.nutritionFacts is not allowed to be null or empty");
+	 * 
+	 * DishValidator validator = new DishValidator(); Dish dish = TestUtils.generateRandomDish(); List<NutritionFact> list = new
+	 * ArrayList<NutritionFact>(); dish.setNutritionFacts(list); validator.checkData(dish); }
+	 */
 
 	@Test
 	public void testData8() {
@@ -221,45 +208,33 @@ public class DishValidatorTest {
 		validator.checkData(dish);
 	}
 
-/*	@Test
-	public void testData14() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field dish.nutritionFacts[0].name is not allowed to be null or empty");
+	/*
+	 * @Test public void testData14() { thrown.expect(EpickurIllegalArgument.class);
+	 * thrown.expectMessage("The field dish.nutritionFacts[0].name is not allowed to be null or empty");
+	 * 
+	 * DishValidator validator = new DishValidator(); Dish dish = TestUtils.generateRandomDish(); List<NutritionFact> list = dish.getNutritionFacts();
+	 * list.get(0).setName(null); validator.checkData(dish); }
+	 */
 
-		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
-		List<NutritionFact> list = dish.getNutritionFacts();
-		list.get(0).setName(null);
-		validator.checkData(dish);
-	}*/
+	/*
+	 * @Test public void testData15() { thrown.expect(EpickurIllegalArgument.class);
+	 * thrown.expectMessage("The field dish.nutritionFacts[0].value is not allowed to be null or empty");
+	 * 
+	 * DishValidator validator = new DishValidator(); Dish dish = TestUtils.generateRandomDish(); List<NutritionFact> list = dish.getNutritionFacts();
+	 * list.get(0).setValue(null); validator.checkData(dish); }
+	 */
 
-/*	@Test
-	public void testData15() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field dish.nutritionFacts[0].value is not allowed to be null or empty");
-
-		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
-		List<NutritionFact> list = dish.getNutritionFacts();
-		list.get(0).setValue(null);
-		validator.checkData(dish);
-	}*/
-
-/*	@Test
-	public void testData16() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field dish.nutritionFacts[0].unit is not allowed to be null or empty");
-
-		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
-		List<NutritionFact> list = dish.getNutritionFacts();
-		list.get(0).setUnit(null);
-		validator.checkData(dish);
-	}*/
+	/*
+	 * @Test public void testData16() { thrown.expect(EpickurIllegalArgument.class);
+	 * thrown.expectMessage("The field dish.nutritionFacts[0].unit is not allowed to be null or empty");
+	 * 
+	 * DishValidator validator = new DishValidator(); Dish dish = TestUtils.generateRandomDish(); List<NutritionFact> list = dish.getNutritionFacts();
+	 * list.get(0).setUnit(null); validator.checkData(dish); }
+	 */
 
 	@Test
 	public void testCheckRightsBefore() throws EpickurException {
-		thrown.expect(ForbiddenException.class);
+		thrown.expect(EpickurForbiddenException.class);
 
 		DishValidator validator = new DishValidator();
 		Dish dish = TestUtils.generateRandomDish();
@@ -297,7 +272,7 @@ public class DishValidatorTest {
 		validator.checkRightsBefore(Role.SUPER_USER, Crud.DELETE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void checkRightsBefore7() throws EpickurException {
 		DishValidator validator = new DishValidator();
 		validator.checkRightsBefore(Role.USER, Crud.CREATE, null);
@@ -309,13 +284,13 @@ public class DishValidatorTest {
 		validator.checkRightsBefore(Role.USER, Crud.READ, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void checkRightsBefore9() throws EpickurException {
 		DishValidator validator = new DishValidator();
 		validator.checkRightsBefore(Role.USER, Crud.UPDATE, null);
 	}
 
-	@Test(expected = ForbiddenException.class)
+	@Test(expected = EpickurForbiddenException.class)
 	public void checkRightsBefore10() throws EpickurException {
 		DishValidator validator = new DishValidator();
 		validator.checkRightsBefore(Role.USER, Crud.DELETE, null);
@@ -323,7 +298,7 @@ public class DishValidatorTest {
 
 	@Test
 	public void testCheckRightsAfter() throws EpickurException {
-		thrown.expect(ForbiddenException.class);
+		thrown.expect(EpickurForbiddenException.class);
 
 		DishValidator validator = new DishValidator();
 		Dish dish = TestUtils.generateRandomDish();

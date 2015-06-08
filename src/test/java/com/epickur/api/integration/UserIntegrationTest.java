@@ -446,6 +446,8 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
+		String pickupdate = TestUtils.generateRandomPickupDate();
+		json.put("pickupdate", pickupdate);
 
 		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
 		request.addHeader("content-type", jsonMimeType);
@@ -487,7 +489,7 @@ public class UserIntegrationTest {
 	}
 
 	@Test
-	public void testAddOneOrderWithStripeToken() throws ClientProtocolException, IOException, AuthenticationException, InvalidRequestException,
+	public void testCreateOneOrderWithStripeToken() throws ClientProtocolException, IOException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException, EpickurParsingException {
 		String jsonMimeType = "application/json";
 
@@ -550,6 +552,8 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
+		String pickupdate = TestUtils.generateRandomPickupDate();
+		json.put("pickupdate", pickupdate);
 
 		// Create Stripe card token
 		Stripe.apiKey = STRIPE_TEST_KEY;
@@ -671,6 +675,8 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
+		String pickupdate = TestUtils.generateRandomPickupDate();
+		json.put("pickupdate", pickupdate);
 
 		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
 		request.addHeader("content-type", jsonMimeType);
@@ -792,6 +798,8 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
+		String pickupdate = TestUtils.generateRandomPickupDate();
+		json.put("pickupdate", pickupdate);
 
 		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
 		request.addHeader("content-type", jsonMimeType);
@@ -914,6 +922,8 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
+		String pickupdate = TestUtils.generateRandomPickupDate();
+		json.put("pickupdate", pickupdate);
 
 		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
 		request.addHeader("content-type", jsonMimeType);

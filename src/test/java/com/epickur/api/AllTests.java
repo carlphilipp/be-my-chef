@@ -34,7 +34,7 @@ import com.epickur.api.exception.mapper.EpickurDBExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurIOExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurIllegalArgumentMapperTest;
-import com.epickur.api.exception.mapper.ForbiddenExceptionMapperTest;
+import com.epickur.api.exception.mapper.EpickurForbiddenExceptionMapperTest;
 import com.epickur.api.exception.mapper.IllegalArgumentExceptionMapperTest;
 import com.epickur.api.exception.mapper.JsonMappingExceptionMapperTest;
 import com.epickur.api.exception.mapper.NotAllowedExceptionMapperTest;
@@ -104,7 +104,7 @@ import com.epickur.api.validator.UserValidatorTest;
 		ThrowableExeptionMapperTest.class,
 		UnrecognizedPropertyExceptionMapperTest.class,
 		EpickurDBExceptionMapperTest.class,
-		ForbiddenExceptionMapperTest.class,
+		EpickurForbiddenExceptionMapperTest.class,
 		IllegalArgumentExceptionMapperTest.class,
 		EpickurIOExceptionMapperTest.class,
 		NotAllowedExceptionMapperTest.class,
