@@ -80,6 +80,7 @@ public final class ErrorUtils {
 	/**
 	 * @return The response
 	 */
+	// TODO: probably delete this usless method
 	public static Response noResult() {
 		// Change from no content to bad request because the entity is actually null in the answer when no content
 		DBObject bdb = BasicDBObjectBuilder.start().get();

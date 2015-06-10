@@ -17,7 +17,6 @@ import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.SearchValidator;
@@ -169,10 +168,6 @@ public final class SearchService {
 		String day = (String) result[0];
 		Integer minutes = (Integer) result[1];
 		List<Dish> dishes = this.searchBusiness.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
-		if (dishes.size() != 0) {
-			return Response.ok().entity(dishes).build();
-		} else {
-			return ErrorUtils.noResult();
-		}
+		return Response.ok().entity(dishes).build();
 	}
 }
