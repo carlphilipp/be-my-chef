@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import org.omg.PortableInterceptor.LOCATION_FORWARD;
 
 import com.epickur.api.cron.Jobs;
 import com.epickur.api.dao.mongo.OrderDaoImpl;
@@ -16,6 +17,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.payment.stripe.StripePayment;
 import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.Security;
 import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
@@ -70,8 +72,10 @@ public class OrderBusiness {
 			order.setCreatedBy(new ObjectId(userId));
 			order.setCardToken(cardToken);
 			Order res = this.orderDao.create(order);
+			String orderCode = Security.createOrderCode(res.getId(), cardToken);
+			System.out.println(orderCode);
 			if (sendEmail) {
-				EmailUtils.emailNewOrder(user, res);
+				EmailUtils.emailNewOrder(user, res, orderCode);
 			}
 			Jobs.getInstance().addTemporaryOrderJob(user, res);
 			return res;

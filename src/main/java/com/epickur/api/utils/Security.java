@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import org.apache.commons.codec.binary.Hex;
+import org.bson.types.ObjectId;
 
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
@@ -124,7 +125,7 @@ public final class Security {
 		String email = user.getEmail();
 		String saltHashed = user.getPassword().substring(0, sixtyFour);
 		String cryptedPasswordSalt = user.getPassword().substring(sixtyFour, user.getPassword().length());
-		String checkFound = Security.createCode(user.getName(), saltHashed, cryptedPasswordSalt, email);
+		String checkFound = Security.createUserCode(user.getName(), saltHashed, cryptedPasswordSalt, email);
 		return checkFound;
 	}
 
@@ -143,8 +144,12 @@ public final class Security {
 	 * @throws EpickurException
 	 *             If an exception occurred while encoding the password
 	 */
-	public static String createCode(final String name, final String saltHashed, final String encryptedPasswordSalt, final String email)
+	public static String createUserCode(final String name, final String saltHashed, final String encryptedPasswordSalt, final String email)
 			throws EpickurException {
 		return Security.encodeToSha256(name + saltHashed + encryptedPasswordSalt + email);
+	}
+	
+	public static String createOrderCode(final ObjectId orderId, final String cardToken) throws EpickurException{
+		return Security.encodeToSha256(orderId.toHexString() + cardToken);
 	}
 }

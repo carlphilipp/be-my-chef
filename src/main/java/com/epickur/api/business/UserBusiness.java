@@ -73,7 +73,7 @@ public final class UserBusiness {
 		String passwordHashed = Security.encodeToSha256(user.getPassword());
 		saltHashed = Security.generateSalt();
 		encryptedPasswordSalt = Security.encodeToSha256(passwordHashed + saltHashed);
-		code = Security.createCode(name, saltHashed, encryptedPasswordSalt, email);
+		code = Security.createUserCode(name, saltHashed, encryptedPasswordSalt, email);
 		user.setPassword(saltHashed + encryptedPasswordSalt);
 		user.setRole(Role.USER);
 		User res = userDao.create(user);

@@ -42,9 +42,9 @@ public final class EmailUtils {
 	}
 
 	// ORDER: case 1 - New order
-	public static void emailNewOrder(final User user, final Order order) {
+	public static void emailNewOrder(final User user, final Order order, final String orderCode) {
 		emailNewOrderUser(user, order);
-		emailNewOrderCaterer(user, order);
+		emailNewOrderCaterer(user, order, orderCode);
 		emailNewOrderAdmin(user, order);
 	}
 
@@ -54,9 +54,9 @@ public final class EmailUtils {
 		Email.sendMail(EmailType.ORDER_USER_NEW, emailData, new String[] { user.getEmail() });
 	}
 
-	private static void emailNewOrderCaterer(final User user, final Order order) {
-		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderCaterer(user.getName(), order.getId().toHexString(), order.getDish()
-				.getName(), order.getDish().getCaterer().getName());
+	private static void emailNewOrderCaterer(final User user, final Order order, final String orderCode) {
+		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderCaterer(user.getName(), user.getId().toHexString(), order.getId()
+				.toHexString(), order.getDish().getName(), order.getDish().getCaterer().getName(), orderCode);
 		Email.sendMail(EmailType.ORDER_CATERER_NEW, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
 
@@ -126,9 +126,9 @@ public final class EmailUtils {
 		Map<String, String> emailData = EmailTemplate.convertToDataSuccessOrderCaterer(order.getId().toHexString());
 		Email.sendMail(EmailType.ORDER_ADMINS_FAIL, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 	}
-	
+
 	// ORDER: case 5 - The order has been received by the Caterer, but he did not answer it on time.
-	public static void emailCancelOrder(final User user, final Order order){
+	public static void emailCancelOrder(final User user, final Order order) {
 		emailCancelOrderUser(user, order);
 		emailCancelOrderCaterer(order);
 		emailCancelOrderAdmins(order);
@@ -138,10 +138,12 @@ public final class EmailUtils {
 		Map<String, String> emailData = EmailTemplate.convertToDataCancelOrderUser(order.getId().toHexString());
 		Email.sendMail(EmailType.ORDER_USER_CANCEL, emailData, new String[] { user.getEmail() });
 	}
+
 	private static void emailCancelOrderCaterer(final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataCancelOrderUser(order.getId().toHexString());
 		Email.sendMail(EmailType.ORDER_CATERER_CANCEL, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
+
 	private static void emailCancelOrderAdmins(final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataCancelOrderUser(order.getId().toHexString());
 		Email.sendMail(EmailType.ORDER_ADMINS_CANCEL, emailData, Info.admins.toArray(new String[Info.admins.size()]));

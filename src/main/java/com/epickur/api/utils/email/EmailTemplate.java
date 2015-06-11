@@ -199,14 +199,17 @@ public final class EmailTemplate {
 	 *            The Caterer Name
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataNewOrderCaterer(final String userName, final String orderId, final String dishName,
-			final String catererName) {
+	public static Map<String, String> convertToDataNewOrderCaterer(final String userName, final String userId, final String orderId, final String dishName,
+			final String catererName, final String orderCode) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@USER_NAME@@", userName);
+		data.put("@@USER_ID@@", userId);
 		data.put("@@ORDER_ID@@", orderId);
 		data.put("@@DISH_NAME@@", dishName);
 		data.put("@@CATERER_NAME@@", catererName);
+		data.put("@@WEB_ADDRESS@@", Info.WEB_ADDRESS);
+		data.put("@@ORDER_CODE@@", orderCode);
 		return data;
 	}
 

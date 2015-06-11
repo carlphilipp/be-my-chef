@@ -39,6 +39,7 @@ public final class Info {
 		NAME = prop.getProperty("name");
 		ADDRESS = prop.getProperty("address");
 		FOLDER = prop.getProperty("folder");
+		WEB_ADDRESS = prop.getProperty("epickur.web.address");
 		admins = Collections.unmodifiableList(Arrays.asList(prop.getProperty("admins").split(";")));
 	}
 
@@ -48,6 +49,8 @@ public final class Info {
 	public static final String ADDRESS;
 	/** Current folder after the address **/
 	public static final String FOLDER;
+	/** Web address **/
+	public static final String WEB_ADDRESS;
 	/** Admins **/
 	public static List<String> admins;
 
