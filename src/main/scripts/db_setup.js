@@ -132,7 +132,7 @@ db.users.insert(
 	  "name":"Bill Gates",
 	  "email":"bgates@microsoft.com",
 	  "password":"hashed_password",
-	  "allow": NumberLong(1),
+	  "allow": NumberInt(1),
 	  "createdAt":NumberLong(1423427362620),
 	  "updatedAt":NumberLong(1423427362620)
   },
@@ -140,7 +140,7 @@ db.users.insert(
     "name":"Steve Jobs",
     "email":"sjobs@apple.com",
     "password":"hashed_password",
-    "allow": NumberLong(1),
+    "allow": NumberInt(1),
     "createdAt": NumberLong(1423427362621),
     "updatedAt": NumberLong(1423427362622)
   }]

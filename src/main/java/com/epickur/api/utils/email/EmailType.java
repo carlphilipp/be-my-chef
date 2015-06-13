@@ -47,5 +47,9 @@ public enum EmailType {
 	ORDER_CATERER_CANCEL,
 	/** Email sent to the admins when the caterer did not accept on time the order **/
 	ORDER_ADMINS_CANCEL,
+	
+	// Reset password
+	/** Email sent to the user to reset its password **/
+	RESET_USER_PASSWORD
 
 }

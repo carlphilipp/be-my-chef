@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.DBObject;
 

@@ -3,7 +3,7 @@ package com.epickur.api.validator;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.exception.mapper.EpickurForbiddenException;
+import com.epickur.api.exception.EpickurForbiddenException;
 
 /**
  * @author cph

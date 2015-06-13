@@ -148,4 +148,9 @@ public final class EmailUtils {
 		Map<String, String> emailData = EmailTemplate.convertToDataCancelOrderUser(order.getId().toHexString());
 		Email.sendMail(EmailType.ORDER_ADMINS_CANCEL, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 	}
+
+	public static void resetPassword(final String email, final String userId, final String resetCode) {
+		Map<String, String> emailData = EmailTemplate.convertToDataResetUserPassword(email, userId, resetCode);
+		Email.sendMail(EmailType.RESET_USER_PASSWORD, emailData, new String[] { email });
+	}
 }

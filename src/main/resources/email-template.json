@@ -78,5 +78,10 @@
 		"subject":"Order canceled #@@ORDER_ID@@",
 		"folder":"order/cancel",
 		"file":"order_admins_cancel.html"
+	},
+	"reset_user_password": {
+		"subject":"Password reset",
+		"folder":"user",
+		"file":"reset_password.html"
 	}
 }

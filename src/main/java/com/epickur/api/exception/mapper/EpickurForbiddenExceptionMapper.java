@@ -9,6 +9,7 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.utils.ErrorUtils;
 
 /**

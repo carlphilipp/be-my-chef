@@ -11,10 +11,11 @@ import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.exception.EpickurParsingException;
-import com.epickur.api.exception.mapper.EpickurForbiddenException;
 import com.epickur.api.utils.Utils;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @author cph
@@ -169,7 +170,7 @@ public final class UserValidator extends Validator {
 				}
 			}
 		}
-		if(StringUtils.isBlank(cardToken)){
+		if (StringUtils.isBlank(cardToken)) {
 			throw new EpickurIllegalArgument("The parameter cardtoken is not allowed to be null or empty.");
 		}
 	}
@@ -293,9 +294,15 @@ public final class UserValidator extends Validator {
 		}
 	}
 
-	public void checkExecuteOrder(final Role role, final String confirm) {
-		if (StringUtils.isBlank(confirm)) {
+	public void checkResetRightsBefore(final Role role) {
+		if (role != Role.ADMIN) {
+			throw new EpickurForbiddenException();
+		}
+	}
 
+	public void checkResetData(final ObjectNode node) {
+		if(!node.has("email")){
+			throw new EpickurIllegalArgument("The field email is not allowed to be null or empty");
 		}
 	}
 }

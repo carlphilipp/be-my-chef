@@ -30,6 +30,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 
@@ -731,86 +732,18 @@ public final class UserService {
 		}
 	}
 
-	// @formatter:off
-	/** 
-	 * 
-	 * @api {get} /users/:id/orders/:orderId/execute?confirm=:confirm Execute an Order
-	 * @apiVersion 1.0.0
-	 * @apiName ExecuteOrder
-	 * @apiGroup Orders
-	 * @apiPermission admin, super_user (own order), user (own order)
-	 * 
-	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
-	 * @apiParam (Request: URL Parameter) {String} orderId Id of the Order.
-	 * @apiParam (Request: URL Parameter) {Boolean} confirm If the caterer accept the order or not
-	 *
-	 * @apiSuccess (Response: JSON Object) {Order} id Id of the Order.
-	 * @apiSuccess (Response: JSON Object) {String} userId Id of the User.
-	 * @apiSuccess (Response: JSON Object) {String} description Description of the Order.
-	 * @apiSuccess (Response: JSON Object) {Number} amount Price of the Order.
-	 * @apiSuccess (Response: JSON Object) {Dish} dish Dish of the Order.
-	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Order.
-	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Order.
-	 *
-	 * @apiSuccessExample Success-Response:
-	 *	HTTP/1.1 200 OK
-	 *	{ 
-	 *		"id" : "54e0f996731e1b9f54451ef6",
-	 *		"userId" : "54e0f995731e1b9f54451ef5", 
-	 *		"description" : "A new order", 
-	 *		"amount" : 500 , 
-	 *		"currency" : "AUD", 
-	 *		"dish" : { 
-	 *			"name" : "Chicken Kebab", 
-	 *			"description" : "Fresh meat, served with fries", 
-	 *			"type" : "Vegan", 
-	 *			"price" : 5.0, 
-	 *			"cookingTime" : 5, 
-	 *			"difficultyLevel" : 8, 
-	 *			"videoUrl" : "http://www.google.com/videos"
-	 *		},
-	 *		"paid": true,
-	 *		"chargeId": "ch_163baS21cpKR0BKmv00GWuLK",
-	 *		"cardToken": "tok_163baP21cpKR0BKmxFStdlIc",
-	 *		"createdAt" : 1424030102542, 
-	 *		"updatedAt" : 1424030102542
-	 *	}
-	 *
-	 * @apiUse BadRequestError
-	 * @apiUse ForbiddenError
-	 * @apiUse InternalError
-	 */
-	// @formatter:on
-	/**
-	 * @param userId
-	 *            The User id
-	 * @param orderId
-	 *            The Order id
-	 * @param confirm
-	 *            If the caterer confirmed the order
-	 * @param sendEmail
-	 *            If we want to send the emails
-	 * @param shouldCharge
-	 *            If we charge the user
-	 * @param context
-	 *            The container context that contains the Key
-	 * @return The reponse
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
-	 */
-/*	@GET
-	@Path("/{id}/orders/{orderId}/execute")
+	@POST
+	@Path("/reset")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response executeOrder(
-			@PathParam("id") final String userId,
-			@PathParam("orderId") final String orderId,
-			@QueryParam("confirm") final boolean confirm,
-			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
-			@DefaultValue("true") @HeaderParam("charge-agent") final boolean shouldCharge,
+	public Response reset(
+			final ObjectNode node,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.UPDATE, "order");
-		Order result = orderBusiness.executeOrder(userId, orderId, confirm, sendEmail, shouldCharge, key);
-		return Response.ok().entity(result).build();
-	}*/
+		validator.checkResetRightsBefore(key.getRole());
+		validator.checkResetData(node);
+		String email = node.get("email").asText();
+		userBusiness.reset(email);
+		node.put("status", "email sent.");
+		return Response.ok().entity(node).build();
+	}
 }

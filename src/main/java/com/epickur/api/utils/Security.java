@@ -17,24 +17,15 @@ import com.epickur.api.exception.EpickurException;
  */
 public final class Security {
 	/** Logger **/
-	//private static final Logger LOG = LogManager.getLogger(Security.class.getSimpleName());
+	// private static final Logger LOG = LogManager.getLogger(Security.class.getSimpleName());
 
-/*	public static void main(final String[] args) throws EpickurException {
-		try {
-			String password = encodeToMd5("passwordAPI");
-			// Run this class to generate a key in src/resources/api.key
-			File file = new File("C:/Users/Carl-Philipp/git/epickur-api-java/epickur/src/main/resources/api.key");
-			BufferedWriter output = new BufferedWriter(new FileWriter(file));
-			output.write(password);
-			output.close();
-			file = new File("C:/Users/Carl-Philipp/git/epickur-api-java/epickur/src/test/resources/api.key");
-			output = new BufferedWriter(new FileWriter(file));
-			output.write(password);
-			output.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
+	/*
+	 * public static void main(final String[] args) throws EpickurException { try { String password = encodeToMd5("passwordAPI"); // Run this class to
+	 * generate a key in src/resources/api.key File file = new File("C:/Users/Carl-Philipp/git/epickur-api-java/epickur/src/main/resources/api.key");
+	 * BufferedWriter output = new BufferedWriter(new FileWriter(file)); output.write(password); output.close(); file = new
+	 * File("C:/Users/Carl-Philipp/git/epickur-api-java/epickur/src/test/resources/api.key"); output = new BufferedWriter(new FileWriter(file));
+	 * output.write(password); output.close(); } catch (IOException e) { e.printStackTrace(); } }
+	 */
 
 	/**
 	 * Constructor
@@ -148,8 +139,12 @@ public final class Security {
 			throws EpickurException {
 		return Security.encodeToSha256(name + saltHashed + encryptedPasswordSalt + email);
 	}
-	
-	public static String createOrderCode(final ObjectId orderId, final String cardToken) throws EpickurException{
+
+	public static String createOrderCode(final ObjectId orderId, final String cardToken) throws EpickurException {
 		return Security.encodeToSha256(orderId.toHexString() + cardToken);
+	}
+
+	public static String createResetCode(final ObjectId orderId, final String email) throws EpickurException {
+		return Security.encodeToSha256(orderId.toHexString() + email);
 	}
 }

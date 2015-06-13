@@ -327,4 +327,14 @@ public final class EmailTemplate {
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
+	
+	public static Map<String, String> convertToDataResetUserPassword(final String email, final String userId, final String resetCode) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@USER_EMAIL@@", email);
+		data.put("@@RESET_CODE@@", resetCode);
+		data.put("@@USER_ID@@", userId);
+		data.put("@@WEB_ADDRESS@@", Info.WEB_ADDRESS);
+		return data;
+	}
 }

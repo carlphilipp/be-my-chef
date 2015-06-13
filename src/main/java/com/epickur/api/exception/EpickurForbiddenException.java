@@ -1,4 +1,4 @@
-package com.epickur.api.exception.mapper;
+package com.epickur.api.exception;
 
 import javax.ws.rs.ForbiddenException;
 

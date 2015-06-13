@@ -287,4 +287,18 @@ public final class UserBusiness {
 		dbUser.setRole(null);
 		return dbUser;
 	}
+
+	/**
+	 * @param email
+	 * @throws EpickurException
+	 */
+	public void reset(final String email) throws EpickurException {
+		User user = this.readWithEmail(email);
+		if (user == null) {
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
+		} else {
+			String resetCode = Security.createResetCode(user.getId(), email);
+			EmailUtils.resetPassword(email, user.getId().toHexString(), resetCode);
+		}
+	}
 }

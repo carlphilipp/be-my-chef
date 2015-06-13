@@ -12,8 +12,8 @@ import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
-import com.epickur.api.exception.mapper.EpickurForbiddenException;
 
 public class UserValidatorTest {
 
