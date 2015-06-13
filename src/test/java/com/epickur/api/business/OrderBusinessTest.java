@@ -24,6 +24,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.integration.UserIntegrationTest;
 import com.epickur.api.utils.Info;
+import com.epickur.api.utils.Security;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -167,11 +168,9 @@ public class OrderBusinessTest {
 		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
-		Key key = new Key();
-		key.setRole(Role.ADMIN);
-		key.setUserId(userRes.getId());
+		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
 		
-		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, key);
+		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, orderCode);
 		assertTrue(orderAfterCharge.getPaid());
 	}
 	
@@ -199,8 +198,8 @@ public class OrderBusinessTest {
 		Key key = new Key();
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
-		
-		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, key);
+		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
+		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());
 	}
 	
@@ -225,11 +224,8 @@ public class OrderBusinessTest {
 		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
-		Key key = new Key();
-		key.setRole(Role.ADMIN);
-		key.setUserId(userRes.getId());
-		
-		orderBusiness.executeOrder(userRes.getId().toHexString(), new ObjectId().toHexString(), true, false, true, key);
+		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
+		orderBusiness.executeOrder(userRes.getId().toHexString(), new ObjectId().toHexString(), true, false, true, orderCode);
 	}
 	
 	@Test(expected=EpickurNotFoundException.class)
@@ -256,10 +252,10 @@ public class OrderBusinessTest {
 		Key key = new Key();
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
-		
-		orderBusiness.executeOrder(new ObjectId().toHexString(), res.getId().toHexString(), true, false, true, key);
+		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
+		orderBusiness.executeOrder(new ObjectId().toHexString(), res.getId().toHexString(), true, false, true, orderCode);
 	}
-	
+
 	@Test
 	public void testChargeOneUser2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
 		User user = TestUtils.generateRandomUser();
@@ -284,8 +280,8 @@ public class OrderBusinessTest {
 		Key key = new Key();
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
-		
-		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), false, true, true, key);
+		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
+		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), false, true, true, orderCode);
 		assertNull(orderAfterCharge.getPaid());
 	}
 	
@@ -313,8 +309,8 @@ public class OrderBusinessTest {
 		Key key = new Key();
 		key.setRole(Role.ADMIN);
 		key.setUserId(userRes.getId());
-		
-		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, true, true, key);
+		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
+		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, true, true, orderCode);
 		assertTrue(orderAfterCharge.getPaid());
-	}
+	} 
 }

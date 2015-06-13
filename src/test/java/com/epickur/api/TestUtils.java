@@ -230,17 +230,6 @@ public class TestUtils {
 		return timeFrames;
 	}
 
-	public static String generateRandomPickupDate() {
-		DecimalFormat formatter = new DecimalFormat("00");
-		int index = RandomUtils.nextInt(0, pickupdateDays.length - 1);
-		String selected = pickupdateDays[index];
-		int hours = RandomUtils.nextInt(0, 23);
-		int minutes = RandomUtils.nextInt(0, 59);
-		String hoursFormatted = formatter.format(hours);
-		String minutesFormatted = formatter.format(minutes);
-		return selected + "-" + hoursFormatted + ":" + minutesFormatted;
-	}
-
 	public static Location generateRandomLocation() {
 		Location location = new Location();
 		location.setAddress(generateRandomAddress());
@@ -373,6 +362,27 @@ public class TestUtils {
 		user.setPassword(generateRandomString());
 		return user;
 	}
+	
+	public static String generateRandomPickupDate() {
+		DecimalFormat formatter = new DecimalFormat("00");
+		int index = RandomUtils.nextInt(0, pickupdateDays.length - 1);
+		String selected = pickupdateDays[index];
+		int hours = RandomUtils.nextInt(0, 23);
+		int minutes = RandomUtils.nextInt(0, 59);
+		String hoursFormatted = formatter.format(hours);
+		String minutesFormatted = formatter.format(minutes);
+		return selected + "-" + hoursFormatted + ":" + minutesFormatted;
+	}
+	
+	public static String generateRandomCorrectPickupDate(WorkingTimes workingTimes){
+		String pickupdate = generateRandomPickupDate();
+		Object [] parsedPickupdate = Utils.parsePickupdate(pickupdate);
+		while(!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])){
+			pickupdate = generateRandomPickupDate();
+			parsedPickupdate = Utils.parsePickupdate(pickupdate);
+		}
+		return pickupdate;
+	}
 
 	public static Order generateRandomOrder() {
 		Order order = new Order();
@@ -385,13 +395,20 @@ public class TestUtils {
 		String pickupdate = generateRandomPickupDate();
 		order.setPickupdate(pickupdate);
 		Object [] parsedPickupdate = Utils.parsePickupdate(pickupdate);
+		String day = (String) parsedPickupdate[0];
+		Integer pickupdateMinutes = (Integer) parsedPickupdate[1];
 		
 		WorkingTimes workingTimes = order.getDish().getCaterer().getWorkingTimes();
-		while(!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])){
+		while(!workingTimes.canBePickup(day, pickupdateMinutes)){
 			WorkingTimes temp = generateRandomWorkingTimes();
 			order.getDish().getCaterer().setWorkingTimes(temp);
 			workingTimes = order.getDish().getCaterer().getWorkingTimes();
 			
+			pickupdate = generateRandomPickupDate();
+			order.setPickupdate(pickupdate);
+			parsedPickupdate = Utils.parsePickupdate(pickupdate);
+			day = (String) parsedPickupdate[0];
+			pickupdateMinutes = (Integer) parsedPickupdate[1];
 		}
 		return order;
 	}

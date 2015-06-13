@@ -35,7 +35,9 @@ import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.enumeration.DishType;
+import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
+import com.epickur.api.utils.Security;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -51,6 +53,7 @@ public class UserIntegrationTest {
 
 	private static String URL;
 	private static String URL_NO_KEY;
+	private static String URL_EXECUTE_ORDER;
 	private static String name;
 	private static String password;
 	private static String start;
@@ -72,6 +75,7 @@ public class UserIntegrationTest {
 			String path = prop.getProperty("api.path");
 			STRIPE_TEST_KEY = prop.getProperty("stripe.key");
 			URL_NO_KEY = address + path + "/users";
+			URL_EXECUTE_ORDER = address + path + "/execute";
 
 			in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
 			BufferedReader br = new BufferedReader(in);
@@ -446,10 +450,11 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomPickupDate();
+		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 		json.put("pickupdate", pickupdate);
+		String cardToken = TestUtils.generateRandomString();
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY + "&token=" + cardToken);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
@@ -552,7 +557,7 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomPickupDate();
+		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 		json.put("pickupdate", pickupdate);
 
 		// Create Stripe card token
@@ -675,10 +680,11 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomPickupDate();
+		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 		json.put("pickupdate", pickupdate);
+		String cardToken = TestUtils.generateRandomString();
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY + "&token=" + cardToken);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
@@ -798,10 +804,11 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomPickupDate();
+		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 		json.put("pickupdate", pickupdate);
+		String cardToken = TestUtils.generateRandomString();
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY + "&token=" + cardToken);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
@@ -874,7 +881,7 @@ public class UserIntegrationTest {
 	
 	
 	@Test
-	public void testExecuteOneOrder() throws ClientProtocolException, IOException, EpickurParsingException {
+	public void testExecuteOneOrder() throws ClientProtocolException, IOException, EpickurException {
 		String jsonMimeType = "application/json";
 
 		// Create User
@@ -922,10 +929,11 @@ public class UserIntegrationTest {
 		json.put("description", "A new order");
 		json.put("amount", 500);
 		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomPickupDate();
+		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 		json.put("pickupdate", pickupdate);
+		String cardToken = TestUtils.generateRandomString();
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY + "&token=" + cardToken);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
@@ -952,10 +960,13 @@ public class UserIntegrationTest {
 		assertNotNull(jsonResult.get("createdAt").asText());
 		assertEquals("AUD", jsonResult.get("currency").asText());
 		assertNotNull(jsonResult.get("dish"));
+		assertNotNull(jsonResult.get("cardToken"));
+		
+		String orderCode = Security.createOrderCode(new ObjectId(orderId), jsonResult.get("cardToken").asText());
 		
 		// Execute order (Caterer choose yes or no)
 		String confirm = "false";
-		HttpGet httpGet = new HttpGet(URL_NO_KEY + "/" + id + "/orders/" + orderId + "/execute?confirm=" + confirm + "&key=" + API_KEY);
+		HttpGet httpGet = new HttpGet(URL_EXECUTE_ORDER + "/users/" + id + "/orders/" + orderId + "?confirm=" + confirm + "&ordercode=" + orderCode);
 		httpGet.addHeader("content-type", jsonMimeType);
 		httpGet.addHeader("charge-agent", "false");
 		httpGet.addHeader("email-agent", "false");

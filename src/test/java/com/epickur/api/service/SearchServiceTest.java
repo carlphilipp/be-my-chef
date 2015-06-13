@@ -25,7 +25,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
-import com.mongodb.DBObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SearchServiceTest {
 
@@ -96,12 +96,13 @@ public class SearchServiceTest {
 			assertNotNull(dishResult.getId());
 			idsToDelete.add(dishResult.getId());
 			idsToDeleteCaterer.add(dishResult.getCaterer().getId());
-			String pickupdate = TestUtils.generateRandomPickupDate();
+			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dishResult.getCaterer().getWorkingTimes());
 			Response result2 = searchService.search(pickupdate, dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000);
 			if (result2.getEntity() != null) {
 				List<Dish> dishes = (List<Dish>) result2.getEntity();
 				assertNotNull(dishes);
-				assertEquals(1, dishes.size());
+				assertEquals("Failed with pickupdate: " + pickupdate + ", and workingTimes: " + dishResult.getCaterer().getWorkingTimes(), 1,
+						dishes.size());
 				Dish dish1 = dishes.get(0);
 				assertEquals(dishResult.getName(), dish1.getName());
 				assertEquals(dishResult.getPrice(), dish1.getPrice());
@@ -120,12 +121,11 @@ public class SearchServiceTest {
 		String pickupdate = TestUtils.generateRandomPickupDate();
 		Response result = searchService.search(pickupdate, dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000);
 		if (result.getEntity() != null) {
-			DBObject res = null;
 			try {
-				res = (DBObject) result.getEntity();
-
-				assertNotNull(res);
-				assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res.get("error"));
+				ObjectMapper mapper = new ObjectMapper();
+				List<?> jsonResult = mapper.readValue(result.getEntity().toString(), List.class);
+				assertNotNull(jsonResult);
+				assertEquals(0, jsonResult.size());
 			} catch (Exception e) {
 				fail(result.getEntity() + " has been returned. We should have had a no content error");
 			}

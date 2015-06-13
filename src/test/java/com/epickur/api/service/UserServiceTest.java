@@ -393,7 +393,8 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			String cardToken = TestUtils.generateRandomString();
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
 			if (result.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -459,7 +460,8 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			String cardToken = TestUtils.generateRandomString();
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
 			if (result2.getEntity() != null) {
 				Order orderResult = (Order) result2.getEntity();
 				assertNotNull(orderResult.getId());
@@ -492,7 +494,8 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			String cardToken = TestUtils.generateRandomString();
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -621,7 +624,8 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			String cardToken = TestUtils.generateRandomString();
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -652,7 +656,8 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			String cardToken = TestUtils.generateRandomString();
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -805,7 +810,8 @@ public class UserServiceTest {
 
 			Order order = TestUtils.generateRandomOrder();
 			order.setId(null);
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			String cardToken = TestUtils.generateRandomString();
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());

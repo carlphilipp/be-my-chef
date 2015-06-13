@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.Properties;
 
 import javax.ws.rs.core.Response;
@@ -26,6 +27,7 @@ import com.epickur.api.TestUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.gson.JsonArray;
 
 public class SearchIntegrationTest {
 
@@ -105,7 +107,7 @@ public class SearchIntegrationTest {
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 400, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
 		
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
@@ -113,9 +115,8 @@ public class SearchIntegrationTest {
 		in.close();
 		
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-		Assert.assertEquals(400, jsonResult.get("error").asInt());
-		Assert.assertEquals("Bad Request", jsonResult.get("message").asText());
+		List<?> jsonResult = mapper.readValue(obj, List.class);
+		Assert.assertEquals(0, jsonResult.size());
 	}
 	
 	@Test
@@ -128,7 +129,7 @@ public class SearchIntegrationTest {
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 400, statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
 		
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
@@ -136,9 +137,8 @@ public class SearchIntegrationTest {
 		in.close();
 		
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-		Assert.assertEquals(400, jsonResult.get("error").asInt());
-		Assert.assertEquals("Bad Request", jsonResult.get("message").asText());
+		List<?> jsonResult = mapper.readValue(obj, List.class);
+		Assert.assertEquals(0, jsonResult.size());
 	}
 	
 	@Test

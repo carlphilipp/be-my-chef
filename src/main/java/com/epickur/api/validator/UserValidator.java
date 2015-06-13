@@ -12,6 +12,7 @@ import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.exception.mapper.EpickurForbiddenException;
 import com.epickur.api.utils.Utils;
 
@@ -119,7 +120,7 @@ public final class UserValidator extends Validator {
 	 * @param order
 	 *            The Order
 	 */
-	public void checkCreateOneOrder(final String userId, final Order order) {
+	public void checkCreateOneOrder(final String userId, final Order order, final String cardToken) {
 		if (StringUtils.isBlank(userId)) {
 			throw new EpickurIllegalArgument(PARAM_ID_NULL);
 		}
@@ -149,6 +150,15 @@ public final class UserValidator extends Validator {
 					Caterer caterer = order.getDish().getCaterer();
 					WorkingTimes workingTimes = caterer.getWorkingTimes();
 					if (!workingTimes.canBePickup((String) result[0], (Integer) result[1])) {
+						System.out.println("1: " + (String) result[0]);
+						System.out.println("2: " + (Integer) result[1]);
+						System.out.println("Prep time: " + workingTimes.getMinimumPreparationTime());
+						try {
+							System.out.println("Hours: " + workingTimes.getHours().toStringAPIView());
+						} catch (EpickurParsingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						throw new EpickurIllegalArgument("The order has a wrong pickupdate.");
 					}
 				}
@@ -158,6 +168,9 @@ public final class UserValidator extends Validator {
 					throw new EpickurIllegalArgument("The field order.paid can not be true.");
 				}
 			}
+		}
+		if(StringUtils.isBlank(cardToken)){
+			throw new EpickurIllegalArgument("The parameter cardtoken is not allowed to be null or empty.");
 		}
 	}
 

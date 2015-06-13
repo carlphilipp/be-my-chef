@@ -56,10 +56,10 @@ public final class WorkingTimes extends AbstractEntity {
 	public final int getMinimumPreparationTime() {
 		return minimumPreparationTime;
 	}
-	
+
 	@JsonIgnore
-	public boolean canBePickup(final String day, final Integer pickupdateMinutes){
-		int openTime = 0;
+	public boolean canBePickup(final String day, final Integer pickupdateMinutes) {
+		Integer openTime = null;
 		List<TimeFrame> timeFrames = getHours().get(day);
 		for (TimeFrame tf : timeFrames) {
 			// If the pickup date is in the current timeframe.
@@ -68,9 +68,11 @@ public final class WorkingTimes extends AbstractEntity {
 				break;
 			}
 		}
-		// We keep this dish if the caterer has time to prepare it.
-		if (pickupdateMinutes.intValue() - getMinimumPreparationTime() >= openTime) {
-			return true;
+		if(openTime != null){
+			// We keep this dish if the caterer has time to prepare it.
+			if (pickupdateMinutes.intValue() - getMinimumPreparationTime() >= openTime) {
+				return true;
+			}
 		}
 		return false;
 	}

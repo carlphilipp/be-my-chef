@@ -25,6 +25,7 @@ import com.epickur.api.entity.LocationTest;
 import com.epickur.api.entity.NutritionFactTest;
 import com.epickur.api.entity.OrderTest;
 import com.epickur.api.entity.UserTest;
+import com.epickur.api.entity.WorkingTimesTest;
 import com.epickur.api.entity.databind.DateSerializerTest;
 import com.epickur.api.entity.databind.ObjectIdDeserializerTest;
 import com.epickur.api.entity.databind.ObjectIdSerializerTest;
@@ -78,7 +79,6 @@ import com.epickur.api.validator.UserValidatorTest;
 		UserBusinessTest.class,
 		
 		OrderDaoImplTest.class,
-
 		AddressTest.class,
 		CatererTest.class,
 		DishTest.class,
@@ -139,7 +139,9 @@ import com.epickur.api.validator.UserValidatorTest;
 
 		CatererValidatorTest.class,
 		DishValidatorTest.class,
-		UserValidatorTest.class
+		UserValidatorTest.class,
+		
+		WorkingTimesTest.class
 })
 public class AllTests {
 

@@ -196,7 +196,8 @@ public class UserValidatorTest {
 	public void testCheckCreateOneOrder() {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
-		validator.checkCreateOneOrder("id", order);
+		String cardToken = TestUtils.generateRandomString();
+		validator.checkCreateOneOrder("id", order, cardToken);
 	}
 
 	@Test
@@ -206,7 +207,8 @@ public class UserValidatorTest {
 
 		UserValidator validator = new UserValidator();
 		Order order = null;
-		validator.checkCreateOneOrder("id", order);
+		String cardToken = TestUtils.generateRandomString();
+		validator.checkCreateOneOrder("id", order, cardToken);
 	}
 
 	@Test

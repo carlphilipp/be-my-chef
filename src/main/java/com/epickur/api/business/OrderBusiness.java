@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
-import org.omg.PortableInterceptor.LOCATION_FORWARD;
 
 import com.epickur.api.cron.Jobs;
 import com.epickur.api.dao.mongo.OrderDaoImpl;
@@ -15,6 +14,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
+import com.epickur.api.exception.mapper.EpickurForbiddenException;
 import com.epickur.api.payment.stripe.StripePayment;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Security;
@@ -73,7 +73,6 @@ public class OrderBusiness {
 			order.setCardToken(cardToken);
 			Order res = this.orderDao.create(order);
 			String orderCode = Security.createOrderCode(res.getId(), cardToken);
-			System.out.println(orderCode);
 			if (sendEmail) {
 				EmailUtils.emailNewOrder(user, res, orderCode);
 			}
@@ -175,14 +174,17 @@ public class OrderBusiness {
 	 *             If an EpickurException occurred
 	 */
 	public final Order executeOrder(final String userId, final String orderId, final boolean confirm, final boolean sendEmail,
-			final boolean shouldCharge, final Key key) throws EpickurException {
+			final boolean shouldCharge, final String orderCode) throws EpickurException {
 		User user = userDao.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
 		} else {
 			Order order = orderDao.read(orderId);
 			if (order != null) {
-				validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Crud.UPDATE);
+				// validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Crud.UPDATE);
+				if (!orderCode.equals(Security.createOrderCode(new ObjectId(orderId), order.getCardToken()))) {
+					throw new EpickurForbiddenException();
+				}
 				if (confirm) {
 					if (shouldCharge) {
 						StripePayment stripe = new StripePayment();

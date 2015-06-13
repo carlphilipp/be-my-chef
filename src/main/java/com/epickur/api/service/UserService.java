@@ -588,7 +588,7 @@ public final class UserService {
 			@QueryParam("token") final String cardToken,
 			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
 			final Order order) throws EpickurException {
-		validator.checkCreateOneOrder(userId, order);
+		validator.checkCreateOneOrder(userId, order, cardToken);
 		Order result = orderBusiness.create(userId, order, cardToken, sendEmail);
 		return Response.ok().entity(result).build();
 	}
@@ -798,7 +798,7 @@ public final class UserService {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	@GET
+/*	@GET
 	@Path("/{id}/orders/{orderId}/execute")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response executeOrder(
@@ -812,5 +812,5 @@ public final class UserService {
 		validator.checkRightsBefore(key.getRole(), Crud.UPDATE, "order");
 		Order result = orderBusiness.executeOrder(userId, orderId, confirm, sendEmail, shouldCharge, key);
 		return Response.ok().entity(result).build();
-	}
+	}*/
 }
