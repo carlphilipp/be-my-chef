@@ -4,27 +4,36 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
+import com.epickur.api.business.SearchBusiness;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
+import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.DishValidator;
 import com.epickur.api.validator.FactoryValidator;
+import com.epickur.api.validator.SearchValidator;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 
@@ -43,12 +52,20 @@ public final class DishService {
 	private CatererBusiness catererBusiness;
 	/** Service validator **/
 	private DishValidator validator;
+	
+	/** Service validator **/
+	private SearchValidator searchValidator;
+	/** Search Business **/
+	private SearchBusiness searchBusiness;
 
 	/** Constructor **/
 	public DishService() {
 		this.dishBusiness = new DishBusiness();
 		this.catererBusiness = new CatererBusiness();
 		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
+		
+		this.searchBusiness = new SearchBusiness();
+		this.searchValidator = (SearchValidator) FactoryValidator.getValidator("search");
 	}
 
 	// @formatter:off
@@ -438,14 +455,22 @@ public final class DishService {
 			return ErrorUtils.notFound(ErrorUtils.DISH_NOT_FOUND, id);
 		}
 	}
-
+	
 	// @formatter:off
-	/**
-	 * @api {get} /dishes Read all Dishes
+	/** 
+	 * 
+	 * @api {get} /dishes?types=:type1,type2,...,typeN&limit=:limit&at=:lat,:long&searchtext=:searchtext&distance=:distance Search a dish
 	 * @apiVersion 1.0.0
-	 * @apiName ReadAllDishes
+	 * @apiName SearchDish
 	 * @apiGroup Dishes
+	 * @apiDescription Search a dish.
 	 * @apiPermission admin, super_user, user
+	 * 
+	 * @apiParam (Request: URL Parameter) {String} types list of Dish type to search.
+	 * @apiParam (Request: URL Parameter) {String} limit Limit of number of result (default is 50).
+	 * @apiParam (Request: URL Parameter) {String} at Geocoordinates to use (latitude, longitude).
+	 * @apiParam (Request: URL Parameter) {String} searchtext Searchtext to geocode.
+	 * @apiParam (Request: URL Parameter) {String} distance Distance from the origin point to search (in meter) (default is 500).
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the Dish.
 	 * @apiSuccess (Response: JSON Object) {String} name Name of the Dish.
@@ -456,29 +481,29 @@ public final class DishService {
 	 * @apiSuccess (Response: JSON Object) {Caterer} caterer Caterer of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Ingredient[]} ingredients Ingredients of the Dish.
 	 * @apiSuccess (Response: JSON Object) {NutritionFact[]} nutritionFacts Nutrition fact of the Dish.
-	 * @apiSuccess (Response: JSON Object) {String} imageAfterUrl Image After URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	[{
 	 *		"id": "54e12a60731e59c612c5fac7",
- 	 *		"name": "Fish and Chips",
-	 *		"description": "Fresh fish and chips",
-	 *		"type": "Fish",
-	 *		"price": 5.0,
-	 *		"cookingTime": 5,
-	 *		"difficultyLevel": 1,
+	 *		"name": "Thai Inbox",
+	 *		"description": "Noodles with rice",
+	 *		"type": "Meat",
 	 *		"caterer": {
-	 *			"id": "54e12a5e731e465f7301d561"
-	 *			"name": "FisherMan",
+	 *			"id": "54e90015b634980ccd05e3bc",
+	 *			"name": "Super Thai",
+	 *			"description": "Super Thai - Noodles, Curry dishes",
+	 *			"manager": "John Lee",
+	 *			"email": "jlee@superthai.com",
+	 *			"phone": "312-211-8911",
 	 *			"location": {
 	 *				"address": {
-	 *					"label": "",
-	 *					"houseNumber": "1090",
-	 *					"street": "Michigan avenue",
+	 *					"label": "House next to the police station",
+	 *					"houseNumber": "832",
+	 *					"street": "W. Wrightwood Avenue",
 	 *					"city": "Chicago",
 	 *					"postalCode": 60614,
 	 *					"state": "Illinois",
@@ -486,23 +511,26 @@ public final class DishService {
 	 *				},
 	 *				"geo": {
 	 *					"type": "Point",
-	 *					"coordinates": [-73.97, 40.77]
-	 *				},
+	 *					"coordinates": [-87.65024,41.928276]
+	 *				}
 	 *			},
+	 *			"createdAt": 1424556053008,
+	 *			"updatedAt": 1424556053008
 	 *		},
-	 * 		"ingredients": 
-	 * 		[{
-	 * 			"name": "Fish",
+	 *		"price": 500,
+	 *		"ingredients": [{
+	 *			"name": "Noodles",
 	 *			"sequence": 1,
 	 *			"quantity": 1.0
 	 *		},
 	 *		{
-	 *			"name": "Chips",
+	 *			"name": "Rice",
 	 *			"sequence": 2,
 	 *			"quantity": 1.0
 	 *		}],
-	 *		"nutritionFacts": 
-	 *		[{
+	 *		"cookingTime": 5,
+	 *		"difficultyLevel": 1,
+	 *		"nutritionFacts": [{
 	 *			"name": "Calories",
 	 *			"value": 1250.0,
 	 *			"unit": "kJ"
@@ -512,26 +540,49 @@ public final class DishService {
 	 *			"value": 750.5,
 	 *			"unit": "g"
 	 *		}],
-	 *		"imageAfterUrl": "http://www.flickr.com",
 	 *		"videoUrl": "http://www.google.com",
 	 *		"createdAt": 1424042592185,
 	 *		"updatedAt": 1424042592185
 	 *	}]
 	 *
-	 * @apiUse BadRequestError
-	 * @apiUse ForbiddenError
 	 * @apiUse InternalError
+	 * @apiUse ForbiddenError
 	 */
 	// @formatter:on
 	/**
+	 * @param types
+	 *            The list of Dish type
+	 * @param limit
+	 *            The limit ammount of result
+	 * @param searchtext
+	 *            The address
+	 * @param at
+	 *            A geo localisation coordinate. lat,long
+	 * @param distance
+	 *            The distance
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
-	 * @return The list of Dish
+	 * @return The reponse
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response readAll() throws EpickurException {
-		List<Dish> dishes = dishBusiness.readAll();
+	public Response search(
+			@QueryParam("pickupdate") final String pickupdate,
+			@QueryParam("types") final String types,
+			@DefaultValue("50") @QueryParam("limit") final Integer limit,
+			@QueryParam("at") final String at,
+			@QueryParam("searchtext") final String searchtext,
+			@DefaultValue("500") @QueryParam("distance") final Integer distance) throws EpickurException {
+		searchValidator.checkSearch(pickupdate, types, at, searchtext);
+		List<DishType> dishTypes = Utils.stringToListDishType(types);
+		Geo geo = null;
+		if (!StringUtils.isBlank(at)) {
+			geo = Utils.stringToGeo(at);
+		}
+		Object[] result = Utils.parsePickupdate(pickupdate);
+		String day = (String) result[0];
+		Integer minutes = (Integer) result[1];
+		List<Dish> dishes = this.searchBusiness.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
 		return Response.ok().entity(dishes).build();
 	}
 }

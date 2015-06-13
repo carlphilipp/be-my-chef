@@ -33,9 +33,9 @@ import com.epickur.api.enumeration.CurrencyTest;
 import com.epickur.api.enumeration.MeasurementUnitTest;
 import com.epickur.api.exception.mapper.EpickurDBExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurExceptionMapperTest;
+import com.epickur.api.exception.mapper.EpickurForbiddenExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurIOExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurIllegalArgumentMapperTest;
-import com.epickur.api.exception.mapper.EpickurForbiddenExceptionMapperTest;
 import com.epickur.api.exception.mapper.IllegalArgumentExceptionMapperTest;
 import com.epickur.api.exception.mapper.JsonMappingExceptionMapperTest;
 import com.epickur.api.exception.mapper.NotAllowedExceptionMapperTest;
@@ -53,7 +53,6 @@ import com.epickur.api.integration.AccessRightsOrderIntegrationTest;
 import com.epickur.api.integration.AccessRightsUserIntegrationTest;
 import com.epickur.api.integration.CatererIntegrationTest;
 import com.epickur.api.integration.DishIntegrationTest;
-import com.epickur.api.integration.SearchIntegrationTest;
 import com.epickur.api.integration.UserIntegrationTest;
 import com.epickur.api.payment.stripe.StripePaymentTest;
 import com.epickur.api.service.CatererServiceTest;
@@ -77,7 +76,7 @@ import com.epickur.api.validator.UserValidatorTest;
 		KeyBusinessTest.class,
 		OrderBusinessTest.class,
 		UserBusinessTest.class,
-		
+
 		OrderDaoImplTest.class,
 		AddressTest.class,
 		CatererTest.class,
@@ -122,7 +121,6 @@ import com.epickur.api.validator.UserValidatorTest;
 		AccessRightsOrderIntegrationTest.class,
 		CatererIntegrationTest.class,
 		DishIntegrationTest.class,
-		SearchIntegrationTest.class,
 		UserIntegrationTest.class,
 
 		StripePaymentTest.class,
@@ -133,21 +131,21 @@ import com.epickur.api.validator.UserValidatorTest;
 		LoginServiceTest.class,
 		LogoutServiceTest.class,
 		UserServiceTest.class,
-		
+
 		UtilsTest.class,
 		EmailUtilsTest.class,
 
 		CatererValidatorTest.class,
 		DishValidatorTest.class,
 		UserValidatorTest.class,
-		
+
 		WorkingTimesTest.class
 })
 public class AllTests {
 
 	@BeforeClass
 	public static void beforeClass() throws IOException {
-		InputStreamReader in = new InputStreamReader(SearchIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+		InputStreamReader in = new InputStreamReader(AllTests.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 

@@ -1,5 +1,6 @@
 package com.epickur.api.integration;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
@@ -7,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -27,6 +29,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.bson.types.ObjectId;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -42,6 +45,7 @@ import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.exception.EpickurException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class DishIntegrationTest {
@@ -78,9 +82,6 @@ public class DishIntegrationTest {
 
 	@AfterClass
 	public static void afterClass() throws EpickurException, IOException {
-		/*
-		 * for (ObjectId id : idsCatererToDelete) { catererService.delete(id.toHexString(), context); }
-		 */
 		TestUtils.cleanDB();
 	}
 
@@ -393,5 +394,118 @@ public class DishIntegrationTest {
 		assertEquals(jsonMimeType, mimeType);
 		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), Integer.valueOf(jsonResult.get("error").toString()).intValue());
 		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
+	}
+	
+	// Search tests
+	
+	@Test
+	public void testSearchUsa() throws ClientProtocolException, IOException {
+		String type = "Meat";
+		String limit = "100";
+		String address = "832 W. Wrightwood, Chicago, Illinois";
+		String pickupdate = "mon-19:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
+		
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
+		Assert.assertThat(jsonResult.size(), is(1));
+	}
+	
+	@Test
+	public void testSearchUsa2() throws ClientProtocolException, IOException {
+		// Same test with another pickupdate
+		String type = "Meat";
+		String limit = "100";
+		String address = "832 W. Wrightwood, Chicago, Illinois";
+		String pickupdate = "mon-16:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
+		
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		List<?> jsonResult = mapper.readValue(obj, List.class);
+		Assert.assertEquals(0, jsonResult.size());
+	}
+	
+	@Test
+	public void testSearchUsa3() throws ClientProtocolException, IOException {
+		String type = "Meat";
+		String limit = "100";
+		String address = "832 W. Wrightwood, Chicago, Illinois";
+		String pickupdate = "mon-18:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
+		
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		List<?> jsonResult = mapper.readValue(obj, List.class);
+		Assert.assertEquals(0, jsonResult.size());
+	}
+	
+	@Test
+	public void testSearchUsa4() throws ClientProtocolException, IOException {
+		String type = "Meat";
+		String limit = "100";
+		String address = "832 W. Wrightwood, Chicago, Illinois";
+		String pickupdate = "mon-22:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
+		
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
+		Assert.assertThat(jsonResult.size(), is(1));
+	}
+
+	@Test
+	public void testSearchAustralia() throws ClientProtocolException, IOException {
+		String type = "Fish,Meat";
+		String limit = "100";
+		String address = "388 Bourke St Melbourne, Australia";
+		String pickupdate = "mon-19:00";
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
+		
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
+		Assert.assertThat(jsonResult.size(), is(2));
 	}
 }

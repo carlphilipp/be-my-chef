@@ -41,7 +41,6 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.MeasurementUnit;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.integration.SearchIntegrationTest;
 import com.epickur.api.utils.ObjectMapperWrapperAPI;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -60,7 +59,7 @@ public class TestUtils {
 	private static final String[] pickupdateDays = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
 
 	public static void setupDB() throws IOException {
-		InputStreamReader in = new InputStreamReader(SearchIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+		InputStreamReader in = new InputStreamReader(TestUtils.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 		in.close();
@@ -76,7 +75,7 @@ public class TestUtils {
 	}
 
 	public static void cleanDB() throws IOException {
-		InputStreamReader in = new InputStreamReader(SearchIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+		InputStreamReader in = new InputStreamReader(TestUtils.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 		in.close();
@@ -362,7 +361,7 @@ public class TestUtils {
 		user.setPassword(generateRandomString());
 		return user;
 	}
-	
+
 	public static String generateRandomPickupDate() {
 		DecimalFormat formatter = new DecimalFormat("00");
 		int index = RandomUtils.nextInt(0, pickupdateDays.length - 1);
@@ -373,11 +372,11 @@ public class TestUtils {
 		String minutesFormatted = formatter.format(minutes);
 		return selected + "-" + hoursFormatted + ":" + minutesFormatted;
 	}
-	
-	public static String generateRandomCorrectPickupDate(WorkingTimes workingTimes){
+
+	public static String generateRandomCorrectPickupDate(WorkingTimes workingTimes) {
 		String pickupdate = generateRandomPickupDate();
-		Object [] parsedPickupdate = Utils.parsePickupdate(pickupdate);
-		while(!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])){
+		Object[] parsedPickupdate = Utils.parsePickupdate(pickupdate);
+		while (!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])) {
 			pickupdate = generateRandomPickupDate();
 			parsedPickupdate = Utils.parsePickupdate(pickupdate);
 		}
@@ -391,19 +390,19 @@ public class TestUtils {
 		order.setDescription(generateRandomString());
 		order.setDish(generateRandomDish());
 		order.setCreatedBy(new ObjectId());
-		
+
 		String pickupdate = generateRandomPickupDate();
 		order.setPickupdate(pickupdate);
-		Object [] parsedPickupdate = Utils.parsePickupdate(pickupdate);
+		Object[] parsedPickupdate = Utils.parsePickupdate(pickupdate);
 		String day = (String) parsedPickupdate[0];
 		Integer pickupdateMinutes = (Integer) parsedPickupdate[1];
-		
+
 		WorkingTimes workingTimes = order.getDish().getCaterer().getWorkingTimes();
-		while(!workingTimes.canBePickup(day, pickupdateMinutes)){
+		while (!workingTimes.canBePickup(day, pickupdateMinutes)) {
 			WorkingTimes temp = generateRandomWorkingTimes();
 			order.getDish().getCaterer().setWorkingTimes(temp);
 			workingTimes = order.getDish().getCaterer().getWorkingTimes();
-			
+
 			pickupdate = generateRandomPickupDate();
 			order.setPickupdate(pickupdate);
 			parsedPickupdate = Utils.parsePickupdate(pickupdate);
