@@ -746,6 +746,4 @@ public final class UserService {
 		node.put("status", "email sent");
 		return Response.ok().entity(node).build();
 	}
-
-
 }

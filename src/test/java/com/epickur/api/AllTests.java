@@ -56,7 +56,7 @@ import com.epickur.api.integration.DishIntegrationTest;
 import com.epickur.api.integration.UserIntegrationTest;
 import com.epickur.api.payment.stripe.StripePaymentTest;
 import com.epickur.api.service.CatererServiceTest;
-import com.epickur.api.service.CheckUserServiceTest;
+import com.epickur.api.service.NoKeyServiceTest;
 import com.epickur.api.service.DishServiceTest;
 import com.epickur.api.service.LoginServiceTest;
 import com.epickur.api.service.LogoutServiceTest;
@@ -126,7 +126,7 @@ import com.epickur.api.validator.UserValidatorTest;
 		StripePaymentTest.class,
 
 		CatererServiceTest.class,
-		CheckUserServiceTest.class,
+		NoKeyServiceTest.class,
 		DishServiceTest.class,
 		LoginServiceTest.class,
 		LogoutServiceTest.class,

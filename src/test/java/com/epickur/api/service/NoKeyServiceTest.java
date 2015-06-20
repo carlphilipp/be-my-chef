@@ -22,17 +22,23 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.utils.Security;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.DBObject;
 
-public class CheckUserServiceTest {
+public class NoKeyServiceTest {
 
 	private static NoKeyService noKeyService;
 	private static UserService userService;
 	private static List<ObjectId> idsToDelete;
 	private static ContainerRequestContext context;
+	private static ObjectMapper mapper;
 
 	@BeforeClass
 	public static void beforeClass() {
+		mapper = new ObjectMapper();
 		noKeyService = new NoKeyService();
 		userService = new UserService();
 		idsToDelete = new ArrayList<ObjectId>();
@@ -98,5 +104,27 @@ public class CheckUserServiceTest {
 			fail("Failed");
 		}
 	}
-
+	
+	@Test
+	public void testResetPassord() throws EpickurException {
+		// Create User
+		User user = TestUtils.generateRandomUser();
+		Response result = userService.create(false, false, user, context);
+		if (result.getEntity() != null) {
+			User userResult = (User) result.getEntity();
+			assertNotNull(userResult.getId());
+			idsToDelete.add(userResult.getId());
+			
+			String resetCode = Security.createResetCode(userResult.getId(), userResult.getEmail());
+			
+			ObjectNode node = mapper.createObjectNode();
+			node.put("password", "newPassword");
+			Response result2 = noKeyService.resetPasswordSecondStep(userResult.getId().toHexString(), resetCode, node);
+			assertNotNull(result2.getEntity());
+			User userResult2 = (User) result2.getEntity();
+			assertNotNull(userResult2.getEmail());
+		} else {
+			fail("User returned is null");
+		}
+	}
 }
