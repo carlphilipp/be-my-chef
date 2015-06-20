@@ -38,17 +38,7 @@ public final class DishValidator extends Validator {
 	public void checkCreateData(final Dish dish) {
 		checkData(dish);
 	}
-
-	/**
-	 * @param id
-	 *            The Dish id
-	 */
-	public void checkId(final String id) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
-	}
-
+	
 	/**
 	 * @param id
 	 *            The Dish Id
@@ -56,9 +46,7 @@ public final class DishValidator extends Validator {
 	 *            The Dish
 	 */
 	public void checkUpdateData(final String id, final Dish dish) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
+		checkId(id);
 		if (dish == null) {
 			throw new EpickurIllegalArgument(NO_DISH_PROVIDED);
 		}
@@ -99,13 +87,6 @@ public final class DishValidator extends Validator {
 		if (StringUtils.isBlank(dish.getImageAfterUrl())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "imageAfterUrl"));
 		}
-		/*
-		 * if (StringUtils.isBlank(dish.getVideoUrl())) { throw new EpickurIllegalArgument(fieldNull(getEntity(), "videoUrl")); }
-		 */
-		/*
-		 * if (dish.getNutritionFacts() != null) { checkNutritionFactsData(dish.getNutritionFacts()); } else { throw new
-		 * EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts")); }
-		 */
 		if (dish.getIngredients() != null) {
 			checkIngredientsData(dish.getIngredients());
 		} else {
@@ -154,20 +135,6 @@ public final class DishValidator extends Validator {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "ingredients"));
 		}
 	}
-
-	/**
-	 * @param nutritionFacts
-	 *            The list of NutritionFact
-	 */
-
-	/*
-	 * private void checkNutritionFactsData(final List<NutritionFact> nutritionFacts) { if (nutritionFacts.size() == 0) { throw new
-	 * EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts")); } else { for (int i = 0; i < nutritionFacts.size(); i++) { if
-	 * (StringUtils.isBlank(nutritionFacts.get(i).getName())) { throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts[" + i +
-	 * "].name")); } if (nutritionFacts.get(i).getValue() == null) { throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts[" + i +
-	 * "].value")); } if (nutritionFacts.get(i).getUnit() == null) { throw new EpickurIllegalArgument(fieldNull(getEntity(), "nutritionFacts[" + i +
-	 * "].unit")); } } } }
-	 */
 
 	/**
 	 * @param role

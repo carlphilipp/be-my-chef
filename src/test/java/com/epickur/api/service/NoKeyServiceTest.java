@@ -23,7 +23,6 @@ import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.utils.Security;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.DBObject;
@@ -104,7 +103,7 @@ public class NoKeyServiceTest {
 			fail("Failed");
 		}
 	}
-	
+
 	@Test
 	public void testResetPassord() throws EpickurException {
 		// Create User
@@ -114,9 +113,9 @@ public class NoKeyServiceTest {
 			User userResult = (User) result.getEntity();
 			assertNotNull(userResult.getId());
 			idsToDelete.add(userResult.getId());
-			
+
 			String resetCode = Security.createResetCode(userResult.getId(), userResult.getEmail());
-			
+
 			ObjectNode node = mapper.createObjectNode();
 			node.put("password", "newPassword");
 			Response result2 = noKeyService.resetPasswordSecondStep(userResult.getId().toHexString(), resetCode, node);

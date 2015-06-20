@@ -222,7 +222,7 @@ public class CatererServiceTest {
 
 			Caterer catererUpdate = catererResult.clone();
 			catererUpdate.setDescription("modified");
-			catererService.update("id", catererUpdate, context);
+			catererService.update(new ObjectId().toHexString(), catererUpdate, context);
 		} else {
 			fail("Caterer returned is null");
 		}
@@ -279,7 +279,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_CATERER_PROVIDED);
 
-		Response result = catererService.update("id", null, context);
+		Response result = catererService.update(new ObjectId().toHexString(), null, context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
 			assertEquals(500, dbObject.get("error"));
@@ -293,7 +293,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_CATERER_PROVIDED);
 
-		Response result = catererService.update("id", null, context);
+		Response result = catererService.update(new ObjectId().toHexString(), null, context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
 			assertEquals(500, dbObject.get("error"));

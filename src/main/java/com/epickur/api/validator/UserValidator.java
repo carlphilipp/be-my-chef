@@ -52,23 +52,11 @@ public final class UserValidator extends Validator {
 	/**
 	 * @param id
 	 *            The User id
-	 */
-	public void checkId(final String id) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
-	}
-
-	/**
-	 * @param id
-	 *            The User id
 	 * @param user
 	 *            The User
 	 */
 	public void checkUpdateUser(final String id, final User user) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
+		checkId(id);
 		if (user == null) {
 			throw new EpickurIllegalArgument(NO_USER_PROVIDED);
 		}
@@ -93,12 +81,8 @@ public final class UserValidator extends Validator {
 	 *            The Order id
 	 */
 	public void checkReadOneOrder(final String id, final String orderId) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
-		if (StringUtils.isBlank(orderId)) {
-			throw new EpickurIllegalArgument(PARAM_ORDER_ID_NULL);
-		}
+		checkId(id);
+		checkId(orderId);
 	}
 
 	/**
@@ -108,9 +92,7 @@ public final class UserValidator extends Validator {
 	 *            The Key
 	 */
 	public void checkReadAllOrder(final String id, final Key key) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
+		checkId(id);
 	}
 
 	/**
@@ -122,9 +104,7 @@ public final class UserValidator extends Validator {
 	 *            The Order
 	 */
 	public void checkCreateOneOrder(final String userId, final Order order, final String cardToken) {
-		if (StringUtils.isBlank(userId)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
+		checkId(userId);
 		if (order == null) {
 			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
 		} else {
@@ -184,12 +164,8 @@ public final class UserValidator extends Validator {
 	 *            The Order
 	 */
 	public void checkUpdateOneOrder(final String id, final String orderId, final Order order) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
-		if (StringUtils.isBlank(orderId)) {
-			throw new EpickurIllegalArgument(PARAM_ORDER_ID_NULL);
-		}
+		checkId(id);
+		checkId(orderId);
 		if (order == null) {
 			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
 		}
@@ -208,12 +184,8 @@ public final class UserValidator extends Validator {
 	 *            The Order id
 	 */
 	public void checkDeleteOneOrder(final String id, final String orderId) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
-		if (StringUtils.isBlank(orderId)) {
-			throw new EpickurIllegalArgument(PARAM_ORDER_ID_NULL);
-		}
+		checkId(id);
+		checkId(orderId);
 	}
 
 	/**
@@ -312,9 +284,7 @@ public final class UserValidator extends Validator {
 	}
 
 	public void checkResetPasswordData(final String id, final ObjectNode node, final String token) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
+		checkId(id);
 		if (StringUtils.isBlank(token)) {
 			throw new EpickurIllegalArgument("The parameter token is not allowed to be null or empty");
 		}

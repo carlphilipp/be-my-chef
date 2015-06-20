@@ -1,9 +1,13 @@
 package com.epickur.api.validator;
 
+import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
+
 import com.epickur.api.enumeration.Crud;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
+import com.epickur.api.exception.EpickurIllegalArgument;
 
 /**
  * @author cph
@@ -107,6 +111,21 @@ public abstract class Validator {
 			} else {
 				throw new EpickurException("Type error while checking rights: " + type);
 			}
+		}
+	}
+
+	/**
+	 * Check if an id is correctly formed
+	 * 
+	 * @param id
+	 *            The id to check
+	 */
+	public final void checkId(final String id) {
+		if (StringUtils.isBlank(id)) {
+			throw new EpickurIllegalArgument(PARAM_ID_NULL);
+		}
+		if (!ObjectId.isValid(id)) {
+			throw new EpickurIllegalArgument(id + " is not a valid id");
 		}
 	}
 }

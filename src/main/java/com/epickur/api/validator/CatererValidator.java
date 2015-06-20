@@ -39,17 +39,7 @@ public final class CatererValidator extends Validator {
 	public void checkCreateCaterer(final Caterer caterer) {
 		checkCaterer(caterer);
 	}
-
-	/**
-	 * @param id
-	 *            The Caterer id
-	 */
-	public void checkId(final String id) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
-	}
-
+	
 	/**
 	 * @param id
 	 *            The caterer Id
@@ -57,9 +47,7 @@ public final class CatererValidator extends Validator {
 	 *            The Caterer
 	 */
 	public void checkUpdateCaterer(final String id, final Caterer caterer) {
-		if (StringUtils.isBlank(id)) {
-			throw new EpickurIllegalArgument(PARAM_ID_NULL);
-		}
+		checkId(id);
 		checkCaterer(caterer);
 		if (caterer.getId() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "id"));

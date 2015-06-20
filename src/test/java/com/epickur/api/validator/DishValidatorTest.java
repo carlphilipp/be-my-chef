@@ -53,7 +53,7 @@ public class DishValidatorTest {
 		DishValidator validator = new DishValidator();
 		Dish dish = TestUtils.generateRandomDish();
 		dish.setId(null);
-		validator.checkUpdateData("id", dish);
+		validator.checkUpdateData(new ObjectId().toHexString(), dish);
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class DishValidatorTest {
 
 		DishValidator validator = new DishValidator();
 		Dish dish = null;
-		validator.checkUpdateData("id", dish);
+		validator.checkUpdateData(new ObjectId().toHexString(), dish);
 	}
 
 	@Test

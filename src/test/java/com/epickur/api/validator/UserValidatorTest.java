@@ -62,7 +62,7 @@ public class UserValidatorTest {
 		User user = TestUtils.generateRandomUser();
 		user.setId(null);
 		user.setRole(Role.ADMIN);
-		validator.checkUpdateUser("id", user);
+		validator.checkUpdateUser(new ObjectId().toHexString(), user);
 	}
 
 	@Test
@@ -71,8 +71,7 @@ public class UserValidatorTest {
 		thrown.expectMessage("No user has been provided");
 
 		UserValidator validator = new UserValidator();
-		;
-		validator.checkUpdateUser("id", null);
+		validator.checkUpdateUser(new ObjectId().toHexString(), null);
 	}
 
 	@Test
@@ -84,7 +83,7 @@ public class UserValidatorTest {
 		User user = TestUtils.generateRandomUser();
 		user.setNewPassword("test");
 		user.setPassword(null);
-		validator.checkUpdateUser("id", user);
+		validator.checkUpdateUser(new ObjectId().toHexString(), user);
 	}
 
 	@Test
@@ -95,7 +94,7 @@ public class UserValidatorTest {
 		UserValidator validator = new UserValidator();
 		User user = TestUtils.generateRandomUser();
 		user.setId(null);
-		validator.checkUpdateUser("id", user);
+		validator.checkUpdateUser(new ObjectId().toHexString(), user);
 	}
 
 	@Test
@@ -117,7 +116,7 @@ public class UserValidatorTest {
 		User user = TestUtils.generateRandomUser();
 		user.setNewPassword("password");
 		user.setPassword("password");
-		validator.checkUpdateUser("idid", user);
+		validator.checkUpdateUser(new ObjectId().toHexString(), user);
 	}
 
 	@Test
@@ -149,7 +148,7 @@ public class UserValidatorTest {
 		UserValidator validator = new UserValidator();
 		User user = TestUtils.generateRandomUser();
 		user.setId(new ObjectId());
-		validator.checkUpdateUser("id", user);
+		validator.checkUpdateUser(new ObjectId().toHexString(), user);
 	}
 
 	@Test
@@ -160,7 +159,7 @@ public class UserValidatorTest {
 		Order order = TestUtils.generateRandomOrder();
 		order.setId(null);
 		UserValidator validator = new UserValidator();
-		validator.checkUpdateOneOrder("id", "orderId", order);
+		validator.checkUpdateOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString(), order);
 	}
 
 	@Test
@@ -171,7 +170,7 @@ public class UserValidatorTest {
 		Order order = TestUtils.generateRandomOrder();
 		order.setId(new ObjectId());
 		UserValidator validator = new UserValidator();
-		validator.checkUpdateOneOrder("id", "orderId", order);
+		validator.checkUpdateOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString(), order);
 	}
 
 	@Test
@@ -197,7 +196,7 @@ public class UserValidatorTest {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
 		String cardToken = TestUtils.generateRandomString();
-		validator.checkCreateOneOrder("id", order, cardToken);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order, cardToken);
 	}
 
 	@Test
@@ -208,7 +207,7 @@ public class UserValidatorTest {
 		UserValidator validator = new UserValidator();
 		Order order = null;
 		String cardToken = TestUtils.generateRandomString();
-		validator.checkCreateOneOrder("id", order, cardToken);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order, cardToken);
 	}
 
 	@Test
