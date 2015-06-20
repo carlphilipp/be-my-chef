@@ -18,6 +18,7 @@ import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * User business layer. Access User DAO layer and execute logic.
@@ -292,13 +293,34 @@ public final class UserBusiness {
 	 * @param email
 	 * @throws EpickurException
 	 */
-	public void reset(final String email) throws EpickurException {
+	public void resetPasswordFirstStep(final String email) throws EpickurException {
 		User user = this.readWithEmail(email);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 		} else {
 			String resetCode = Security.createResetCode(user.getId(), email);
 			EmailUtils.resetPassword(email, user.getId().toHexString(), resetCode);
+		}
+	}
+
+	public User resetPasswordSecondStep(final String id, final ObjectNode node, final String resetCode) throws EpickurException {
+		User user = userDao.read(id);
+		if (user == null) {
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
+		} else {
+			String resetCodeDB = Security.createResetCode(user.getId(), user.getEmail());
+			if (!resetCodeDB.equals(resetCode)) {
+				// throw intentionaly user not found.
+				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
+			} else {
+				String newPassword = node.get("password").asText();
+				String newEnryptedPassword = Utils.getEncryptedPassword(newPassword);
+				user.setPassword(newEnryptedPassword);
+				User res = userDao.update(user);
+				res.setPassword(null);
+				res.setRole(null);
+				return res;
+			}
 		}
 	}
 }

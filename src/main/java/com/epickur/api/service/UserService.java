@@ -735,15 +735,17 @@ public final class UserService {
 	@POST
 	@Path("/reset")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response reset(
+	public Response resetPasswordFirstStep(
 			final ObjectNode node,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		validator.checkResetRightsBefore(key.getRole());
-		validator.checkResetData(node);
+		validator.checkResetPasswordData(node);
 		String email = node.get("email").asText();
-		userBusiness.reset(email);
-		node.put("status", "email sent.");
+		userBusiness.resetPasswordFirstStep(email);
+		node.put("status", "email sent");
 		return Response.ok().entity(node).build();
 	}
+
+
 }

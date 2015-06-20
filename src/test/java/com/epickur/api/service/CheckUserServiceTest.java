@@ -26,14 +26,14 @@ import com.mongodb.DBObject;
 
 public class CheckUserServiceTest {
 
-	private static CheckUserService checkService;
+	private static NoKeyService noKeyService;
 	private static UserService userService;
 	private static List<ObjectId> idsToDelete;
 	private static ContainerRequestContext context;
 
 	@BeforeClass
 	public static void beforeClass() {
-		checkService = new CheckUserService();
+		noKeyService = new NoKeyService();
 		userService = new UserService();
 		idsToDelete = new ArrayList<ObjectId>();
 		context = mock(ContainerRequestContext.class);
@@ -65,7 +65,7 @@ public class CheckUserServiceTest {
 			idsToDelete.add(userResult.getId());
 
 			String check = result.getHeaderString("check");
-			Response result2 = checkService.check(userResult.getName(), check);
+			Response result2 = noKeyService.checkUser(userResult.getName(), check);
 			if (result2.getEntity() != null) {
 				User catererResult2 = (User) result2.getEntity();
 				assertEquals(1, catererResult2.getAllow().intValue());
@@ -79,7 +79,7 @@ public class CheckUserServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testCheckUserServiceFail() throws EpickurException {
-		Response result = checkService.check(null, null);
+		Response result = noKeyService.checkUser(null, null);
 		if (result.getEntity() != null) {
 			DBObject obj = (DBObject) result.getEntity();
 			assertEquals(500, obj.get("error"));
@@ -90,7 +90,7 @@ public class CheckUserServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testCheckUserServiceFail2() throws EpickurException {
-		Response result = checkService.check(new String(), null);
+		Response result = noKeyService.checkUser(new String(), null);
 		if (result.getEntity() != null) {
 			DBObject obj = (DBObject) result.getEntity();
 			assertEquals(500, obj.get("error"));

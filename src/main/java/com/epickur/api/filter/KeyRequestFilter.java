@@ -44,7 +44,7 @@ public final class KeyRequestFilter implements ContainerRequestFilter {
 	public void filter(final ContainerRequestContext requestContext) throws IOException {
 		String paramKey = requestContext.getUriInfo().getQueryParameters().getFirst("key");
 		String urlPath = requestContext.getUriInfo().getPath();
-		if (urlPath != null && !urlPath.equalsIgnoreCase("check") && !urlPath.startsWith("execute")) {
+		if (urlPath != null && !urlPath.startsWith("nokey/")) {
 			if (paramKey == null) {
 				Response response = ErrorUtils.error(Response.Status.UNAUTHORIZED, ErrorUtils.MISSING_KEY);
 				requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(response.getEntity()).build());

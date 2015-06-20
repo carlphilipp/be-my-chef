@@ -75,7 +75,7 @@ public class UserIntegrationTest {
 			String path = prop.getProperty("api.path");
 			STRIPE_TEST_KEY = prop.getProperty("stripe.key");
 			URL_NO_KEY = address + path + "/users";
-			URL_EXECUTE_ORDER = address + path + "/execute";
+			URL_EXECUTE_ORDER = address + path + "/nokey/execute";
 
 			in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
 			BufferedReader br = new BufferedReader(in);

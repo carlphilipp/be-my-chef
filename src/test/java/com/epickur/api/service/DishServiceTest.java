@@ -361,15 +361,19 @@ public class DishServiceTest {
 			Response result2 = dishService.search(pickupdate, dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000);
 			if (result2.getEntity() != null) {
 				List<Dish> dishes = (List<Dish>) result2.getEntity();
-				for(Dish temp : dishes){
-					System.out.println(temp);
-				}
 				assertNotNull(dishes);
 				Assert.assertThat("Failed with pickupdate: " + pickupdate + ", and workingTimes: " + dishResult.getCaterer().getWorkingTimes(), dishes.size(),
 						greaterThanOrEqualTo(1));
-				Dish dish1 = dishes.get(0);
-				assertEquals(dishResult.getName(), dish1.getName());
-				assertEquals(dishResult.getPrice(), dish1.getPrice());
+				boolean found = false;
+				for(Dish temp : dishes){
+					if(dishResult.getName().equals(temp.getName())){
+						found = true;
+						break;
+					}
+				}
+				if(!found){
+					fail(dishResult.getName() + " not found in the result.");
+				}
 			} else {
 				fail("List of dish returned is null");
 			}

@@ -300,9 +300,32 @@ public final class UserValidator extends Validator {
 		}
 	}
 
-	public void checkResetData(final ObjectNode node) {
-		if(!node.has("email")){
-			throw new EpickurIllegalArgument("The field email is not allowed to be null or empty");
+	public void checkResetPasswordData(final ObjectNode node) {
+		if (!node.has("email")) {
+			throw new EpickurIllegalArgument("The field email is mandatory");
+		} else {
+			String email = node.get("email").asText();
+			if (StringUtils.isBlank(email)) {
+				throw new EpickurIllegalArgument("The field password is not allowed to be null or empty");
+			}
+		}
+	}
+
+	public void checkResetPasswordData(final String id, final ObjectNode node, final String token) {
+		if (StringUtils.isBlank(id)) {
+			throw new EpickurIllegalArgument(PARAM_ID_NULL);
+		}
+		if (StringUtils.isBlank(token)) {
+			throw new EpickurIllegalArgument("The parameter token is not allowed to be null or empty");
+		}
+		if (!node.has("password")) {
+			throw new EpickurIllegalArgument("The field password is mandatory");
+
+		} else {
+			String password = node.get("password").asText();
+			if (StringUtils.isBlank(password)) {
+				throw new EpickurIllegalArgument("The field password is not allowed to be null or empty");
+			}
 		}
 	}
 }
