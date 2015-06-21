@@ -180,6 +180,53 @@ public final class NoKeyService {
 		return Response.ok().entity(result).build();
 	}
 
+	// @formatter:off
+	/** 
+	 * 
+	 * @api {put} /nokey/reset/users/:userId Reset user password
+	 * @apiVersion 1.0.0
+	 * @apiName ResetPassword2
+	 * @apiGroup Users
+	 * @apiDescription Reset the current password of the user with the provided new one.
+	 * 
+	 * @apiParam (Request: URL Parameter) {String} userId User id.
+	 * 
+	 * @apiParam (Request: JSON Object) {String} password New user password.
+	 *
+	 * @apiSuccess (Response: JSON Object) {String} id Id of the User.
+	 * @apiSuccess (Response: JSON Object) {String} name Name of the User.
+	 * @apiSuccess (Response: JSON Object) {String} email Email of the User.
+	 * @apiSuccess (Response: JSON Object) {Number} allow  1 if the User is allowed to login, 0 if not.
+	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the User.
+	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the User.
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *	HTTP/1.1 200 OK
+	 *	{
+	 *		"id":"54d7a02ed6fee70a27215649",
+	 *		"name":"Bill Gates",
+	 *		"email":"bgates@microsoft.com",
+	 *		"allow":1,
+	 *		"createdAt":1423417390991,
+	 *		"updatedAt":1423417390991
+	 *	}
+	 *
+	 * @apiUse BadRequestError
+	 * @apiUse ForbiddenError
+	 * @apiUse InternalError
+	 */
+	// @formatter:on
+	/**
+	 * @param id
+	 *            The User id
+	 * @param resetCode
+	 *            The reset code
+	 * @param node
+	 *            The node containing the password
+	 * @return The response
+	 * @throws EpickurException
+	 *             If an epickur exception occurred
+	 */
 	@PUT
 	@Path("/reset/users/{id}")
 	@Produces(MediaType.APPLICATION_JSON)

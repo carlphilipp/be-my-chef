@@ -32,7 +32,7 @@ public final class DateDeserializer extends JsonDeserializer<DateTime> {
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 

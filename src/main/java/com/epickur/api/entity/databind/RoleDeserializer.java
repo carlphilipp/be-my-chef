@@ -20,7 +20,7 @@ public final class RoleDeserializer extends JsonDeserializer<Role> {
 			JsonNode objId = jp.readValueAsTree();
 			return Role.getEnum(objId.asText());
 		} catch (Exception e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 }

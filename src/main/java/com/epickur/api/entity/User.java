@@ -17,6 +17,8 @@ import com.epickur.api.entity.databind.DateDeserializer;
 import com.epickur.api.entity.databind.DateSerializer;
 import com.epickur.api.entity.databind.ObjectIdDeserializer;
 import com.epickur.api.entity.databind.ObjectIdSerializer;
+import com.epickur.api.entity.databind.PhoneNumberDeserializer;
+import com.epickur.api.entity.databind.PhoneNumberSerializer;
 import com.epickur.api.entity.databind.RoleDeserializer;
 import com.epickur.api.entity.databind.RoleSerializer;
 import com.epickur.api.enumeration.Role;
@@ -28,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 /**
  * User entity
@@ -36,7 +39,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "allow", "key", "allow", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "phoneNumber", "allow", "key", "allow", "createdAt", "updatedAt" })
 public final class User extends AbstractEntity {
 
 	/** Logger **/
@@ -53,6 +56,8 @@ public final class User extends AbstractEntity {
 	private String password;
 	/** Email **/
 	private String email;
+	/** Phone number **/
+	private PhoneNumber phoneNumber;
 	/** Indicate if allowed to login **/
 	private Integer allow;
 	/** Created at **/
@@ -277,6 +282,23 @@ public final class User extends AbstractEntity {
 	}
 
 	/**
+	 * @return The User phone number
+	 */
+	@JsonSerialize(using = PhoneNumberSerializer.class)
+	public PhoneNumber getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	/**
+	 * @param phoneNumber
+	 *            The User phone number
+	 */
+	@JsonDeserialize(using = PhoneNumberDeserializer.class)
+	public void setPhoneNumber(final PhoneNumber phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	/**
 	 * @param obj
 	 *            The DBObject
 	 * @return The User
@@ -343,6 +365,7 @@ public final class User extends AbstractEntity {
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
 		result = prime * result + ((role == null) ? 0 : role.hashCode());
+		result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
 		return result;
 	}
 
@@ -391,6 +414,13 @@ public final class User extends AbstractEntity {
 				return false;
 			}
 		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		if (phoneNumber == null) {
+			if (other.phoneNumber != null) {
+				return false;
+			}
+		} else if (!phoneNumber.equals(other.phoneNumber)) {
 			return false;
 		}
 		if (key == null) {

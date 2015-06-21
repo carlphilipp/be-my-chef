@@ -45,6 +45,7 @@ import com.epickur.api.utils.ObjectMapperWrapperAPI;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -359,7 +360,17 @@ public class TestUtils {
 		user.setEmail(generateRandomString());
 		user.setName(generateRandomString());
 		user.setPassword(generateRandomString());
+		user.setPhoneNumber(generateRandomPhoneNumber());
 		return user;
+	}
+
+	private static PhoneNumber generateRandomPhoneNumber() {
+		PhoneNumber phoneNumber = new PhoneNumber();
+		phoneNumber.setCountryCode(61);
+		phoneNumber.setNationalNumber(700000000 +RandomUtils.nextInt(10000000, 99999999));
+		//phoneNumber.setNationalNumber(761231585);
+		//phoneNumber.setNationalNumber(754944084);
+		return phoneNumber;
 	}
 
 	public static String generateRandomPickupDate() {

@@ -732,6 +732,36 @@ public final class UserService {
 		}
 	}
 
+	// @formatter:off
+	/**
+	 * @api {post} /users/reset Send an email to the user to reset his password
+	 * @apiVersion 1.0.0
+	 * @apiName ResetPassword1
+	 * @apiGroup Users
+	 * @apiPermission admin only
+	 *
+	 * @apiSuccess (Response: JSON Object) {email} email Email of the User.
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *	HTTP/1.1 200 OK
+	 *	{
+	 *		"status" : "email sent"
+	 *	}
+	 *
+	 * @apiUse BadRequestError
+	 * @apiUse ForbiddenError
+	 * @apiUse InternalError
+	 */
+	// @formatter:on
+	/**
+	 * @param node
+	 *            The node containing the user email that needs to be reset
+	 * @param context
+	 *            The container context that contains the Key
+	 * @return The reponse
+	 * @throws EpickurException
+	 *             If an epickur exception occurred
+	 */
 	@POST
 	@Path("/reset")
 	@Produces(MediaType.APPLICATION_JSON)

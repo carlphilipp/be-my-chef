@@ -22,7 +22,7 @@ public final class RoleSerializer extends JsonSerializer<Role> {
 				jgen.writeString(role.toString().toLowerCase());
 			}
 		} catch (Exception e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 }

@@ -16,6 +16,7 @@ import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 /**
  * @author cph
@@ -46,6 +47,13 @@ public final class UserValidator extends Validator {
 		}
 		if (StringUtils.isBlank(user.getEmail())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "email"));
+		}
+		if(user.getPhoneNumber() != null){
+			PhoneNumberUtil util = PhoneNumberUtil.getInstance();
+			if(!util.isValidNumber(user.getPhoneNumber())){
+				System.out.println(user.getPhoneNumber());
+				throw new EpickurIllegalArgument("The field " + getEntity() + ".phoneNumber is not valid");
+			}
 		}
 	}
 

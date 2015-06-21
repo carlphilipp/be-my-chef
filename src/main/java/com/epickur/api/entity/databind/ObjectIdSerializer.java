@@ -25,8 +25,7 @@ public final class ObjectIdSerializer extends JsonSerializer<ObjectId> {
 				jgen.writeString(objectId.toHexString());
 			}
 		} catch (Exception e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
-
 }

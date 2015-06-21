@@ -23,7 +23,7 @@ public final class DishTypeDeserializer extends JsonDeserializer<DishType> {
 			JsonNode objId = jp.readValueAsTree();
 			return DishType.fromString(objId.asText());
 		} catch (Exception e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 }

@@ -3,6 +3,7 @@ package com.epickur.api.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -255,6 +256,157 @@ public class UserIntegrationTest {
 		request.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
+	
+	
+	@Test
+	public void testCreatePhoneNumber() throws ClientProtocolException, IOException {
+		String jsonMimeType = "application/json";
+
+		// Create
+		ObjectNode json = mapper.createObjectNode();
+		ObjectNode phoneNumber = mapper.createObjectNode();
+		String name = RandomStringUtils.randomAlphabetic(10);
+		String password = RandomStringUtils.randomAlphabetic(10);
+		String start = RandomStringUtils.randomAlphabetic(5);
+		String end = RandomStringUtils.randomAlphabetic(3);
+		json.put("name", name);
+		json.put("password", password);
+		json.put("email", start + "@" + end + ".com");
+		phoneNumber.put("nationalNumber", 383400775);
+		phoneNumber.put("countryCode", 33);
+		json.set("phoneNumber", phoneNumber);
+
+		HttpPost request = new HttpPost(URL);
+		StringEntity requestEntity = new StringEntity(json.toString());
+		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("email-agent", "false");
+		request.setEntity(requestEntity);
+
+		// Create request
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
+
+		// Create result
+		assertEquals(name, jsonResult.get("name").asText());
+		assertEquals(null, jsonResult.get("password"));
+		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+		assertTrue(jsonResult.has("phoneNumber"));
+		JsonNode phoneNumberNode = jsonResult.get("phoneNumber");
+		assertTrue(phoneNumberNode.has("nationalNumber"));
+		assertTrue(phoneNumberNode.has("countryCode"));
+		assertEquals(383400775, phoneNumberNode.get("nationalNumber").asLong());
+		assertEquals(33, phoneNumberNode.get("countryCode").asInt());
+		String id = jsonResult.get("id").asText();
+		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+		assertEquals(jsonMimeType, mimeType);
+
+		// Delete this user
+		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		request.addHeader("content-type", jsonMimeType);
+		HttpClientBuilder.create().build().execute(requestDelete);
+	}
+	
+	@Test
+	public void testCreatePhoneNumber2() throws ClientProtocolException, IOException {
+		String jsonMimeType = "application/json";
+
+		// Create
+		ObjectNode json = mapper.createObjectNode();
+		ObjectNode phoneNumber = mapper.createObjectNode();
+		String name = RandomStringUtils.randomAlphabetic(10);
+		String password = RandomStringUtils.randomAlphabetic(10);
+		String start = RandomStringUtils.randomAlphabetic(5);
+		String end = RandomStringUtils.randomAlphabetic(3);
+		json.put("name", name);
+		json.put("password", password);
+		json.put("email", start + "@" + end + ".com");
+		phoneNumber.put("nationalNumber", "+33383400775");
+		json.set("phoneNumber", phoneNumber);
+
+		HttpPost request = new HttpPost(URL);
+		StringEntity requestEntity = new StringEntity(json.toString());
+		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("email-agent", "false");
+		request.setEntity(requestEntity);
+
+		// Create request
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
+
+		// Create result
+		assertEquals(name, jsonResult.get("name").asText());
+		assertEquals(null, jsonResult.get("password"));
+		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+		assertTrue(jsonResult.has("phoneNumber"));
+		JsonNode phoneNumberNode = jsonResult.get("phoneNumber");
+		assertTrue(phoneNumberNode.has("nationalNumber"));
+		assertTrue(phoneNumberNode.has("countryCode"));
+		assertEquals(383400775, phoneNumberNode.get("nationalNumber").asLong());
+		assertEquals(33, phoneNumberNode.get("countryCode").asInt());
+		String id = jsonResult.get("id").asText();
+		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+		assertEquals(jsonMimeType, mimeType);
+
+		// Delete this user
+		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		request.addHeader("content-type", jsonMimeType);
+		HttpClientBuilder.create().build().execute(requestDelete);
+	}
+	
+	@Test
+	public void testCreatePhoneNumber3Fail() throws ClientProtocolException, IOException {
+		String jsonMimeType = "application/json";
+
+		// Create
+		ObjectNode json = mapper.createObjectNode();
+		ObjectNode phoneNumber = mapper.createObjectNode();
+		String name = RandomStringUtils.randomAlphabetic(10);
+		String password = RandomStringUtils.randomAlphabetic(10);
+		String start = RandomStringUtils.randomAlphabetic(5);
+		String end = RandomStringUtils.randomAlphabetic(3);
+		json.put("name", name);
+		json.put("password", password);
+		json.put("email", start + "@" + end + ".com");
+		phoneNumber.put("nationalNumber", "00775");
+		json.set("phoneNumber", phoneNumber);
+
+		HttpPost request = new HttpPost(URL);
+		StringEntity requestEntity = new StringEntity(json.toString());
+		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("email-agent", "false");
+		request.setEntity(requestEntity);
+
+		// Create request
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		in.close();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.BAD_REQUEST.getStatusCode(), statusCode);
+		JsonNode jsonResult = mapper.readTree(obj);
+
+		// Create result
+		assertTrue(jsonResult.has("error"));
+		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), jsonResult.get("error").asInt());
+		assertTrue(jsonResult.has("description"));
+		assertEquals("The field user.phoneNumber is not valid", jsonResult.get("description").asText());
+	}
+
 
 	@Test
 	public void testReadOneUser() throws ClientProtocolException, IOException {

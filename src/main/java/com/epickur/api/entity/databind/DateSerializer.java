@@ -21,8 +21,7 @@ public final class DateSerializer extends JsonSerializer<DateTime> {
 		try {
 			jgen.writeNumber(date.getMillis());
 		} catch (Exception e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
-
 }
