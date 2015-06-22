@@ -1,6 +1,10 @@
 package com.epickur.api.business;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,6 +23,7 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
@@ -114,6 +119,7 @@ public class OrderBusinessTest {
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		assertEquals(token.getId(), res.getCardToken());
+		assertEquals(OrderStatus.PENDING, res.getStatus());
 	}
 
 	@Test
@@ -138,6 +144,7 @@ public class OrderBusinessTest {
 		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
+		assertEquals(OrderStatus.PENDING, res.getStatus());
 	}
 
 	@Test(expected = EpickurNotFoundException.class)
@@ -146,13 +153,14 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrder();
 		orderBusiness.create(new ObjectId().toHexString(), order, "token", false);
 	}
-	
+
 	@Test
-	public void testChargeOneUser() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+	public void testChargeOneUser() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
 		User user = TestUtils.generateRandomUser();
 		User userRes = userBusiness.create(user, true, false);
 		toDeleteUser.add(userRes.getId());
-		
+
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
@@ -169,17 +177,19 @@ public class OrderBusinessTest {
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
-		
+
 		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, orderCode);
 		assertTrue(orderAfterCharge.getPaid());
+		assertEquals(OrderStatus.SUCCESSFUL, orderAfterCharge.getStatus());
 	}
-	
+
 	@Test
-	public void testChargeOneUserFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+	public void testChargeOneUserFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+			CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		User userRes = userBusiness.create(user, true, false);
 		toDeleteUser.add(userRes.getId());
-		
+
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(-15);
 
@@ -201,14 +211,16 @@ public class OrderBusinessTest {
 		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
 		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, false, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());
+		assertEquals(OrderStatus.FAILED, orderAfterCharge.getStatus());
 	}
-	
-	@Test(expected=EpickurNotFoundException.class)
-	public void testChargeOneUserFail2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+
+	@Test(expected = EpickurNotFoundException.class)
+	public void testChargeOneUserFail2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+			CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		User userRes = userBusiness.create(user, true, false);
 		toDeleteUser.add(userRes.getId());
-		
+
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
@@ -226,14 +238,16 @@ public class OrderBusinessTest {
 		toDeleteOrder.add(res.getId().toHexString());
 		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
 		orderBusiness.executeOrder(userRes.getId().toHexString(), new ObjectId().toHexString(), true, false, true, orderCode);
+		assertEquals(OrderStatus.FAILED, res.getStatus());
 	}
-	
-	@Test(expected=EpickurNotFoundException.class)
-	public void testChargeOneUserFail3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+
+	@Test(expected = EpickurNotFoundException.class)
+	public void testChargeOneUserFail3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+			CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		User userRes = userBusiness.create(user, true, false);
 		toDeleteUser.add(userRes.getId());
-		
+
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
@@ -257,11 +271,12 @@ public class OrderBusinessTest {
 	}
 
 	@Test
-	public void testChargeOneUser2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+	public void testChargeOneUser2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+			CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		User userRes = userBusiness.create(user, true, false);
 		toDeleteUser.add(userRes.getId());
-		
+
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
@@ -283,14 +298,16 @@ public class OrderBusinessTest {
 		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
 		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), false, true, true, orderCode);
 		assertNull(orderAfterCharge.getPaid());
+		assertEquals(OrderStatus.DECLINED, orderAfterCharge.getStatus());
 	}
-	
+
 	@Test
-	public void testChargeOneUser3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
+	public void testChargeOneUser3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+			CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		User userRes = userBusiness.create(user, true, false);
 		toDeleteUser.add(userRes.getId());
-		
+
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
@@ -312,5 +329,6 @@ public class OrderBusinessTest {
 		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
 		Order orderAfterCharge = orderBusiness.executeOrder(userRes.getId().toHexString(), res.getId().toHexString(), true, true, true, orderCode);
 		assertTrue(orderAfterCharge.getPaid());
-	} 
+		assertEquals(OrderStatus.SUCCESSFUL, orderAfterCharge.getStatus());
+	}
 }

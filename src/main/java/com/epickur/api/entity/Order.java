@@ -17,7 +17,10 @@ import com.epickur.api.entity.databind.DateDeserializer;
 import com.epickur.api.entity.databind.DateSerializer;
 import com.epickur.api.entity.databind.ObjectIdDeserializer;
 import com.epickur.api.entity.databind.ObjectIdSerializer;
+import com.epickur.api.entity.databind.OrderStatusDeserializer;
+import com.epickur.api.entity.databind.OrderStatusSerializer;
 import com.epickur.api.enumeration.Currency;
+import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,7 +37,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "userId", "description", "amount", "currency", "pickupdate", "cardToken", "chargeId", "paid", "dish", "createdBy", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "userId", "description", "amount", "status", "currency", "pickupdate", "cardToken", "chargeId", "paid", "dish",
+		"createdBy", "createdAt", "updatedAt" })
 public final class Order extends AbstractEntity {
 
 	/** Logger **/
@@ -45,6 +49,8 @@ public final class Order extends AbstractEntity {
 	private String description;
 	/** Amount **/
 	private Integer amount;
+	/** Amount **/
+	private OrderStatus status;
 	/** Currency **/
 	private Currency currency;
 	/** Pickupdate **/
@@ -131,6 +137,23 @@ public final class Order extends AbstractEntity {
 	}
 
 	/**
+	 * @return The order status
+	 */
+	@JsonSerialize(using = OrderStatusSerializer.class)
+	public OrderStatus getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status
+	 *            The order status
+	 */
+	@JsonDeserialize(using = OrderStatusDeserializer.class)
+	public void setStatus(final OrderStatus status) {
+		this.status = status;
+	}
+
+	/**
 	 * @return The currency
 	 */
 	public Currency getCurrency() {
@@ -151,10 +174,10 @@ public final class Order extends AbstractEntity {
 	public String getPickupdate() {
 		return pickupdate;
 	}
-	
 
 	/**
-	 * @param pickupdate The pickupdate.
+	 * @param pickupdate
+	 *            The pickupdate.
 	 */
 	public void setPickupdate(final String pickupdate) {
 		this.pickupdate = pickupdate;

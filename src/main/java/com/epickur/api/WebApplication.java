@@ -10,6 +10,7 @@ import org.quartz.SchedulerException;
 
 import com.epickur.api.cron.Jobs;
 import com.epickur.api.enumeration.DishType;
+import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.utils.EnumTransformer;
 
 /**
@@ -27,6 +28,7 @@ public class WebApplication extends ResourceConfig {
 	public WebApplication() {
 		// Register new encoding to be able to serialize enum in MongoDB
 		BSON.addEncodingHook(DishType.class, new EnumTransformer());
+		BSON.addEncodingHook(OrderStatus.class, new EnumTransformer());
 	}
 
 	/**

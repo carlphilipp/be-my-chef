@@ -12,6 +12,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurNotFoundException;
@@ -71,6 +72,7 @@ public class OrderBusiness {
 		} else {
 			order.setCreatedBy(new ObjectId(userId));
 			order.setCardToken(cardToken);
+			order.setStatus(OrderStatus.PENDING);
 			Order res = this.orderDao.create(order);
 			String orderCode = Security.createOrderCode(res.getId(), cardToken);
 			if (sendEmail) {
@@ -190,23 +192,31 @@ public class OrderBusiness {
 						StripePayment stripe = new StripePayment();
 						try {
 							Charge charge = stripe.chargeCard(order.getCardToken(), order.getAmount(), order.getCurrency());
-							if (charge == null) {
+							if (charge == null || !charge.getPaid()) {
 								order.setPaid(false);
+								order.setStatus(OrderStatus.FAILED);
+								// Send email to User, Caterer and admins - Order fail
+								if (sendEmail) {
+									EmailUtils.emailFailOrder(user, order);
+								}
 							} else {
 								order.setChargeId(charge.getId());
 								order.setPaid(charge.getPaid());
+								order.setStatus(OrderStatus.SUCCESSFUL);
+								// Send email to User, Caterer and admins - Order success
+								if (sendEmail) {
+									EmailUtils.emailSuccessOrder(user, order);
+								}
 							}
 						} catch (StripeException e) {
 							order.setPaid(false);
+							order.setStatus(OrderStatus.FAILED);
 							// Send email to User, Caterer and admins - Order fail
 							if (sendEmail) {
 								EmailUtils.emailFailOrder(user, order);
 							}
-						}
-						order = orderDao.update(order);
-						// Send email to User, Caterer and admins - Order succe
-						if (sendEmail) {
-							EmailUtils.emailSuccessOrder(user, order);
+						} finally {
+							order = orderDao.update(order);
 						}
 					}
 				} else {
@@ -214,6 +224,8 @@ public class OrderBusiness {
 					if (sendEmail) {
 						EmailUtils.emailDeclineOrder(user, order);
 					}
+					order.setStatus(OrderStatus.DECLINED);
+					order = orderDao.update(order);
 				}
 				Jobs.getInstance().removeTemporaryOrderJob(orderId);
 				return order;

@@ -36,6 +36,7 @@ import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.enumeration.DishType;
+import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.Security;
@@ -1129,6 +1130,9 @@ public class UserIntegrationTest {
 		in.close();
 		int statusCode3 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode3);
+		jsonResult = mapper.readTree(obj);
+		assertNotNull(jsonResult.has("status"));
+		assertEquals(OrderStatus.DECLINED.toString(), jsonResult.get("status").asText());
 
 		// Delete this order
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
@@ -1140,5 +1144,4 @@ public class UserIntegrationTest {
 		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
-
 }
