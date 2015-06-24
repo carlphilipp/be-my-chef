@@ -1,13 +1,22 @@
 package com.epickur.api.utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +27,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.xeustechnologies.jtar.TarEntry;
+import org.xeustechnologies.jtar.TarOutputStream;
 
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
@@ -282,10 +293,78 @@ public final class Utils {
 		}
 		return result;
 	}
+
+	public static String getCurrentDateInFormat(final String format) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Australia/Melbourne"));
+		DateFormat formatter = new SimpleDateFormat(format);
+		formatter.setTimeZone(cal.getTimeZone());
+		return formatter.format(cal.getTime());
+	}
+
+	public static String[] convertListToArray(final List<String> list) {
+		String[] res = new String[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			res[i] = list.get(i);
+		}
+		return res;
+	}
 	
-	public static void main(String [] args){
-		Object[] derp = Utils.parsePickupdate("sun-22:15");
-		LOG.info(derp[0]);
-		LOG.info(derp[1]);
+	/**
+	 * Create tar.gz file
+	 * 
+	 * @param input
+	 *            the input path
+	 * @param output
+	 *            the output path
+	 * @throws IOException
+	 *             the exception
+	 */
+	public static void createTarGz(final List<String> inputs, final String output) {
+		FileOutputStream dest = null;
+		TarOutputStream out = null;
+		BufferedInputStream origin = null;
+		LOG.info("Creating file " + output + " ...");
+		try {
+			// Output file stream
+			dest = new FileOutputStream(output);
+
+			// Create a TarOutputStream
+			out = new TarOutputStream(new BufferedOutputStream(dest));
+
+			for (String input : inputs) {
+				File f = new File(input);
+				out.putNextEntry(new TarEntry(f, f.getName()));
+				origin = new BufferedInputStream(new FileInputStream(f));
+				int count;
+				byte data[] = new byte[2048];
+				while ((count = origin.read(data)) != -1) {
+					out.write(data, 0, count);
+				}
+				out.flush();
+				origin.close();
+			}
+			out.close();
+			dest.close();
+		} catch (IOException e) {
+			if (dest != null) {
+				try {
+					dest.close();
+				} catch (IOException e1) {
+				}
+			}
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e1) {
+				}
+			}
+			if (origin != null) {
+				try {
+					origin.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+		LOG.info("File created");
 	}
 }

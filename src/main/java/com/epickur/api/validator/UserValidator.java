@@ -111,13 +111,16 @@ public final class UserValidator extends Validator {
 	 * @param order
 	 *            The Order
 	 */
-	public void checkCreateOneOrder(final String userId, final Order order, final String cardToken) {
+	public void checkCreateOneOrder(final String userId, final Order order) {
 		checkId(userId);
 		if (order == null) {
 			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
 		} else {
 			DishValidator validator = new DishValidator();
 			validator.checkCreateData(order.getDish());
+			if (StringUtils.isBlank(order.getCardToken())) {
+					throw new EpickurIllegalArgument(fieldNull(getEntity(), "cardToken"));
+			}
 			if (StringUtils.isBlank(order.getDescription())) {
 				throw new EpickurIllegalArgument(fieldNull(getEntity(), "description"));
 			}
@@ -157,9 +160,6 @@ public final class UserValidator extends Validator {
 					throw new EpickurIllegalArgument("The field order.paid can not be true.");
 				}
 			}
-		}
-		if (StringUtils.isBlank(cardToken)) {
-			throw new EpickurIllegalArgument("The parameter cardtoken is not allowed to be null or empty.");
 		}
 	}
 

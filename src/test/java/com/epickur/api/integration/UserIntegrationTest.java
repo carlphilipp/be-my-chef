@@ -606,8 +606,9 @@ public class UserIntegrationTest {
 		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 		json.put("pickupdate", pickupdate);
 		String cardToken = TestUtils.generateRandomString();
+		json.put("cardToken", cardToken);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY + "&token=" + cardToken);
+		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
@@ -725,8 +726,10 @@ public class UserIntegrationTest {
 		tokenParams.put("card", cardParams);
 
 		Token token = Token.create(tokenParams);
+		
+		json.put("cardToken", token.getId());
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY + "&token=" + token.getId());
+		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "true");
@@ -836,8 +839,9 @@ public class UserIntegrationTest {
 		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 		json.put("pickupdate", pickupdate);
 		String cardToken = TestUtils.generateRandomString();
+		json.put("cardToken", cardToken);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY + "&token=" + cardToken);
+		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
@@ -960,8 +964,9 @@ public class UserIntegrationTest {
 		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 		json.put("pickupdate", pickupdate);
 		String cardToken = TestUtils.generateRandomString();
+		json.put("cardToken", cardToken);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY + "&token=" + cardToken);
+		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
@@ -1085,8 +1090,9 @@ public class UserIntegrationTest {
 		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 		json.put("pickupdate", pickupdate);
 		String cardToken = TestUtils.generateRandomString();
+		json.put("cardToken", cardToken);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY + "&token=" + cardToken);
+		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");

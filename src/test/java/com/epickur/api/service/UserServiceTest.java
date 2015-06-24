@@ -6,10 +6,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -27,7 +30,14 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.integration.UserIntegrationTest;
 import com.mongodb.DBObject;
+import com.stripe.Stripe;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
 
 public class UserServiceTest {
 
@@ -44,6 +54,22 @@ public class UserServiceTest {
 		service = new UserService();
 		idsToDeleteUser = new ArrayList<ObjectId>();
 		idsToDeleteOrder = new HashMap<String, ObjectId>();
+		InputStreamReader in = null;
+		try {
+			in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+			Properties prop = new Properties();
+			prop.load(in);
+			Stripe.apiKey = prop.getProperty("stripe.key");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+				}
+			}
+		}
 	}
 
 	@AfterClass
@@ -384,7 +410,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testAddOneOrder() throws EpickurException {
+	public void testAddOneOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -393,8 +419,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			String cardToken = TestUtils.generateRandomString();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -408,7 +433,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
-	public void testAddOneOrderFail() throws EpickurException {
+	public void testAddOneOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -417,7 +442,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(null, null, false, order);
+			Response result2 = service.createOneOrder(null, false, order);
 			if (result2.getEntity() != null) {
 				DBObject dbObject = (DBObject) result2.getEntity();
 				assertEquals(500, dbObject.get("error"));
@@ -438,7 +463,7 @@ public class UserServiceTest {
 			assertNotNull(userResult.getId());
 			idsToDeleteUser.add(userResult.getId());
 
-			Response result2 = service.createOneOrder("", null, false, null);
+			Response result2 = service.createOneOrder("", false, null);
 			if (result2.getEntity() != null) {
 				DBObject dbObject = (DBObject) result2.getEntity();
 				assertEquals(500, dbObject.get("error"));
@@ -451,7 +476,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testReadOneOrder() throws EpickurException {
+	public void testReadOneOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -460,8 +485,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			String cardToken = TestUtils.generateRandomString();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order orderResult = (Order) result2.getEntity();
 				assertNotNull(orderResult.getId());
@@ -485,7 +509,7 @@ public class UserServiceTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testReadAllOrder() throws EpickurException {
+	public void testReadAllOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -494,8 +518,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			String cardToken = TestUtils.generateRandomString();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -522,7 +545,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
-	public void testReadAllOrderFail() throws EpickurException {
+	public void testReadAllOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -531,7 +554,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -553,7 +576,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
-	public void testReadOneOrderFail() throws EpickurException {
+	public void testReadOneOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -562,7 +585,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -584,7 +607,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
-	public void testReadOneOrderFail2() throws EpickurException {
+	public void testReadOneOrderFail2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -593,7 +616,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -615,7 +638,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testReadOneOrderFail3() throws EpickurException {
+	public void testReadOneOrderFail3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -624,8 +647,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			String cardToken = TestUtils.generateRandomString();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -647,7 +669,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testUpdateOneOrder() throws EpickurException {
+	public void testUpdateOneOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -656,8 +678,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			String cardToken = TestUtils.generateRandomString();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -681,7 +702,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateOneOrderFail() throws EpickurException {
+	public void testUpdateOneOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -690,7 +711,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -713,7 +734,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateOneOrderFail2() throws EpickurException {
+	public void testUpdateOneOrderFail2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -722,7 +743,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -745,7 +766,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateOneOrderFail3() throws EpickurException {
+	public void testUpdateOneOrderFail3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -754,7 +775,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -777,7 +798,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testUpdateOneOrderFail4() throws EpickurException {
+	public void testUpdateOneOrderFail4() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -800,7 +821,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testdeleteOneOrder() throws EpickurException {
+	public void testdeleteOneOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -810,8 +831,7 @@ public class UserServiceTest {
 
 			Order order = TestUtils.generateRandomOrder();
 			order.setId(null);
-			String cardToken = TestUtils.generateRandomString();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), cardToken, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -833,7 +853,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
-	public void testdeleteOneOrderFail() throws EpickurException {
+	public void testdeleteOneOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -842,7 +862,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
@@ -863,7 +883,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
-	public void testdeleteOneOrderFail2() throws EpickurException {
+	public void testdeleteOneOrderFail2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
 		if (result.getEntity() != null) {
@@ -872,7 +892,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), null, false, order);
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order);
 			if (result2.getEntity() != null) {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());

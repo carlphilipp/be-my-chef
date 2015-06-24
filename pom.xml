@@ -281,13 +281,53 @@
 			<version>1.5.0-b01</version>
 		</dependency>
 
-    <!-- Phone lib -->
+		<!-- Phone lib -->
 		<dependency>
 			<groupId>com.googlecode.libphonenumber</groupId>
 			<artifactId>libphonenumber</artifactId>
 			<version>7.0.6</version>
 		</dependency>
 
+		<!-- Commons compress -->
+		<dependency>
+			<groupId>org.xeustechnologies</groupId>
+			<artifactId>jtar</artifactId>
+			<version>1.1</version>
+		</dependency>
+		
+		<!-- MongoDB util (import/export) -->
+		<dependency>
+			<groupId>com.wordnik</groupId>
+			<artifactId>mongo-admin-utils_2.10.0</artifactId>
+			<version>1.1.6</version>
+		</dependency>
+		
+		
+
+
+
+
+
+<dependency>
+  <groupId>com.google.apis</groupId>
+  <artifactId>google-api-services-drive</artifactId>
+  <version>v2-rev175-1.20.0</version>
+</dependency>
+<dependency>
+  <groupId>com.google.oauth-client</groupId>
+  <artifactId>google-oauth-client-java6</artifactId>
+  <version>1.20.0</version>
+</dependency>
+<dependency>
+  <groupId>com.google.oauth-client</groupId>
+  <artifactId>google-oauth-client-jetty</artifactId>
+  <version>1.20.0</version>
+</dependency>
+
+
+
+		
+		
 	</dependencies>
 
 	<build>

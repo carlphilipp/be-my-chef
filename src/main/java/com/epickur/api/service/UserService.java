@@ -12,7 +12,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -514,14 +513,13 @@ public final class UserService {
 
 	// @formatter:off
 	/**
-	 * @api {post} /users/:id/orders?token=:token Create a new Order
+	 * @api {post} /users/:id/orders Create a new Order
 	 * @apiVersion 1.0.0
 	 * @apiName CreateOrder
 	 * @apiGroup Orders
 	 * @apiPermission admin, super_user, user
 	 * 
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
-	 * @apiParam (Request: URL Parameter) {String} token Card token.
 	 * 
 	 * @apiParam (Request: Header Parameter) {Boolean} charge-agent Set as false to not charge the card. For tests only.
 	 * 
@@ -570,8 +568,6 @@ public final class UserService {
 	/**
 	 * @param userId
 	 *            The User id
-	 * @param cardToken
-	 *            The Stripe card token
 	 * @param sendEmail
 	 *            The email agent. Can only be true or false
 	 * @param order
@@ -586,11 +582,10 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createOneOrder(
 			@PathParam("id") final String userId,
-			@QueryParam("token") final String cardToken,
 			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
 			final Order order) throws EpickurException {
-		validator.checkCreateOneOrder(userId, order, cardToken);
-		Order result = orderBusiness.create(userId, order, cardToken, sendEmail);
+		validator.checkCreateOneOrder(userId, order);
+		Order result = orderBusiness.create(userId, order, sendEmail);
 		return Response.ok().entity(result).build();
 	}
 

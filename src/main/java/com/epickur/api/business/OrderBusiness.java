@@ -62,19 +62,18 @@ public class OrderBusiness {
 	 *            True if you want send all emails
 	 * @return an Order
 	 * @throws EpickurException
-	 *             If an ${@link EpickurException} occurred
+	 *             If an EpickurException occurred
 	 */
-	public final Order create(final String userId, final Order order, final String cardToken, final boolean sendEmail)
+	public final Order create(final String userId, final Order order, final boolean sendEmail)
 			throws EpickurException {
 		User user = this.userDao.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
 		} else {
 			order.setCreatedBy(new ObjectId(userId));
-			order.setCardToken(cardToken);
 			order.setStatus(OrderStatus.PENDING);
 			Order res = this.orderDao.create(order);
-			String orderCode = Security.createOrderCode(res.getId(), cardToken);
+			String orderCode = Security.createOrderCode(res.getId(), order.getCardToken());
 			if (sendEmail) {
 				EmailUtils.emailNewOrder(user, res, orderCode);
 			}

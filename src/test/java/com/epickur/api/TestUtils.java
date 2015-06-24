@@ -394,13 +394,14 @@ public class TestUtils {
 		return pickupdate;
 	}
 
-	public static Order generateRandomOrder() {
+	public static Order generateRandomOrder() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		Order order = new Order();
 		order.setAmount(generateRandomStripAmount());
 		order.setCurrency(generateRandomCurrency());
 		order.setDescription(generateRandomString());
 		order.setDish(generateRandomDish());
 		order.setCreatedBy(new ObjectId());
+		order.setCardToken(TestUtils.generateRandomToken().getId());
 
 		String pickupdate = generateRandomPickupDate();
 		order.setPickupdate(pickupdate);
@@ -507,21 +508,19 @@ public class TestUtils {
 	public static Order createOrder(ObjectId userId) throws EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException,
 			CardException, APIException {
-		Token token = TestUtils.generateRandomToken();
 		Order order = TestUtils.generateRandomOrder();
 		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId.toHexString(), order, token.getId(), false);
+		Order orderRes = business.create(userId.toHexString(), order, false);
 		return orderRes;
 	}
 
 	public static Order createOrder(ObjectId userId, ObjectId catererId) throws AuthenticationException, InvalidRequestException,
 			APIConnectionException,
 			CardException, APIException, EpickurException {
-		Token token = TestUtils.generateRandomToken();
 		Order order = TestUtils.generateRandomOrder();
 		order.getDish().getCaterer().setId(catererId);
 		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId.toHexString(), order, token.getId(), false);
+		Order orderRes = business.create(userId.toHexString(), order, false);
 		return orderRes;
 	}
 }

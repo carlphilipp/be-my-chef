@@ -1,6 +1,11 @@
 package com.epickur.api.validator;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Properties;
+
 import org.bson.types.ObjectId;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -14,8 +19,36 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.integration.UserIntegrationTest;
+import com.stripe.Stripe;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
 
 public class UserValidatorTest {
+
+	@BeforeClass
+	public static void beforeClass() {
+		InputStreamReader in = null;
+		try {
+			in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+			Properties prop = new Properties();
+			prop.load(in);
+			in.close();
+			Stripe.apiKey = prop.getProperty("stripe.key");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -152,7 +185,8 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckUpdateOneOrder() {
+	public void testCheckUpdateOneOrder() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.id is not allowed to be null or empty");
 
@@ -163,7 +197,8 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckUpdateOneOrder2() {
+	public void testCheckUpdateOneOrder2() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The parameter orderId and the field order.id should match");
 
@@ -192,11 +227,11 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckCreateOneOrder() {
+	public void testCheckCreateOneOrder() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
-		String cardToken = TestUtils.generateRandomString();
-		validator.checkCreateOneOrder(new ObjectId().toHexString(), order, cardToken);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order);
 	}
 
 	@Test
@@ -206,8 +241,7 @@ public class UserValidatorTest {
 
 		UserValidator validator = new UserValidator();
 		Order order = null;
-		String cardToken = TestUtils.generateRandomString();
-		validator.checkCreateOneOrder(new ObjectId().toHexString(), order, cardToken);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order);
 	}
 
 	@Test
@@ -394,14 +428,16 @@ public class UserValidatorTest {
 	}
 
 	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckOrderRightsAfter() {
+	public void testCheckOrderRightsAfter() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
 		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Crud.READ);
 	}
 
 	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckOrderRightsAfter2() {
+	public void testCheckOrderRightsAfter2() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
 		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Crud.DELETE);

@@ -45,7 +45,6 @@ public class OrderBusinessTest {
 	private static List<String> toDeleteOrder;
 	private static List<ObjectId> toDeleteUser;
 	private static List<String> temp;
-	private static String STRIPE_TEST_KEY;
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -57,7 +56,7 @@ public class OrderBusinessTest {
 			Properties prop = new Properties();
 			prop.load(in);
 			in.close();
-			STRIPE_TEST_KEY = prop.getProperty("stripe.key");
+			Stripe.apiKey = prop.getProperty("stripe.key");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -88,7 +87,7 @@ public class OrderBusinessTest {
 	}
 
 	@Test
-	public void testUpdate() throws EpickurException {
+	public void testUpdate() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		Order order = TestUtils.generateRandomOrder();
 		order.setId(new ObjectId());
 		Key key = new Key();
@@ -106,7 +105,6 @@ public class OrderBusinessTest {
 
 		Order order = TestUtils.generateRandomOrder();
 
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		Map<String, Object> tokenParams = new HashMap<String, Object>();
 		Map<String, Object> cardParams = new HashMap<String, Object>();
 		cardParams.put("number", "4242424242424242");
@@ -115,7 +113,8 @@ public class OrderBusinessTest {
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
 		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		order.setCardToken(token.getId());
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		assertEquals(token.getId(), res.getCardToken());
@@ -132,16 +131,7 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(-15);
 
-		Stripe.apiKey = STRIPE_TEST_KEY;
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
-		cardParams.put("number", "4242424242424242");
-		cardParams.put("exp_month", 2);
-		cardParams.put("exp_year", 2016);
-		cardParams.put("cvc", "314");
-		tokenParams.put("card", cardParams);
-		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		assertEquals(OrderStatus.PENDING, res.getStatus());
@@ -151,7 +141,8 @@ public class OrderBusinessTest {
 	public void testCreate3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
 		Order order = TestUtils.generateRandomOrder();
-		orderBusiness.create(new ObjectId().toHexString(), order, "token", false);
+		order.setCardToken(null);
+		orderBusiness.create(new ObjectId().toHexString(), order, false);
 	}
 
 	@Test
@@ -164,16 +155,7 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
-		Stripe.apiKey = STRIPE_TEST_KEY;
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
-		cardParams.put("number", "4242424242424242");
-		cardParams.put("exp_month", 2);
-		cardParams.put("exp_year", 2016);
-		cardParams.put("cvc", "314");
-		tokenParams.put("card", cardParams);
-		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
@@ -193,16 +175,9 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(-15);
 
-		Stripe.apiKey = STRIPE_TEST_KEY;
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
-		cardParams.put("number", "4242424242424242");
-		cardParams.put("exp_month", 2);
-		cardParams.put("exp_year", 2016);
-		cardParams.put("cvc", "314");
-		tokenParams.put("card", cardParams);
-		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		order.setCardToken(null);
+		
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		Key key = new Key();
@@ -224,7 +199,6 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		Map<String, Object> tokenParams = new HashMap<String, Object>();
 		Map<String, Object> cardParams = new HashMap<String, Object>();
 		cardParams.put("number", "4242424242424242");
@@ -233,7 +207,8 @@ public class OrderBusinessTest {
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
 		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		order.setCardToken(token.getId());
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
@@ -251,16 +226,7 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
-		Stripe.apiKey = STRIPE_TEST_KEY;
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
-		cardParams.put("number", "4242424242424242");
-		cardParams.put("exp_month", 2);
-		cardParams.put("exp_year", 2016);
-		cardParams.put("cvc", "314");
-		tokenParams.put("card", cardParams);
-		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		Key key = new Key();
@@ -280,16 +246,7 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
-		Stripe.apiKey = STRIPE_TEST_KEY;
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
-		cardParams.put("number", "4242424242424242");
-		cardParams.put("exp_month", 2);
-		cardParams.put("exp_year", 2016);
-		cardParams.put("cvc", "314");
-		tokenParams.put("card", cardParams);
-		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		Key key = new Key();
@@ -311,16 +268,7 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrder();
 		order.setAmount(150);
 
-		Stripe.apiKey = STRIPE_TEST_KEY;
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
-		cardParams.put("number", "4242424242424242");
-		cardParams.put("exp_month", 2);
-		cardParams.put("exp_year", 2016);
-		cardParams.put("cvc", "314");
-		tokenParams.put("card", cardParams);
-		Token token = Token.create(tokenParams);
-		Order res = orderBusiness.create(userRes.getId().toHexString(), order, token.getId(), false);
+		Order res = orderBusiness.create(userRes.getId().toHexString(), order, false);
 		assertNotNull(res);
 		toDeleteOrder.add(res.getId().toHexString());
 		Key key = new Key();
