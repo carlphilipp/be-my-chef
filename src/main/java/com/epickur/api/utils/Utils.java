@@ -323,7 +323,6 @@ public final class Utils {
 		FileOutputStream dest = null;
 		TarOutputStream out = null;
 		BufferedInputStream origin = null;
-		LOG.info("Creating file " + output + " ...");
 		try {
 			// Output file stream
 			dest = new FileOutputStream(output);
@@ -365,6 +364,5 @@ public final class Utils {
 				}
 			}
 		}
-		LOG.info("File created");
 	}
 }

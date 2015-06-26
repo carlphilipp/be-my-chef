@@ -71,12 +71,22 @@ public class Jobs {
 	 */
 	public final void run() throws SchedulerException {
 		final Integer interval = Integer.valueOf(prop.getProperty("cron.cleankeys.interval"));
-		String identity = "cleanKeys";
-		JobDetail cleanKeys = JobBuilder.newJob(CleanKeysJob.class).withIdentity(identity).build();
-		Trigger triggerCleanKeys = TriggerBuilder.newTrigger().withIdentity(identity)
-				.withSchedule(simpleSchedule().withIntervalInMinutes(interval.intValue()).repeatForever()).build();
+		String identityKeys = "cleanKeys";
+		String identityMongoDB = "mongodb";
+		JobDetail cleanKeys = JobBuilder.newJob(CleanKeysJob.class).withIdentity(identityKeys).build();
+		Trigger triggerCleanKeys = TriggerBuilder.newTrigger().withIdentity(identityKeys)
+									.withSchedule(simpleSchedule()
+									.withIntervalInMinutes(interval.intValue())
+									.repeatForever()).build();
 		scheduler.scheduleJob(cleanKeys, triggerCleanKeys);
-		LOG.info("Added job '" + identity + "' to scheduler");
+		LOG.info("Added job '" + identityKeys + "' to scheduler");
+/*		JobDetail mongoDBDump = JobBuilder.newJob(MongoDBDumpJob.class).withIdentity(identityMongoDB).build();
+		Trigger triggerMongoDBDump = TriggerBuilder.newTrigger().withIdentity(identityMongoDB)
+									.withSchedule(simpleSchedule()
+									.withIntervalInMinutes(5)
+									.repeatForever()).build();
+		scheduler.scheduleJob(mongoDBDump, triggerMongoDBDump);
+		LOG.info("Added job '" + identityMongoDB + "' to scheduler");*/
 		scheduler.start();
 		LOG.info("Scheduler started ");
 	}

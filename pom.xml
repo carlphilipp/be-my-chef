@@ -309,20 +309,11 @@
 
 
 <dependency>
-  <groupId>com.google.apis</groupId>
-  <artifactId>google-api-services-drive</artifactId>
-  <version>v2-rev175-1.20.0</version>
+  <groupId>com.dropbox.core</groupId>
+  <artifactId>dropbox-core-sdk</artifactId>
+  <version>1.7.7</version>
 </dependency>
-<dependency>
-  <groupId>com.google.oauth-client</groupId>
-  <artifactId>google-oauth-client-java6</artifactId>
-  <version>1.20.0</version>
-</dependency>
-<dependency>
-  <groupId>com.google.oauth-client</groupId>
-  <artifactId>google-oauth-client-jetty</artifactId>
-  <version>1.20.0</version>
-</dependency>
+
 
 
 

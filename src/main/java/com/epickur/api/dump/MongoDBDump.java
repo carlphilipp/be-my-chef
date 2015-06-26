@@ -19,6 +19,8 @@ public final class MongoDBDump {
 
 	/** Logger **/
 	private static final Logger LOG = LogManager.getLogger(MongoDBDump.class.getSimpleName());
+	/** File separator */
+	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	/** Ip **/
 	private String ip;
 	/** Port **/
@@ -62,6 +64,10 @@ public final class MongoDBDump {
 		}
 		return "epickur_" + computername + "_" + date + TARGZEXT;
 	}
+	
+	public String getCurrentFullPathName(){
+		return backupPath + FILE_SEPARATOR + getCurrentNameFile();
+	}
 
 	public final List<String> getListFiles() {
 		List<String> files = new ArrayList<String>();
@@ -71,7 +77,6 @@ public final class MongoDBDump {
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
-				LOG.info(listOfFiles[i].getAbsolutePath());
 				files.add(listOfFiles[i].getAbsolutePath());
 			}
 		}
@@ -127,9 +132,7 @@ public final class MongoDBDump {
 		if (files.size() != 0) {
 			File folder = new File(backupPath);
 			File[] listOfFiles = folder.listFiles();
-
 			for (int i = 0; i < listOfFiles.length; i++) {
-				LOG.info("Deleting " + listOfFiles[i].getAbsolutePath());
 				listOfFiles[i].delete();
 			}
 		}
