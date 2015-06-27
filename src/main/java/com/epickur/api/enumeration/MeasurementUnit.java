@@ -7,19 +7,22 @@ package com.epickur.api.enumeration;
  * @version 1.0
  */
 public enum MeasurementUnit {
-	/** The enum **/
+	/** Gram */
 	G("g", "Gram", "g", true),
+	/** Kilogram */
 	KG("KG", "Kilogram", "kg", true),
-	
+	/** Litre */
 	L("L", "Litre", "l", true),
 	ML("ML", "Millilitre", "ml", true),
-	
+	/** Cup */
 	CUP("cup", "Cup", "cup", false),
+	/** Tbsp */
 	TBSP("tbsp", "Tablespoon", "tbsp", false),
+	/** Tsp */
 	TSP("tsp", "Teaspoon", "tsp", false),
-	
+	/** Each */
 	EACH("each", "Each", "each", false),
-	
+	/** KiloJoules */
 	KJ("kJ", "KiloJoules", "kJ", true);
 
 	/** Short description **/

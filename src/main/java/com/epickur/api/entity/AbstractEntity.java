@@ -20,7 +20,7 @@ import com.mongodb.util.JSONParseException;
  */
 public abstract class AbstractEntity implements IEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(AbstractEntity.class.getSimpleName());
 
 	@JsonIgnore

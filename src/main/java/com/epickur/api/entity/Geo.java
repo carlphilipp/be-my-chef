@@ -24,15 +24,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder(value = { "type", "coordinates" })
 public final class Geo extends AbstractEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Geo.class.getSimpleName());
 
-	/** Type **/
+	/** Type */
 	private String type = "Point";
 	/** Coordinates [ longitude, latitude] **/
 	private Double[] coordinates;
 
-	/** Constructor **/
+	/** Constructor */
 	public Geo() {
 		this.coordinates = new Double[2];
 		this.coordinates[0] = 0.0;

@@ -6,8 +6,12 @@ package com.epickur.api.enumeration;
  *
  */
 public enum Role {
-	/** The enum **/
-	ADMIN, USER, SUPER_USER;
+	/** Admin role */
+	ADMIN, 
+	/** User role */
+	USER, 
+	/** Super user role */
+	SUPER_USER;
 
 	/**
 	 * Get enum from str

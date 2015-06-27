@@ -29,39 +29,39 @@ import com.mongodb.util.JSONParseException;
  * @version 1.0
  */
 public class Here {
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Here.class.getSimpleName());
-	/** Url base **/
+	/** Url base */
 	private static final String URL_BASE = "http://geocoder.api.here.com";
-	/** Url option **/
+	/** Url option */
 	private static final String URL_APP_CODE = "app_code=";
-	/** Url option **/
+	/** Url option */
 	private static final String URL_APP_ID = "&app_id=";
-	/** Url option **/
+	/** Url option */
 	private static final String URL_APP_GEN = "&gen=8";
-	/** Url option **/
+	/** Url option */
 	private static final String URL_SEARCH_TEXT = "&searchtext=";
-	/** Url option **/
+	/** Url option */
 	private static final String URL_MAX_RESULTS = "&maxresults=1";
-	/** Url option **/
+	/** Url option */
 	private static final String URL_RESPONSE_ATTRIBUTES = "&responseattributes=none";
-	/** Url option **/
+	/** Url option */
 	private static final String URL_LOCATION_ATTRIBUTES = "&locationattributes=none,ar";
-	/** Url option **/
+	/** Url option */
 	private static final String URL_ADDRESS_ATTRIBUTES = "&addressattributes=none";
-	/** Url option **/
+	/** Url option */
 	private static final String URL_JSON_ATTRIBUTES = "&jsonattributes=1";
-	/** Url option **/
+	/** Url option */
 	private static final double RELEVANCE_THRESHOLD = 0.85;
-	/** Here App Id **/
+	/** Here App Id */
 	private String appId;
-	/** Here App Code **/
+	/** Here App Code */
 	private String appCode;
-	/** Here App Resource **/
+	/** Here App Resource */
 	private String resource;
-	/** Here App Version **/
+	/** Here App Version */
 	private String version;
-	/** The adress to find **/
+	/** The adress to find */
 	private String text;
 
 	/**

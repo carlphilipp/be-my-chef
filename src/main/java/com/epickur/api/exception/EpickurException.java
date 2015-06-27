@@ -8,10 +8,10 @@ package com.epickur.api.exception;
  */
 public class EpickurException extends Exception {
 
-	/** Serializer **/
+	/** Serializer */
 	private static final long serialVersionUID = 1L;
 
-	/** Constructor **/
+	/** Constructor */
 	public EpickurException() {
 		super();
 	}

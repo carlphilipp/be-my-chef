@@ -20,14 +20,14 @@ import com.mongodb.client.result.DeleteResult;
  */
 public abstract class DaoCrud<T extends AbstractEntity> implements IDaoCrud<T> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(DaoCrud.class.getSimpleName());
-	/** Database **/
+	/** Database */
 	private MongoDatabase db;
-	/** Database collection **/
+	/** Database collection */
 	private MongoCollection<Document> coll;
 
-	/** Init function **/
+	/** Init function */
 	protected final void initDB() {
 		this.db = MongoDb.getInstance();
 	}

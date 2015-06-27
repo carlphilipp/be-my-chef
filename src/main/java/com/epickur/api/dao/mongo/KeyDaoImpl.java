@@ -23,10 +23,10 @@ import com.mongodb.client.MongoCursor;
  */
 public final class KeyDaoImpl extends DaoCrud<Key> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(KeyDaoImpl.class.getSimpleName());
 
-	/** Constructor **/
+	/** Constructor */
 	public KeyDaoImpl() {
 		init();
 	}

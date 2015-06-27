@@ -7,7 +7,7 @@ package com.epickur.api.exception;
  */
 public class EpickurDuplicateKeyException extends EpickurDBException {
 
-	/** **/
+	/** Serialize */
 	private static final long serialVersionUID = 1L;
 
 	/**

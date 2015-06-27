@@ -42,14 +42,14 @@ import com.mongodb.DBObject;
 @Path("/users")
 public final class UserService {
 
-	/** User Business **/
+	/** User Business */
 	private UserBusiness userBusiness;
-	/** Order Business **/
+	/** Order Business */
 	private OrderBusiness orderBusiness;
-	/** User validator **/
+	/** User validator */
 	private UserValidator validator;
 
-	/** Constructor **/
+	/** Constructor */
 	public UserService() {
 		this.userBusiness = new UserBusiness();
 		this.orderBusiness = new OrderBusiness();

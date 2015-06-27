@@ -23,7 +23,7 @@ import com.mongodb.DBObject;
 @Produces(MediaType.APPLICATION_JSON)
 public final class ThrowableExeptionMapper implements ExceptionMapper<Throwable> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(ThrowableExeptionMapper.class.getSimpleName());
 
 	@Override

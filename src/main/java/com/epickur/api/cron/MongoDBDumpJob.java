@@ -16,7 +16,7 @@ import com.epickur.api.utils.Utils;
 
 public class MongoDBDumpJob implements Job {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(MongoDBDumpJob.class.getSimpleName());
 
 	@Override
@@ -29,7 +29,7 @@ public class MongoDBDumpJob implements Job {
 		List<String> list = m.getListFiles();
 		Utils.createTarGz(list, m.getCurrentFullPathName());
 		LOG.info("tar.gz generated: " + m.getCurrentFullPathName());
-		Dropbox dropbox = new Dropbox();
+		/*Dropbox dropbox = new Dropbox();
 		try {
 			dropbox.deleteOldFile();
 			dropbox.uploadFile(m.getCurrentFullPathName());
@@ -37,10 +37,10 @@ public class MongoDBDumpJob implements Job {
 			LOG.error(e.getLocalizedMessage(), e);
 		} catch (DbxException e) {
 			LOG.error(e.getLocalizedMessage(), e);
-		}
+		}*/
 	}
-/*	public static void main(String [] args) throws JobExecutionException{
+	public static void main(String [] args) throws JobExecutionException{
 		MongoDBDumpJob job = new MongoDBDumpJob();
 		job.execute(null);
-	}*/
+	}
 }

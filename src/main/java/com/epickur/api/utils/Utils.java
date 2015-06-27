@@ -49,10 +49,9 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
  */
 public final class Utils {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Utils.class.getSimpleName());
-
-	/** Session timeout **/
+	/** Session timeout */
 	private static Integer SESSIONTIMEOUT;
 
 	/**

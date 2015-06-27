@@ -33,10 +33,10 @@ import com.mongodb.client.model.ReturnDocument;
  */
 public final class DishDaoImpl extends DaoCrud<Dish> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(DishDaoImpl.class.getSimpleName());
 
-	/** Constructor **/
+	/** Constructor */
 	public DishDaoImpl() {
 		init();
 	}

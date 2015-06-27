@@ -28,15 +28,15 @@ import com.epickur.api.utils.Utils;
  */
 public class Jobs {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Jobs.class.getSimpleName());
-	/** Properties **/
+	/** Properties */
 	private final Properties prop;
-	/** Jobs **/
+	/** Jobs */
 	private static Jobs jobs;
-	/** Quartz scheduler **/
+	/** Quartz scheduler */
 	private Scheduler scheduler;
-	/** Order max time **/
+	/** Order max time */
 	private int orderMaxTime;
 
 	/**

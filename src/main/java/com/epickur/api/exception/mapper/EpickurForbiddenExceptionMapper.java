@@ -22,7 +22,7 @@ import com.epickur.api.utils.ErrorUtils;
 @Produces(MediaType.APPLICATION_JSON)
 public final class EpickurForbiddenExceptionMapper implements ExceptionMapper<EpickurForbiddenException> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(EpickurForbiddenExceptionMapper.class.getSimpleName());
 
 	@Override

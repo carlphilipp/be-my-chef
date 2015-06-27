@@ -21,10 +21,10 @@ import com.mongodb.DBObject;
 @Path("/logout")
 public final class LogoutService {
 
-	/** Key Business **/
+	/** Key Business */
 	private KeyBusiness keyBusiness;
 
-	/** Constructor **/
+	/** Constructor */
 	public LogoutService() {
 		this.keyBusiness = new KeyBusiness();
 	}

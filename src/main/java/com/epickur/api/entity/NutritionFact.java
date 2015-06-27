@@ -14,11 +14,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder(value = { "name", "value", "unit" })
 public final class NutritionFact implements Cloneable {
 
-	/** Name **/
+	/** Name */
 	private String name;
-	/** Value **/
+	/** Value */
 	private Double value;
-	/** Measurement unit **/
+	/** Measurement unit */
 	private MeasurementUnit unit;
 
 	/**

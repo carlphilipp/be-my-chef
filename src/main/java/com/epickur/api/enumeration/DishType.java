@@ -5,12 +5,11 @@ package com.epickur.api.enumeration;
  * @version 1.0
  */
 public enum DishType {
-
-	/** Meat **/
+	/** Meat */
 	MEAT("meat"),
-	/** Fish **/
+	/** Fish */
 	FISH("fish"),
-	/** Vegan **/
+	/** Vegan */
 	VEGAN("vegan");
 
 	/**

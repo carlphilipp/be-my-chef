@@ -26,16 +26,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public final class EmailTemplate {
 
-	/** The logger **/
+	/** The logger */
 	private static final Logger LOG = LogManager.getLogger(EmailTemplate.class.getSimpleName());
-
-	/** The templates **/
+	/** The templates */
 	private Map<String, Map<String, String>> templates;
-
-	/** The templates? **/
+	/** The templates? */
 	private static EmailTemplate emailTemplate = null;
 
-	/** The constructor **/
+	/** The constructor */
 	private EmailTemplate() {
 		this.templates = new HashMap<String, Map<String, String>>();
 		loadTemplates();

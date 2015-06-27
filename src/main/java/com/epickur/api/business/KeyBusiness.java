@@ -14,7 +14,7 @@ import com.epickur.api.exception.EpickurException;
  */
 public final class KeyBusiness {
 
-	/** Key dao **/
+	/** Key dao */
 	private KeyDaoImpl keyDao;
 
 	/**

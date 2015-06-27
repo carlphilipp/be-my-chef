@@ -22,12 +22,12 @@ import com.epickur.api.validator.UserValidator;
 @Path("/login")
 public final class LoginService {
 
-	/** User Business **/
+	/** User Business */
 	private UserBusiness userBusiness;
-	/** Service validator **/
+	/** Service validator */
 	private UserValidator validator;
 
-	/** Constructor **/
+	/** Constructor */
 	public LoginService() {
 		this.userBusiness = new UserBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");

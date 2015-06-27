@@ -6,8 +6,8 @@ package com.epickur.api.enumeration;
  *
  */
 public enum View {
-	/** The API View **/
+	/** The API View */
 	API,
-	/** The DB View **/
+	/** The DB View */
 	DB;
 }

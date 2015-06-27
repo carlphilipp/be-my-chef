@@ -46,19 +46,18 @@ import com.mongodb.DBObject;
 @Path("/dishes")
 public final class DishService {
 
-	/** Dish Business **/
+	/** Dish Business */
 	private DishBusiness dishBusiness;
-	/** Dish Business **/
+	/** Dish Business */
 	private CatererBusiness catererBusiness;
-	/** Service validator **/
+	/** Service validator */
 	private DishValidator validator;
-	
-	/** Service validator **/
+	/** Service validator */
 	private SearchValidator searchValidator;
-	/** Search Business **/
+	/** Search Business */
 	private SearchBusiness searchBusiness;
 
-	/** Constructor **/
+	/** Constructor */
 	public DishService() {
 		this.dishBusiness = new DishBusiness();
 		this.catererBusiness = new CatererBusiness();

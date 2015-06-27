@@ -17,18 +17,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder(value = { "name", "sequence", "quantity", "measurementUnit" })
 public final class Ingredient extends AbstractEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Ingredient.class.getSimpleName());
-	/** Name **/
+	/** Name */
 	private String name;
-	/** Sequence **/
+	/** Sequence */
 	private int sequence;
-	/** Quantity **/
+	/** Quantity */
 	private double quantity;
-	/** Measurement Unit **/
+	/** Measurement Unit */
 	private MeasurementUnit measurementUnit;
 
-	/** Constructor **/
+	/** Constructor */
 	public Ingredient() {
 	}
 

@@ -12,17 +12,17 @@ import com.mongodb.MongoException;
  */
 public class EpickurDBException extends EpickurException {
 
-	/** Serializer **/
+	/** Serializer */
 	private static final long serialVersionUID = 1L;
-	/** Unexepcted exception **/
+	/** Unexepcted exception */
 	public static final String UNEXPECTED_EXCEPTION = "Unexpected error";
-	/** Dbo failed **/
+	/** Dbo failed */
 	private Document doc;
-	/** Id **/
+	/** Id */
 	private String id;
-	/** Update **/
+	/** Update */
 	private Document update;
-	/** Operation type **/
+	/** Operation type */
 	private String operation;
 
 	/**

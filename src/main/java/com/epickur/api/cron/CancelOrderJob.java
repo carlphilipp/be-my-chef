@@ -15,11 +15,11 @@ import com.epickur.api.utils.email.EmailUtils;
 
 public final class CancelOrderJob implements Job {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CancelOrderJob.class.getSimpleName());
-	/** Order dao **/
+	/** Order dao */
 	private OrderDaoImpl orderDao;
-	/** User dao **/
+	/** User dao */
 	private UserDaoImpl userDao;
 
 	public CancelOrderJob() {

@@ -25,7 +25,7 @@ import com.stripe.model.Charge;
  */
 public final class StripePayment {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(StripePayment.class.getSimpleName());
 
 	static {

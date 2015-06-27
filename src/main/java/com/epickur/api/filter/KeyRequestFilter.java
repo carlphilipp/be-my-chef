@@ -29,12 +29,12 @@ import com.epickur.api.utils.Utils;
 @Provider
 public final class KeyRequestFilter implements ContainerRequestFilter {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(KeyRequestFilter.class.getSimpleName());
-	/** key dao **/
+	/** Key dao */
 	private KeyDaoImpl keyDao;
 
-	/** Constructor **/
+	/** Constructor */
 	public KeyRequestFilter() {
 		super();
 		this.keyDao = new KeyDaoImpl();

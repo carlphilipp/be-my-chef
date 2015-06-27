@@ -43,46 +43,46 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 		"ingredients", "condiments", "steps", "utensils", "caterer", "createdAt", "updatedAt" })
 public final class Dish extends AbstractEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Dish.class.getSimpleName());
-	/** Id **/
+	/** Id */
 	private ObjectId id;
-	/** Name **/
+	/** Name */
 	private String name;
-	/** Description **/
+	/** Description */
 	private String description;
-	/** Type **/
+	/** Type */
 	private DishType type;
-	/** Price **/
+	/** Price */
 	private Integer price;
-	/** Cooking time **/
+	/** Cooking time */
 	private Integer cookingTime;
-	/** Difficulty level **/
+	/** Difficulty level */
 	private Integer difficultyLevel;
-	/** Image After URL **/
+	/** Image After URL */
 	private String imageAfterUrl;
-	/** Video URL **/
+	/** Video URL */
 	private String videoUrl;
-	/** Nutrition facts **/
+	/** Nutrition facts */
 	private List<NutritionFact> nutritionFacts;
-	/** Ingredients **/
+	/** Ingredients */
 	private List<Ingredient> ingredients;
-	/** Steps **/
+	/** Steps */
 	private List<String> steps;
-	/** Condiments **/
+	/** Condiments */
 	private List<String> condiments;
-	/** Utensils **/
+	/** Utensils */
 	private List<String> utensils;
-	/** Caterer **/
+	/** Caterer */
 	private Caterer caterer;
-	/** Owner id **/
+	/** Owner id */
 	private ObjectId createdBy;
-	/** Created at **/
+	/** Created at */
 	private DateTime createdAt;
-	/** Updated at **/
+	/** Updated at */
 	private DateTime updatedAt;
 
-	/** Constructor **/
+	/** Constructor */
 	public Dish() {
 	}
 

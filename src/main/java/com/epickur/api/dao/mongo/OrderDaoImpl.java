@@ -25,10 +25,10 @@ import com.mongodb.client.model.ReturnDocument;
  */
 public class OrderDaoImpl extends DaoCrud<Order> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(OrderDaoImpl.class.getSimpleName());
 
-	/** Constructor **/
+	/** Constructor */
 	public OrderDaoImpl() {
 		init();
 	}

@@ -20,24 +20,24 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder(value = { "label", "houseNumber", "street", "city", "postalCode", "state", "country" })
 public final class Address extends AbstractEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Address.class.getSimpleName());
-	/** Label **/
+	/** Label */
 	private String label;
-	/** House number **/
+	/** House number */
 	private String houseNumber;
-	/** Street **/
+	/** Street */
 	private String street;
-	/** City **/
+	/** City */
 	private String city;
-	/** Postal code **/
+	/** Postal code */
 	private Integer postalCode;
-	/** State **/
+	/** State */
 	private String state;
-	/** Country **/
+	/** Country */
 	private String country;
 
-	/** Constructor **/
+	/** Constructor */
 	public Address() {
 	}
 

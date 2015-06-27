@@ -35,22 +35,22 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonPropertyOrder(value = { "id", "key", "userEmail", "role", "createdAt", "updatedAt" })
 public final class Key extends AbstractEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Key.class.getSimpleName());
-	/** Id **/
+	/** Id */
 	private ObjectId id;
-	/** Key **/
+	/** Key */
 	private String key;
-	/** User id **/
+	/** User id */
 	private ObjectId userId;
-	/** The role **/
+	/** The role */
 	private Role role;
-	/** Created at **/
+	/** Created at */
 	private DateTime createdAt;
-	/** Updated at **/
+	/** Updated at */
 	private DateTime updatedAt;
 
-	/** Constructor **/
+	/** Constructor */
 	public Key() {
 	}
 

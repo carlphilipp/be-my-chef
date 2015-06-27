@@ -25,14 +25,14 @@ import com.mongodb.client.MongoDatabase;
  */
 public final class MongoDb {
 
-	/** Database **/
+	/** Database */
 	private static MongoDatabase db;
-	/** Mongo Client **/
+	/** Mongo Client */
 	private static MongoClient mongoClient;
-	/** Lock object **/
+	/** Lock object */
 	private static final Object LOCK = new Object();
 
-	/** Constructor **/
+	/** Constructor */
 	private MongoDb() {
 	}
 
@@ -52,7 +52,7 @@ public final class MongoDb {
 		return db;
 	}
 
-	/** Create instance **/
+	/** Create instance */
 	private static void createInstance() {
 		Properties prop = Utils.getEpickurProperties();
 		String address = prop.getProperty("mongo.address");

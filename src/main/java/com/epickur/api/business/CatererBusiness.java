@@ -21,9 +21,9 @@ import com.epickur.api.validator.FactoryValidator;
  */
 public class CatererBusiness {
 
-	/** The DAO {@link CatererDaoImpl} **/
+	/** The DAO {@link CatererDaoImpl} */
 	private CatererDaoImpl dao;
-	/** The validator {@link CatererValidator} **/
+	/** The validator {@link CatererValidator} */
 	private CatererValidator validator;
 
 	/**

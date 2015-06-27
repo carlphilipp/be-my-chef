@@ -13,29 +13,29 @@ import com.mongodb.DBObject;
  */
 public final class ErrorUtils {
 
-	/** Dish not found **/
+	/** Dish not found */
 	public static final String DISH_NOT_FOUND = "Dish not found";
-	/** User not found **/
+	/** User not found */
 	public static final String USER_NOT_FOUND = "User not found";
-	/** Order not found **/
+	/** Order not found */
 	public static final String ORDER_NOT_FOUND = "Order not found";
-	/** Caterer not found **/
+	/** Caterer not found */
 	public static final String CATERER_NOT_FOUND = "Caterer not found";
-	/** Invalid key **/
+	/** Invalid key */
 	public static final String INVALID_KEY = "Invalid API key";
-	/** Missing key **/
+	/** Missing key */
 	public static final String MISSING_KEY = "Missing API key";
-	/** User not allowed to login **/
+	/** User not allowed to login */
 	public static final String USER_NOT_ALLOWED_TO_LOGIN = "User not allowed to login";
-	/** Internal server error **/
+	/** Internal server error */
 	public static final String INTERNAL_SERVER_ERROR = Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase();
-	/** Internal server error **/
+	/** Internal server error */
 	public static final String FORBIDDEN = Response.Status.FORBIDDEN.getReasonPhrase();
-	/** Internal server error **/
+	/** Internal server error */
 	public static final String IDS_DO_NOT_MATCH = "IDs provided do not match";
-	/** Basic error response **/
+	/** Basic error response */
 	public static final String LOGIN_ERROR = "An error occurred while logging in";
-	/** Not implemented **/
+	/** Not implemented */
 	public static final String NOT_IMPLEMENTED = "Not implemented";
 
 	/**

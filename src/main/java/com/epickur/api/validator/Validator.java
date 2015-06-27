@@ -15,23 +15,23 @@ import com.epickur.api.exception.EpickurIllegalArgument;
  */
 public abstract class Validator {
 
-	/** The entity **/
+	/** The entity */
 	private String entity;
-	/** Id Null **/
+	/** Id Null */
 	public static final String PARAM_ID_NULL = "The parameter id is not allowed to be null or empty";
-	/** Order Id Null **/
+	/** Order Id Null */
 	public static final String PARAM_ORDER_ID_NULL = "The parameter orderId is not allowed to be null or empty";
-	/** Token Null **/
+	/** Token Null */
 	public static final String PARAM_TOKEN_NULL = "The parameter token is not allowed to be null or empty";
-	/** No User provided **/
+	/** No User provided */
 	public static final String NO_USER_PROVIDED = "No user has been provided";
-	/** No Order provided **/
+	/** No Order provided */
 	public static final String NO_ORDER_PROVIDED = "No order has been provided";
-	/** No Caterer provided **/
+	/** No Caterer provided */
 	public static final String NO_CATERER_PROVIDED = "No caterer has been provided";
-	/** No Dish provided **/
+	/** No Dish provided */
 	public static final String NO_DISH_PROVIDED = "No dish has been provided";
-	/** Field Null **/
+	/** Field Null */
 	public static final String FIELD_NULL = "The field @object@.@field@ is not allowed to be null or empty";
 
 	/**

@@ -24,7 +24,7 @@ import com.mongodb.DBObject;
 @Produces(MediaType.APPLICATION_JSON)
 public final class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingException> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(JsonMappingExceptionMapper.class.getSimpleName());
 
 	@Override

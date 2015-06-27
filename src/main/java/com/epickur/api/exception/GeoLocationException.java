@@ -8,7 +8,7 @@ package com.epickur.api.exception;
  */
 public class GeoLocationException extends EpickurException {
 
-	/** Serialization **/
+	/** Serializer */
 	private static final long serialVersionUID = 1L;
 
 	/**

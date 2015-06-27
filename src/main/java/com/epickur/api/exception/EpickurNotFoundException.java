@@ -7,7 +7,7 @@ package com.epickur.api.exception;
  */
 public final class EpickurNotFoundException extends EpickurException {
 
-	/** **/
+	/** Serializer */
 	private static final long serialVersionUID = 1L;
 
 	/**

@@ -42,14 +42,14 @@ import com.mongodb.DBObject;
 @Path("/caterers")
 public final class CatererService {
 
-	/** Caterer Business **/
+	/** Caterer Business */
 	private CatererBusiness catererBusiness;
-	/** Order Business **/
+	/** Order Business */
 	private OrderBusiness orderBusiness;
-	/** Caterer validator **/
+	/** Caterer validator */
 	private CatererValidator validator;
 
-	/** Constructor **/
+	/** Constructor */
 	public CatererService() {
 		this.catererBusiness = new CatererBusiness();
 		this.orderBusiness = new OrderBusiness();

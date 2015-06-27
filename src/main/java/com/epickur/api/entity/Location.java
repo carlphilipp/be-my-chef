@@ -27,14 +27,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @JsonPropertyOrder(value = { "address", "geo" })
 public final class Location extends AbstractEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Location.class.getSimpleName());
-	/** Address **/
+	/** Address */
 	private Address address;
-	/** Geo **/
+	/** Geo */
 	private Geo geo;
 
-	/** Constructor **/
+	/** Constructor */
 	public Location() {
 	}
 

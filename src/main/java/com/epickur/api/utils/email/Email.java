@@ -45,21 +45,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public final class Email {
 
-	/** The logger **/
+	/** The logger */
 	private static final Logger LOG = LogManager.getLogger(Email.class.getSimpleName());
-	/** The request **/
+	/** The request */
 	private MandrillRESTRequest request;
-	/** The message request **/
+	/** The message request */
 	private MandrillMessagesRequest messagesRequest;
-	/** The email address **/
+	/** The email address */
 	private String fromEmail;
-	/** The name of the sender **/
+	/** The name of the sender */
 	private String fromName;
-	/** The subject **/
+	/** The subject */
 	private String subject;
-	/** The message in HTML format **/
+	/** The message in HTML format */
 	private String message;
-	/** The list of sender **/
+	/** The list of sender */
 	private String[] sendTo;
 
 	/**

@@ -28,11 +28,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public final class UserBusiness {
 
-	/** User dao **/
+	/** User dao */
 	private UserDaoImpl userDao;
-	/** Key Business **/
+	/** Key Business */
 	private KeyBusiness keyBusiness;
-	/** User validator **/
+	/** User validator */
 	private UserValidator validator;
 
 	/**

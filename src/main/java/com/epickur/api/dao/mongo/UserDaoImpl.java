@@ -28,10 +28,10 @@ import com.mongodb.client.model.ReturnDocument;
  */
 public final class UserDaoImpl extends DaoCrud<User> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(UserDaoImpl.class.getSimpleName());
 
-	/** Constructor **/
+	/** Constructor */
 	public UserDaoImpl() {
 		init();
 	}

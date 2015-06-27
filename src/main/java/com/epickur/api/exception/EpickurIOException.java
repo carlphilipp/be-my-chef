@@ -9,7 +9,7 @@ import java.io.IOException;
  */
 public final class EpickurIOException extends IOException {
 
-	/** **/
+	/** Serializer */
 	private static final long serialVersionUID = 1L;
 
 	/**

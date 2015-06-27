@@ -41,36 +41,36 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 		"createdBy", "createdAt", "updatedAt" })
 public final class Order extends AbstractEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Order.class.getSimpleName());
-	/** Id **/
+	/** Id */
 	private ObjectId id;
-	/** Description **/
+	/** Description */
 	private String description;
-	/** Amount **/
+	/** Amount */
 	private Integer amount;
-	/** Amount **/
+	/** Amount */
 	private OrderStatus status;
-	/** Currency **/
+	/** Currency */
 	private Currency currency;
-	/** Pickupdate **/
+	/** Pickupdate */
 	private String pickupdate;
-	/** Dish **/
+	/** Dish */
 	private Dish dish;
-	/** Stripe Card Token **/
+	/** Stripe Card Token */
 	private String cardToken;
-	/** ChargeId from Stripe **/
+	/** ChargeId from Stripe */
 	private String chargeId;
-	/** Indicate if paid **/
+	/** Indicate if paid */
 	private Boolean paid;
-	/** Owner id **/
+	/** Owner id */
 	private ObjectId createdBy;
-	/** Created at **/
+	/** Created at */
 	private DateTime createdAt;
-	/** Updated at **/
+	/** Updated at */
 	private DateTime updatedAt;
 
-	/** Constructor **/
+	/** Constructor */
 	public Order() {
 	}
 

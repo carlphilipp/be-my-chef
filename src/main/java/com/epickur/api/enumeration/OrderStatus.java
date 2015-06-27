@@ -8,17 +8,24 @@ package com.epickur.api.enumeration;
  *
  */
 public enum OrderStatus {
-	/** Pending **/
+	/** Pending */
 	PENDING,
-	/** Declined **/
+	/** Declined */
 	DECLINED,
-	/** Failed **/
+	/** Failed */
 	FAILED,
-	/** Successful **/
+	/** Successful */
 	SUCCESSFUL,
-	/** Canceled **/
+	/** Canceled */
 	CANCELED;
 
+	/**
+	 * Convert from string to order status.
+	 * 
+	 * @param value
+	 *            The order status
+	 * @return The Order status
+	 */
 	public static OrderStatus fromString(final String value) {
 		if (value == null) {
 			throw new IllegalArgumentException();

@@ -42,39 +42,39 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 @JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "phoneNumber", "allow", "key", "allow", "createdAt", "updatedAt" })
 public final class User extends AbstractEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(User.class.getSimpleName());
-	/** Id **/
+	/** Id */
 	private ObjectId id;
-	/** Name **/
+	/** Name */
 	private String name;
-	/** First **/
+	/** First */
 	private String first;
-	/** Last **/
+	/** Last */
 	private String last;
-	/** Password **/
+	/** Password */
 	private String password;
-	/** Email **/
+	/** Email */
 	private String email;
-	/** Phone number **/
+	/** Phone number */
 	private PhoneNumber phoneNumber;
-	/** Indicate if allowed to login **/
+	/** Indicate if allowed to login */
 	private Integer allow;
-	/** Created at **/
+	/** Created at */
 	private DateTime createdAt;
-	/** Updated at **/
+	/** Updated at */
 	private DateTime updatedAt;
-	/** Code generated the first time on create **/
+	/** Code generated the first time on create */
 	@JsonIgnore
 	private String code;
-	/** API key generated **/
+	/** API key generated */
 	private String key;
-	/** New password to check **/
+	/** New password to check */
 	private String newPassword;
-	/** Role. Not exposed to User **/
+	/** Role. Not exposed to User */
 	private Role role;
 
-	/** Constructor **/
+	/** Constructor */
 	public User() {
 	}
 

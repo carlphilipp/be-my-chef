@@ -7,12 +7,12 @@ package com.epickur.api.enumeration;
  * @version 1.0
  */
 public enum Crud {
-	/** Create **/
+	/** Create */
 	CREATE,
-	/** Read **/
+	/** Read */
 	READ,
-	/** Update **/
+	/** Update */
 	UPDATE,
-	/** Delete **/
+	/** Delete */
 	DELETE
 }

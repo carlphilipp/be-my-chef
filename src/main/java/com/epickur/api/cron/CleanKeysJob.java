@@ -21,12 +21,12 @@ import com.epickur.api.utils.Utils;
  */
 public final class CleanKeysJob implements Job {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CleanKeysJob.class.getSimpleName());
-	/** Key dao **/
+	/** Key dao */
 	private KeyDaoImpl keyDao;
 
-	/** Constructor **/
+	/** Constructor */
 	public CleanKeysJob() {
 		this.keyDao = new KeyDaoImpl();
 	}

@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 @Provider
 public final class LogRequestFilter implements ContainerRequestFilter {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(LogRequestFilter.class.getSimpleName());
 
 	@Override

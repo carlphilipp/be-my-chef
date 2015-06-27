@@ -42,32 +42,32 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 		"updatedAt" })
 public final class Caterer extends AbstractEntity {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Caterer.class.getSimpleName());
-	/** Id **/
+	/** Id */
 	private ObjectId id;
-	/** Name **/
+	/** Name */
 	private String name;
-	/** Description **/
+	/** Description */
 	private String description;
-	/** Manager name **/
+	/** Manager name */
 	private String manager;
-	/** Manager email **/
+	/** Manager email */
 	private String email;
-	/** Phone **/
+	/** Phone */
 	private String phone;
-	/** Location **/
+	/** Location */
 	private Location location;
-	/** Working times **/
+	/** Working times */
 	private WorkingTimes workingTimes;
-	/** Owner id **/
+	/** Owner id */
 	private ObjectId createdBy;
-	/** Created at **/
+	/** Created at */
 	private DateTime createdAt;
-	/** Updated at **/
+	/** Updated at */
 	private DateTime updatedAt;
 
-	/** Constructor **/
+	/** Constructor */
 	public Caterer() {
 	}
 

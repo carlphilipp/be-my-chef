@@ -17,29 +17,34 @@ import com.wordnik.system.mongodb.SnapshotUtil;
 
 public final class MongoDBDump {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(MongoDBDump.class.getSimpleName());
 	/** File separator */
 	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
-	/** Ip **/
+	/** Ip */
 	private String ip;
-	/** Port **/
+	/** Port */
 	private String port;
-	/** Database **/
+	/** Database */
 	private String database;
-	/** Database user **/
+	/** Database user */
 	private String username;
-	/** Database password **/
+	/** Database password */
 	private String password;
-	/** Backup path **/
+	/** Backup path */
 	private String backupPath;
-	/** Compression of the file **/
+	/** Compression of the file */
 	private static final String TARGZEXT = ".tar.gz";
-	/** Date **/
+	/** Date */
 	private String date;
 
-	public MongoDBDump(final String d) {
-		this.date = d;
+	/**
+	 * Construct a DB dump
+	 * 
+	 * @param date
+	 */
+	public MongoDBDump(final String date) {
+		this.date = date;
 		Properties prop = Utils.getEpickurProperties();
 		this.ip = prop.getProperty("mongo.address");
 		this.port = prop.getProperty("mongo.port");
@@ -64,8 +69,8 @@ public final class MongoDBDump {
 		}
 		return "epickur_" + computername + "_" + date + TARGZEXT;
 	}
-	
-	public String getCurrentFullPathName(){
+
+	public String getCurrentFullPathName() {
 		return backupPath + FILE_SEPARATOR + getCurrentNameFile();
 	}
 

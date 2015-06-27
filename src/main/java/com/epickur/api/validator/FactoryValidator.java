@@ -6,16 +6,16 @@ package com.epickur.api.validator;
  */
 public final class FactoryValidator {
 
-	/** User validator **/
+	/** User validator */
 	private static UserValidator userValidator = null;
-	/** Caterer validator **/
+	/** Caterer validator */
 	private static CatererValidator catererValidator = null;
-	/** Service validator **/
+	/** Service validator */
 	private static DishValidator dishValidator = null;
-	/** Service validator **/
+	/** Service validator */
 	private static SearchValidator searchValidator = null;
 
-	/** Constructor **/
+	/** Constructor */
 	private FactoryValidator() {
 	}
 

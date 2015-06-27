@@ -21,10 +21,10 @@ import com.epickur.api.utils.EnumTransformer;
  */
 public class WebApplication extends ResourceConfig {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(WebApplication.class.getSimpleName());
 
-	/** Constructor **/
+	/** Constructor */
 	public WebApplication() {
 		// Register new encoding to be able to serialize enum in MongoDB
 		BSON.addEncodingHook(DishType.class, new EnumTransformer());

@@ -29,11 +29,11 @@ import java.util.Properties;
  */
 public final class Info {
 
-	/** Constructor **/
+	/** Constructor */
 	private Info() {
 	}
 
-	/** Access in a static way to the property file **/
+	/** Access in a static way to the property file */
 	static {
 		Properties prop = Utils.getEpickurProperties();
 		NAME = prop.getProperty("name");
@@ -43,15 +43,15 @@ public final class Info {
 		admins = Collections.unmodifiableList(Arrays.asList(prop.getProperty("admins").split(";")));
 	}
 
-	/** Name of the webapp **/
+	/** Name of the webapp */
 	public static final String NAME;
-	/** Current address of the webapp **/
+	/** Current address of the webapp */
 	public static final String ADDRESS;
-	/** Current folder after the address **/
+	/** Current folder after the address */
 	public static final String FOLDER;
-	/** Web address **/
+	/** Web address */
 	public static final String WEB_ADDRESS;
-	/** Admins **/
+	/** Admins */
 	public static List<String> admins;
 
 }

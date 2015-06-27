@@ -8,10 +8,10 @@ package com.epickur.api.exception;
  */
 public class EpickurIllegalArgument extends IllegalArgumentException {
 
-	/** Serializer **/
+	/** Serializer */
 	private static final long serialVersionUID = 1L;
 
-	/** Constructor **/
+	/** Constructor */
 	public EpickurIllegalArgument() {
 		super();
 	}

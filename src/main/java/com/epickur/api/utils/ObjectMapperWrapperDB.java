@@ -11,12 +11,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public final class ObjectMapperWrapperDB {
 
-	/** ObjectMapper **/
+	/** ObjectMapper */
 	private static volatile ObjectMapper mapper;
-	/** Lock object **/
+	/** Lock object */
 	private static final Object LOCK = new Object();
 
-	/** Constructor **/
+	/** Constructor */
 	private ObjectMapperWrapperDB() {
 	}
 

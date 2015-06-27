@@ -29,14 +29,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @Path("/nokey")
 public final class NoKeyService {
-	/** User Business **/
+	
+	/** User Business */
 	private UserBusiness userBusiness;
-	/** Order Business **/
+	/** Order Business */
 	private OrderBusiness orderBusiness;
-	/** Service validator **/
+	/** Service validator */
 	private UserValidator validator;
 
-	/** Construct the service **/
+	/** Construct the service */
 	public NoKeyService() {
 		this.userBusiness = new UserBusiness();
 		this.orderBusiness = new OrderBusiness();

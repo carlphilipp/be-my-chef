@@ -33,14 +33,14 @@ import com.stripe.model.Charge;
  */
 public class OrderBusiness {
 
-	/** Order dao **/
+	/** Order dao */
 	private OrderDaoImpl orderDao;
-	/** User dao **/
+	/** User dao */
 	private UserDaoImpl userDao;
-	/** User validator **/
+	/** User validator */
 	private UserValidator validator;
 
-	/** The constructor **/
+	/** The constructor */
 	public OrderBusiness() {
 		this.orderDao = new OrderDaoImpl();
 		this.userDao = new UserDaoImpl();

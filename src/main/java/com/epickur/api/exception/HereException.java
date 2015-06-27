@@ -8,9 +8,9 @@ package com.epickur.api.exception;
  */
 public class HereException extends GeoLocationException {
 
-	/** Serialization **/
+	/** Serializer */
 	private static final long serialVersionUID = 1L;
-	/** Connect error **/
+	/** Connect error */
 	public static final String CONNECT_ERROR = "Can't connect to here API";
 
 	/**

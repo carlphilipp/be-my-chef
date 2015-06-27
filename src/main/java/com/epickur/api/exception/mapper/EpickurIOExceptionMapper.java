@@ -23,7 +23,7 @@ import com.mongodb.DBObject;
 @Produces(MediaType.APPLICATION_JSON)
 public final class EpickurIOExceptionMapper implements ExceptionMapper<EpickurIOException> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(EpickurIllegalArgumentMapper.class.getSimpleName());
 
 	@Override

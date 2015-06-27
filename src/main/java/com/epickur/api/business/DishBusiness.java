@@ -18,9 +18,9 @@ import com.epickur.api.validator.FactoryValidator;
  */
 public class DishBusiness {
 
-	/** The DAO {@link DishDaoImpl}. **/
+	/** The DAO {@link DishDaoImpl}. */
 	private DishDaoImpl dao;
-	/** The validator {@link DishValidator}. **/
+	/** The validator {@link DishValidator}. */
 	private DishValidator validator;
 
 	/**

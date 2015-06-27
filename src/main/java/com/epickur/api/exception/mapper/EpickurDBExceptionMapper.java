@@ -22,7 +22,7 @@ import com.epickur.api.utils.ErrorUtils;
 @Produces(MediaType.APPLICATION_JSON)
 public final class EpickurDBExceptionMapper implements ExceptionMapper<EpickurDBException> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(EpickurDBExceptionMapper.class.getSimpleName());
 
 	@Override

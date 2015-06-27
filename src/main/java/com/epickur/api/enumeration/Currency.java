@@ -7,7 +7,7 @@ package com.epickur.api.enumeration;
  * @version 1.0
  */
 public enum Currency {
-	/** The enum **/
+	/** The enum */
 	AUD("Australia Dollar", "$", "AUD"), EUR("Euro", "€", "EUR"), USD("United States Dollar", "$", "USD");
 
 	/**
@@ -72,10 +72,10 @@ public enum Currency {
 		throw new IllegalArgumentException();
 	}
 
-	/** name **/
+	/** name */
 	private String name;
-	/** symbol **/
+	/** symbol */
 	private String symbol;
-	/** code **/
+	/** code */
 	private String code;
 }

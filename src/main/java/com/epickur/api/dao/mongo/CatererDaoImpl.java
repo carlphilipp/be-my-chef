@@ -26,10 +26,10 @@ import com.mongodb.client.model.ReturnDocument;
  */
 public final class CatererDaoImpl extends DaoCrud<Caterer> {
 
-	/** Logger **/
+	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CatererDaoImpl.class.getSimpleName());
 
-	/** Constructor **/
+	/** Constructor */
 	public CatererDaoImpl() {
 		init();
 	}
