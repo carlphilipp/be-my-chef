@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "description", "type", "price", "cookingTime", "difficultyLevel", "videoUrl", "nutritionFacts",
-		"ingredients", "steps", "caterer", "createdAt", "updatedAt" })
+		"ingredients", "condiments", "steps", "utensils", "caterer", "createdAt", "updatedAt" })
 public final class Dish extends AbstractEntity {
 
 	/** Logger **/
@@ -69,6 +69,10 @@ public final class Dish extends AbstractEntity {
 	private List<Ingredient> ingredients;
 	/** Steps **/
 	private List<String> steps;
+	/** Condiments **/
+	private List<String> condiments;
+	/** Utensils **/
+	private List<String> utensils;
 	/** Caterer **/
 	private Caterer caterer;
 	/** Owner id **/
@@ -265,7 +269,7 @@ public final class Dish extends AbstractEntity {
 	public void setImageAfterUrl(final String imageAfterUrl) {
 		this.imageAfterUrl = imageAfterUrl;
 	}
-	
+
 	/**
 	 * @return The video url
 	 */
@@ -392,6 +396,22 @@ public final class Dish extends AbstractEntity {
 		return dish;
 	}
 
+	public List<String> getCondiments() {
+		return condiments;
+	}
+
+	public void setCondiments(List<String> condiments) {
+		this.condiments = condiments;
+	}
+
+	public List<String> getUtensils() {
+		return utensils;
+	}
+
+	public void setUtensils(List<String> utensils) {
+		this.utensils = utensils;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -403,6 +423,8 @@ public final class Dish extends AbstractEntity {
 		result = prime * result + ((difficultyLevel == null) ? 0 : difficultyLevel.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((ingredients == null) ? 0 : ingredients.hashCode());
+		result = prime * result + ((utensils == null) ? 0 : utensils.hashCode());
+		result = prime * result + ((condiments == null) ? 0 : condiments.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((nutritionFacts == null) ? 0 : nutritionFacts.hashCode());
 		result = prime * result + ((price == null) ? 0 : price.hashCode());
@@ -472,6 +494,20 @@ public final class Dish extends AbstractEntity {
 				return false;
 			}
 		} else if (!ingredients.equals(other.ingredients)) {
+			return false;
+		}
+		if (condiments == null) {
+			if (other.condiments != null) {
+				return false;
+			}
+		} else if (!condiments.equals(other.condiments)) {
+			return false;
+		}
+		if (utensils == null) {
+			if (other.utensils != null) {
+				return false;
+			}
+		} else if (!utensils.equals(other.utensils)) {
 			return false;
 		}
 		if (name == null) {
