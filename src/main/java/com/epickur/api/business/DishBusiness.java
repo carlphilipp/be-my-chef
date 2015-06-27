@@ -69,6 +69,19 @@ public class DishBusiness {
 	}
 
 	/**
+	 * Search all dishes for one caterer.
+	 * 
+	 * @param catererId
+	 *            The caterer id
+	 * @return A list of {@link Dish}
+	 * @throws EpickurException
+	 *             If an ${@link EpickurException} occurred
+	 */
+	public final List<Dish> searchDishesForOneCaterer(final String catererId) throws EpickurException {
+		return dao.search(catererId);
+	}
+
+	/**
 	 * Update a {@link Dish}
 	 * 
 	 * @param dish

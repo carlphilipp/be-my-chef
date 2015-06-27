@@ -27,6 +27,7 @@ import org.mockito.Mockito;
 
 import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
@@ -48,8 +49,10 @@ public class CatererServiceTest {
 	public ExpectedException thrown = ExpectedException.none();
 
 	private static CatererService catererService;
+	private static DishService dishService;
 	private static UserService userService;
 	private static List<ObjectId> idsCaterers;
+	private static List<ObjectId> idsDishes;
 	private static Map<String, List<ObjectId>> idsOrders;
 	private static ContainerRequestContext context;
 
@@ -59,8 +62,10 @@ public class CatererServiceTest {
 		Key key = TestUtils.generateRandomKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 		catererService = new CatererService();
+		dishService = new DishService();
 		userService = new UserService();
 		idsCaterers = new ArrayList<ObjectId>();
+		idsDishes = new ArrayList<ObjectId>();
 		idsOrders = new HashMap<String, List<ObjectId>>();
 		try {
 			InputStreamReader in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
@@ -78,6 +83,9 @@ public class CatererServiceTest {
 	public static void afterClass() throws EpickurException {
 		for (ObjectId id : idsCaterers) {
 			catererService.delete(id.toHexString(), context);
+		}
+		for (ObjectId id : idsDishes) {
+			dishService.delete(id.toHexString(), context);
 		}
 		for (Entry<String, List<ObjectId>> entry : idsOrders.entrySet()) {
 			for (ObjectId id : entry.getValue()) {
@@ -170,6 +178,67 @@ public class CatererServiceTest {
 				}
 			} else {
 				fail("List of catereres returned is null");
+			}
+		} else {
+			fail("Caterer returned is null");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void readDishes1() throws EpickurException {
+		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
+		Response result = catererService.create(caterer, context);
+		if (result.getEntity() != null) {
+			Caterer catererResult = (Caterer) result.getEntity();
+			assertNotNull(catererResult.getId());
+			idsCaterers.add(catererResult.getId());
+			String id = catererResult.getId().toHexString();
+			Response result2 = catererService.readDishes(id, context);
+			if (result2.getEntity() != null) {
+				List<Dish> cateres = (List<Dish>) result2.getEntity();
+				assertEquals(0, cateres.size());
+			} else {
+				fail("List of catereres returned is null");
+			}
+		} else {
+			fail("Caterer returned is null");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void readDishes2() throws EpickurException {
+		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
+		Response result = catererService.create(caterer, context);
+		if (result.getEntity() != null) {
+			Caterer catererResult = (Caterer) result.getEntity();
+			assertNotNull(catererResult.getId());
+			idsCaterers.add(catererResult.getId());
+			String id = catererResult.getId().toHexString();
+			
+			Dish dish1  = TestUtils.generateRandomDish();
+			dish1.setCaterer(catererResult);
+			Response resultDish1 = dishService.create(dish1, context);
+			Dish dish1Result = (Dish) resultDish1.getEntity();
+			idsDishes.add(dish1Result.getId());
+			
+			Dish dish2  = TestUtils.generateRandomDish();
+			dish2.setCaterer(catererResult);
+			Response resultDish2 = dishService.create(dish2, context);
+			Dish dish2Result = (Dish) resultDish2.getEntity();
+			idsDishes.add(dish2Result.getId());
+			
+			Response result2 = catererService.readDishes(id, context);
+			if (result2.getEntity() != null) {
+				List<Dish> dishes = (List<Dish>) result2.getEntity();
+				for (Dish d : dishes) {
+					if (d.getId().equals(id)) {
+						assertEquals(id, d.getCaterer().getId().toString());
+					}
+				}
+			} else {
+				fail("List of dishes returned is null");
 			}
 		} else {
 			fail("Caterer returned is null");

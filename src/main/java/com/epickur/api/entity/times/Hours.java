@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.epickur.api.entity.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  * Hours
@@ -15,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @version 1.0
  *
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder(value = {"mon", "tue", "wed", "thu", "fri", "sat", "sun"})
 public final class Hours extends AbstractEntity {
 
 	/** Monday */

@@ -57,9 +57,9 @@ public final class KeyRequestFilter implements ContainerRequestFilter {
 						Response response = ErrorUtils.error(Response.Status.UNAUTHORIZED, ErrorUtils.INVALID_KEY);
 						requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(response.getEntity()).build());
 					} else if (paramKey.equals(apiKey)) {
-						Key keyAdmin = new Key();
-						keyAdmin.setRole(Role.ADMIN);
-						requestContext.setProperty("key", keyAdmin);
+						Key readKey = new Key();
+						readKey.setRole(Role.ADMIN);
+						requestContext.setProperty("key", readKey);
 					} else {
 						requestContext.setProperty("key", key);
 					}

@@ -203,4 +203,32 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 		}
 		return res;
 	}
+
+	/**
+	 * @param catererId
+	 *            The {@link Caterer} id.
+	 * @return A list of {@link Dish} list.
+	 * @throws EpickurException
+	 *             if an epickur exception occurred
+	 */
+	public List<Dish> search(final String catererId) throws EpickurException {
+		MongoCursor<Document> cursor = null;
+		List<Dish> dishes = new ArrayList<Dish>();
+		Document find = new Document();
+		find.append("caterer._id", catererId);
+		try {
+			cursor = getColl().find(find).iterator();
+			while (cursor.hasNext()) {
+				Dish dish = Dish.getObject(cursor.next());
+				dishes.add(dish);
+			}
+		} catch (MongoException e) {
+			throw new EpickurDBException("readAllForOneCaterer", e.getMessage(), find, e);
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
+		return dishes;
+	}
 }

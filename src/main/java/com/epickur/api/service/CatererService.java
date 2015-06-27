@@ -20,8 +20,10 @@ import javax.ws.rs.core.Response;
 import org.joda.time.DateTime;
 
 import com.epickur.api.business.CatererBusiness;
+import com.epickur.api.business.DishBusiness;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.enumeration.Crud;
@@ -46,6 +48,8 @@ public final class CatererService {
 	private CatererBusiness catererBusiness;
 	/** Order Business */
 	private OrderBusiness orderBusiness;
+	/** Dish Business */
+	private DishBusiness dishBusiness;
 	/** Caterer validator */
 	private CatererValidator validator;
 
@@ -53,6 +57,7 @@ public final class CatererService {
 	public CatererService() {
 		this.catererBusiness = new CatererBusiness();
 		this.orderBusiness = new OrderBusiness();
+		this.dishBusiness = new DishBusiness();
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
 
@@ -423,6 +428,130 @@ public final class CatererService {
 		validator.checkRightsBefore(key.getRole(), Crud.READ);
 		List<Caterer> caterers = catererBusiness.readAll();
 		return Response.ok().entity(caterers).build();
+	}
+	// @formatter:off
+	/**
+	 * @api {get} /caterers/:id/dishes Search Dishes for a Caterer
+	 * @apiVersion 1.0.0
+	 * @apiName SearchDishesForOneCaterer
+	 * @apiGroup Caterers
+	 * @apiDescription Return a list containing all Dishes.
+	 * @apiPermission admin, super_user, user
+	 * 
+	 * @apiParam (Request: URL Parameter) {String} id Id of the Caterer.
+	 *
+	 * @apiSuccess (Response: List of JSON Object) {String} id Id of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {String} name Name of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {String} description Description of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {String} type Type of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {String} cookingTime Cooking time of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {String} difficultyLevel Difficulty level of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {Caterer} caterer Caterer of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {Ingredient[]} ingredients Ingredients of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {NutritionFact[]} nutritionFacts Nutrition fact of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {String} imageAfterUrl Image After URL of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {String} videoUrl Video URL of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {Date} createdAt Creation date of the Dish.
+	 * @apiSuccess (Response: List of JSON Object) {Date} updatedAt Last update of the Dish.
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *	HTTP/1.1 200 OK
+	 * [{
+	 *	"id": "558f2b85a557dbd2cb95d7f5",
+	 *	"name": "Fish and Chips",
+	 *	"description": "Fresh fish and chips",
+	 *	"type": "fish",
+	 *	"price": 500,
+	 *	"cookingTime": 5,
+	 *	"difficultyLevel": 1,
+	 *	"videoUrl": "http://www.google.com",
+	 *	"nutritionFacts": [{
+	 * 	    "name": "Calories",
+	 * 	    "value": 1250.0,
+	 * 	    "unit": "KJ"
+	 *	},
+	 *	{
+	 * 	    "name": "Proteins",
+	 * 	    "value": 750.5,
+	 * 	    "unit": "G"
+	 *	}],
+	 *	"ingredients": [{
+	 * 	    "name": "Fish",
+	 * 	    "sequence": 1,
+	 * 	    "quantity": 1.0,
+	 * 	    "measurementUnit": "G"
+	 *	},
+	 *	{
+	 * 	    "name": "Chips",
+	 * 	    "sequence": 2,
+	 * 	    "quantity": 1.0,
+	 * 	    "measurementUnit": "G"
+	 *	}],
+	 *	"caterer": {
+	 *		"id": "54e90015b634980ccd05e3be",
+	 *		"name": "Fish & Chips",
+	 *		"description": "The bast Fish & Chips down under",
+	 *		"manager": "Dean Prob",
+	 *		"email": "dprob@fishchips.com",
+	 *		"phone": "312-211-8913",
+	 *		"location": {
+	 * 			"address": {
+	 * 				"label": "Downtown area",
+	 * 				"houseNumber": "1",
+	 * 				"street": "Elizabeth Street",
+	 * 				"city": "Melbourne",
+	 * 				"postalCode": 32901,
+	 * 				"state": "Victoria",
+	 * 				"country": "Australia"
+	 * 			},
+	 * 			"geo": {
+	 * 				"type": "Point",
+	 * 				"coordinates": [144.96328, -37.814107]
+	 *  		}
+	 * 		},
+	 * 		"workingTimes": {
+	 * 			"hours": {
+	 * 				"mon": [{"open": 492,"close": 868},{"open": 1074,"close": 1395}],
+	 * 				"tue": [{"open": 517,"close": 831},{"open": 1059,"close": 1433}],
+	 * 				"wed": [{"open": 428,"close": 711},{"open": 1052,"close": 1397}],
+	 * 				"thu": [{"open": 529,"close": 889},{"open": 1034,"close": 1349}],
+	 * 				"fri": [{"open": 449,"close": 810},{"open": 1076,"close": 1373}]
+	 * 			},
+	 * 			"minimumPreparationTime": 30
+	 * 		},
+	 * 		"createdAt": 1424042592185,
+	 * 		"updatedAt": 1424042592185
+	 *  	},
+	 *	"createdAt": 1424042592185,
+	 *	"updatedAt": 1424042592185,
+	 *	"imageAfterUrl": "http://www.google.com"
+	 *}]
+	 *
+	 * @apiUse BadRequestError
+	 * @apiUse ForbiddenError
+	 * @apiUse InternalError
+	 */
+	// @formatter:on
+	/**
+	 * @param catererId
+	 *            The {@link Caterer} id
+	 * @param context
+	 *            The container context that contains the Key
+	 * @return
+	 * @throws EpickurException
+	 *             If an epickur exception occurred
+	 */
+	@GET
+	@Path("/{id}/dishes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response readDishes(
+			@PathParam("id") final String catererId,
+			@Context final ContainerRequestContext context) throws EpickurException {
+		Key key = (Key) context.getProperty("key");
+		validator.checkRightsBefore(key.getRole(), Crud.READ);
+		validator.checkId(catererId);
+		List<Dish> dishes = dishBusiness.searchDishesForOneCaterer(catererId);
+		return Response.ok().entity(dishes).build();
 	}
 
 	// @formatter:off

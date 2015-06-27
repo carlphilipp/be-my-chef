@@ -12,7 +12,7 @@ import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 
 /**
- * Called whenever an not found Exception occurs. It logs an error and build the response.
+ * Called whenever a not found Exception occurs. It logs an error and build the response.
  * 
  * @author cph
  * @version 1.0
@@ -26,6 +26,7 @@ public final class NotFoundExceptionMapper implements ExceptionMapper<NotFoundEx
 		DBObject bdb = BasicDBObjectBuilder.start().get();
 		bdb.put("error", Response.Status.NOT_FOUND.getStatusCode());
 		bdb.put("message", Response.Status.NOT_FOUND.getReasonPhrase());
+		bdb.put("description", "Endpoint not found");
 		return Response.status(Status.NOT_FOUND).entity(bdb).build();
 	}
 }
