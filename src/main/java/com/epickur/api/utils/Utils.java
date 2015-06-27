@@ -177,7 +177,7 @@ public final class Utils {
 	 *
 	 */
 	public static final class MyStrategy extends PropertyNamingStrategy {
-		/** **/
+		/** Serializer **/
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -307,7 +307,7 @@ public final class Utils {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Create tar.gz file
 	 * 

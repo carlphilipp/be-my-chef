@@ -51,7 +51,7 @@ public enum DishType {
 		return type;
 	}
 
-	/** The type **/
+	/** The type */
 	private String type;
 
 }

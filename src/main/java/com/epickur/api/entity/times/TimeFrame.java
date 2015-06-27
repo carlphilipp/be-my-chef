@@ -15,9 +15,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public final class TimeFrame extends AbstractEntity {
 
-	/** Open Time value 0 - 1440 **/
+	/** Open Time value 0 - 1440 */
 	private int open;
-	/** Open Time value 0 - 1440 **/
+	/** Open Time value 0 - 1440 */
 	private int close;
 
 	/**

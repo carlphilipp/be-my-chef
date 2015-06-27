@@ -24,14 +24,13 @@ public enum MeasurementUnit {
 	EACH("each", "Each", "each", false),
 	/** KiloJoules */
 	KJ("kJ", "KiloJoules", "kJ", true);
-
-	/** Short description **/
+	/** Short description */
 	private String shortDescription;
-	/** Description **/
+	/** Description */
 	private String description;
-	/** Symbol **/
+	/** Symbol */
 	private String symbol;
-	/** Metric **/
+	/** Metric */
 	private boolean metric;
 
 	/**

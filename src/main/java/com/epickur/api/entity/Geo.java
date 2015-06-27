@@ -29,7 +29,7 @@ public final class Geo extends AbstractEntity {
 
 	/** Type */
 	private String type = "Point";
-	/** Coordinates [ longitude, latitude] **/
+	/** Coordinates [ longitude, latitude] */
 	private Double[] coordinates;
 
 	/** Constructor */

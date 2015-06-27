@@ -24,9 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public final class WorkingTimes extends AbstractEntity {
 
-	/** Hours **/
+	/** Hours */
 	private Hours hours;
-	/** Minimum preparation time in minutes **/
+	/** Minimum preparation time in minutes */
 	private int minimumPreparationTime;
 
 	/**

@@ -17,19 +17,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public final class Hours extends AbstractEntity {
 
-	/** Monday **/
+	/** Monday */
 	private List<TimeFrame> mon;
-	/** Tuesday **/
+	/** Tuesday */
 	private List<TimeFrame> tue;
-	/** Wednesday **/
+	/** Wednesday */
 	private List<TimeFrame> wed;
-	/** Thursday **/
+	/** Thursday */
 	private List<TimeFrame> thu;
-	/** Friday **/
+	/** Friday */
 	private List<TimeFrame> fri;
-	/** Saturday **/
+	/** Saturday */
 	private List<TimeFrame> sat;
-	/** Sunday **/
+	/** Sunday */
 	private List<TimeFrame> sun;
 
 	/**

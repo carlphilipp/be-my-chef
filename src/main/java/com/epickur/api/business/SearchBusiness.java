@@ -18,10 +18,10 @@ import com.epickur.api.geocoder.here.GeocoderHereImpl;
  */
 public final class SearchBusiness {
 
-	/** Dish dao **/
+	/** Dish dao */
 	private DishDaoImpl dishDao;
 
-	/** The constructor **/
+	/** The constructor */
 	public SearchBusiness() {
 		this.dishDao = new DishDaoImpl();
 	}
