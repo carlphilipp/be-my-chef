@@ -140,7 +140,7 @@ public final class EmailTemplate {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@NAME@@", userName);
-		data.put("@@ADDRESS@@", Info.ADDRESS);
+		data.put("@@ADDRESS@@", Info.WEB_ADDRESS);
 		data.put("@@FOLDER@@", Info.FOLDER);
 		data.put("@@CHECK@@", code);
 		return data;

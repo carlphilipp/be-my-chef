@@ -93,4 +93,27 @@ public class EmailUtilsTest {
 		order.setDish(dish);
 		EmailUtils.emailFailOrder(user, order);
 	}
+	
+	@Test
+	public void emailCancelOrder(){
+		User user = new User();
+		user.setName("carl");
+		user.setEmail(EMAIL_TEST);
+
+		Order order = new Order();
+		order.setId(new ObjectId());
+		Dish dish = new Dish();
+		dish.setName("Kebab fries");
+		Caterer caterer = new Caterer();
+		caterer.setEmail(EMAIL_TEST);
+		caterer.setName("Kebab");
+		dish.setCaterer(caterer);
+		order.setDish(dish);
+		EmailUtils.emailCancelOrder(user, order);
+	}
+	
+	@Test
+	public void emailResetPassword() throws EpickurException{
+		EmailUtils.resetPassword("cp.harmant@gmail.com", new ObjectId().toHexString(), Security.generateRandomMd5());
+	}
 }
