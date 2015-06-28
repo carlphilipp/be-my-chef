@@ -993,6 +993,8 @@ public class UserIntegrationTest {
 		assertNotNull(jsonResult.get("createdAt").asText());
 		assertEquals("AUD", jsonResult.get("currency").asText());
 		assertNotNull(jsonResult.get("dish"));
+		assertNotNull(jsonResult.get("status"));
+		assertEquals("PENDING", jsonResult.get("status").asText());
 
 		// Update order
 		json = mapper.createObjectNode();

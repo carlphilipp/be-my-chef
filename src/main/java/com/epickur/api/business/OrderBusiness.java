@@ -139,6 +139,9 @@ public class OrderBusiness {
 		Order read = orderDao.read(order.getId().toHexString());
 		if (read != null) {
 			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Crud.UPDATE);
+			if (read.getStatus() != OrderStatus.PENDING) {
+				throw new EpickurException("It's not allowed to modify an order that has a " + order.getStatus() + " status");
+			}
 			return orderDao.update(order);
 		}
 		return null;

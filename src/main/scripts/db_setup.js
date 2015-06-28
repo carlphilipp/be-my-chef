@@ -391,6 +391,7 @@ db.dishes.insert(
     "description" : "A new order",
     "amount" : NumberInt(500),
     "currency" : "AUD",
+    "status" : "PENDING",
     "dish" : {
       "_id" : "553292c04c399b1733997513",
 	  	"name": "Thai Inbox",

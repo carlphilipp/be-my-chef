@@ -10,6 +10,7 @@ import com.epickur.api.dao.mongo.OrderDaoImpl;
 import com.epickur.api.dao.mongo.UserDaoImpl;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.email.EmailUtils;
 
@@ -40,13 +41,9 @@ public final class CancelOrderJob implements Job {
 			String userId = context.getJobDetail().getJobDataMap().getString("userId");
 			User user = userDao.read(userId);
 			LOG.info("Cancel order id: " + orderId + " with user id: " + userId);
-			if (order == null) {
-				LOG.error("Trying to cancel order (" + orderId + "), but the order was not found.");
-			}
-			if (user == null) {
-				LOG.error("Trying to cancel order (" + orderId + "), but the user (" + userId + ") was not found.");
-			}
 			if (user != null && order != null) {
+				order.setStatus(OrderStatus.CANCELED);
+				orderDao.update(order);
 				EmailUtils.emailCancelOrder(user, order);
 			}
 		} catch (EpickurException e) {
