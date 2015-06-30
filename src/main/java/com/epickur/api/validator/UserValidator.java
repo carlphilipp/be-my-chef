@@ -202,9 +202,9 @@ public final class UserValidator extends Validator {
 	 * @param check
 	 *            The check code
 	 */
-	public void checkCheckUser(final String name, final String check) {
-		if (StringUtils.isBlank(name)) {
-			throw new EpickurIllegalArgument("The parameter name is not allowed to be null or empty");
+	public void checkCheckUser(final String email, final String check) {
+		if (StringUtils.isBlank(email)) {
+			throw new EpickurIllegalArgument("The parameter email is not allowed to be null or empty");
 		}
 		if (StringUtils.isBlank(check)) {
 			throw new EpickurIllegalArgument("The parameter check is not allowed to be null or empty");

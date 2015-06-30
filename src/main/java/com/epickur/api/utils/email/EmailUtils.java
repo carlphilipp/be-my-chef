@@ -29,7 +29,7 @@ public final class EmailUtils {
 
 	private static void emailNewRegistrationUser(final String name, final String code, final String email) {
 		// Convert data to use email template
-		Map<String, String> emailData = EmailTemplate.convertToDataNewRegistrationUser(name, code);
+		Map<String, String> emailData = EmailTemplate.convertToDataNewRegistrationUser(name, email, code);
 		// Send an email to the user
 		Email.sendMail(EmailType.REGISTRATION_USER, emailData, new String[] { email });
 	}

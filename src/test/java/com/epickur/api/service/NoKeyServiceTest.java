@@ -70,7 +70,7 @@ public class NoKeyServiceTest {
 			idsToDelete.add(userResult.getId());
 
 			String check = result.getHeaderString("check");
-			Response result2 = noKeyService.checkUser(userResult.getName(), check);
+			Response result2 = noKeyService.checkUser(userResult.getEmail(), check);
 			if (result2.getEntity() != null) {
 				User catererResult2 = (User) result2.getEntity();
 				assertEquals(1, catererResult2.getAllow().intValue());

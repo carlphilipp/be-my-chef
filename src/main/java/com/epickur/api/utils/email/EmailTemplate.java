@@ -136,10 +136,11 @@ public final class EmailTemplate {
 	 *            The code
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataNewRegistrationUser(final String userName, final String code) {
+	public static Map<String, String> convertToDataNewRegistrationUser(final String userName, final String email, final String code) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@NAME@@", userName);
+		data.put("@@EMAIL@@", email);
 		data.put("@@ADDRESS@@", Info.WEB_ADDRESS);
 		data.put("@@FOLDER@@", Info.FOLDER);
 		data.put("@@CHECK@@", code);

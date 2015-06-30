@@ -263,26 +263,26 @@ public final class UserBusiness {
 	/**
 	 * Check if the code provided is correct and unlock the User
 	 * 
-	 * @param name
-	 *            The name of the User
+	 * @param email
+	 *            The email of the User
 	 * @param code
 	 *            The code provided by the API to the User
 	 * @return An updated User
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public User checkCode(final String name, final String code) throws EpickurException {
-		User dbUser = this.readWithName(name);
+	public User checkCode(final String email, final String code) throws EpickurException {
+		User dbUser = this.readWithEmail(email);
 		if (dbUser != null) {
 			String codeFound = Security.getUserCode(dbUser);
 			if (!codeFound.equals(code)) {
-				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, name);
+				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 			} else {
 				dbUser.setAllow(1);
 				dbUser = userDao.update(dbUser);
 			}
 		} else {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, name);
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 		}
 		dbUser.setPassword(null);
 		dbUser.setRole(null);

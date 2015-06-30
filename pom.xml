@@ -301,9 +301,19 @@
 			<groupId>com.wordnik</groupId>
 			<artifactId>mongo-admin-utils_2.10.0</artifactId>
 			<version>1.1.6</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.mongodb</groupId>
+					<artifactId>mongo-java-driver</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.module</groupId>
+					<artifactId>jackson-module-jaxb-annotations</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
-    <!-- Dropbox API -->
+		<!-- Dropbox API -->
 		<dependency>
 			<groupId>com.dropbox.core</groupId>
 			<artifactId>dropbox-core-sdk</artifactId>

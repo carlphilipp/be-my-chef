@@ -47,7 +47,7 @@ public final class NoKeyService {
 	// @formatter:off
 	/** 
 	 * 
-	 * @api {get} /nokey/check?name=:name&check=:check Verifiy a User
+	 * @api {get} /nokey/check?email=:email&check=:check Verifiy a User
 	 * @apiVersion 1.0.0
 	 * @apiName CheckUser
 	 * @apiGroup Users
@@ -93,10 +93,10 @@ public final class NoKeyService {
 	@Path("/check")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response checkUser(
-			@QueryParam("name") final String name,
+			@QueryParam("email") final String email,
 			@QueryParam("check") final String check) throws EpickurException {
-		this.validator.checkCheckUser(name, check);
-		User user = this.userBusiness.checkCode(name, check);
+		this.validator.checkCheckUser(email, check);
+		User user = this.userBusiness.checkCode(email, check);
 		return Response.ok().entity(user).build();
 	}
 

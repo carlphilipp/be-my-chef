@@ -105,11 +105,11 @@ public class UserBusinessTest {
 	@Test
 	public void testCheckCode() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
-		String name = new String(user.getName());
+		String email = new String(user.getEmail());
 		User created = business.create(user, false, false);
 		idsToDelete.add(created.getId());
 		String code = new String(created.getCode());
-		User checked = business.checkCode(name, code);
+		User checked = business.checkCode(email, code);
 		assertEquals(1, checked.getAllow().intValue());
 		assertNull(checked.getPassword());
 	}
