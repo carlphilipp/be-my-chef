@@ -12,7 +12,7 @@ import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Location;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
@@ -242,60 +242,6 @@ public class CatererValidatorTest {
 	}
 
 	@Test
-	public void testCheckRights() throws EpickurException {
-		CatererValidator service = new CatererValidator();
-		service.checkRightsBefore(Role.ADMIN, Crud.CREATE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRights2() throws EpickurException {
-		CatererValidator service = new CatererValidator();
-		service.checkRightsBefore(Role.SUPER_USER, Crud.CREATE, null);
-	}
-
-	@Test
-	public void testCheckRights3() throws EpickurException {
-		CatererValidator service = new CatererValidator();
-		service.checkRightsBefore(Role.SUPER_USER, Crud.READ, null);
-	}
-
-	@Test
-	public void testCheckRights4() throws EpickurException {
-		CatererValidator service = new CatererValidator();
-		service.checkRightsBefore(Role.SUPER_USER, Crud.UPDATE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRights5() throws EpickurException {
-		CatererValidator service = new CatererValidator();
-		service.checkRightsBefore(Role.SUPER_USER, Crud.DELETE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRights6() throws EpickurException {
-		CatererValidator service = new CatererValidator();
-		service.checkRightsBefore(Role.USER, Crud.CREATE, null);
-	}
-
-	@Test
-	public void testCheckRights7() throws EpickurException {
-		CatererValidator service = new CatererValidator();
-		service.checkRightsBefore(Role.USER, Crud.READ, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRights8() throws EpickurException {
-		CatererValidator service = new CatererValidator();
-		service.checkRightsBefore(Role.USER, Crud.UPDATE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRights9() throws EpickurException {
-		CatererValidator service = new CatererValidator();
-		service.checkRightsBefore(Role.USER, Crud.DELETE, null);
-	}
-
-	@Test
 	public void testCheckRightsAfter() throws EpickurException {
 		CatererValidator service = new CatererValidator();
 		Key key = TestUtils.generateRandomKey();
@@ -304,7 +250,7 @@ public class CatererValidatorTest {
 		key.setUserId(userId);
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		caterer.setCreatedBy(userId);
-		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
+		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Operation.UPDATE);
 	}
 
 	@Test
@@ -316,7 +262,7 @@ public class CatererValidatorTest {
 		key.setUserId(userId);
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		caterer.setCreatedBy(userId);
-		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
+		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Operation.UPDATE);
 	}
 
 	@Test
@@ -329,7 +275,7 @@ public class CatererValidatorTest {
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
-		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
+		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Operation.UPDATE);
 	}
 
 	@Test
@@ -344,7 +290,7 @@ public class CatererValidatorTest {
 		key.setUserId(userId);
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		caterer.setCreatedBy(userId);
-		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Crud.UPDATE);
+		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Operation.UPDATE);
 	}
 
 	@Test

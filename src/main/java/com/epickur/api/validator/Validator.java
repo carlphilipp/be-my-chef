@@ -3,10 +3,6 @@ package com.epickur.api.validator;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 
-import com.epickur.api.enumeration.Crud;
-import com.epickur.api.enumeration.Role;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 
 /**
@@ -60,58 +56,6 @@ public abstract class Validator {
 	 */
 	public static final String fieldNull(final String entity, final String field) {
 		return FIELD_NULL.replaceAll("@object@", entity).replaceAll("@field@", field);
-	}
-
-	/**
-	 * @param role
-	 *            The Role
-	 * @param action
-	 *            The Crud action
-	 * @throws EpickurException
-	 *             If an EpickurException occured
-	 */
-	public final void checkRightsBefore(final Role role, final Crud action) throws EpickurException {
-		checkRightsBefore(role, action, null);
-	}
-
-	/**
-	 * @param role
-	 *            The Role
-	 * @param action
-	 *            The Crud action
-	 * @param validatorType
-	 *            The validator type
-	 * @throws EpickurException
-	 *             If an EpickurException occured
-	 */
-	public final void checkRightsBefore(final Role role, final Crud action, final String validatorType) throws EpickurException {
-		String type = null;
-		if (validatorType == null) {
-			type = getEntity();
-		} else {
-			type = validatorType;
-		}
-		if (role != Role.ADMIN) {
-			if (type.equals("user")) {
-				if (action == Crud.CREATE || action == Crud.DELETE) {
-					throw new EpickurForbiddenException();
-				}
-			} else if (type.equals("caterer")) {
-				if (action == Crud.CREATE || action == Crud.DELETE || action == Crud.UPDATE && role == Role.USER) {
-					throw new EpickurForbiddenException();
-				}
-			} else if (type.equals("dish")) {
-				if (role == Role.USER && (action == Crud.CREATE || action == Crud.UPDATE || action == Crud.DELETE)) {
-					throw new EpickurForbiddenException();
-				}
-			} else if (type.equals("order")) {
-				if (action == Crud.DELETE) {
-					throw new EpickurForbiddenException();
-				}
-			} else {
-				throw new EpickurException("Type error while checking rights: " + type);
-			}
-		}
 	}
 
 	/**

@@ -9,7 +9,7 @@ import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.entity.Key;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
@@ -38,7 +38,7 @@ public final class DishValidator extends Validator {
 	public void checkCreateData(final Dish dish) {
 		checkData(dish);
 	}
-	
+
 	/**
 	 * @param id
 	 *            The Dish Id
@@ -115,6 +115,27 @@ public final class DishValidator extends Validator {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "caterer.id"));
 		}
 	}
+	
+	/**
+	 * @param role
+	 *            The Role
+	 * @param action
+	 *            The Crud Action
+	 * @param dish
+	 *            The Dish
+	 * @param catererDB
+	 *            The CatererDB
+	 * @param key
+	 *            The Key
+	 * @throws EpickurException
+	 *             If an EpickurExeption occured
+	 */
+	public void checkRightsBefore(final Role role, final Operation action, final Dish dish, final Caterer catererDB, final Key key)
+			throws EpickurException {
+		if (role == Role.SUPER_USER && action == Operation.CREATE && !key.getUserId().equals(catererDB.getCreatedBy())) {
+			throw new EpickurForbiddenException();
+		}
+	}
 
 	/**
 	 * @param steps
@@ -139,28 +160,6 @@ public final class DishValidator extends Validator {
 	/**
 	 * @param role
 	 *            The Role
-	 * @param action
-	 *            The Crud Action
-	 * @param dish
-	 *            The Dish
-	 * @param catererDB
-	 *            The CatererDB
-	 * @param key
-	 *            The Key
-	 * @throws EpickurException
-	 *             If an EpickurExeption occured
-	 */
-	public void checkRightsBefore(final Role role, final Crud action, final Dish dish, final Caterer catererDB, final Key key)
-			throws EpickurException {
-		if (role == Role.SUPER_USER && action == Crud.CREATE && !key.getUserId().equals(catererDB.getCreatedBy())) {
-			throw new EpickurForbiddenException();
-		}
-		super.checkRightsBefore(role, action);
-	}
-
-	/**
-	 * @param role
-	 *            The Role
 	 * @param userId
 	 *            The User Id
 	 * @param dish
@@ -168,9 +167,9 @@ public final class DishValidator extends Validator {
 	 * @param action
 	 *            The action
 	 */
-	public void checkRightsAfter(final Role role, final ObjectId userId, final Dish dish, final Crud action) {
+	public void checkRightsAfter(final Role role, final ObjectId userId, final Dish dish, final Operation action) {
 		if (role != Role.ADMIN) {
-			if ((action == Crud.UPDATE || action == Crud.DELETE) && !dish.getCreatedBy().equals(userId)) {
+			if ((action == Operation.UPDATE || action == Operation.DELETE) && !dish.getCreatedBy().equals(userId)) {
 				throw new EpickurForbiddenException();
 			}
 		}

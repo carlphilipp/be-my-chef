@@ -5,7 +5,7 @@ import java.util.List;
 import com.epickur.api.dao.mongo.DishDaoImpl;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.validator.DishValidator;
 import com.epickur.api.validator.FactoryValidator;
@@ -94,7 +94,7 @@ public class DishBusiness {
 	 */
 	public final Dish update(final Dish dish, final Key key) throws EpickurException {
 		Dish read = dao.read(dish.getId().toHexString());
-		validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Crud.UPDATE);
+		validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
 		return dao.update(dish);
 	}
 
@@ -111,7 +111,7 @@ public class DishBusiness {
 	 */
 	public final boolean delete(final String id, final Key key) throws EpickurException {
 		Dish read = dao.read(id);
-		validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Crud.DELETE);
+		validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.DELETE);
 		return dao.delete(id);
 	}
 }

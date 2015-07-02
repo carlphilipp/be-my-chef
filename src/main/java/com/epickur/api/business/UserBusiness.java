@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 import com.epickur.api.dao.mongo.UserDaoImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurDuplicateKeyException;
 import com.epickur.api.exception.EpickurException;
@@ -112,7 +112,7 @@ public final class UserBusiness {
 	public User read(final String id, final Key key) throws EpickurException {
 		User res = userDao.read(id);
 		if (res != null) {
-			validator.checkUserRightsAfter(key.getRole(), key.getUserId(), res, Crud.READ);
+			validator.checkUserRightsAfter(key.getRole(), key.getUserId(), res, Operation.READ);
 			res.setPassword(null);
 			res.setRole(null);
 		}
@@ -173,7 +173,7 @@ public final class UserBusiness {
 	 */
 	public User update(final User user, final Key key) throws EpickurException {
 		User read = userDao.read(user.getId().toHexString());
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), read, Crud.UPDATE);
+		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
 		User res = userDao.update(user);
 		if (res != null) {
 			// We do not send back the password or the role

@@ -13,7 +13,7 @@ import com.epickur.api.entity.Location;
 import com.epickur.api.entity.times.Hours;
 import com.epickur.api.entity.times.TimeFrame;
 import com.epickur.api.entity.times.WorkingTimes;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
@@ -227,10 +227,10 @@ public final class CatererValidator extends Validator {
 	 * @throws EpickurException
 	 *             If an EpickurException occured
 	 */
-	public void checkRightsAfter(final Role role, final ObjectId userId, final Caterer caterer, final Crud action) throws EpickurException {
+	public void checkRightsAfter(final Role role, final ObjectId userId, final Caterer caterer, final Operation action) throws EpickurException {
 		if (role != Role.ADMIN) {
-			if (action != Crud.READ) {
-				if (action == Crud.UPDATE && role == Role.SUPER_USER) {
+			if (action != Operation.READ) {
+				if (action == Operation.UPDATE && role == Role.SUPER_USER) {
 					if (!caterer.getCreatedBy().equals(userId)) {
 						throw new EpickurForbiddenException();
 					}

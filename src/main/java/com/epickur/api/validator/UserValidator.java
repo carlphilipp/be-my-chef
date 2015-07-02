@@ -8,7 +8,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.times.WorkingTimes;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
@@ -238,10 +238,10 @@ public final class UserValidator extends Validator {
 	 * @throws EpickurException
 	 *             If a EpickurException occured
 	 */
-	public void checkUserRightsAfter(final Role role, final ObjectId userId, final User user, final Crud action) throws EpickurException {
+	public void checkUserRightsAfter(final Role role, final ObjectId userId, final User user, final Operation action) throws EpickurException {
 		if (role != Role.ADMIN) {
-			if ((action == Crud.READ && (role == Role.USER || role == Role.SUPER_USER))
-					|| (action == Crud.UPDATE && (role == Role.USER || role == Role.SUPER_USER))) {
+			if ((action == Operation.READ && (role == Role.USER || role == Role.SUPER_USER))
+					|| (action == Operation.UPDATE && (role == Role.USER || role == Role.SUPER_USER))) {
 				if (!userId.equals(user.getId())) {
 					throw new EpickurForbiddenException();
 				}
@@ -261,12 +261,12 @@ public final class UserValidator extends Validator {
 	 * @param action
 	 *            The Crud action
 	 */
-	public void checkOrderRightsAfter(final Role role, final ObjectId userId, final Order order, final Crud action) {
+	public void checkOrderRightsAfter(final Role role, final ObjectId userId, final Order order, final Operation action) {
 		if (role != Role.ADMIN) {
-			if (action == Crud.DELETE) {
+			if (action == Operation.DELETE) {
 				throw new EpickurForbiddenException();
 			}
-			if (action == Crud.READ || action == Crud.UPDATE) {
+			if (action == Operation.READ || action == Operation.UPDATE) {
 				if (!userId.equals(order.getCreatedBy())) {
 					throw new EpickurForbiddenException();
 				}

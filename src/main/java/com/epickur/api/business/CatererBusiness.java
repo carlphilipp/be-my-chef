@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 import com.epickur.api.dao.mongo.CatererDaoImpl;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Order;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.validator.CatererValidator;
@@ -85,7 +85,7 @@ public class CatererBusiness {
 	public final Caterer update(final Caterer caterer, final Role role, final ObjectId userId) throws EpickurException {
 		Caterer read = dao.read(caterer.getId().toHexString());
 		if (read != null) {
-			validator.checkRightsAfter(role, userId, read, Crud.UPDATE);
+			validator.checkRightsAfter(role, userId, read, Operation.UPDATE);
 			return dao.update(caterer);
 		}
 		return read;

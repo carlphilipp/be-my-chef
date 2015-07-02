@@ -24,9 +24,11 @@ import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.EndpointType;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -116,7 +118,7 @@ public final class UserService {
 			final User user,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.CREATE);
+		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.USER);
 		validator.checkCreateUser(user);
 		User result = userBusiness.create(user, sendEmail, autoValidate);
 		// We add to the header the check code. Can be useful for tests or developers.
@@ -171,7 +173,7 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response read(@PathParam("id") final String id, @Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.READ);
+		AccessRights.check(key.getRole(), Operation.READ, EndpointType.USER);
 		validator.checkId(id);
 		User user = userBusiness.read(id, key);
 		if (user == null) {
@@ -238,7 +240,7 @@ public final class UserService {
 			final User user,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.UPDATE);
+		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.USER);
 		validator.checkUpdateUser(id, user);
 		if (StringUtils.isNotBlank(user.getPassword()) && StringUtils.isNotBlank(user.getNewPassword())) {
 			userBusiness.injectNewPassword(user);
@@ -293,7 +295,7 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(@PathParam("id") final String id, @Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.DELETE);
+		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.USER);
 		validator.checkId(id);
 		boolean isDeleted = userBusiness.delete(id);
 		if (isDeleted) {
@@ -347,7 +349,7 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readAll(@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.READ);
+		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.USER);
 		List<User> users = userBusiness.readAll();
 		return Response.ok().entity(users).build();
 	}
@@ -417,7 +419,7 @@ public final class UserService {
 			@PathParam("orderId") final String orderId,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.READ, "order");
+		AccessRights.check(key.getRole(), Operation.READ, EndpointType.ORDER);
 		validator.checkReadOneOrder(id, orderId);
 		Order order = orderBusiness.read(orderId, key);
 		if (order == null) {
@@ -505,7 +507,7 @@ public final class UserService {
 			@PathParam("id") final String id,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.READ, "order");
+		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.ORDER);
 		validator.checkReadAllOrder(id, key);
 		List<Order> orders = orderBusiness.readAllWithUserId(id);
 		return Response.ok().entity(orders).build();
@@ -583,7 +585,10 @@ public final class UserService {
 	public Response createOneOrder(
 			@PathParam("id") final String userId,
 			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
-			final Order order) throws EpickurException {
+			final Order order,
+			@Context final ContainerRequestContext context) throws EpickurException {
+		Key key = (Key) context.getProperty("key");
+		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.ORDER);
 		validator.checkCreateOneOrder(userId, order);
 		Order result = orderBusiness.create(userId, order, sendEmail);
 		return Response.ok().entity(result).build();
@@ -661,7 +666,7 @@ public final class UserService {
 			final Order order,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.UPDATE, "order");
+		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.ORDER);
 		validator.checkUpdateOneOrder(id, orderId, order);
 		Order result = orderBusiness.update(order, key);
 		if (result == null) {
@@ -716,7 +721,7 @@ public final class UserService {
 			@PathParam("orderId") final String orderId,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.DELETE, "order");
+		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.ORDER);
 		validator.checkDeleteOneOrder(id, orderId);
 		boolean isDeleted = orderBusiness.delete(orderId);
 		if (isDeleted) {
@@ -764,7 +769,7 @@ public final class UserService {
 			final ObjectNode node,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkResetRightsBefore(key.getRole());
+		AccessRights.check(key.getRole(), Operation.RESET_PASSWORD, EndpointType.USER);
 		validator.checkResetPasswordData(node);
 		String email = node.get("email").asText();
 		userBusiness.resetPasswordFirstStep(email);

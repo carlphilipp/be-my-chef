@@ -11,9 +11,9 @@ public enum Role {
 	/** User role */
 	USER, 
 	/** Super user role */
-	SUPER_USER;
+	SUPER_USER,
 	/** Read role. Only Caterer and Dishes */
-	//READ;
+	EPICKUR_WEB;
 
 	/**
 	 * Get enum from str

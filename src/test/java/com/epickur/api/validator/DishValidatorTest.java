@@ -11,8 +11,7 @@ import org.junit.rules.ExpectedException;
 import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
-import com.epickur.api.entity.Key;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
@@ -233,75 +232,11 @@ public class DishValidatorTest {
 	 */
 
 	@Test
-	public void testCheckRightsBefore() throws EpickurException {
-		thrown.expect(EpickurForbiddenException.class);
-
-		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
-		Key key = TestUtils.generateRandomKey();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.CREATE, dish, dish.getCaterer(), key);
-	}
-
-	@Test
-	public void checkRightsBefore2() throws EpickurException {
-		DishValidator validator = new DishValidator();
-		validator.checkRightsBefore(Role.ADMIN, Crud.CREATE, null);
-	}
-
-	@Test
-	public void checkRightsBefore3() throws EpickurException {
-		DishValidator validator = new DishValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.CREATE, null);
-	}
-
-	@Test
-	public void checkRightsBefore4() throws EpickurException {
-		DishValidator validator = new DishValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.READ, null);
-	}
-
-	@Test
-	public void checkRightsBefore5() throws EpickurException {
-		DishValidator validator = new DishValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.UPDATE, null);
-	}
-
-	@Test
-	public void checkRightsBefore6() throws EpickurException {
-		DishValidator validator = new DishValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.DELETE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void checkRightsBefore7() throws EpickurException {
-		DishValidator validator = new DishValidator();
-		validator.checkRightsBefore(Role.USER, Crud.CREATE, null);
-	}
-
-	@Test
-	public void checkRightsBefore8() throws EpickurException {
-		DishValidator validator = new DishValidator();
-		validator.checkRightsBefore(Role.USER, Crud.READ, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void checkRightsBefore9() throws EpickurException {
-		DishValidator validator = new DishValidator();
-		validator.checkRightsBefore(Role.USER, Crud.UPDATE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void checkRightsBefore10() throws EpickurException {
-		DishValidator validator = new DishValidator();
-		validator.checkRightsBefore(Role.USER, Crud.DELETE, null);
-	}
-
-	@Test
 	public void testCheckRightsAfter() throws EpickurException {
 		thrown.expect(EpickurForbiddenException.class);
 
 		DishValidator validator = new DishValidator();
 		Dish dish = TestUtils.generateRandomDish();
-		validator.checkRightsAfter(Role.SUPER_USER, new ObjectId(), dish, Crud.UPDATE);
+		validator.checkRightsAfter(Role.SUPER_USER, new ObjectId(), dish, Operation.UPDATE);
 	}
 }

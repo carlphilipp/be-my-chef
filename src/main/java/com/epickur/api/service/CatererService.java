@@ -26,10 +26,12 @@ import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.EndpointType;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
+import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.CatererValidator;
 import com.epickur.api.validator.FactoryValidator;
 import com.mongodb.BasicDBObjectBuilder;
@@ -136,7 +138,7 @@ public final class CatererService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create(final Caterer caterer, @Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.CREATE);
+		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.CATERER);
 		validator.checkCreateCaterer(caterer);
 		caterer.setCreatedBy(key.getUserId());
 		Caterer result = catererBusiness.create(caterer);
@@ -207,7 +209,9 @@ public final class CatererService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") final String id) throws EpickurException {
+	public Response read(@PathParam("id") final String id, @Context final ContainerRequestContext context) throws EpickurException {
+		Key key = (Key) context.getProperty("key");
+		AccessRights.check(key.getRole(), Operation.READ, EndpointType.CATERER);
 		validator.checkId(id);
 		Caterer caterer = catererBusiness.read(id);
 		if (caterer == null) {
@@ -299,7 +303,7 @@ public final class CatererService {
 			final Caterer caterer,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.UPDATE);
+		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.CATERER);
 		validator.checkUpdateCaterer(id, caterer);
 		Caterer result = catererBusiness.update(caterer, key.getRole(), key.getUserId());
 		if (result == null) {
@@ -351,7 +355,7 @@ public final class CatererService {
 			@PathParam("id") final String id,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.DELETE);
+		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.CATERER);
 		validator.checkId(id);
 		boolean resBool = catererBusiness.delete(id);
 		if (resBool) {
@@ -425,7 +429,7 @@ public final class CatererService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readAll(@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.READ);
+		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.CATERER);
 		List<Caterer> caterers = catererBusiness.readAll();
 		return Response.ok().entity(caterers).build();
 	}
@@ -548,7 +552,7 @@ public final class CatererService {
 			@PathParam("id") final String catererId,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
-		validator.checkRightsBefore(key.getRole(), Crud.READ);
+		AccessRights.check(key.getRole(), Operation.READ_DISHES, EndpointType.CATERER);
 		validator.checkId(catererId);
 		List<Dish> dishes = dishBusiness.searchDishesForOneCaterer(catererId);
 		return Response.ok().entity(dishes).build();
@@ -601,7 +605,10 @@ public final class CatererService {
 			@PathParam("id") final String id,
 			@QueryParam("startDate") final String start,
 			@QueryParam("endDate") final String end,
-			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format) throws EpickurException {
+			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format,
+			@Context final ContainerRequestContext context) throws EpickurException {
+		Key key = (Key) context.getProperty("key");
+		AccessRights.check(key.getRole(), Operation.PAYEMENT_INFO, EndpointType.CATERER);
 		DateTime startDate = null;
 		DateTime endDate = null;
 		if (start != null) {

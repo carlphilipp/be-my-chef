@@ -14,7 +14,7 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
@@ -245,120 +245,6 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckRights() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.ADMIN, Crud.CREATE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRights2() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.CREATE, null);
-	}
-
-	@Test
-	public void testCheckRights3() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.READ, null);
-	}
-
-	@Test
-	public void testCheckRights4() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.UPDATE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRights5() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.DELETE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRights6() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.USER, Crud.CREATE, null);
-	}
-
-	@Test
-	public void testCheckRights7() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.USER, Crud.READ, null);
-	}
-
-	@Test
-	public void testCheckRights8() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.USER, Crud.UPDATE, null);
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRights9() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.USER, Crud.DELETE, null);
-	}
-
-	@Test
-	public void testCheckRightsOrder() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.ADMIN, Crud.CREATE, "order");
-	}
-
-	@Test
-	public void testCheckRightsOrder2() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.CREATE, "order");
-	}
-
-	@Test
-	public void testCheckRightsOrder3() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.READ, "order");
-	}
-
-	@Test
-	public void testCheckRightsOrder4() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.UPDATE, "order");
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRightsOrder5() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.SUPER_USER, Crud.DELETE, "order");
-	}
-
-	@Test
-	public void testCheckRightsOrder6() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.USER, Crud.CREATE, "order");
-	}
-
-	@Test
-	public void testCheckRightsOrder7() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.USER, Crud.READ, "order");
-	}
-
-	@Test
-	public void testCheckRightsOrder8() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.USER, Crud.UPDATE, "order");
-	}
-
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckRightsOrder9() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.USER, Crud.DELETE, "order");
-	}
-
-	@Test(expected = EpickurException.class)
-	public void testCheckRightsOrder10() throws EpickurException {
-		UserValidator validator = new UserValidator();
-		validator.checkRightsBefore(Role.USER, Crud.DELETE, "unknown type");
-	}
-
-	@Test
 	public void testCheckRightsAfter() throws EpickurException {
 		UserValidator validator = new UserValidator();
 		Key key = TestUtils.generateRandomKey();
@@ -367,7 +253,7 @@ public class UserValidatorTest {
 		key.setUserId(userId);
 		User user = TestUtils.generateRandomUser();
 		user.setId(userId);
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.READ);
+		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.READ);
 	}
 
 	@Test
@@ -379,7 +265,7 @@ public class UserValidatorTest {
 		key.setUserId(userId);
 		User user = TestUtils.generateRandomUser();
 		user.setId(userId);
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.UPDATE);
+		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.UPDATE);
 	}
 
 	@Test
@@ -391,7 +277,7 @@ public class UserValidatorTest {
 		key.setUserId(userId);
 		User user = TestUtils.generateRandomUser();
 		user.setId(userId);
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.READ);
+		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.READ);
 	}
 
 	@Test
@@ -403,7 +289,7 @@ public class UserValidatorTest {
 		key.setUserId(userId);
 		User user = TestUtils.generateRandomUser();
 		user.setId(userId);
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.UPDATE);
+		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.UPDATE);
 	}
 
 	@Test(expected = EpickurForbiddenException.class)
@@ -415,7 +301,7 @@ public class UserValidatorTest {
 		key.setUserId(userId);
 		User user = TestUtils.generateRandomUser();
 		user.setId(new ObjectId());
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.UPDATE);
+		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.UPDATE);
 	}
 
 	@Test(expected = EpickurException.class)
@@ -424,7 +310,7 @@ public class UserValidatorTest {
 		Key key = TestUtils.generateRandomKey();
 		key.setRole(Role.USER);
 		User user = TestUtils.generateRandomUser();
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Crud.CREATE);
+		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.CREATE);
 	}
 
 	@Test(expected = EpickurForbiddenException.class)
@@ -432,7 +318,7 @@ public class UserValidatorTest {
 			APIException {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
-		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Crud.READ);
+		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Operation.READ);
 	}
 
 	@Test(expected = EpickurForbiddenException.class)
@@ -440,6 +326,6 @@ public class UserValidatorTest {
 			APIException {
 		UserValidator validator = new UserValidator();
 		Order order = TestUtils.generateRandomOrder();
-		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Crud.DELETE);
+		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Operation.DELETE);
 	}
 }

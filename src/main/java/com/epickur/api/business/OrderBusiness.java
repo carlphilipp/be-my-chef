@@ -11,7 +11,7 @@ import com.epickur.api.dao.mongo.UserDaoImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
-import com.epickur.api.enumeration.Crud;
+import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
@@ -94,7 +94,7 @@ public class OrderBusiness {
 	public final Order read(final String id, final Key key) throws EpickurException {
 		Order order = orderDao.read(id);
 		if (order != null) {
-			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Crud.READ);
+			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Operation.READ);
 			return order;
 		}
 		return null;
@@ -138,7 +138,7 @@ public class OrderBusiness {
 	public final Order update(final Order order, final Key key) throws EpickurException {
 		Order read = orderDao.read(order.getId().toHexString());
 		if (read != null) {
-			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Crud.UPDATE);
+			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
 			if (read.getStatus() != OrderStatus.PENDING) {
 				throw new EpickurException("It's not allowed to modify an order that has a " + order.getStatus() + " status");
 			}

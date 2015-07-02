@@ -1,11 +1,11 @@
 package com.epickur.api.service;
 
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.hamcrest.Matchers.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class DishServiceTest {
 			fail("Fail");
 		}
 	}
-	
+
 	@Test
 	public void testCreateFail2() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
@@ -122,7 +122,7 @@ public class DishServiceTest {
 			assertNotNull(dishResult.getId());
 			idsToDelete.add(dishResult.getId());
 
-			Response result2 = dishService.read(dishResult.getId().toHexString());
+			Response result2 = dishService.read(dishResult.getId().toHexString(), context);
 			if (result2.getEntity() != null) {
 				statusCode = result2.getStatus();
 				assertEquals("Wrong status code: " + statusCode + " with " + result2.getEntity(), 200, statusCode);
@@ -139,7 +139,7 @@ public class DishServiceTest {
 
 	@Test
 	public void testReadFail() throws EpickurException {
-		Response result = dishService.read(new ObjectId().toHexString());
+		Response result = dishService.read(new ObjectId().toHexString(), context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
 			assertEquals(404, dbObject.get("error"));
@@ -150,7 +150,7 @@ public class DishServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testReadFail2() throws EpickurException {
-		Response result = dishService.read(null);
+		Response result = dishService.read(null, context);
 		if (result.getEntity() != null) {
 			DBObject dbObject = (DBObject) result.getEntity();
 			assertEquals(500, dbObject.get("error"));
@@ -318,9 +318,9 @@ public class DishServiceTest {
 			fail("Dish returned is null");
 		}
 	}
-	
+
 	// Search dish
-	
+
 	@Test
 	public void testSearch() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
@@ -340,7 +340,7 @@ public class DishServiceTest {
 			fail("Dish returned is null");
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSearch2() throws EpickurException {
@@ -358,20 +358,21 @@ public class DishServiceTest {
 			idsToDelete.add(dishResult.getId());
 			idsToDeleteCaterer.add(dishResult.getCaterer().getId());
 			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dishResult.getCaterer().getWorkingTimes());
-			Response result2 = dishService.search(pickupdate, dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000);
+			Response result2 = dishService.search(pickupdate, dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000, context);
 			if (result2.getEntity() != null) {
 				List<Dish> dishes = (List<Dish>) result2.getEntity();
 				assertNotNull(dishes);
-				Assert.assertThat("Failed with pickupdate: " + pickupdate + ", and workingTimes: " + dishResult.getCaterer().getWorkingTimes(), dishes.size(),
+				Assert.assertThat("Failed with pickupdate: " + pickupdate + ", and workingTimes: " + dishResult.getCaterer().getWorkingTimes(),
+						dishes.size(),
 						greaterThanOrEqualTo(1));
 				boolean found = false;
-				for(Dish temp : dishes){
-					if(dishResult.getName().equals(temp.getName())){
+				for (Dish temp : dishes) {
+					if (dishResult.getName().equals(temp.getName())) {
 						found = true;
 						break;
 					}
 				}
-				if(!found){
+				if (!found) {
 					fail(dishResult.getName() + " not found in the result.");
 				}
 			} else {
@@ -381,13 +382,13 @@ public class DishServiceTest {
 			fail("Dish returned is null");
 		}
 	}
-	
+
 	@Test
 	public void testSearch3() throws EpickurException, IOException {
 		TestUtils.cleanDB();
 		Dish dish = TestUtils.generateRandomDish();
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		Response result = dishService.search(pickupdate, dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000);
+		Response result = dishService.search(pickupdate, dish.getType().getType(), 100, null, "832 W. Wrightwood, Chicago", 3000, context);
 		if (result.getEntity() != null) {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
@@ -401,39 +402,39 @@ public class DishServiceTest {
 			fail("List of dish returned is null");
 		}
 	}
-	
+
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail() throws EpickurException {
-		dishService.search(null, null, null, null, null, null);
+		dishService.search(null, null, null, null, null, null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail2() throws EpickurException {
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		dishService.search(pickupdate, null, 8, null, "", null);
+		dishService.search(pickupdate, null, 8, null, "", null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail3() throws EpickurException {
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		dishService.search(pickupdate, DishType.FISH.getType(), null, null, null, null);
+		dishService.search(pickupdate, DishType.FISH.getType(), null, null, null, null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail4() throws EpickurException {
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		dishService.search(pickupdate, DishType.FISH.getType(), 8, null, "", null);
+		dishService.search(pickupdate, DishType.FISH.getType(), 8, null, "", null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail5() throws EpickurException {
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		dishService.search(pickupdate, DishType.FISH.getType(), 0, null, null, null);
+		dishService.search(pickupdate, DishType.FISH.getType(), 0, null, null, null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail6() throws EpickurException {
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		dishService.search(pickupdate, DishType.FISH.getType(), 0, null, "", null);
+		dishService.search(pickupdate, DishType.FISH.getType(), 0, null, "", null, context);
 	}
 }

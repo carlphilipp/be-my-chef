@@ -132,7 +132,7 @@ public class CatererServiceTest {
 			assertNotNull(catererResult.getId());
 			idsCaterers.add(catererResult.getId());
 			String id = catererResult.getId().toHexString();
-			Response result2 = catererService.read(id);
+			Response result2 = catererService.read(id, context);
 			if (result2.getEntity() != null) {
 				Caterer catererResult2 = (Caterer) result.getEntity();
 				assertEquals(catererResult, catererResult2);
@@ -149,7 +149,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.PARAM_ID_NULL);
 
-		Response result = catererService.read(null);
+		Response result = catererService.read(null, context);
 		if (result.getEntity() != null) {
 			DBObject obj = (DBObject) result.getEntity();
 			assertEquals(500, obj.get("error"));
@@ -401,7 +401,7 @@ public class CatererServiceTest {
 				DBObject deleted = (DBObject) result2.getEntity();
 				assertTrue((Boolean) deleted.get("deleted"));
 
-				Response result3 = catererService.read(catererResult.getId().toHexString());
+				Response result3 = catererService.read(catererResult.getId().toHexString(), context);
 				DBObject dbObject = (DBObject) result3.getEntity();
 				assertEquals(404, dbObject.get("error"));
 			}
@@ -437,7 +437,7 @@ public class CatererServiceTest {
 		Order order3 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order3);
 
-		Response result = catererService.paymentInfo(caterer.getId().toHexString(), null, null, null);
+		Response result = catererService.paymentInfo(caterer.getId().toHexString(), null, null, null, context);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
 			DBObject entityResult = (DBObject) result.getEntity();
@@ -462,7 +462,7 @@ public class CatererServiceTest {
 		String start = "01/01/2015";
 		String defaultFormat = "MM/dd/yyyy";
 
-		Response result = catererService.paymentInfo(caterer.getId().toHexString(), start, null, defaultFormat);
+		Response result = catererService.paymentInfo(caterer.getId().toHexString(), start, null, defaultFormat, context);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
 			DBObject entityResult = (DBObject) result.getEntity();
@@ -488,7 +488,7 @@ public class CatererServiceTest {
 		String end = "01/02/2015";
 		String defaultFormat = "MM/dd/yyyy";
 
-		Response result = catererService.paymentInfo(caterer.getId().toHexString(), start, end, defaultFormat);
+		Response result = catererService.paymentInfo(caterer.getId().toHexString(), start, end, defaultFormat, context);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
 			DBObject entityResult = (DBObject) result.getEntity();
@@ -503,7 +503,7 @@ public class CatererServiceTest {
 		String end = "01/02/2015";
 		String defaultFormat = "MM/dd/yyyy";
 
-		Response result = catererService.paymentInfo(new ObjectId().toHexString(), start, end, defaultFormat);
+		Response result = catererService.paymentInfo(new ObjectId().toHexString(), start, end, defaultFormat, context);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
 			DBObject entityResult = (DBObject) result.getEntity();
