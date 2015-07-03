@@ -21,21 +21,19 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
-import com.epickur.api.business.SearchBusiness;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
-import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.DishValidator;
 import com.epickur.api.validator.FactoryValidator;
-import com.epickur.api.validator.SearchValidator;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 
@@ -54,19 +52,12 @@ public final class DishService {
 	private CatererBusiness catererBusiness;
 	/** Service validator */
 	private DishValidator validator;
-	/** Service validator */
-	private SearchValidator searchValidator;
-	/** Search Business */
-	private SearchBusiness searchBusiness;
 
 	/** Constructor */
 	public DishService() {
 		this.dishBusiness = new DishBusiness();
 		this.catererBusiness = new CatererBusiness();
 		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
-		
-		this.searchBusiness = new SearchBusiness();
-		this.searchValidator = (SearchValidator) FactoryValidator.getValidator("search");
 	}
 
 	// @formatter:off
@@ -459,7 +450,7 @@ public final class DishService {
 			return ErrorUtils.notFound(ErrorUtils.DISH_NOT_FOUND, id);
 		}
 	}
-	
+
 	// @formatter:off
 	/** 
 	 * 
@@ -580,7 +571,7 @@ public final class DishService {
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.SEARCH_DISH, EndpointType.DISH);
-		searchValidator.checkSearch(pickupdate, types, at, searchtext);
+		validator.checkSearch(pickupdate, types, at, searchtext);
 		List<DishType> dishTypes = Utils.stringToListDishType(types);
 		Geo geo = null;
 		if (!StringUtils.isBlank(at)) {
@@ -589,7 +580,7 @@ public final class DishService {
 		Object[] result = Utils.parsePickupdate(pickupdate);
 		String day = (String) result[0];
 		Integer minutes = (Integer) result[1];
-		List<Dish> dishes = this.searchBusiness.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
+		List<Dish> dishes = this.dishBusiness.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
 		return Response.ok().entity(dishes).build();
 	}
 }

@@ -4,9 +4,13 @@ import java.util.List;
 
 import com.epickur.api.dao.mongo.DishDaoImpl;
 import com.epickur.api.entity.Dish;
+import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.geocoder.IGeocoder;
+import com.epickur.api.geocoder.here.GeocoderHereImpl;
 import com.epickur.api.validator.DishValidator;
 import com.epickur.api.validator.FactoryValidator;
 
@@ -69,19 +73,6 @@ public class DishBusiness {
 	}
 
 	/**
-	 * Search all dishes for one caterer.
-	 * 
-	 * @param catererId
-	 *            The caterer id
-	 * @return A list of {@link Dish}
-	 * @throws EpickurException
-	 *             If an ${@link EpickurException} occurred
-	 */
-	public final List<Dish> searchDishesForOneCaterer(final String catererId) throws EpickurException {
-		return dao.search(catererId);
-	}
-
-	/**
 	 * Update a {@link Dish}
 	 * 
 	 * @param dish
@@ -113,5 +104,47 @@ public class DishBusiness {
 		Dish read = dao.read(id);
 		validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.DELETE);
 		return dao.delete(id);
+	}
+
+	/**
+	 * Search all dishes for one caterer.
+	 * 
+	 * @param catererId
+	 *            The caterer id
+	 * @return A list of {@link Dish}
+	 * @throws EpickurException
+	 *             If an ${@link EpickurException} occurred
+	 */
+	public final List<Dish> searchDishesForOneCaterer(final String catererId) throws EpickurException {
+		return dao.search(catererId);
+	}
+
+	/**
+	 * Search a list of Dish
+	 * 
+	 * @param type
+	 *            The type of Dish
+	 * @param limit
+	 *            The number max of result
+	 * @param searchtext
+	 *            The address
+	 * @param geo
+	 *            The geo location
+	 * @param distance
+	 *            The distance
+	 * @return A list of Dish
+	 * @throws EpickurException
+	 *             If an epickur exception occurred
+	 */
+	public List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
+			final String searchtext, final int distance)
+			throws EpickurException {
+		if (geo == null) {
+			IGeocoder geocoder = new GeocoderHereImpl();
+			Geo geoFound = geocoder.getPosition(searchtext);
+			return dao.search(day, minutes, type, limit, geoFound, distance);
+		} else {
+			return dao.search(day, minutes, type, limit, geo, distance);
+		}
 	}
 }

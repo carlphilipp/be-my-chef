@@ -12,8 +12,6 @@ public final class FactoryValidator {
 	private static CatererValidator catererValidator = null;
 	/** Service validator */
 	private static DishValidator dishValidator = null;
-	/** Service validator */
-	private static SearchValidator searchValidator = null;
 
 	/** Constructor */
 	private FactoryValidator() {
@@ -42,11 +40,6 @@ public final class FactoryValidator {
 				dishValidator = new DishValidator();
 			}
 			return dishValidator;
-		} else if (name.equals("search")) {
-			if (searchValidator == null) {
-				searchValidator = new SearchValidator();
-			}
-			return searchValidator;
 		}
 		return null;
 	}
