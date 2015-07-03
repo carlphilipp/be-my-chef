@@ -34,7 +34,6 @@ public class AccessRightsCatererIntegrationTest {
 	private static String END_POINT;
 	private static String URL;
 	private static String URL_NO_KEY;
-	private static String API_KEY;
 	private static String jsonMimeType;
 	private static ObjectMapper mapper;
 
@@ -46,11 +45,6 @@ public class AccessRightsCatererIntegrationTest {
 		String address = prop.getProperty("address");
 		String path = prop.getProperty("api.path");
 		END_POINT = address + path;
-
-		in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
-		BufferedReader br = new BufferedReader(in);
-		API_KEY = br.readLine();
-		in.close();
 
 		jsonMimeType = "application/json";
 		mapper = new ObjectMapper();
@@ -64,9 +58,10 @@ public class AccessRightsCatererIntegrationTest {
 
 	// User Administrator
 	@Test
-	public void testAdministratorCatererCreate() throws ClientProtocolException, IOException {
+	public void testAdministratorCatererCreate() throws ClientProtocolException, IOException, EpickurException {
+		User admin = TestUtils.createAdminAndLogin();
 		URL_NO_KEY = END_POINT + "/caterers";
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 
@@ -89,10 +84,11 @@ public class AccessRightsCatererIntegrationTest {
 
 	@Test
 	public void testAdministratorCatererRead() throws ClientProtocolException, IOException, EpickurException {
+		User admin = TestUtils.createAdminAndLogin();
 		String id = TestUtils.createCaterer().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id;
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpGet request = new HttpGet(URL);
 
@@ -107,9 +103,10 @@ public class AccessRightsCatererIntegrationTest {
 
 	@Test
 	public void testAdministratorCatererUpdate() throws ClientProtocolException, IOException, EpickurException {
+		User admin = TestUtils.createAdminAndLogin();
 		Caterer caterer = TestUtils.createCaterer();
 		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		Caterer user = TestUtils.generateRandomCatererWithId();
 		user.setId(caterer.getId());
@@ -130,10 +127,11 @@ public class AccessRightsCatererIntegrationTest {
 
 	@Test
 	public void testAdministratorCatererDelete() throws ClientProtocolException, IOException, EpickurException {
+		User admin = TestUtils.createAdminAndLogin();
 		String id = TestUtils.createCaterer().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id;
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
 
@@ -149,7 +147,7 @@ public class AccessRightsCatererIntegrationTest {
 	// User Super_User
 	@Test
 	public void testSuperUserCaterCreate() throws ClientProtocolException, IOException, EpickurException {
-		String key = TestUtils.createSuperUser().getKey();
+		String key = TestUtils.createSuperUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/caterers";
 		URL = URL_NO_KEY + "?key=" + key;
@@ -176,7 +174,7 @@ public class AccessRightsCatererIntegrationTest {
 	@Test
 	public void testSuperUserCatererRead() throws ClientProtocolException, IOException, EpickurException {
 		// Read another caterer - should pass it
-		String key = TestUtils.createSuperUser().getKey();
+		String key = TestUtils.createSuperUserAndLogin().getKey();
 		String id = TestUtils.createCaterer().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id;
@@ -197,7 +195,7 @@ public class AccessRightsCatererIntegrationTest {
 	public void testSuperUserCatererUpdate() throws ClientProtocolException, IOException, EpickurException {
 		// Update a caterer not created by current user - should not pass it
 		Caterer caterer = TestUtils.createCaterer();
-		User superUser = TestUtils.createSuperUser();
+		User superUser = TestUtils.createSuperUserAndLogin();
 		String key = superUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
@@ -220,7 +218,7 @@ public class AccessRightsCatererIntegrationTest {
 	@Test
 	public void testSuperUserCatererUpdate2() throws ClientProtocolException, IOException, EpickurException {
 		// Update a caterer created by current user - should pass it
-		User superUser = TestUtils.createSuperUser();
+		User superUser = TestUtils.createSuperUserAndLogin();
 		Caterer caterer = TestUtils.createCatererWithUserId(superUser.getId());
 
 		String key = superUser.getKey();
@@ -244,7 +242,7 @@ public class AccessRightsCatererIntegrationTest {
 
 	@Test
 	public void testSuperUserCatererDelete() throws ClientProtocolException, IOException, EpickurException {
-		User superUser = TestUtils.createSuperUser();
+		User superUser = TestUtils.createSuperUserAndLogin();
 		Caterer id = TestUtils.createCaterer();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id.getId().toHexString();
@@ -334,7 +332,7 @@ public class AccessRightsCatererIntegrationTest {
 
 	@Test
 	public void testUserCatererDelete() throws ClientProtocolException, IOException, EpickurException {
-		User superUser = TestUtils.createSuperUser();
+		User superUser = TestUtils.createSuperUserAndLogin();
 		Caterer id = TestUtils.createCaterer();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id.getId().toHexString();

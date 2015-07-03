@@ -35,12 +35,12 @@ public class AccessRightsUserIntegrationTest {
 	private static String END_POINT;
 	private static String URL;
 	private static String URL_NO_KEY;
-	private static String API_KEY;
+	// private static String API_KEY;
 	private static String jsonMimeType;
 	private static ObjectMapper mapper;
 
 	@BeforeClass
-	public static void beforeClass() throws IOException {
+	public static void beforeClass() throws IOException, EpickurException {
 		InputStreamReader in = new InputStreamReader(CatererIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
@@ -48,9 +48,11 @@ public class AccessRightsUserIntegrationTest {
 		String address = prop.getProperty("address");
 		String path = prop.getProperty("api.path");
 		END_POINT = address + path;
-		in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
-		BufferedReader br = new BufferedReader(in);
-		API_KEY = br.readLine();
+		// in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
+		// BufferedReader br = new BufferedReader(in);
+		// API_KEY = br.readLine();
+		// User user = TestUtils.createSuperUser();
+
 		in.close();
 		jsonMimeType = "application/json";
 		mapper = new ObjectMapper();
@@ -64,9 +66,11 @@ public class AccessRightsUserIntegrationTest {
 
 	// User Administrator
 	@Test
-	public void testAdministratorUserCreate() throws ClientProtocolException, IOException {
+	public void testAdministratorUserCreate() throws ClientProtocolException, IOException, EpickurException {
+		User admin = TestUtils.createAdminAndLogin();
+
 		URL_NO_KEY = END_POINT + "/users";
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		User user = TestUtils.generateRandomUser();
 
@@ -91,10 +95,12 @@ public class AccessRightsUserIntegrationTest {
 
 	@Test
 	public void testAdministratorUserRead() throws ClientProtocolException, IOException, EpickurException {
+		User admin = TestUtils.createAdminAndLogin();
+
 		String id = TestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpGet request = new HttpGet(URL);
 
@@ -109,9 +115,10 @@ public class AccessRightsUserIntegrationTest {
 
 	@Test
 	public void testAdministratorUserUpdate() throws ClientProtocolException, IOException, EpickurException {
+		User admin = TestUtils.createAdminAndLogin();
 		User normalUser = TestUtils.createUserAndLogin();
 		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		User user = TestUtils.generateRandomUser();
 		user.setId(normalUser.getId());
@@ -132,10 +139,11 @@ public class AccessRightsUserIntegrationTest {
 
 	@Test
 	public void testAdministratorUserDelete() throws ClientProtocolException, IOException, EpickurException {
+		User admin = TestUtils.createAdminAndLogin();
 		String id = TestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
 

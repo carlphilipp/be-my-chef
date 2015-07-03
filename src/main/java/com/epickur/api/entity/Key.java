@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "key", "userEmail", "role", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "key", "userId", "role", "createdAt", "updatedAt" })
 public final class Key extends AbstractEntity {
 
 	/** Logger */

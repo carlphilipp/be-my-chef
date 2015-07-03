@@ -74,12 +74,14 @@ public class AccessRightsOrderIntegrationTest {
 	// User Administrator
 	@Test
 	public void testAdministratorOrderCreate() throws ClientProtocolException, IOException, AuthenticationException, InvalidRequestException,
-			APIConnectionException, CardException, APIException {
+			APIConnectionException, CardException, APIException, EpickurException {
 		// Create Stripe card token
 		Stripe.apiKey = STRIPE_TEST_KEY;
+		
+		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		Order order = TestUtils.generateRandomOrder();
 
@@ -107,9 +109,11 @@ public class AccessRightsOrderIntegrationTest {
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 		Order order = TestUtils.createOrder(user.getId());
+		
+		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpGet getReq = new HttpGet(URL);
 
@@ -130,11 +134,13 @@ public class AccessRightsOrderIntegrationTest {
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		// Create Stripe card token
 		Stripe.apiKey = STRIPE_TEST_KEY;
+		
+		User admin = TestUtils.createAdminAndLogin();
 
 		String id = new ObjectId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + id;
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpGet request = new HttpGet(URL);
 
@@ -152,9 +158,11 @@ public class AccessRightsOrderIntegrationTest {
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 		Order order = TestUtils.createOrder(user.getId());
+		
+		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
@@ -180,9 +188,11 @@ public class AccessRightsOrderIntegrationTest {
 		ObjectId id = new ObjectId();
 		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
+		
+		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
 		HttpPut request = new HttpPut(URL);
@@ -203,9 +213,11 @@ public class AccessRightsOrderIntegrationTest {
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 		Order order = TestUtils.createOrder(user.getId());
+		
+		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
 
@@ -225,7 +237,7 @@ public class AccessRightsOrderIntegrationTest {
 		// Create Stripe card token
 		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		user = TestUtils.createSuperUser();
+		user = TestUtils.createSuperUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
 		URL = URL_NO_KEY + "?key=" + user.getKey();
@@ -255,7 +267,7 @@ public class AccessRightsOrderIntegrationTest {
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		user = TestUtils.createSuperUser();
+		user = TestUtils.createSuperUserAndLogin();
 
 		Order order = TestUtils.createOrder(user.getId());
 
@@ -279,7 +291,7 @@ public class AccessRightsOrderIntegrationTest {
 	@Test
 	public void testSuperUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createSuperUser();
+		user = TestUtils.createSuperUserAndLogin();
 
 		// Create Stripe card token
 		Stripe.apiKey = STRIPE_TEST_KEY;
@@ -305,7 +317,7 @@ public class AccessRightsOrderIntegrationTest {
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
 
-		user = TestUtils.createSuperUser();
+		user = TestUtils.createSuperUserAndLogin();
 
 		User otherUser = TestUtils.createUserAndLogin();
 
@@ -329,11 +341,11 @@ public class AccessRightsOrderIntegrationTest {
 	public void testSuperUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		user = TestUtils.createSuperUser();
+		user = TestUtils.createSuperUserAndLogin();
 		Order order = TestUtils.createOrder(user.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
@@ -356,13 +368,15 @@ public class AccessRightsOrderIntegrationTest {
 	public void testSuperUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		user = TestUtils.createSuperUser();
+		user = TestUtils.createSuperUserAndLogin();
 		ObjectId id = new ObjectId();
 		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
+		
+		User sUser = TestUtils.createSuperUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + sUser.getKey();
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
 		HttpPut request = new HttpPut(URL);
@@ -382,11 +396,11 @@ public class AccessRightsOrderIntegrationTest {
 	public void testSuperUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Stripe.apiKey = STRIPE_TEST_KEY;
-		user = TestUtils.createSuperUser();
+		user = TestUtils.createSuperUserAndLogin();
 		Order order = TestUtils.createOrder(user.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
 
@@ -396,7 +410,7 @@ public class AccessRightsOrderIntegrationTest {
 		String obj = br.readLine();
 		in.close();
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
 	}
 
 	// User User
@@ -541,7 +555,7 @@ public class AccessRightsOrderIntegrationTest {
 		updatedOrder.setId(id);
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
 		HttpPut request = new HttpPut(URL);

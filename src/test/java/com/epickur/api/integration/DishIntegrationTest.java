@@ -42,6 +42,7 @@ import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Location;
 import com.epickur.api.entity.NutritionFact;
+import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,7 +58,8 @@ public class DishIntegrationTest {
 	private static String jsonMimeType = "application/json";
 
 	@BeforeClass
-	public static void beforeClass() throws IOException {
+	public static void beforeClass() throws IOException, EpickurException {
+		TestUtils.setupDB();
 		InputStreamReader in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
@@ -66,18 +68,14 @@ public class DishIntegrationTest {
 		String path = prop.getProperty("api.path");
 		URL_NO_KEY = address + path + "/dishes";
 
-		in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
-		BufferedReader br = new BufferedReader(in);
-		API_KEY = br.readLine();
-		in.close();
+		User admin = TestUtils.createAdminAndLogin();
+		API_KEY = admin.getKey();
 		URL = URL_NO_KEY + "?key=" + API_KEY;
 
 		idsCatererToDelete = new ArrayList<ObjectId>();
 		context = mock(ContainerRequestContext.class);
 		Key key = TestUtils.generateRandomKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
-
-		TestUtils.setupDB();
 	}
 
 	@AfterClass
@@ -395,31 +393,32 @@ public class DishIntegrationTest {
 		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), Integer.valueOf(jsonResult.get("error").toString()).intValue());
 		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
 	}
-	
+
 	// Search tests
-	
+
 	@Test
 	public void testSearchUsa() throws ClientProtocolException, IOException {
 		String type = "Meat";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-19:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
+				+ URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		
+
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
-		
+
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
 		in.close();
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
 		Assert.assertThat(jsonResult.size(), is(1));
 	}
-	
+
 	@Test
 	public void testSearchUsa2() throws ClientProtocolException, IOException {
 		// Same test with another pickupdate
@@ -427,61 +426,64 @@ public class DishIntegrationTest {
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-16:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
+				+ URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		
+
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
-		
+
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
 		in.close();
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		List<?> jsonResult = mapper.readValue(obj, List.class);
 		Assert.assertEquals(0, jsonResult.size());
 	}
-	
+
 	@Test
 	public void testSearchUsa3() throws ClientProtocolException, IOException {
 		String type = "Meat";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-18:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
+				+ URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		
+
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
-		
+
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
 		in.close();
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		List<?> jsonResult = mapper.readValue(obj, List.class);
 		Assert.assertEquals(0, jsonResult.size());
 	}
-	
+
 	@Test
 	public void testSearchUsa4() throws ClientProtocolException, IOException {
 		String type = "Meat";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-22:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
+				+ URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		
+
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
-		
+
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
 		in.close();
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
 		Assert.assertThat(jsonResult.size(), is(1));
@@ -493,17 +495,18 @@ public class DishIntegrationTest {
 		String limit = "100";
 		String address = "388 Bourke St Melbourne, Australia";
 		String pickupdate = "mon-19:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext=" + URLEncoder.encode(address, "UTF-8"));
+		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
+				+ URLEncoder.encode(address, "UTF-8"));
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		
+
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
-		
+
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
 		in.close();
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
 		Assert.assertThat(jsonResult.size(), is(2));

@@ -63,6 +63,10 @@ import com.epickur.api.service.LogoutServiceTest;
 import com.epickur.api.service.UserServiceTest;
 import com.epickur.api.utils.UtilsTest;
 import com.epickur.api.utils.email.EmailUtilsTest;
+import com.epickur.api.validator.AccessRightsCatererTest;
+import com.epickur.api.validator.AccessRightsDishTest;
+import com.epickur.api.validator.AccessRightsOrderTest;
+import com.epickur.api.validator.AccessRightsUserTest;
 import com.epickur.api.validator.CatererValidatorTest;
 import com.epickur.api.validator.DishValidatorTest;
 import com.epickur.api.validator.UserValidatorTest;
@@ -132,9 +136,17 @@ import com.epickur.api.validator.UserValidatorTest;
 		LogoutServiceTest.class,
 		UserServiceTest.class,
 
+		// .utils
 		UtilsTest.class,
+		
+		// .utils.email
 		EmailUtilsTest.class,
 
+		// .validator
+		AccessRightsCatererTest.class,
+		AccessRightsDishTest.class,
+		AccessRightsOrderTest.class,
+		AccessRightsUserTest.class,
 		CatererValidatorTest.class,
 		DishValidatorTest.class,
 		UserValidatorTest.class,

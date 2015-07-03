@@ -103,7 +103,7 @@ public class TestUtils {
 		return caterer;
 	}
 
-	public static String convertListToStringIngredients(List<Ingredient> ingredients) {
+	public static String convertListToStringIngredients(final List<Ingredient> ingredients) {
 		final OutputStream out = new ByteArrayOutputStream();
 		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
 		try {
@@ -116,7 +116,7 @@ public class TestUtils {
 		return null;
 	}
 
-	public static String convertListToStringNutritionFacts(List<NutritionFact> nutritionFacts) {
+	public static String convertListToStringNutritionFacts(final List<NutritionFact> nutritionFacts) {
 		final OutputStream out = new ByteArrayOutputStream();
 		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
 		try {
@@ -129,7 +129,7 @@ public class TestUtils {
 		return null;
 	}
 
-	public static String convertListToStringSteps(List<String> steps) {
+	public static String convertListToStringSteps(final List<String> steps) {
 		final OutputStream out = new ByteArrayOutputStream();
 		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
 		try {
@@ -384,7 +384,7 @@ public class TestUtils {
 		return selected + "-" + hoursFormatted + ":" + minutesFormatted;
 	}
 
-	public static String generateRandomCorrectPickupDate(WorkingTimes workingTimes) {
+	public static String generateRandomCorrectPickupDate(final WorkingTimes workingTimes) {
 		String pickupdate = generateRandomPickupDate();
 		Object[] parsedPickupdate = Utils.parsePickupdate(pickupdate);
 		while (!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])) {
@@ -455,7 +455,7 @@ public class TestUtils {
 		return createCaterer(caterer, userId);
 	}
 
-	public static Caterer createCaterer(Caterer caterer, ObjectId userId) throws EpickurException {
+	public static Caterer createCaterer(final Caterer caterer, final ObjectId userId) throws EpickurException {
 		CatererBusiness business = new CatererBusiness();
 		caterer.setCreatedBy(userId);
 		return business.create(caterer);
@@ -480,12 +480,25 @@ public class TestUtils {
 		return login;
 	}
 
-	public static User createSuperUser() throws EpickurException {
+	public static User createSuperUserAndLogin() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
 		UserBusiness business = new UserBusiness();
 		User newUser = business.create(user, false, true);
 		newUser.setRole(Role.SUPER_USER);
+		Key key = TestUtils.generateRandomKey();
+		key.setRole(Role.ADMIN);
+		business.update(newUser, key);
+		User login = business.login(newUser.getEmail(), password);
+		return login;
+	}
+	
+	public static User createAdminAndLogin() throws EpickurException {
+		User user = TestUtils.generateRandomUser();
+		String password = new String(user.getPassword());
+		UserBusiness business = new UserBusiness();
+		User newUser = business.create(user, false, true);
+		newUser.setRole(Role.ADMIN);
 		Key key = TestUtils.generateRandomKey();
 		key.setRole(Role.ADMIN);
 		business.update(newUser, key);
@@ -505,7 +518,7 @@ public class TestUtils {
 		return newDish;
 	}
 
-	public static Order createOrder(ObjectId userId) throws EpickurException, AuthenticationException, InvalidRequestException,
+	public static Order createOrder(final ObjectId userId) throws EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException,
 			CardException, APIException {
 		Order order = TestUtils.generateRandomOrder();
@@ -514,7 +527,7 @@ public class TestUtils {
 		return orderRes;
 	}
 
-	public static Order createOrder(ObjectId userId, ObjectId catererId) throws AuthenticationException, InvalidRequestException,
+	public static Order createOrder(final ObjectId userId, final ObjectId catererId) throws AuthenticationException, InvalidRequestException,
 			APIConnectionException,
 			CardException, APIException, EpickurException {
 		Order order = TestUtils.generateRandomOrder();

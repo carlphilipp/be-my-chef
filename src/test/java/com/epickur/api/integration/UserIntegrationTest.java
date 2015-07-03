@@ -35,6 +35,7 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.entity.NutritionFact;
+import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
@@ -79,10 +80,8 @@ public class UserIntegrationTest {
 			URL_NO_KEY = address + path + "/users";
 			URL_EXECUTE_ORDER = address + path + "/nokey/execute";
 
-			in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
-			BufferedReader br = new BufferedReader(in);
-			API_KEY = br.readLine();
-			in.close();
+			User admin = TestUtils.createAdminAndLogin();
+			API_KEY = admin.getKey();
 			URL = URL_NO_KEY + "?key=" + API_KEY;
 
 			name = RandomStringUtils.randomAlphabetic(10);
@@ -107,7 +106,7 @@ public class UserIntegrationTest {
 			// Create request
 			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
+			BufferedReader br = new BufferedReader(in);
 			String obj = br.readLine();
 			JsonNode jsonResult = mapper.readTree(obj);
 			in.close();

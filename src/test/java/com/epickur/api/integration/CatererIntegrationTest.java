@@ -29,8 +29,9 @@ import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Location;
+import com.epickur.api.entity.User;
 import com.epickur.api.entity.times.WorkingTimes;
-import com.epickur.api.exception.EpickurParsingException;
+import com.epickur.api.exception.EpickurException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -45,7 +46,7 @@ public class CatererIntegrationTest {
 	private static String name;
 
 	@BeforeClass
-	public static void beforeClass() throws IOException, EpickurParsingException {
+	public static void beforeClass() throws IOException, EpickurException {
 		InputStreamReader in = new InputStreamReader(CatererIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
@@ -53,10 +54,8 @@ public class CatererIntegrationTest {
 		String path = prop.getProperty("api.path");
 		URL_NO_KEY = address + path + "/caterers";
 
-		in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
-		BufferedReader br = new BufferedReader(in);
-		API_KEY = br.readLine();
-		in.close();
+		User admin = TestUtils.createAdminAndLogin();
+		API_KEY = admin.getKey();
 		URL = URL_NO_KEY + "?key=" + API_KEY;
 
 		String jsonMimeType = "application/json";
@@ -91,7 +90,7 @@ public class CatererIntegrationTest {
 		caterer.put("email", "email@email.com");
 		caterer.put("phone", "000011222");
 		WorkingTimes workingTimes = TestUtils.generateRandomWorkingTimes();
-		
+
 		caterer.set("workingTimes", mapper.readTree(workingTimes.toStringAPIView()));
 
 		HttpPost request = new HttpPost(URL);
@@ -103,7 +102,7 @@ public class CatererIntegrationTest {
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
+		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
 		in.close();
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -111,12 +110,12 @@ public class CatererIntegrationTest {
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
 		// Create result
-		id = ((JsonNode) jsonResult.get("id")).asText();
+		id = jsonResult.get("id").asText();
 	}
 
 	@AfterClass
 	public static void afterClass() throws ClientProtocolException, IOException {
-		if(id != null){
+		if (id != null) {
 			String jsonMimeType = "application/json";
 			// Delete
 			HttpDelete request = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
@@ -191,24 +190,24 @@ public class CatererIntegrationTest {
 		assertNotNull(jsonResult.get("createdAt"));
 		assertNotNull(jsonResult.get("updatedAt"));
 		assertNotNull(jsonResult.get("location"));
-		JsonNode locationRes = (JsonNode) jsonResult.get("location");
+		JsonNode locationRes = jsonResult.get("location");
 		assertNotNull(locationRes.get("address"));
-		JsonNode addressRes = (JsonNode) locationRes.get("address");
+		JsonNode addressRes = locationRes.get("address");
 		assertEquals("carl", addressRes.get("label").asText());
 		assertEquals("832", addressRes.get("houseNumber").asText());
 		assertEquals("Wrightwood", addressRes.get("street").asText());
 		assertEquals("Chicago", addressRes.get("city").asText());
-		assertEquals(new Long(60614).longValue(), ((JsonNode) addressRes.get("postalCode")).longValue());
+		assertEquals(new Long(60614).longValue(), addressRes.get("postalCode").longValue());
 		assertEquals("Illinois", addressRes.get("state").asText());
 		assertEquals("USA", addressRes.get("country").asText());
 		assertNotNull(locationRes.get("geo"));
-		JsonNode geoRes = (JsonNode) locationRes.get("geo");
+		JsonNode geoRes = locationRes.get("geo");
 		assertEquals("Point", geoRes.get("type").asText());
 		ArrayNode coordinatesArray = (ArrayNode) geoRes.get("coordinates");
-		assertEquals(new Float(-73.97).doubleValue(), ((JsonNode) coordinatesArray.get(0)).doubleValue(), 0.01);
-		assertEquals(new Float(40.77).doubleValue(), ((JsonNode) coordinatesArray.get(1)).doubleValue(), 0.01);
+		assertEquals(new Float(-73.97).doubleValue(), coordinatesArray.get(0).doubleValue(), 0.01);
+		assertEquals(new Float(40.77).doubleValue(), coordinatesArray.get(1).doubleValue(), 0.01);
 
-		String id = ((JsonNode) jsonResult.get("id")).asText();
+		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 
@@ -233,7 +232,7 @@ public class CatererIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		
+
 		in.close();
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
@@ -247,21 +246,21 @@ public class CatererIntegrationTest {
 		assertNotNull(jsonResult.get("createdAt"));
 		assertNotNull(jsonResult.get("updatedAt"));
 		assertNotNull(jsonResult.get("location"));
-		JsonNode locationRes = (JsonNode) jsonResult.get("location");
+		JsonNode locationRes = jsonResult.get("location");
 		assertNotNull(locationRes.get("address"));
-		JsonNode addressRes = (JsonNode) locationRes.get("address");
+		JsonNode addressRes = locationRes.get("address");
 		assertEquals("carl", addressRes.get("label").asText());
 		assertEquals("832", addressRes.get("houseNumber").asText());
 		assertEquals("Wrightwood", addressRes.get("street").asText());
 		assertEquals("Chicago", addressRes.get("city").asText());
-		assertEquals(new Long(60614).longValue(), ((JsonNode) addressRes.get("postalCode")).longValue());
+		assertEquals(new Long(60614).longValue(), addressRes.get("postalCode").longValue());
 		assertEquals("Illinois", addressRes.get("state").asText());
 		assertEquals("USA", addressRes.get("country").asText());
 		assertNotNull(locationRes.get("geo"));
-		JsonNode geoRes = (JsonNode) locationRes.get("geo");
+		JsonNode geoRes = locationRes.get("geo");
 		assertEquals("Point", geoRes.get("type").asText());
 		ArrayNode coordinates = (ArrayNode) geoRes.get("coordinates");
-		assertEquals(new Float(-73.97).doubleValue(), ((JsonNode) coordinates.get(0)).doubleValue(), 0.01);
-		assertEquals(new Float(40.77).doubleValue(), ((JsonNode) coordinates.get(1)).doubleValue(), 0.01);
+		assertEquals(new Float(-73.97).doubleValue(), coordinates.get(0).doubleValue(), 0.01);
+		assertEquals(new Float(40.77).doubleValue(), coordinates.get(1).doubleValue(), 0.01);
 	}
 }

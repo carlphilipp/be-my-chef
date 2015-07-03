@@ -7,12 +7,21 @@ import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurForbiddenException;
+import com.epickur.api.exception.EpickurWrongAccessRights;
 
+/**
+ * @author cph
+ * @version 1.0
+ *
+ */
 public class AccessRights {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(AccessRights.class.getSimpleName());
 
+	/**
+	 * The access rights matrix
+	 */
 	private static boolean[][] MATRIX = new boolean[][] {
 // @formatter:off
 
@@ -22,28 +31,39 @@ public class AccessRights {
 /* Administrator */		{true  , true , true   , true   , true    , true          , true   , true , true   , true   , true    , true   , true , true   , true   , true    , true       , true         , true   , true , true   , true   , true}, 	/* Administrator */
 /* Super User */		{false , true , true   , false  , false   , false         , true   , true , true   , false  , true    , false  , true , true   , false  , false   , true       , false        , true   , true , true   , true   , true}, 	/* Super User */
 /* User */				{false , true , true   , false  , false   , false         , true   , true , true   , false  , false   , false  , true , false  , false  , false   , true       , false        , false  , true , false  , false  , true}, 	/* User */
-/* Epickur-Web */		{true  , false, false  , false  , false   , false         , false  , false, false  , false  , false   , false  , false, false  , false  , false   , false      , false        , false  , false, false  , false  , false}, 	/* Epickur-Web */
+/* Epickur-Web */		{true  , false, false  , false  , false   , true          , false  , false, false  , false  , false   , false  , false, false  , false  , false   , true       , false        , false  , false, false  , false  , true}, 	/* Epickur-Web */
 
 // @formatter:on
 	};
 
 	/**
-	 * Avoid constuction
+	 * Avoid constuction.
 	 */
 	private AccessRights() {
 	}
 
+	/**
+	 * Check if the role/operation/endpoint is allowed to access the resource.
+	 * 
+	 * @param role
+	 *            The User Role.
+	 * @param operation
+	 *            The operation type.
+	 * @param endpoint
+	 *            The Endpoint.
+	 */
 	public static void check(final Role role, final Operation operation, final EndpointType endpoint) {
 		int line = getLine(role);
 		int column = getColumn(operation, endpoint);
-		LOG.info("[LINE] Operation: " + role + " " + line);
-		LOG.info("[COLUMN] Role: " + operation + " with " + endpoint + " " + column);
+		LOG.trace("[LINE] Operation: " + role + " " + line);
+		LOG.trace("[COLUMN] Role: " + operation + " with " + endpoint + " " + column);
 		if (line == -1 || column == -1) {
 			LOG.error("Unable to find the access rights (" + line + ";" + column + ") with " + role + ", " + operation + " and " + endpoint);
-			throw new EpickurForbiddenException();
+			throw new EpickurWrongAccessRights("Operation: " + operation + " - Endpoint: " + endpoint
+					+ ". This error should not happen. Developer error.");
 		}
 		if (!MATRIX[line][column]) {
-			throw new EpickurForbiddenException();
+			throw new EpickurForbiddenException(operation + " is not allowed with role " + role + " on " + endpoint + " endpoint");
 		}
 	}
 
@@ -63,7 +83,7 @@ public class AccessRights {
 			line = 3;
 			break;
 		default:
-			break;
+			throw new EpickurWrongAccessRights();
 		}
 		return line;
 	}
@@ -86,36 +106,41 @@ public class AccessRights {
 			break;
 		case READ_ALL:
 			if (endpoint.equals(EndpointType.DISH)) {
-				throw new EpickurForbiddenException();
+				throw new EpickurWrongAccessRights("Operation: " + operation + " - Endpoint: " + endpoint
+						+ ". This error should not happen. Developer error.");
 			}
 			line = offset + 4;
 			break;
 		case RESET_PASSWORD:
 			if (!endpoint.equals(EndpointType.USER)) {
-				throw new EpickurForbiddenException();
+				throw new EpickurWrongAccessRights("Operation: " + operation + " - Endpoint: " + endpoint
+						+ ". This error should not happen. Developer error.");
 			}
 			line = offset + 5;
 			break;
 		case READ_DISHES:
 			if (!endpoint.equals(EndpointType.CATERER)) {
-				throw new EpickurForbiddenException();
+				throw new EpickurWrongAccessRights("Operation: " + operation + " - Endpoint: " + endpoint
+						+ ". This error should not happen. Developer error.");
 			}
 			line = offset + 5;
 			break;
 		case PAYEMENT_INFO:
 			if (!endpoint.equals(EndpointType.CATERER)) {
-				throw new EpickurForbiddenException();
+				throw new EpickurWrongAccessRights("Operation: " + operation + " - Endpoint: " + endpoint
+						+ ". This error should not happen. Developer error.");
 			}
 			line = offset + 6;
 			break;
 		case SEARCH_DISH:
 			if (!endpoint.equals(EndpointType.DISH)) {
-				throw new EpickurForbiddenException();
+				throw new EpickurWrongAccessRights("Operation: " + operation + " - Endpoint: " + endpoint
+						+ ". This error should not happen. Developer error.");
 			}
 			line = offset + 4;
 			break;
 		default:
-			break;
+			throw new EpickurWrongAccessRights();
 		}
 		return line;
 	}
@@ -136,12 +161,12 @@ public class AccessRights {
 			offset = 18;
 			break;
 		default:
-			break;
+			throw new EpickurWrongAccessRights();
 		}
 		return offset;
 	}
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		AccessRights.check(Role.USER, Operation.CREATE, EndpointType.DISH);
 	}
 }
