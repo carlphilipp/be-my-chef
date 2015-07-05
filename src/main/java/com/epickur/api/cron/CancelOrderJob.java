@@ -14,6 +14,13 @@ import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.email.EmailUtils;
 
+/**
+ * This class represents a process to cancel orders when it's been too long time it was not accepted.
+ * 
+ * @author cph
+ * @version 1.0
+ *
+ */
 public final class CancelOrderJob implements Job {
 
 	/** Logger */
@@ -23,16 +30,14 @@ public final class CancelOrderJob implements Job {
 	/** User dao */
 	private UserDaoImpl userDao;
 
+	/**
+	 * Constructs a Cancel Order Job
+	 */
 	public CancelOrderJob() {
 		this.orderDao = new OrderDaoImpl();
 		this.userDao = new UserDaoImpl();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
-	 */
 	@Override
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
 		try {

@@ -19,17 +19,28 @@ import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.DbxWriteMode;
 import com.epickur.api.utils.Utils;
 
-public class Dropbox {
+/**
+ * @author cph
+ * @version 1.0
+ *
+ */
+public final class Dropbox {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Dropbox.class.getSimpleName());
-
+	/** Clients */
 	private List<DbxClient> clients;
 
+	/**
+	 * Construct a Dropbox object
+	 */
 	public Dropbox() {
 		init();
 	}
 
+	/**
+	 * Init
+	 */
 	private void init() {
 		Properties prop = Utils.getEpickurProperties();
 		String tokensProperty = prop.getProperty("dropbox.tokens");
@@ -42,6 +53,12 @@ public class Dropbox {
 		}
 	}
 
+	/**
+	 * @throws DbxException
+	 *             The DB exception
+	 * @throws IOException
+	 *             The IOException
+	 */
 	public void deleteOldFile() throws DbxException, IOException {
 		LOG.info("Deleting old file in dropbox...");
 		for (DbxClient client : this.clients) {
@@ -67,6 +84,14 @@ public class Dropbox {
 		LOG.info("Delete done");
 	}
 
+	/**
+	 * @param filePath
+	 *            The file path
+	 * @throws IOException
+	 *             The IO exception
+	 * @throws DbxException
+	 *             The DB exception
+	 */
 	public void uploadFile(final String filePath) throws IOException, DbxException {
 		LOG.info("Uploading file on dropbox...");
 		int i = 0;

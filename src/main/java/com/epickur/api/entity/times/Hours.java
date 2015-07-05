@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = {"mon", "tue", "wed", "thu", "fri", "sat", "sun"})
+@JsonPropertyOrder(value = { "mon", "tue", "wed", "thu", "fri", "sat", "sun" })
 public final class Hours extends AbstractEntity {
 
 	/** Monday */
@@ -37,103 +37,115 @@ public final class Hours extends AbstractEntity {
 	private List<TimeFrame> sun;
 
 	/**
-	 * @return
+	 * @return The Monday timeframe
 	 */
-	public final List<TimeFrame> getMon() {
+	public List<TimeFrame> getMon() {
 		return mon;
 	}
 
 	/**
 	 * @param mon
+	 *            The Monday timeframe
 	 */
-	public final void setMon(final List<TimeFrame> mon) {
+	public void setMon(final List<TimeFrame> mon) {
 		this.mon = mon;
 	}
 
 	/**
-	 * @return
+	 * @return The Tuesday timeframe
 	 */
-	public final List<TimeFrame> getTue() {
+	public List<TimeFrame> getTue() {
 		return tue;
 	}
 
 	/**
 	 * @param tue
+	 *            The Tuesday timeframe
 	 */
-	public final void setTue(final List<TimeFrame> tue) {
+	public void setTue(final List<TimeFrame> tue) {
 		this.tue = tue;
 	}
 
 	/**
-	 * @return
+	 * @return The Wednesday timeframe
 	 */
-	public final List<TimeFrame> getWed() {
+	public List<TimeFrame> getWed() {
 		return wed;
 	}
 
 	/**
 	 * @param wed
+	 *            The Wednesday timeframe
 	 */
-	public final void setWed(final List<TimeFrame> wed) {
+	public void setWed(final List<TimeFrame> wed) {
 		this.wed = wed;
 	}
 
 	/**
-	 * @return
+	 * @return The Thursday timeframe
 	 */
-	public final List<TimeFrame> getThu() {
+	public List<TimeFrame> getThu() {
 		return thu;
 	}
 
 	/**
 	 * @param thu
+	 *            The Thursday timeframe
 	 */
-	public final void setThu(final List<TimeFrame> thu) {
+	public void setThu(final List<TimeFrame> thu) {
 		this.thu = thu;
 	}
 
 	/**
-	 * @return
+	 * @return The Friday timeframe
 	 */
-	public final List<TimeFrame> getFri() {
+	public List<TimeFrame> getFri() {
 		return fri;
 	}
 
 	/**
 	 * @param fri
+	 *            The Friday timeframe
 	 */
-	public final void setFri(final List<TimeFrame> fri) {
+	public void setFri(final List<TimeFrame> fri) {
 		this.fri = fri;
 	}
 
 	/**
-	 * @return
+	 * @return The Saturday timeframe
 	 */
-	public final List<TimeFrame> getSat() {
+	public List<TimeFrame> getSat() {
 		return sat;
 	}
 
 	/**
 	 * @param sat
+	 *            The Saturday timeframe
 	 */
-	public final void setSat(final List<TimeFrame> sat) {
+	public void setSat(final List<TimeFrame> sat) {
 		this.sat = sat;
 	}
 
 	/**
-	 * @return
+	 * @return The Sunday timeframe
 	 */
-	public final List<TimeFrame> getSun() {
+	public List<TimeFrame> getSun() {
 		return sun;
 	}
 
 	/**
 	 * @param sun
+	 *            The Sunday timeframe
 	 */
-	public final void setSun(final List<TimeFrame> sun) {
+	public void setSun(final List<TimeFrame> sun) {
 		this.sun = sun;
 	}
 
+	/**
+	 * @param prefix
+	 *            The prefix
+	 * @return A updated map
+	 */
 	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -189,6 +201,11 @@ public final class Hours extends AbstractEntity {
 		return res;
 	}
 
+	/**
+	 * @param str
+	 *            The day
+	 * @return A list of time frame
+	 */
 	@JsonIgnore
 	public List<TimeFrame> get(final String str) {
 		if ("mon".equals(str)) {
@@ -224,7 +241,7 @@ public final class Hours extends AbstractEntity {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}

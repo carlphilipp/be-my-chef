@@ -39,7 +39,7 @@ public final class CatererValidator extends Validator {
 	public void checkCreateCaterer(final Caterer caterer) {
 		checkCaterer(caterer);
 	}
-	
+
 	/**
 	 * @param id
 	 *            The caterer Id
@@ -163,6 +163,12 @@ public final class CatererValidator extends Validator {
 		checkWorkingHours(entity, caterer.getWorkingTimes());
 	}
 
+	/**
+	 * @param entity
+	 *            The entity
+	 * @param workingTimes
+	 *            The working times
+	 */
 	private void checkWorkingHours(final String entity, final WorkingTimes workingTimes) {
 		if (workingTimes == null) {
 			throw new EpickurIllegalArgument(fieldNull(entity, "workingTimes"));
@@ -205,6 +211,14 @@ public final class CatererValidator extends Validator {
 		}
 	}
 
+	/**
+	 * @param entity
+	 *            The entity
+	 * @param suffix
+	 *            The suffix
+	 * @param timeFrames
+	 *            The time frame
+	 */
 	private void checkTimeFrames(final String entity, final String suffix, final List<TimeFrame> timeFrames) {
 		int i = 0;
 		for (final TimeFrame tf : timeFrames) {
@@ -228,15 +242,13 @@ public final class CatererValidator extends Validator {
 	 *             If an EpickurException occured
 	 */
 	public void checkRightsAfter(final Role role, final ObjectId userId, final Caterer caterer, final Operation action) throws EpickurException {
-		if (role != Role.ADMIN) {
-			if (action != Operation.READ) {
-				if (action == Operation.UPDATE && role == Role.SUPER_USER) {
-					if (!caterer.getCreatedBy().equals(userId)) {
-						throw new EpickurForbiddenException();
-					}
-				} else {
-					throw new EpickurException("Rights issue. This case should not happen");
+		if (role != Role.ADMIN && action != Operation.READ) {
+			if (action == Operation.UPDATE && role == Role.SUPER_USER) {
+				if (!caterer.getCreatedBy().equals(userId)) {
+					throw new EpickurForbiddenException();
 				}
+			} else {
+				throw new EpickurException("Rights issue. This case should not happen");
 			}
 		}
 	}

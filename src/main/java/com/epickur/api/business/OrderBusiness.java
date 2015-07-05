@@ -31,7 +31,7 @@ import com.stripe.model.Charge;
  * @author cph
  * @version 1.0
  */
-public class OrderBusiness {
+public final class OrderBusiness {
 
 	/** Order dao */
 	private OrderDaoImpl orderDao;
@@ -54,17 +54,13 @@ public class OrderBusiness {
 	 *            The user id
 	 * @param order
 	 *            The order
-	 * @param cardToken
-	 *            The Stripe card token
-	 * @param shouldCharge
-	 *            True if you actually want to charge through Stripe
 	 * @param sendEmail
 	 *            True if you want send all emails
 	 * @return an Order
 	 * @throws EpickurException
 	 *             If an EpickurException occurred
 	 */
-	public final Order create(final String userId, final Order order, final boolean sendEmail)
+	public Order create(final String userId, final Order order, final boolean sendEmail)
 			throws EpickurException {
 		User user = this.userDao.read(userId);
 		if (user == null) {
@@ -91,7 +87,7 @@ public class OrderBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final Order read(final String id, final Key key) throws EpickurException {
+	public Order read(final String id, final Key key) throws EpickurException {
 		Order order = orderDao.read(id);
 		if (order != null) {
 			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Operation.READ);
@@ -107,7 +103,7 @@ public class OrderBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final List<Order> readAllWithUserId(final String userId) throws EpickurException {
+	public List<Order> readAllWithUserId(final String userId) throws EpickurException {
 		return orderDao.readAllWithUserId(userId);
 	}
 
@@ -122,7 +118,7 @@ public class OrderBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
+	public List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
 		return orderDao.readAllWithCatererId(catererId, start, end);
 	}
 
@@ -135,7 +131,7 @@ public class OrderBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final Order update(final Order order, final Key key) throws EpickurException {
+	public Order update(final Order order, final Key key) throws EpickurException {
 		Order read = orderDao.read(order.getId().toHexString());
 		if (read != null) {
 			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
@@ -154,7 +150,7 @@ public class OrderBusiness {
 	 * @throws EpickurException
 	 *             If an EpickurException occurred
 	 */
-	public final boolean delete(final String id) throws EpickurException {
+	public boolean delete(final String id) throws EpickurException {
 		return orderDao.delete(id);
 	}
 
@@ -171,13 +167,13 @@ public class OrderBusiness {
 	 *            If we want to send the emails
 	 * @param shouldCharge
 	 *            If we charge the user
-	 * @param key
-	 *            The key
+	 * @param orderCode
+	 *            The order code
 	 * @return The Updated order
 	 * @throws EpickurException
 	 *             If an EpickurException occurred
 	 */
-	public final Order executeOrder(final String userId, final String orderId, final boolean confirm, final boolean sendEmail,
+	public Order executeOrder(final String userId, final String orderId, final boolean confirm, final boolean sendEmail,
 			final boolean shouldCharge, final String orderCode) throws EpickurException {
 		User user = userDao.read(userId);
 		if (user == null) {
@@ -185,7 +181,6 @@ public class OrderBusiness {
 		} else {
 			Order order = orderDao.read(orderId);
 			if (order != null) {
-				// validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Crud.UPDATE);
 				if (!orderCode.equals(Security.createOrderCode(new ObjectId(orderId), order.getCardToken()))) {
 					throw new EpickurForbiddenException();
 				}

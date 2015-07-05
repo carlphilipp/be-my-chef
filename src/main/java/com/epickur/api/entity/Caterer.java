@@ -195,11 +195,18 @@ public final class Caterer extends AbstractEntity {
 		this.location = location;
 	}
 
+	/**
+	 * @return A Working Times
+	 */
 	public WorkingTimes getWorkingTimes() {
 		return workingTimes;
 	}
 
-	public void setWorkingTimes(WorkingTimes workingTimes) {
+	/**
+	 * @param workingTimes
+	 *            The working times
+	 */
+	public void setWorkingTimes(final WorkingTimes workingTimes) {
 		this.workingTimes = workingTimes;
 	}
 
@@ -262,16 +269,16 @@ public final class Caterer extends AbstractEntity {
 					for (Entry<String, Object> entry : locations.entrySet()) {
 						Object entryValue = entry.getValue();
 						if (entryValue instanceof String) {
-							result.put(entry.getKey(), (String) entry.getValue());
+							result.put(entry.getKey(), entry.getValue());
 						} else {
 							// It can only be a tab of Double
-							result.put(entry.getKey(), (Double[]) entry.getValue());
+							result.put(entry.getKey(), entry.getValue());
 						}
 					}
-				} else if(key.equals("workingTimes")){
+				} else if (key.equals("workingTimes")) {
 					WorkingTimes wt = WorkingTimes.getObject((Document) found.get(key));
-					Map<String, Object> workingTimes = wt.getUpdateMapObject(prefix + ".workingTimes");
-					result.putAll(workingTimes);
+					Map<String, Object> workingTimesMap = wt.getUpdateMapObject(prefix + ".workingTimes");
+					result.putAll(workingTimesMap);
 				} else {
 					result.put("caterer." + key, found.get(key).toString());
 				}

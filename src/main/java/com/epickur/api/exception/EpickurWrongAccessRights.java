@@ -21,6 +21,9 @@ public class EpickurWrongAccessRights extends RuntimeException {
 
 	/**
 	 * Construct a Epickur Wrong Access Rights
+	 * 
+	 * @param message
+	 *            The message
 	 */
 	public EpickurWrongAccessRights(final String message) {
 		super(message);

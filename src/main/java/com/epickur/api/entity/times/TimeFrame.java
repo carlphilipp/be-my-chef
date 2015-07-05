@@ -21,33 +21,38 @@ public final class TimeFrame extends AbstractEntity {
 	private int close;
 
 	/**
-	 * @return
+	 * @return The open time
 	 */
-	public final int getOpen() {
+	public int getOpen() {
 		return open;
 	}
 
 	/**
 	 * @param open
+	 *            The open time
 	 */
-	public final void setOpen(final int open) {
+	public void setOpen(final int open) {
 		this.open = open;
 	}
 
 	/**
-	 * @return
+	 * @return The close time
 	 */
-	public final int getClose() {
+	public int getClose() {
 		return close;
 	}
 
 	/**
 	 * @param close
+	 *            The close time
 	 */
-	public final void setClose(final int close) {
+	public void setClose(final int close) {
 		this.close = close;
 	}
 
+	/**
+	 * @return The updated map
+	 */
 	@JsonIgnore
 	public Map<String, String> getUpdateMap() {
 		Map<String, String> res = new HashMap<String, String>();
@@ -66,7 +71,7 @@ public final class TimeFrame extends AbstractEntity {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}

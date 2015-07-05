@@ -263,7 +263,7 @@ public final class Dish extends AbstractEntity {
 	}
 
 	/**
-	 * @param videoUrl
+	 * @param imageAfterUrl
 	 *            The image after url
 	 */
 	public void setImageAfterUrl(final String imageAfterUrl) {
@@ -396,19 +396,31 @@ public final class Dish extends AbstractEntity {
 		return dish;
 	}
 
+	/**
+	 * @return A list of condiments
+	 */
 	public List<String> getCondiments() {
 		return condiments;
 	}
 
-	public void setCondiments(List<String> condiments) {
+	/**
+	 * @param condiments A list of condiments
+	 */
+	public void setCondiments(final List<String> condiments) {
 		this.condiments = condiments;
 	}
 
+	/**
+	 * @return A list of utensils
+	 */
 	public List<String> getUtensils() {
 		return utensils;
 	}
 
-	public void setUtensils(List<String> utensils) {
+	/**
+	 * @param utensils A list of utensils
+	 */
+	public void setUtensils(final List<String> utensils) {
 		this.utensils = utensils;
 	}
 

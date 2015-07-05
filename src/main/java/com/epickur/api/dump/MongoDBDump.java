@@ -15,6 +15,11 @@ import com.epickur.api.utils.Utils;
 import com.wordnik.system.mongodb.RestoreUtil;
 import com.wordnik.system.mongodb.SnapshotUtil;
 
+/**
+ * @author cph
+ * @version 1.0
+ *
+ */
 public final class MongoDBDump {
 
 	/** Logger */
@@ -42,6 +47,7 @@ public final class MongoDBDump {
 	 * Construct a DB dump
 	 * 
 	 * @param date
+	 *            The date
 	 */
 	public MongoDBDump(final String date) {
 		this.date = date;
@@ -70,11 +76,17 @@ public final class MongoDBDump {
 		return "epickur_" + computername + "_" + date + TARGZEXT;
 	}
 
+	/**
+	 * @return The current full path name
+	 */
 	public String getCurrentFullPathName() {
 		return backupPath + FILE_SEPARATOR + getCurrentNameFile();
 	}
 
-	public final List<String> getListFiles() {
+	/**
+	 * @return The list files
+	 */
+	public List<String> getListFiles() {
 		List<String> files = new ArrayList<String>();
 		File folder = new File(backupPath);
 
@@ -91,7 +103,7 @@ public final class MongoDBDump {
 	/**
 	 * Get the dump database
 	 * 
-	 * @throws Exception
+	 * @return The backup directory
 	 */
 	public String exportMongo() {
 		cleanDirectory();
@@ -120,6 +132,9 @@ public final class MongoDBDump {
 		return backupPath;
 	}
 
+	/**
+	 * Import mongo
+	 */
 	public void importMongo() {
 		String[] derp2 = new String[7];
 		derp2[0] = "-i";
@@ -132,6 +147,9 @@ public final class MongoDBDump {
 		RestoreUtil.main(derp2);
 	}
 
+	/**
+	 * Clean directory
+	 */
 	private void cleanDirectory() {
 		List<String> files = getListFiles();
 		if (files.size() != 0) {

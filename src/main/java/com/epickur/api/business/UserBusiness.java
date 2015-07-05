@@ -291,7 +291,9 @@ public final class UserBusiness {
 
 	/**
 	 * @param email
+	 *            The email
 	 * @throws EpickurException
+	 *             If an epickur exception occurred
 	 */
 	public void resetPasswordFirstStep(final String email) throws EpickurException {
 		User user = this.readWithEmail(email);
@@ -303,6 +305,17 @@ public final class UserBusiness {
 		}
 	}
 
+	/**
+	 * @param id
+	 *            The Userid
+	 * @param node
+	 *            The node containing the password
+	 * @param resetCode
+	 *            The reset code
+	 * @return A User
+	 * @throws EpickurException
+	 *             If an epickur exception occurred
+	 */
 	public User resetPasswordSecondStep(final String id, final ObjectNode node, final String resetCode) throws EpickurException {
 		User user = userDao.read(id);
 		if (user == null) {

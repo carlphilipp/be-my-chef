@@ -137,6 +137,10 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 	/**
 	 * Search a list of Dish
 	 * 
+	 * @param day
+	 *            The day
+	 * @param pickupdateMinutes
+	 *            The pickup date in minutes
 	 * @param types
 	 *            The type of Dish to search
 	 * @param limit
@@ -191,7 +195,7 @@ public final class DishDaoImpl extends DaoCrud<Dish> {
 				cursor.close();
 			}
 		}
-		// TODO: See how to optimize that and avoid doing that here.
+		// TODO See how to optimize that and avoid doing that here.
 		// Should be doable in MongoDB.
 		List<Dish> res = new ArrayList<Dish>();
 		for (Dish dish : dishes) {

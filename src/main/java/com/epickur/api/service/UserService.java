@@ -574,6 +574,8 @@ public final class UserService {
 	 *            The email agent. Can only be true or false
 	 * @param order
 	 *            The Order
+	 * @param context
+	 *            The context
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse

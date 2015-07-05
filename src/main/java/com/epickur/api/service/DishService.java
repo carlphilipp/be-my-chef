@@ -262,6 +262,8 @@ public final class DishService {
 	 *            The Dish id
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
+	 * @param context
+	 *            The context
 	 * @return The response
 	 */
 	@GET
@@ -545,6 +547,8 @@ public final class DishService {
 	 */
 	// @formatter:on
 	/**
+	 * @param pickupdate
+	 *            The pickup date
 	 * @param types
 	 *            The list of Dish type
 	 * @param limit
@@ -555,6 +559,8 @@ public final class DishService {
 	 *            A geo localisation coordinate. lat,long
 	 * @param distance
 	 *            The distance
+	 * @param context
+	 *            The context
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse

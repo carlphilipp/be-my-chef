@@ -34,7 +34,7 @@ public final class WorkingTimes extends AbstractEntity {
 	 * 
 	 * @return The hours
 	 */
-	public final Hours getHours() {
+	public Hours getHours() {
 		return hours;
 	}
 
@@ -44,19 +44,26 @@ public final class WorkingTimes extends AbstractEntity {
 	 * @param hours
 	 *            The hours
 	 */
-	public final void setHours(final Hours hours) {
+	public void setHours(final Hours hours) {
 		this.hours = hours;
 	}
 
 	/**
 	 * Getter
 	 * 
-	 * @return
+	 * @return The preparation time
 	 */
-	public final int getMinimumPreparationTime() {
+	public int getMinimumPreparationTime() {
 		return minimumPreparationTime;
 	}
 
+	/**
+	 * @param day
+	 *            The day
+	 * @param pickupdateMinutes
+	 *            The pickup date in minutes
+	 * @return true or false
+	 */
 	@JsonIgnore
 	public boolean canBePickup(final String day, final Integer pickupdateMinutes) {
 		Integer openTime = null;
@@ -68,7 +75,7 @@ public final class WorkingTimes extends AbstractEntity {
 				break;
 			}
 		}
-		if(openTime != null){
+		if (openTime != null) {
 			// We keep this dish if the caterer has time to prepare it.
 			if (pickupdateMinutes.intValue() - getMinimumPreparationTime() >= openTime) {
 				return true;
@@ -77,10 +84,24 @@ public final class WorkingTimes extends AbstractEntity {
 		return false;
 	}
 
+	/**
+	 * @param obj
+	 *            The document
+	 * @return The working times
+	 * @throws EpickurParsingException
+	 *             If a parsing exception occured
+	 */
 	public static WorkingTimes getObject(final Document obj) throws EpickurParsingException {
 		return WorkingTimes.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
+	/**
+	 * @param json
+	 *            The json
+	 * @return The working times
+	 * @throws EpickurParsingException
+	 *             If a parsing exception occured
+	 */
 	public static WorkingTimes getObject(final String json) throws EpickurParsingException {
 		WorkingTimes wt = null;
 		try {
@@ -92,6 +113,11 @@ public final class WorkingTimes extends AbstractEntity {
 		return wt;
 	}
 
+	/**
+	 * @param prefix
+	 *            The prifix
+	 * @return The updated map
+	 */
 	public Map<String, Object> getUpdateMapObject(final String prefix) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		if (hours != null) {
@@ -107,7 +133,7 @@ public final class WorkingTimes extends AbstractEntity {
 	 * @param minimumPreparationTime
 	 *            The minimun preparation time
 	 */
-	public final void setMinimumPreparationTime(final int minimumPreparationTime) {
+	public void setMinimumPreparationTime(final int minimumPreparationTime) {
 		this.minimumPreparationTime = minimumPreparationTime;
 	}
 
@@ -121,7 +147,7 @@ public final class WorkingTimes extends AbstractEntity {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}

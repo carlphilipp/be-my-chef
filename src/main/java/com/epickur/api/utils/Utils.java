@@ -52,7 +52,7 @@ public final class Utils {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Utils.class.getSimpleName());
 	/** Session timeout */
-	private static Integer SESSIONTIMEOUT;
+	private static Integer sessionTimeout;
 
 	/**
 	 * Private Constructor
@@ -62,7 +62,7 @@ public final class Utils {
 
 	static {
 		Properties prop = Utils.getEpickurProperties();
-		SESSIONTIMEOUT = Integer.valueOf(prop.getProperty("session.timeout"));
+		sessionTimeout = Integer.valueOf(prop.getProperty("session.timeout"));
 	}
 
 	/**
@@ -220,7 +220,7 @@ public final class Utils {
 			return false;
 		} else {
 			DateTime currentTime = new DateTime();
-			if (Days.daysBetween(key.getCreatedAt(), currentTime).getDays() > SESSIONTIMEOUT) {
+			if (Days.daysBetween(key.getCreatedAt(), currentTime).getDays() > sessionTimeout) {
 				return false;
 			}
 		}
@@ -271,12 +271,17 @@ public final class Utils {
 	public static Geo stringToGeo(final String str) {
 		Geo geo = new Geo();
 		String[] geoArray = str.split(",");
-		// TODO: Not sure about 0 or 1, check which one is correct
+		// TODO Not sure about 0 or 1, check which one is correct
 		geo.setLatitude(Double.valueOf(geoArray[0]));
 		geo.setLongitude(Double.valueOf(geoArray[1]));
 		return geo;
 	}
 
+	/**
+	 * @param pickupdate
+	 *            The pickup date
+	 * @return An array of object containing in the first cell the day and in the second cell the time.
+	 */
 	public static Object[] parsePickupdate(final String pickupdate) {
 		Object[] result = null;
 		if (pickupdate != null) {
@@ -293,6 +298,11 @@ public final class Utils {
 		return result;
 	}
 
+	/**
+	 * @param format
+	 *            The format
+	 * @return A string
+	 */
 	public static String getCurrentDateInFormat(final String format) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Australia/Melbourne"));
 		DateFormat formatter = new SimpleDateFormat(format);
@@ -300,6 +310,11 @@ public final class Utils {
 		return formatter.format(cal.getTime());
 	}
 
+	/**
+	 * @param list
+	 *            The list to convert
+	 * @return A converted array
+	 */
 	public static String[] convertListToArray(final List<String> list) {
 		String[] res = new String[list.size()];
 		for (int i = 0; i < list.size(); i++) {
@@ -311,12 +326,10 @@ public final class Utils {
 	/**
 	 * Create tar.gz file
 	 * 
-	 * @param input
-	 *            the input path
+	 * @param inputs
+	 *            the input path list
 	 * @param output
 	 *            the output path
-	 * @throws IOException
-	 *             the exception
 	 */
 	public static void createTarGz(final List<String> inputs, final String output) {
 		FileOutputStream dest = null;
@@ -334,7 +347,7 @@ public final class Utils {
 				out.putNextEntry(new TarEntry(f, f.getName()));
 				origin = new BufferedInputStream(new FileInputStream(f));
 				int count;
-				byte data[] = new byte[2048];
+				byte [] data = new byte[2048];
 				while ((count = origin.read(data)) != -1) {
 					out.write(data, 0, count);
 				}

@@ -48,9 +48,9 @@ public final class UserValidator extends Validator {
 		if (StringUtils.isBlank(user.getEmail())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "email"));
 		}
-		if(user.getPhoneNumber() != null){
+		if (user.getPhoneNumber() != null) {
 			PhoneNumberUtil util = PhoneNumberUtil.getInstance();
-			if(!util.isValidNumber(user.getPhoneNumber())){
+			if (!util.isValidNumber(user.getPhoneNumber())) {
 				System.out.println(user.getPhoneNumber());
 				throw new EpickurIllegalArgument("The field " + getEntity() + ".phoneNumber is not valid");
 			}
@@ -106,8 +106,6 @@ public final class UserValidator extends Validator {
 	/**
 	 * @param userId
 	 *            The User id
-	 * @param token
-	 *            The Stripe token
 	 * @param order
 	 *            The Order
 	 */
@@ -119,7 +117,7 @@ public final class UserValidator extends Validator {
 			DishValidator validator = new DishValidator();
 			validator.checkCreateData(order.getDish());
 			if (StringUtils.isBlank(order.getCardToken())) {
-					throw new EpickurIllegalArgument(fieldNull(getEntity(), "cardToken"));
+				throw new EpickurIllegalArgument(fieldNull(getEntity(), "cardToken"));
 			}
 			if (StringUtils.isBlank(order.getDescription())) {
 				throw new EpickurIllegalArgument(fieldNull(getEntity(), "description"));
@@ -143,7 +141,7 @@ public final class UserValidator extends Validator {
 					WorkingTimes workingTimes = caterer.getWorkingTimes();
 					if (!workingTimes.canBePickup((String) result[0], (Integer) result[1])) {
 						System.out.println("1: " + (String) result[0]);
-						System.out.println("2: " + (Integer) result[1]);
+						System.out.println("2: " + result[1]);
 						System.out.println("Prep time: " + workingTimes.getMinimumPreparationTime());
 						try {
 							System.out.println("Hours: " + workingTimes.getHours().toStringAPIView());
@@ -156,7 +154,7 @@ public final class UserValidator extends Validator {
 				}
 			}
 			if (order.getPaid() != null) {
-				if (order.getPaid() == true) {
+				if (order.getPaid()) {
 					throw new EpickurIllegalArgument("The field order.paid can not be true.");
 				}
 			}
@@ -197,8 +195,8 @@ public final class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param name
-	 *            The user name
+	 * @param email
+	 *            The user email
 	 * @param check
 	 *            The check code
 	 */
@@ -274,12 +272,20 @@ public final class UserValidator extends Validator {
 		}
 	}
 
+	/**
+	 * @param role
+	 *            The role
+	 */
 	public void checkResetRightsBefore(final Role role) {
 		if (role != Role.ADMIN) {
 			throw new EpickurForbiddenException();
 		}
 	}
 
+	/**
+	 * @param node
+	 *            The node containing the email
+	 */
 	public void checkResetPasswordData(final ObjectNode node) {
 		if (!node.has("email")) {
 			throw new EpickurIllegalArgument("The field email is mandatory");
@@ -291,6 +297,14 @@ public final class UserValidator extends Validator {
 		}
 	}
 
+	/**
+	 * @param id
+	 *            The id
+	 * @param node
+	 *            The node containing the password
+	 * @param token
+	 *            The token
+	 */
 	public void checkResetPasswordData(final String id, final ObjectNode node, final String token) {
 		checkId(id);
 		if (StringUtils.isBlank(token)) {

@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @Path("/nokey")
 public final class NoKeyService {
-	
+
 	/** User Business */
 	private UserBusiness userBusiness;
 	/** Order Business */
@@ -81,8 +81,8 @@ public final class NoKeyService {
 	 */
 	// @formatter:on
 	/**
-	 * @param name
-	 *            The User name
+	 * @param email
+	 *            The User email
 	 * @param check
 	 *            The code
 	 * @throws EpickurException

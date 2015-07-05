@@ -3,7 +3,6 @@ package com.epickur.api.entity.databind;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,10 +10,15 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
+/**
+ * @author cph
+ * @version 1.0
+ *
+ */
 public final class PhoneNumberDeserializer extends JsonDeserializer<PhoneNumber> {
 
 	@Override
-	public PhoneNumber deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
+	public PhoneNumber deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
 		try {
 			JsonNode node = jp.readValueAsTree();
 			if (!node.has("nationalNumber")) {

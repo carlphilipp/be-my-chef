@@ -204,6 +204,8 @@ public final class CatererService {
 	 *            The Caterer id
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
+	 * @param context
+	 *            The context
 	 * @return The response
 	 */
 	@GET
@@ -433,6 +435,7 @@ public final class CatererService {
 		List<Caterer> caterers = catererBusiness.readAll();
 		return Response.ok().entity(caterers).build();
 	}
+
 	// @formatter:off
 	/**
 	 * @api {get} /caterers/:id/dishes Search Dishes for a Caterer
@@ -541,7 +544,7 @@ public final class CatererService {
 	 *            The {@link Caterer} id
 	 * @param context
 	 *            The container context that contains the Key
-	 * @return
+	 * @return The response
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
@@ -594,6 +597,8 @@ public final class CatererService {
 	 *            The end date to filter on
 	 * @param format
 	 *            The date format
+	 * @param context
+	 *            The context
 	 * @return A Response
 	 * @throws EpickurException
 	 *             If an EpickurException occured

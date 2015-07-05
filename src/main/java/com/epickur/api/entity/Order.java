@@ -455,11 +455,18 @@ public final class Order extends AbstractEntity {
 		}
 	}
 
+	/**
+	 * @return A card token
+	 */
 	public String getCardToken() {
 		return cardToken;
 	}
 
-	public void setCardToken(String cardToken) {
+	/**
+	 * @param cardToken
+	 *            A card token
+	 */
+	public void setCardToken(final String cardToken) {
 		this.cardToken = cardToken;
 	}
 }

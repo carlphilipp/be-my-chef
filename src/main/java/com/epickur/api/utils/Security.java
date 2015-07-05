@@ -140,10 +140,28 @@ public final class Security {
 		return Security.encodeToSha256(name + saltHashed + encryptedPasswordSalt + email);
 	}
 
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @param cardToken
+	 *            The card token
+	 * @return A order code
+	 * @throws EpickurException
+	 *             If an exception occurred
+	 */
 	public static String createOrderCode(final ObjectId orderId, final String cardToken) throws EpickurException {
 		return Security.encodeToSha256(orderId.toHexString() + cardToken);
 	}
 
+	/**
+	 * @param orderId
+	 *            The order Id
+	 * @param email
+	 *            The user email
+	 * @return A reset code
+	 * @throws EpickurException
+	 *             If an exception occurred
+	 */
 	public static String createResetCode(final ObjectId orderId, final String email) throws EpickurException {
 		return Security.encodeToSha256(orderId.toHexString() + email);
 	}

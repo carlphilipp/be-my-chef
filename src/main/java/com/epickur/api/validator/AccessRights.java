@@ -14,7 +14,7 @@ import com.epickur.api.exception.EpickurWrongAccessRights;
  * @version 1.0
  *
  */
-public class AccessRights {
+public final class AccessRights {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(AccessRights.class.getSimpleName());
@@ -22,7 +22,7 @@ public class AccessRights {
 	/**
 	 * The access rights matrix
 	 */
-	private static boolean[][] MATRIX = new boolean[][] {
+	private static final boolean[][] MATRIX = new boolean[][] {
 // @formatter:off
 
 	// Endpoint	    // 	-------------------------- USER --------------------------|------------------ ORDER ------------------|------------------------------- CATERER -------------------------------|------------------ DISH ------------------
@@ -67,6 +67,11 @@ public class AccessRights {
 		}
 	}
 
+	/**
+	 * @param role
+	 *            The rold
+	 * @return The line number
+	 */
 	private static int getLine(final Role role) {
 		int line = -1;
 		switch (role) {
@@ -88,6 +93,13 @@ public class AccessRights {
 		return line;
 	}
 
+	/**
+	 * @param operation
+	 *            The operation
+	 * @param endpoint
+	 *            The endpoint
+	 * @return The column number
+	 */
 	private static int getColumn(final Operation operation, final EndpointType endpoint) {
 		int line = -1;
 		int offset = getOffset(endpoint);
@@ -145,6 +157,11 @@ public class AccessRights {
 		return line;
 	}
 
+	/**
+	 * @param endpoint
+	 *            The endpoint
+	 * @return The offset
+	 */
 	private static int getOffset(final EndpointType endpoint) {
 		int offset = -1;
 		switch (endpoint) {
@@ -164,9 +181,5 @@ public class AccessRights {
 			throw new EpickurWrongAccessRights();
 		}
 		return offset;
-	}
-
-	public static void main(final String[] args) {
-		AccessRights.check(Role.USER, Operation.CREATE, EndpointType.DISH);
 	}
 }

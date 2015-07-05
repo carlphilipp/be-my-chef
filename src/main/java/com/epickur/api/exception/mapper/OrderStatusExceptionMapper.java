@@ -18,7 +18,7 @@ import com.mongodb.DBObject;
  */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
-public class OrderStatusExceptionMapper implements ExceptionMapper<OrderStatusException> {
+public final class OrderStatusExceptionMapper implements ExceptionMapper<OrderStatusException> {
 
 	@Override
 	public Response toResponse(final OrderStatusException exception) {

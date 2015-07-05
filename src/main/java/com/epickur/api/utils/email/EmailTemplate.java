@@ -132,9 +132,11 @@ public final class EmailTemplate {
 	 * 
 	 * @param userName
 	 *            The user name
+	 * @param email
+	 *            The user email
 	 * @param code
 	 *            The code
-	 * @return A map
+	 * @return The map
 	 */
 	public static Map<String, String> convertToDataNewRegistrationUser(final String userName, final String email, final String code) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -190,16 +192,20 @@ public final class EmailTemplate {
 	 * 
 	 * @param userName
 	 *            The user name
+	 * @param userId
+	 *            The user id
 	 * @param orderId
 	 *            The Order Id
 	 * @param dishName
 	 *            The Dish name
 	 * @param catererName
 	 *            The Caterer Name
+	 * @param orderCode
+	 *            the Order code
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataNewOrderCaterer(final String userName, final String userId, final String orderId, final String dishName,
-			final String catererName, final String orderCode) {
+	public static Map<String, String> convertToDataNewOrderCaterer(final String userName, final String userId, final String orderId,
+			final String dishName, final String catererName, final String orderCode) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@USER_NAME@@", userName);
@@ -240,6 +246,8 @@ public final class EmailTemplate {
 	/**
 	 * Convert data for decline order user.
 	 * 
+	 * @param orderId
+	 *            The order id
 	 * @return A map.
 	 */
 	public static Map<String, String> convertToDataDeclineOrderUser(final String orderId) {
@@ -252,6 +260,8 @@ public final class EmailTemplate {
 	/**
 	 * Convert data for decline order admins.
 	 * 
+	 * @param orderId
+	 *            The order id
 	 * @return A map.
 	 */
 	public static Map<String, String> convertToDataDeclineOrderAdmins(final String orderId) {
@@ -262,20 +272,35 @@ public final class EmailTemplate {
 	}
 
 	// ORDER: case 3 - The order is a success
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataSuccessOrderUser(final String orderId) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
-	
+
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataSuccessOrderCaterer(final String orderId) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
-	
+
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataSuccessOrderAdmins(final String orderId) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
@@ -284,49 +309,88 @@ public final class EmailTemplate {
 	}
 
 	// ORDER: case 4 - The order has been accepted but the payment failed
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataFailOrderUser(final String orderId) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
-	
+
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataFailOrderCaterer(final String orderId) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
-	
+
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataFailOrderAdmins(final String orderId) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
-	
+
 	// ORDER: case 5 - The order has been received by the Caterer, but he did not answer it on time.
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataCancelOrderUser(final String orderId) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
-	
+
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataCancelOrderCaterer(final String orderId) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
-	
+
+	/**
+	 * @param orderId
+	 *            The order id
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataCancelOrderAdmins(final String orderId) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@ORDER_ID@@", orderId);
 		return data;
 	}
-	
+
+	/**
+	 * @param email
+	 *            The email
+	 * @param userId
+	 *            The user id
+	 * @param resetCode
+	 *            The reset code
+	 * @return A map
+	 */
 	public static Map<String, String> convertToDataResetUserPassword(final String email, final String userId, final String resetCode) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);

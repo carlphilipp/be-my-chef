@@ -122,6 +122,10 @@ public class DishBusiness {
 	/**
 	 * Search a list of Dish
 	 * 
+	 * @param day
+	 *            The day
+	 * @param minutes
+	 *            The minutes
 	 * @param type
 	 *            The type of Dish
 	 * @param limit
@@ -136,7 +140,7 @@ public class DishBusiness {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
+	public final List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
 			final String searchtext, final int distance)
 			throws EpickurException {
 		if (geo == null) {
