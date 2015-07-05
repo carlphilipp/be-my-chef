@@ -48,7 +48,7 @@ public final class Jobs {
 	private Jobs() throws SchedulerException {
 		this.prop = Utils.getEpickurProperties();
 		this.scheduler = new StdSchedulerFactory().getScheduler();
-		this.orderMaxTime = Integer.valueOf(prop.getProperty("cron.order.timelimit"));
+		this.orderMaxTime = Integer.parseInt(prop.getProperty("cron.order.timelimit"));
 	}
 
 	/**

@@ -156,7 +156,10 @@ public final class MongoDBDump {
 			File folder = new File(backupPath);
 			File[] listOfFiles = folder.listFiles();
 			for (int i = 0; i < listOfFiles.length; i++) {
-				listOfFiles[i].delete();
+				boolean deleted = listOfFiles[i].delete();
+				if (!deleted) {
+					LOG.warn(listOfFiles[i].getName() + " has not been deleted");
+				}
 			}
 		}
 	}
