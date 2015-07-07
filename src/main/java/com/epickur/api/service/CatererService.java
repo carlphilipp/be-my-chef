@@ -34,6 +34,7 @@ import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.CatererValidator;
 import com.epickur.api.validator.FactoryValidator;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 
@@ -640,6 +641,12 @@ public final class CatererService {
 				bdb.put("end", end);
 			}
 			bdb.put("format", format);
+			BasicDBList list = new BasicDBList();
+			for(Order order : orders){
+				order.setDish(null);
+				list.add(order.getAPIView());
+			}
+			bdb.put("orders", list);
 			return Response.ok().entity(bdb).build();
 		}
 	}

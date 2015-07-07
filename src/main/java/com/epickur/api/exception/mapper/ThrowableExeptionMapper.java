@@ -32,6 +32,6 @@ public final class ThrowableExeptionMapper implements ExceptionMapper<Throwable>
 		DBObject bdb = BasicDBObjectBuilder.start().get();
 		bdb.put("error", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		bdb.put("message", Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(bdb).build();
+		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(bdb).type(MediaType.APPLICATION_JSON).build();
 	}
 }

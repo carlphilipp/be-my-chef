@@ -69,7 +69,7 @@
 		<javadoc.version>2.10.1</javadoc.version>
 		<javancss.version>2.1</javancss.version>
 		<jackson.version>2.5.3</jackson.version>
-		<jersey.version>2.17</jersey.version>
+		<jersey.version>2.19</jersey.version>
 		<joda.version>2.7</joda.version>
 		<junit.version>4.12</junit.version>
 		<lang3.version>3.4</lang3.version>

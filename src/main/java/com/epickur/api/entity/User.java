@@ -39,7 +39,7 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "phoneNumber", "allow", "key", "allow", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "role", "phoneNumber", "allow", "key", "allow", "createdAt", "updatedAt" })
 public final class User extends AbstractEntity {
 
 	/** Logger */
