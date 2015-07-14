@@ -1,12 +1,15 @@
 package com.epickur.api.filter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map.Entry;
 
 import javax.annotation.Priority;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.logging.log4j.LogManager;
@@ -39,9 +42,12 @@ public final class LogRequestFilter implements ContainerRequestFilter {
 		Log log = new Log();
 		log.setTime(new DateTime());
 		log.setUrl(servletRequest.getRequestURL().toString());
-		log.setMethod(requestContext.getMethod());
+		log.setMethod(servletRequest.getMethod());
 		log.setProtocol(servletRequest.getProtocol());
-
+		MultivaluedMap<String, String> params = requestContext.getUriInfo().getQueryParameters();
+		for (Entry<String, List<String>> param : params.entrySet()) {
+			log.getArgs().put(param.getKey(), param.getValue().get(0));
+		}
 		String ipAddress = servletRequest.getHeader("X-FORWARDED-FOR");
 		if (ipAddress == null) {
 			ipAddress = servletRequest.getRemoteAddr();

@@ -1,5 +1,8 @@
 package com.epickur.api.entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
@@ -18,7 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "time", "url", "method", "protocol", "remoteAddr", "userAgent" })
+@JsonPropertyOrder(value = { "id", "time", "url", "args", "method", "protocol", "remoteAddr", "userAgent" })
 public final class Log extends AbstractEntity {
 	/** Id */
 	private ObjectId id;
@@ -26,6 +29,8 @@ public final class Log extends AbstractEntity {
 	private DateTime time;
 	/** Url */
 	private String url;
+	/** Url arguments */
+	private Map<String, String> args;
 	/** Method */
 	private String method;
 	/** Protocol */
@@ -91,14 +96,22 @@ public final class Log extends AbstractEntity {
 		return userAgent;
 	}
 
-	public void setUserAgent(String userAgent) {
+	public void setUserAgent(final String userAgent) {
 		this.userAgent = userAgent;
+	}
+
+	public Map<String, String> getArgs() {
+		if (this.args == null) {
+			this.args = new HashMap<String, String>();
+		}
+		return args;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((args == null) ? 0 : args.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
@@ -121,6 +134,13 @@ public final class Log extends AbstractEntity {
 			return false;
 		}
 		Log other = (Log) obj;
+		if (args == null) {
+			if (other.args != null) {
+				return false;
+			}
+		} else if (!args.equals(other.args)) {
+			return false;
+		}
 		if (id == null) {
 			if (other.id != null) {
 				return false;
