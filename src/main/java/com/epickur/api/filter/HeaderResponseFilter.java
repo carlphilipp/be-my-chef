@@ -20,5 +20,4 @@ public final class HeaderResponseFilter implements ContainerResponseFilter {
 		responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
 		responseContext.getHeaders().add("Access-Control-Allow-Headers", "Content-Type");
 	}
-
 }

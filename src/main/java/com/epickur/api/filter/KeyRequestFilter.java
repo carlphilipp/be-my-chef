@@ -3,7 +3,6 @@ package com.epickur.api.filter;
 import java.io.IOException;
 
 import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
@@ -16,6 +15,7 @@ import com.epickur.api.dao.mongo.KeyDaoImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.utils.EpickurPriorities;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 
@@ -25,7 +25,7 @@ import com.epickur.api.utils.Utils;
  * @author carl
  * @version 1.0
  */
-@Priority(Priorities.AUTHORIZATION)
+@Priority(EpickurPriorities.AUTHORIZATION)
 @Provider
 public final class KeyRequestFilter implements ContainerRequestFilter {
 

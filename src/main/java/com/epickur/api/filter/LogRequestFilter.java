@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.annotation.Priority;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
@@ -17,6 +16,7 @@ import org.joda.time.DateTime;
 import com.epickur.api.dao.mongo.LogDaoImpl;
 import com.epickur.api.entity.Log;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.utils.EpickurPriorities;
 
 /**
  * Filter that log any single request
@@ -24,7 +24,7 @@ import com.epickur.api.exception.EpickurException;
  * @author cph
  * @version 1.0
  */
-@Priority(Priorities.AUTHENTICATION)
+@Priority(EpickurPriorities.LOG)
 @Provider
 public final class LogRequestFilter implements ContainerRequestFilter {
 
