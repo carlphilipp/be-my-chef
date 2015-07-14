@@ -8,6 +8,7 @@ import com.epickur.api.dao.mongo.CatererDaoImpl;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Order;
 import com.epickur.api.enumeration.Operation;
+import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.validator.CatererValidator;
@@ -109,10 +110,12 @@ public class CatererBusiness {
 	 *            The orders
 	 * @return The addition of all orders amount
 	 */
-	public final Integer getAmount(final List<Order> orders) {
+	public final Integer getTotalAmountSuccessful(final List<Order> orders) {
 		Integer amount = Integer.valueOf(0);
 		for (Order order : orders) {
-			amount += order.getAmount();
+			if (order.getStatus() == OrderStatus.SUCCESSFUL) {
+				amount += order.getAmount();
+			}
 		}
 		return amount;
 	}

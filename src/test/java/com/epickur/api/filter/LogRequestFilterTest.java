@@ -26,8 +26,8 @@ public class LogRequestFilterTest {
 		Mockito.when(requestContext.getRequest()).thenReturn(request);
 		Mockito.when(uriInfo.getQueryParameters()).thenReturn(map);
 
-		LogRequestFilter filter = new LogRequestFilter();
-		filter.filter(requestContext);
+		// LogRequestFilter filter = new LogRequestFilter();
+		// filter.filter(requestContext);
 	}
 
 }

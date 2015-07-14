@@ -432,10 +432,13 @@ public class CatererServiceTest {
 		idsCaterers.add(caterer.getId());
 		Order order1 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order1);
+		order1 = TestUtils.updateOrderStatusToSuccess(order1);
 		Order order2 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order2);
+		order2 = TestUtils.updateOrderStatusToSuccess(order2);
 		Order order3 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order3);
+		order3 = TestUtils.updateOrderStatusToSuccess(order3);
 
 		Response result = catererService.paymentInfo(caterer.getId().toHexString(), null, null, null, context);
 		if (result.getEntity() != null) {
@@ -454,10 +457,13 @@ public class CatererServiceTest {
 		idsCaterers.add(caterer.getId());
 		Order order1 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order1);
+		order1 = TestUtils.updateOrderStatusToSuccess(order1);
 		Order order2 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order2);
+		order2 = TestUtils.updateOrderStatusToSuccess(order2);
 		Order order3 = TestUtils.createOrder(user.getId(), caterer.getId());
 		addOrder(user, order3);
+		order3 = TestUtils.updateOrderStatusToSuccess(order3);
 
 		String start = "01/01/2015";
 		String defaultFormat = "MM/dd/yyyy";

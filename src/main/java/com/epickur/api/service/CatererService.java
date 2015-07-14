@@ -629,7 +629,7 @@ public final class CatererService {
 			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
 		} else {
 			List<Order> orders = orderBusiness.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
-			Integer amount = catererBusiness.getAmount(orders);
+			Integer amount = catererBusiness.getTotalAmountSuccessful(orders);
 			DBObject bdb = BasicDBObjectBuilder.start().get();
 			bdb.put("id", caterer.getId().toHexString());
 			bdb.put("name", caterer.getName());

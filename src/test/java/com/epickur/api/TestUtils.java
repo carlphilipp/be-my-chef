@@ -23,6 +23,7 @@ import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
+import com.epickur.api.dao.mongo.OrderDaoImpl;
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
@@ -39,6 +40,7 @@ import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.Currency;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.MeasurementUnit;
+import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ObjectMapperWrapperAPI;
@@ -367,9 +369,9 @@ public class TestUtils {
 	private static PhoneNumber generateRandomPhoneNumber() {
 		PhoneNumber phoneNumber = new PhoneNumber();
 		phoneNumber.setCountryCode(61);
-		phoneNumber.setNationalNumber(700000000 +RandomUtils.nextInt(10000000, 99999999));
-		//phoneNumber.setNationalNumber(761231585);
-		//phoneNumber.setNationalNumber(754944084);
+		phoneNumber.setNationalNumber(700000000 + RandomUtils.nextInt(10000000, 99999999));
+		// phoneNumber.setNationalNumber(761231585);
+		// phoneNumber.setNationalNumber(754944084);
 		return phoneNumber;
 	}
 
@@ -394,7 +396,8 @@ public class TestUtils {
 		return pickupdate;
 	}
 
-	public static Order generateRandomOrder() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
+	public static Order generateRandomOrder() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
 		Order order = new Order();
 		order.setAmount(generateRandomStripAmount());
 		order.setCurrency(generateRandomCurrency());
@@ -402,6 +405,7 @@ public class TestUtils {
 		order.setDish(generateRandomDish());
 		order.setCreatedBy(new ObjectId());
 		order.setCardToken(TestUtils.generateRandomToken().getId());
+		order.setStatus(OrderStatus.SUCCESSFUL);
 
 		String pickupdate = generateRandomPickupDate();
 		order.setPickupdate(pickupdate);
@@ -492,7 +496,7 @@ public class TestUtils {
 		User login = business.login(newUser.getEmail(), password);
 		return login;
 	}
-	
+
 	public static User createAdminAndLogin() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
@@ -535,5 +539,11 @@ public class TestUtils {
 		OrderBusiness business = new OrderBusiness();
 		Order orderRes = business.create(userId.toHexString(), order, false);
 		return orderRes;
+	}
+
+	public static Order updateOrderStatusToSuccess(final Order order) throws EpickurException {
+		order.setStatus(OrderStatus.SUCCESSFUL);
+		OrderDaoImpl dao = new OrderDaoImpl();
+		return dao.update(order);
 	}
 }

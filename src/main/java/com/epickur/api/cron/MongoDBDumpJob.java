@@ -36,4 +36,9 @@ public final class MongoDBDumpJob implements Job {
 		 * LOG.error(e.getLocalizedMessage(), e); } catch (DbxException e) { LOG.error(e.getLocalizedMessage(), e); }
 		 */
 	}
+	
+/*	public static void main(String [] args) throws JobExecutionException{
+		MongoDBDumpJob dump = new MongoDBDumpJob();
+		dump.execute(null);
+	}*/
 }
