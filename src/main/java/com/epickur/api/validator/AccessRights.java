@@ -31,7 +31,7 @@ public final class AccessRights {
 /* Administrator */		{true  , true , true   , true   , true    , true          , true   , true , true   , true   , true    , true   , true , true   , true   , true    , true       , true         , true   , true , true   , true   , true}, 	/* Administrator */
 /* Super User */		{false , true , true   , false  , false   , false         , true   , true , true   , false  , true    , false  , true , true   , false  , false   , true       , false        , true   , true , true   , true   , true}, 	/* Super User */
 /* User */				{false , true , true   , false  , false   , false         , true   , true , true   , false  , false   , false  , true , false  , false  , false   , true       , false        , false  , true , false  , false  , true}, 	/* User */
-/* Epickur-Web */		{true  , false, false  , false  , false   , true          , false  , false, false  , false  , false   , false  , false, false  , false  , false   , true       , false        , false  , false, false  , false  , true}, 	/* Epickur-Web */
+/* Epickur-Web */		{true  , false, false  , false  , false   , true          , false  , false, false  , false  , false   , false  , true , false  , false  , false   , true       , false        , false  , false, false  , false  , true}, 	/* Epickur-Web */
 
 // @formatter:on
 	};
