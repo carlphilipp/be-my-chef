@@ -30,8 +30,8 @@ public final class EmailUtils {
 	 * @param email
 	 *            The email
 	 */
-	public static void emailNewRegistration(final String name, final String code, final String email) {
-		emailNewRegistrationUser(name, code, email);
+	public static void emailNewRegistration(final String name, final String first, final String code, final String email) {
+		emailNewRegistrationUser(name, first, code, email);
 		emailNewRegistrationAdmin(name, email);
 	}
 
@@ -43,9 +43,9 @@ public final class EmailUtils {
 	 * @param email
 	 *            The email
 	 */
-	private static void emailNewRegistrationUser(final String name, final String code, final String email) {
+	private static void emailNewRegistrationUser(final String name, final String first, final String code, final String email) {
 		// Convert data to use email template
-		Map<String, String> emailData = EmailTemplate.convertToDataNewRegistrationUser(name, email, code);
+		Map<String, String> emailData = EmailTemplate.convertToDataNewRegistrationUser(name, first, email, code);
 		// Send an email to the user
 		Email.sendMail(EmailType.REGISTRATION_USER, emailData, new String[] { email });
 	}

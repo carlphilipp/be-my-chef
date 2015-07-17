@@ -130,7 +130,7 @@ public final class EmailTemplate {
 	/**
 	 * Convert data to registration
 	 * 
-	 * @param userName
+	 * @param name
 	 *            The user name
 	 * @param email
 	 *            The user email
@@ -138,10 +138,11 @@ public final class EmailTemplate {
 	 *            The code
 	 * @return The map
 	 */
-	public static Map<String, String> convertToDataNewRegistrationUser(final String userName, final String email, final String code) {
+	public static Map<String, String> convertToDataNewRegistrationUser(final String name, final String first, final String email, final String code) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@NAME@@", userName);
+		data.put("@@NAME@@", name);
+		data.put("@@FIRST@@", first);
 		data.put("@@EMAIL@@", email);
 		data.put("@@ADDRESS@@", Info.WEB_ADDRESS);
 		data.put("@@FOLDER@@", Info.FOLDER);
@@ -152,15 +153,15 @@ public final class EmailTemplate {
 	/**
 	 * Convert data to registration admins
 	 * 
-	 * @param userName
+	 * @param name
 	 *            The user name
 	 * @param email
 	 *            The email
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataNewRegistrationAdmins(final String userName, final String email) {
+	public static Map<String, String> convertToDataNewRegistrationAdmins(final String name, final String email) {
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("@@NAME@@", userName);
+		data.put("@@NAME@@", name);
 		data.put("@@EMAIL@@", email);
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		return data;
@@ -170,7 +171,7 @@ public final class EmailTemplate {
 	/**
 	 * Convert data to order user
 	 * 
-	 * @param userName
+	 * @param name
 	 *            The User name
 	 * @param orderId
 	 *            The Order id
@@ -178,10 +179,10 @@ public final class EmailTemplate {
 	 *            The Dish name
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataNewOrderUser(final String userName, final String orderId, final String dishName) {
+	public static Map<String, String> convertToDataNewOrderUser(final String name, final String orderId, final String dishName) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@NAME@@", userName);
+		data.put("@@NAME@@", name);
 		data.put("@@ORDER_ID@@", orderId);
 		data.put("@@DISH_NAME@@", dishName);
 		return data;
@@ -190,7 +191,7 @@ public final class EmailTemplate {
 	/**
 	 * Convert data to Order Caterer
 	 * 
-	 * @param userName
+	 * @param name
 	 *            The user name
 	 * @param userId
 	 *            The user id
@@ -204,11 +205,11 @@ public final class EmailTemplate {
 	 *            the Order code
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataNewOrderCaterer(final String userName, final String userId, final String orderId,
+	public static Map<String, String> convertToDataNewOrderCaterer(final String name, final String userId, final String orderId,
 			final String dishName, final String catererName, final String orderCode) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@USER_NAME@@", userName);
+		data.put("@@USER_NAME@@", name);
 		data.put("@@USER_ID@@", userId);
 		data.put("@@ORDER_ID@@", orderId);
 		data.put("@@DISH_NAME@@", dishName);
@@ -221,7 +222,7 @@ public final class EmailTemplate {
 	/**
 	 * Convert data to Order admins
 	 * 
-	 * @param userName
+	 * @param name
 	 *            The user name
 	 * @param orderId
 	 *            The Order id
@@ -231,11 +232,11 @@ public final class EmailTemplate {
 	 *            The Caterer name
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataNewOrderAdmins(final String userName, final String orderId, final String dishName,
+	public static Map<String, String> convertToDataNewOrderAdmins(final String name, final String orderId, final String dishName,
 			final String catererName) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@USER_NAME@@", userName);
+		data.put("@@USER_NAME@@", name);
 		data.put("@@ORDER_ID@@", orderId);
 		data.put("@@DISH_NAME@@", dishName);
 		data.put("@@CATERER_NAME@@", catererName);

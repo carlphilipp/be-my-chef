@@ -80,7 +80,7 @@ public final class UserBusiness {
 		User res = userDao.create(user);
 
 		if (sendEmail) {
-			EmailUtils.emailNewRegistration(name, code, email);
+			EmailUtils.emailNewRegistration(name, user.getFirst(), code, email);
 		}
 		// We do not send back the password
 		res.setPassword(null);

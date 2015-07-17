@@ -17,7 +17,7 @@ public class EmailUtilsTest {
 
 	@Test
 	public void emailNewRegistrationTest() {
-		EmailUtils.emailNewRegistration("carl", "codeeddd", EMAIL_TEST);
+		EmailUtils.emailNewRegistration("carl", "firstname", "codeeddd", EMAIL_TEST);
 	}
 
 	@Test
