@@ -28,6 +28,7 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.integration.UserIntegrationTest;
@@ -512,7 +513,7 @@ public class UserServiceTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testReadAllOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+	public void testReadAllOrderAdmin() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
 		User user = TestUtils.generateRandomUser();
 		Response result = service.create(false, false, user, context);
@@ -569,6 +570,50 @@ public class UserServiceTest {
 				if (result3.getEntity() != null) {
 					DBObject dbObject = (DBObject) result3.getEntity();
 					assertEquals(500, dbObject.get("error"));
+				} else {
+					fail("List Order returned is null");
+				}
+			} else {
+				fail("Order returned is null");
+			}
+		} else {
+			fail("User returned is null");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testReadAllOrderUser() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
+		User user = TestUtils.generateRandomUser();
+		
+		Response result = service.create(false, false, user, context);
+		if (result.getEntity() != null) {
+			User userResult = (User) result.getEntity();
+			assertNotNull(userResult.getId());
+			idsToDeleteUser.add(userResult.getId());
+
+			Order order = TestUtils.generateRandomOrder();
+			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
+			if (result2.getEntity() != null) {
+				Order userResult2 = (Order) result2.getEntity();
+				assertNotNull(userResult2.getId());
+				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
+
+				ContainerRequestContext context = mock(ContainerRequestContext.class);
+				Key key = TestUtils.generateRandomKey();
+				key.setRole(Role.USER);
+				Mockito.when(context.getProperty("key")).thenReturn(key);
+				
+				Response result3 = service.readAllOrders(userResult.getId().toHexString(), context);
+				if (result3.getEntity() != null) {
+					List<Order> userResult3 = (List<Order>) result3.getEntity();
+					for (Order or : userResult3) {
+						if (or.getId().toHexString().equals(userResult2.getId().toHexString())) {
+							assertNotNull(or.getId());
+							assertEquals(userResult2, or);
+						}
+					}
 				} else {
 					fail("List Order returned is null");
 				}

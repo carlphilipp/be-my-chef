@@ -95,7 +95,6 @@ public class AccessRightsOrderTest {
 
 	@Test
 	public void userReadAllTest() {
-		thrown.expect(EpickurForbiddenException.class);
 		AccessRights.check(Role.USER, Operation.READ_ALL, endpoint);
 	}
 

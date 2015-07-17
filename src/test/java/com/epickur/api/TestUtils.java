@@ -363,6 +363,7 @@ public class TestUtils {
 		user.setName(generateRandomString());
 		user.setPassword(generateRandomString());
 		user.setPhoneNumber(generateRandomPhoneNumber());
+		user.setRole(Role.USER);
 		return user;
 	}
 

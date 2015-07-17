@@ -30,7 +30,7 @@ public final class AccessRights {
 	// Column		//   0     - 1    - 2      - 3      - 4       - 5             - 6      - 7    - 8      - 9      - 10      - 11     - 12   - 13     - 14     - 15      - 16         - 17           - 18     - 19   - 20     - 21     - 22
 /* Administrator */		{true  , true , true   , true   , true    , true          , true   , true , true   , true   , true    , true   , true , true   , true   , true    , true       , true         , true   , true , true   , true   , true}, 	/* Administrator */
 /* Super User */		{false , true , true   , false  , false   , false         , true   , true , true   , false  , true    , false  , true , true   , false  , false   , true       , false        , true   , true , true   , true   , true}, 	/* Super User */
-/* User */				{false , true , true   , false  , false   , false         , true   , true , true   , false  , false   , false  , true , false  , false  , false   , true       , false        , false  , true , false  , false  , true}, 	/* User */
+/* User */				{false , true , true   , false  , false   , false         , true   , true , true   , false  , true    , false  , true , false  , false  , false   , true       , false        , false  , true , false  , false  , true}, 	/* User */
 /* Epickur-Web */		{true  , false, false  , false  , false   , true          , false  , false, false  , false  , false   , false  , true , false  , false  , false   , true       , false        , false  , false, false  , false  , true}, 	/* Epickur-Web */
 
 // @formatter:on
