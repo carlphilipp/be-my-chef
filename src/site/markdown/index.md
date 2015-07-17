@@ -90,7 +90,7 @@ Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Wind
 
 To deploy on heroku:
 
-`mvn heroku deploy-war -P heroku`
+`mvn clean heroku:deploy-war -P heroku`
 
 To resolve an issue, I had to configure heroku with:
 
