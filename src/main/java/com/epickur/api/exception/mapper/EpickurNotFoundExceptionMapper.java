@@ -28,6 +28,6 @@ public final class EpickurNotFoundExceptionMapper implements ExceptionMapper<Epi
 		if (exception != null && exception.getMessage() != null && !exception.getMessage().equals("")) {
 			bdb.put("description", exception.getMessage());
 		}
-		return Response.status(Status.NOT_FOUND).entity(bdb).build();
+		return Response.status(Status.NOT_FOUND).entity(bdb).type(MediaType.APPLICATION_JSON).build();
 	}
 }

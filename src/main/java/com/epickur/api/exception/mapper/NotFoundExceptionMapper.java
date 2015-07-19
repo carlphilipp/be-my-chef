@@ -27,6 +27,6 @@ public final class NotFoundExceptionMapper implements ExceptionMapper<NotFoundEx
 		bdb.put("error", Response.Status.NOT_FOUND.getStatusCode());
 		bdb.put("message", Response.Status.NOT_FOUND.getReasonPhrase());
 		bdb.put("description", "Endpoint not found");
-		return Response.status(Status.NOT_FOUND).entity(bdb).build();
+		return Response.status(Status.NOT_FOUND).type(MediaType.APPLICATION_JSON).entity(bdb).build();
 	}
 }

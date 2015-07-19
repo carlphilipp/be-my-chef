@@ -28,7 +28,7 @@ public final class OrderStatusExceptionMapper implements ExceptionMapper<OrderSt
 		if (exception != null && exception.getMessage() != null && !exception.getMessage().equals("")) {
 			bdb.put("description", exception.getMessage());
 		}
-		return Response.status(Status.BAD_REQUEST).entity(bdb).build();
+		return Response.status(Status.BAD_REQUEST).entity(bdb).type(MediaType.APPLICATION_JSON).build();
 	}
 
 }

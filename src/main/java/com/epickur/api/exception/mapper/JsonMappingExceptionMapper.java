@@ -34,7 +34,7 @@ public final class JsonMappingExceptionMapper implements ExceptionMapper<JsonMap
 		bdb.put("message", Response.Status.BAD_REQUEST.getReasonPhrase());
 		bdb.put("description", exception.getOriginalMessage());
 		LOG.error(exception.getLocalizedMessage(), exception);
-		return Response.status(Status.BAD_REQUEST).entity(bdb).build();
+		return Response.status(Status.BAD_REQUEST).entity(bdb).type(MediaType.APPLICATION_JSON).build();
 	}
 
 }

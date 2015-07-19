@@ -27,7 +27,7 @@ public final class UnrecognizedPropertyExceptionMapper implements ExceptionMappe
 		bdb.put("error", Response.Status.BAD_REQUEST.getStatusCode());
 		bdb.put("message", Response.Status.BAD_REQUEST.getReasonPhrase());
 		bdb.put("description", "Unrecognized field " + exception.getPropertyName() + "");
-		return Response.status(Status.BAD_REQUEST).entity(bdb).build();
+		return Response.status(Status.BAD_REQUEST).entity(bdb).type(MediaType.APPLICATION_JSON).build();
 	}
 
 }

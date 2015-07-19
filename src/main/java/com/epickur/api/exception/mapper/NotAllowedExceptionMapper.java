@@ -26,6 +26,6 @@ public final class NotAllowedExceptionMapper implements ExceptionMapper<NotAllow
 		DBObject bdb = BasicDBObjectBuilder.start().get();
 		bdb.put("error", Response.Status.METHOD_NOT_ALLOWED.getStatusCode());
 		bdb.put("message", Response.Status.METHOD_NOT_ALLOWED.getReasonPhrase());
-		return Response.status(Status.METHOD_NOT_ALLOWED).entity(bdb).build();
+		return Response.status(Status.METHOD_NOT_ALLOWED).entity(bdb).type(MediaType.APPLICATION_JSON).build();
 	}
 }

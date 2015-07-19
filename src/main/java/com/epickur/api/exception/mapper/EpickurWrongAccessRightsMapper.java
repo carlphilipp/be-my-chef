@@ -1,5 +1,6 @@
 package com.epickur.api.exception.mapper;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -27,7 +28,7 @@ public final class EpickurWrongAccessRightsMapper implements ExceptionMapper<Epi
 		DBObject bdb = BasicDBObjectBuilder.start().get();
 		bdb.put("error", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		bdb.put("message", Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(bdb).build();
+		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(bdb).type(MediaType.APPLICATION_JSON).build();
 	}
 
 }

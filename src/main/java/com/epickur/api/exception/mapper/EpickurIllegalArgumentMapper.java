@@ -36,6 +36,6 @@ public final class EpickurIllegalArgumentMapper implements ExceptionMapper<Epick
 			bdb.put("description", exception.getMessage());
 		}
 		LOG.error("Error: ", exception);
-		return Response.status(Status.BAD_REQUEST).entity(bdb).build();
+		return Response.status(Status.BAD_REQUEST).entity(bdb).type(MediaType.APPLICATION_JSON).build();
 	}
 }
