@@ -6,6 +6,7 @@
         <wb-resource deploy-path="/WEB-INF/resources" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/scripts"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/site"/>
         <property name="context-root" value="epickur"/>
         <property name="java-output-path" value="/epickur/target/classes"/>
     </wb-module>

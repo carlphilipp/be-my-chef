@@ -6,6 +6,7 @@ db.caterers.ensureIndex( { "name": 1 }, { unique: true, sparse: true } )
 db.caterers.ensureIndex( { 'location.geo' : "2dsphere" } )
 db.dishes.ensureIndex( { 'caterer.location.geo' : "2dsphere" } )
 db.dishes.ensureIndex( { "caterer._id" : 1 }, { unique: false, sparse: true } )
+db.orders.createIndex( { "readableId": 1 }, { unique: true, sparse: true } )
 
 /** Insert caterers **/
 db.caterers.insert(

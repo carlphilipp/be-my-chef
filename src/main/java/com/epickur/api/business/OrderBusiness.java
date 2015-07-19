@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import com.epickur.api.cron.Jobs;
 import com.epickur.api.dao.mongo.OrderDaoImpl;
+import com.epickur.api.dao.mongo.SequenceDaoImpl;
 import com.epickur.api.dao.mongo.UserDaoImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
@@ -37,6 +38,8 @@ public final class OrderBusiness {
 	private OrderDaoImpl orderDao;
 	/** User dao */
 	private UserDaoImpl userDao;
+	/** Sequence Order dao */
+	private SequenceDaoImpl seqDao;
 	/** User validator */
 	private UserValidator validator;
 
@@ -44,6 +47,7 @@ public final class OrderBusiness {
 	public OrderBusiness() {
 		this.orderDao = new OrderDaoImpl();
 		this.userDao = new UserDaoImpl();
+		this.seqDao = new SequenceDaoImpl();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
 
@@ -68,6 +72,8 @@ public final class OrderBusiness {
 		} else {
 			order.setCreatedBy(new ObjectId(userId));
 			order.setStatus(OrderStatus.PENDING);
+			String sequence = seqDao.getNextId();
+			order.setReadableId(sequence);
 			Order res = this.orderDao.create(order);
 			String orderCode = Security.createOrderCode(res.getId(), order.getCardToken());
 			if (sendEmail) {

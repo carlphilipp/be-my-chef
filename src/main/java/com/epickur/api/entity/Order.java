@@ -37,14 +37,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "userId", "description", "amount", "status", "currency", "pickupdate", "cardToken", "chargeId", "paid", "dish",
-		"createdBy", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "readableId", "userId", "description", "amount", "status", "currency", "pickupdate", "cardToken", "chargeId",
+		"paid", "dish", "createdBy", "createdAt", "updatedAt" })
 public final class Order extends AbstractEntity {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Order.class.getSimpleName());
 	/** Id */
 	private ObjectId id;
+	/** Readable Id */
+	private String readableId;
 	/** Description */
 	private String description;
 	/** Amount */
@@ -265,6 +267,36 @@ public final class Order extends AbstractEntity {
 	}
 
 	/**
+	 * @return A card token
+	 */
+	public String getCardToken() {
+		return cardToken;
+	}
+
+	/**
+	 * @param cardToken
+	 *            A card token
+	 */
+	public void setCardToken(final String cardToken) {
+		this.cardToken = cardToken;
+	}
+
+	/**
+	 * @return A readable id
+	 */
+	public String getReadableId() {
+		return readableId;
+	}
+
+	/**
+	 * @param readableId
+	 *            A readable id
+	 */
+	public void setReadableId(final String readableId) {
+		this.readableId = readableId;
+	}
+
+	/**
 	 * @return The Document
 	 * @throws EpickurParsingException
 	 *             If a parsing exception occured
@@ -453,20 +485,5 @@ public final class Order extends AbstractEntity {
 			LOG.error("Error while cloning: " + e.getMessage(), e);
 			throw new RuntimeException();
 		}
-	}
-
-	/**
-	 * @return A card token
-	 */
-	public String getCardToken() {
-		return cardToken;
-	}
-
-	/**
-	 * @param cardToken
-	 *            A card token
-	 */
-	public void setCardToken(final String cardToken) {
-		this.cardToken = cardToken;
 	}
 }

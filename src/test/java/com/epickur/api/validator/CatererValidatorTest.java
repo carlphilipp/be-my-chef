@@ -338,7 +338,6 @@ public class CatererValidatorTest {
 		String id = new ObjectId().toHexString();
 		DateTime start = new DateTime();
 		DateTime end = new DateTime();
-		;
 		end = end.minusHours(1);
 		service.checkPaymentInfo(id, start, end);
 	}

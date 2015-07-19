@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
@@ -359,7 +360,8 @@ public class AccessRightsOrderIntegrationTest {
 		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
 		BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
-		in.close();
+		IOUtils.closeQuietly(in);
+		IOUtils.closeQuietly(br);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 	}

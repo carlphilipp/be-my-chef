@@ -210,6 +210,7 @@ public class OrderBusinessTest {
 		order.setCardToken(token.getId());
 		Order res = orderBusiness.create(userRes.getId().toHexString(), order, false);
 		assertNotNull(res);
+		assertNotNull(res.getReadableId());
 		toDeleteOrder.add(res.getId().toHexString());
 		String orderCode = Security.createOrderCode(res.getId(), res.getCardToken());
 		orderBusiness.executeOrder(userRes.getId().toHexString(), new ObjectId().toHexString(), true, false, true, orderCode);

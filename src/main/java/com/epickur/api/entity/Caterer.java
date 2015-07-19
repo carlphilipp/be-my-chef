@@ -67,7 +67,7 @@ public final class Caterer extends AbstractEntity {
 	/** Updated at */
 	private DateTime updatedAt;
 
-	/** Constructor */
+	/** Construct a Caterer */
 	public Caterer() {
 	}
 

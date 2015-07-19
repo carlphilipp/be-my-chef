@@ -78,6 +78,7 @@ public class OrderDaoImpl extends DaoCrud<Order> {
 	public final Order update(final Order order) throws EpickurException {
 		Document filter = new Document().append("_id", order.getId());
 		DateTime time = new DateTime();
+		order.setReadableId(null);
 		order.setCreatedAt(null);
 		order.setUpdatedAt(time);
 		LOG.debug("Update order: " + order);
