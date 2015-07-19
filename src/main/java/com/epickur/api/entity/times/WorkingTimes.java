@@ -66,21 +66,23 @@ public final class WorkingTimes extends AbstractEntity {
 	 */
 	@JsonIgnore
 	public boolean canBePickup(final String day, final Integer pickupdateMinutes) {
-		Integer openTime = null;
+		// Removed preparation time #API-76
+		//Integer openTime = null;
 		List<TimeFrame> timeFrames = getHours().get(day);
 		for (TimeFrame tf : timeFrames) {
 			// If the pickup date is in the current timeframe.
 			if (tf.getOpen() <= pickupdateMinutes && tf.getClose() >= pickupdateMinutes) {
-				openTime = tf.getOpen();
-				break;
+				//openTime = tf.getOpen();
+				return true;
+				//break;
 			}
 		}
-		if (openTime != null) {
+		/*if (openTime != null) {
 			// We keep this dish if the caterer has time to prepare it.
 			if (pickupdateMinutes.intValue() - getMinimumPreparationTime() >= openTime) {
 				return true;
 			}
-		}
+		}*/
 		return false;
 	}
 

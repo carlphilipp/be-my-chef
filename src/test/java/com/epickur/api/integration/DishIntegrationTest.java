@@ -448,29 +448,6 @@ public class DishIntegrationTest {
 		String type = "Meat";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
-		String pickupdate = "mon-18:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
-				+ URLEncoder.encode(address, "UTF-8"));
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
-
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-
-		ObjectMapper mapper = new ObjectMapper();
-		List<?> jsonResult = mapper.readValue(obj, List.class);
-		Assert.assertEquals(0, jsonResult.size());
-	}
-
-	@Test
-	public void testSearchUsa4() throws ClientProtocolException, IOException {
-		String type = "Meat";
-		String limit = "100";
-		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-22:00";
 		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
 				+ URLEncoder.encode(address, "UTF-8"));
