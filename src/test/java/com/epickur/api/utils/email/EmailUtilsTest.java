@@ -4,16 +4,20 @@ import org.bson.types.ObjectId;
 import org.junit.Test;
 
 import com.epickur.api.TestUtils;
+import com.epickur.api.dao.mongo.SequenceDaoImpl;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.Security;
 
 public class EmailUtilsTest {
 
 	private static final String EMAIL_TEST = "cp.harmant@gmail.com";
+	
+	private SequenceDaoImpl dao = new SequenceDaoImpl();
 
 	@Test
 	public void emailNewRegistrationTest() {
@@ -29,6 +33,7 @@ public class EmailUtilsTest {
 
 		Order order = new Order();
 		order.setId(new ObjectId());
+		order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();
 		dish.setName("Kebab fries");
 		Caterer caterer = new Caterer();
@@ -41,13 +46,14 @@ public class EmailUtilsTest {
 	}
 
 	@Test
-	public void emailDeclineOrderTest() {
+	public void emailDeclineOrderTest() throws EpickurDBException {
 		User user = new User();
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
 
 		Order order = new Order();
 		order.setId(new ObjectId());
+		order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();
 		dish.setName("Kebab fries");
 		Caterer caterer = new Caterer();
@@ -59,13 +65,14 @@ public class EmailUtilsTest {
 	}
 
 	@Test
-	public void emailSuccessOrderTest() {
+	public void emailSuccessOrderTest() throws EpickurDBException {
 		User user = new User();
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
 
 		Order order = new Order();
 		order.setId(new ObjectId());
+		order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();
 		dish.setName("Kebab fries");
 		Caterer caterer = new Caterer();
@@ -77,13 +84,14 @@ public class EmailUtilsTest {
 	}
 
 	@Test
-	public void emailFailOrderTest() {
+	public void emailFailOrderTest() throws EpickurDBException {
 		User user = new User();
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
 
 		Order order = new Order();
 		order.setId(new ObjectId());
+		order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();
 		dish.setName("Kebab fries");
 		Caterer caterer = new Caterer();
@@ -95,13 +103,14 @@ public class EmailUtilsTest {
 	}
 	
 	@Test
-	public void emailCancelOrder(){
+	public void emailCancelOrder() throws EpickurDBException{
 		User user = new User();
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
 
 		Order order = new Order();
 		order.setId(new ObjectId());
+		order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();
 		dish.setName("Kebab fries");
 		Caterer caterer = new Caterer();
