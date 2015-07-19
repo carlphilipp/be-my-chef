@@ -179,6 +179,9 @@ public class Here {
 		} catch (IndexOutOfBoundsException | JSONParseException e) {
 			throw new HereException("Geolocation error", e);
 		}
+		if (geo == null) {
+			throw new HereException("Geolocation error with data: '" + data + "'");
+		}
 		return geo;
 	}
 
