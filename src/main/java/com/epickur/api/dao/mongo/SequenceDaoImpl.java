@@ -58,12 +58,12 @@ public final class SequenceDaoImpl {
 			Document res = (Document) this.coll.findOneAndUpdate(query, update);
 			LOG.debug("Read next Order id");
 			if (res != null) {
-				return res.get(sequence_field).toString();
+				return Integer.toHexString(Integer.valueOf(res.get(sequence_field).toString()));
 			} else {
 				// Put 1 as new seq and return 0 as current sequence
 				query.append(sequence_field, 1);
 				this.coll.insertOne(query);
-				return "0";
+				return Integer.toHexString(0);
 			}
 		} catch (MongoException e) {
 			throw new EpickurDBException("getNextId", e.getMessage(), sequence_id, e);
