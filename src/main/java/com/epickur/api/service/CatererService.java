@@ -1,5 +1,7 @@
 package com.epickur.api.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -22,6 +24,7 @@ import org.joda.time.DateTime;
 import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
 import com.epickur.api.business.OrderBusiness;
+import com.epickur.api.dao.report.Report;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
@@ -606,7 +609,8 @@ public final class CatererService {
 	 */
 	@GET
 	@Path("/{id}/paymentInfo")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
 	public Response paymentInfo(
 			@PathParam("id") final String id,
 			@QueryParam("startDate") final String start,
@@ -630,24 +634,49 @@ public final class CatererService {
 		} else {
 			List<Order> orders = orderBusiness.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
 			Integer amount = catererBusiness.getTotalAmountSuccessful(orders);
-			DBObject bdb = BasicDBObjectBuilder.start().get();
-			bdb.put("id", caterer.getId().toHexString());
-			bdb.put("name", caterer.getName());
-			bdb.put("amount", amount);
-			if (start != null) {
-				bdb.put("start", start);
+			if (context.getMediaType().toString().equalsIgnoreCase(MediaType.APPLICATION_JSON)) {
+				DBObject bdb = BasicDBObjectBuilder.start().get();
+				bdb.put("id", caterer.getId().toHexString());
+				bdb.put("name", caterer.getName());
+				bdb.put("amount", amount);
+				if (start != null) {
+					bdb.put("start", start);
+				}
+				if (end != null) {
+					bdb.put("end", end);
+				}
+				bdb.put("format", format);
+				BasicDBList list = new BasicDBList();
+				for (Order order : orders) {
+					order.setDish(null);
+					list.add(order.getAPIView());
+				}
+				bdb.put("orders", list);
+				return Response.ok().entity(bdb).type(MediaType.APPLICATION_JSON).build();
+			} else {
+				File file = new File("...");
+				return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename =" + file.getName())
+						.build();
 			}
-			if (end != null) {
-				bdb.put("end", end);
-			}
-			bdb.put("format", format);
-			BasicDBList list = new BasicDBList();
-			for(Order order : orders){
-				order.setDish(null);
-				list.add(order.getAPIView());
-			}
-			bdb.put("orders", list);
-			return Response.ok().entity(bdb).build();
+		}
+	}
+
+	@GET
+	@Path("/pdf")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, "application/pdf" })
+	public Response pdf(@Context final ContainerRequestContext context) throws EpickurException, IOException {
+		if (context.getMediaType() != null && context.getMediaType().toString().equalsIgnoreCase(MediaType.APPLICATION_JSON)) {
+			return Response.ok().entity("{\"derp\":\"derp\"}").type(MediaType.APPLICATION_JSON).build();
+		} else {
+			String catererId = "55328b1f875fecbf8442caa9";
+			List<Order> orders = orderBusiness.readAllWithCatererId(catererId, null, null);
+			Integer amount = catererBusiness.getTotalAmountSuccessful(orders);
+			Report report = new Report(orders);
+			report.createPdf("C:\\Users\\carl\\Desktop\\Hello World.pdf");
+			File file = new File("C:\\Users\\carl\\Desktop\\Hello World.pdf");
+			return Response.ok(file, "application/pdf").header("content-disposition", "attachment; filename =" + file.getName())
+					.build();
 		}
 	}
 }

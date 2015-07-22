@@ -57,7 +57,7 @@ public abstract class DaoCrud<T extends AbstractEntity> implements IDaoCrud<T> {
 		boolean res = true;
 		if (deleteResult.getDeletedCount() != 1) {
 			res = false;
-			LOG.error("Request type: " + type + " failed");
+			LOG.warn("Request type: " + type + " failed");
 		}
 		return res;
 	}

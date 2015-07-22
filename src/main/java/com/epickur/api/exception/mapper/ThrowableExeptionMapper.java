@@ -28,7 +28,7 @@ public final class ThrowableExeptionMapper implements ExceptionMapper<Throwable>
 
 	@Override
 	public Response toResponse(final Throwable throwable) {
-		LOG.error("Fatal Error: " + throwable.getMessage(), throwable);
+		LOG.error("Fatal Error: " + throwable.getLocalizedMessage(), throwable);
 		DBObject bdb = BasicDBObjectBuilder.start().get();
 		bdb.put("error", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		bdb.put("message", Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());

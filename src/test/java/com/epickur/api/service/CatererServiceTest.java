@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
@@ -61,6 +62,7 @@ public class CatererServiceTest {
 		context = mock(ContainerRequestContext.class);
 		Key key = TestUtils.generateRandomKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
+		Mockito.when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
 		catererService = new CatererService();
 		dishService = new DishService();
 		userService = new UserService();
