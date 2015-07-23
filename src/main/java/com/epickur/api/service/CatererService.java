@@ -1,7 +1,5 @@
 package com.epickur.api.service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -609,8 +607,8 @@ public final class CatererService {
 	 */
 	@GET
 	@Path("/{id}/paymentInfo")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
+	@Consumes({ MediaType.APPLICATION_JSON, "application/pdf" })
+	@Produces({ MediaType.APPLICATION_JSON, "application/pdf" })
 	public Response paymentInfo(
 			@PathParam("id") final String id,
 			@QueryParam("startDate") final String start,
@@ -634,7 +632,7 @@ public final class CatererService {
 		} else {
 			List<Order> orders = orderBusiness.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
 			Integer amount = catererBusiness.getTotalAmountSuccessful(orders);
-			if (context.getMediaType().toString().equalsIgnoreCase(MediaType.APPLICATION_JSON)) {
+			if (context.getMediaType() != null && context.getMediaType().toString().equalsIgnoreCase(MediaType.APPLICATION_JSON)) {
 				DBObject bdb = BasicDBObjectBuilder.start().get();
 				bdb.put("id", caterer.getId().toHexString());
 				bdb.put("name", caterer.getName());
@@ -654,29 +652,15 @@ public final class CatererService {
 				bdb.put("orders", list);
 				return Response.ok().entity(bdb).type(MediaType.APPLICATION_JSON).build();
 			} else {
-				File file = new File("...");
-				return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename =" + file.getName())
+				Report report = new Report();
+				report.addParam("caterer", caterer);
+				report.addParam("orders", orders);
+				report.addParam("amount", amount);
+
+				return Response.ok(report.getReport(), "application/pdf")
+						.header("content-disposition", "attachment; filename =" + caterer.getId().toHexString() + ".pdf")
 						.build();
 			}
-		}
-	}
-
-	@GET
-	@Path("/pdf")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON, "application/pdf" })
-	public Response pdf(@Context final ContainerRequestContext context) throws EpickurException, IOException {
-		if (context.getMediaType() != null && context.getMediaType().toString().equalsIgnoreCase(MediaType.APPLICATION_JSON)) {
-			return Response.ok().entity("{\"derp\":\"derp\"}").type(MediaType.APPLICATION_JSON).build();
-		} else {
-			String catererId = "55328b1f875fecbf8442caa9";
-			List<Order> orders = orderBusiness.readAllWithCatererId(catererId, null, null);
-			Integer amount = catererBusiness.getTotalAmountSuccessful(orders);
-			Report report = new Report(orders);
-			report.createPdf("C:\\Users\\carl\\Desktop\\Hello World.pdf");
-			File file = new File("C:\\Users\\carl\\Desktop\\Hello World.pdf");
-			return Response.ok(file, "application/pdf").header("content-disposition", "attachment; filename =" + file.getName())
-					.build();
 		}
 	}
 }

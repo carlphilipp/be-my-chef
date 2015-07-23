@@ -389,10 +389,12 @@ db.dishes.insert(
 /** Insert Orders **/
  db.orders.insert( 
 {
+		"readableId" : "60D",
     "description" : "A new order",
     "amount" : NumberInt(500),
     "currency" : "AUD",
     "status" : "PENDING",
+    "paid" : false,
     "dish" : {
       "_id" : "553292c04c399b1733997513",
 	  	"name": "Thai Inbox",
@@ -402,7 +404,7 @@ db.dishes.insert(
       "cookingTime": NumberInt(5),
       "difficultyLevel": NumberInt(1),
       "caterer": {
-          "_id" : "55328b1f875fecbf8442caa9",
+          "_id" : "55b060f077382594cd38373b",
           "name": "Super Thai",
           "description": "Super Thai - Noodles, Curry dishes",
           "manager": "John Lee",

@@ -6,7 +6,6 @@
 	<artifactId>epickur</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-
 	<name>Epickur API</name>
 	<url>http://www.bemychef.com.au</url>
 
@@ -319,6 +318,25 @@
 			<artifactId>dropbox-core-sdk</artifactId>
 			<version>1.7.7</version>
 		</dependency>
+
+		<!-- Generate PDF -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>2.4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.0.6</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
@@ -712,7 +730,6 @@
 			</plugin>
 		</plugins>
 	</reporting>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -740,12 +757,6 @@
 				<artifactId>c3p0</artifactId>
 				<version>${c3p0.version}</version>
 			</dependency>
-
-
-
-
-
-
 			<dependency>
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
@@ -826,6 +837,8 @@
 				<artifactId>xml-apis</artifactId>
 				<version>1.4.01</version>
 			</dependency>
+			<!-- <dependency> <groupId>com.lowagie</groupId> <artifactId>itext</artifactId> 
+				<version>5.5.6</version> </dependency> -->
 		</dependencies>
 	</dependencyManagement>
 </project>
