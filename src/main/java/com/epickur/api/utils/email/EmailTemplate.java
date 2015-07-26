@@ -15,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.epickur.api.entity.Order;
+import com.epickur.api.entity.User;
 import com.epickur.api.utils.Info;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,6 +34,12 @@ public final class EmailTemplate {
 	private Map<String, Map<String, String>> templates;
 	/** The templates? */
 	private static EmailTemplate emailTemplate = null;
+	/** Delay max for a caterer to answer */
+	private static String delay;
+	
+	static{
+		delay = Utils.getEpickurProperties().getProperty("cron.order.timelimit");
+	}
 
 	/** The constructor */
 	private EmailTemplate() {
@@ -251,10 +259,11 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map.
 	 */
-	public static Map<String, String> convertToDataDeclineOrderUser(final String orderId) {
+	public static Map<String, String> convertToDataDeclineOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@FIRST@@", user.getFirst());
+		data.put("@@ORDER_ID@@", order.getReadableId());
 		return data;
 	}
 
@@ -265,10 +274,11 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map.
 	 */
-	public static Map<String, String> convertToDataDeclineOrderAdmins(final String orderId) {
+	public static Map<String, String> convertToDataDeclineOrderAdmins(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@USER_EMAIL@@", user.getEmail());
+		data.put("@@ORDER_ID@@", order.getReadableId());
+		data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
 		return data;
 	}
 
@@ -278,10 +288,12 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataSuccessOrderUser(final String orderId) {
+	public static Map<String, String> convertToDataSuccessOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@FIRST@@", user.getFirst());
+		data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
+		data.put("@@ORDER_ID@@", order.getReadableId());
 		return data;
 	}
 
@@ -290,10 +302,11 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataSuccessOrderCaterer(final String orderId) {
+	public static Map<String, String> convertToDataSuccessOrderCaterer(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
+		data.put("@@ORDER_ID@@", order.getReadableId());
 		return data;
 	}
 
@@ -302,10 +315,11 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataSuccessOrderAdmins(final String orderId) {
+	public static Map<String, String> convertToDataSuccessOrderAdmins(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
+		data.put("@@ORDER_ID@@", order.getReadableId());
 		return data;
 	}
 
@@ -315,10 +329,11 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataFailOrderUser(final String orderId) {
+	public static Map<String, String> convertToDataFailOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@ORDER_ID@@", order.getReadableId());
+		data.put("@@USER_EMAIL@@", user.getEmail());
 		return data;
 	}
 
@@ -327,10 +342,11 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataFailOrderCaterer(final String orderId) {
+	public static Map<String, String> convertToDataFailOrderCaterer(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@ORDER_ID@@", order.getReadableId());
+		data.put("@@USER_EMAIL@@", user.getEmail());
 		return data;
 	}
 
@@ -339,10 +355,11 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataFailOrderAdmins(final String orderId) {
+	public static Map<String, String> convertToDataFailOrderAdmins(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@ORDER_ID@@", order.getReadableId());
+		data.put("@@USER_EMAIL@@", user.getEmail());
 		return data;
 	}
 
@@ -352,10 +369,11 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataCancelOrderUser(final String orderId) {
+	public static Map<String, String> convertToDataCancelOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
+		data.put("@@USER_EMAIL@@", user.getEmail());
+		data.put("@@ORDER_ID@@", order.getReadableId());
 		return data;
 	}
 
@@ -364,10 +382,12 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataCancelOrderCaterer(final String orderId) {
+	public static Map<String, String> convertToDataCancelOrderCaterer(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
+		data.put("@@USER_EMAIL@@", user.getEmail());
+		data.put("@@ORDER_ID@@", order.getReadableId());
+		data.put("@@DELAY@@", delay);
 		return data;
 	}
 
@@ -376,10 +396,11 @@ public final class EmailTemplate {
 	 *            The order id
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataCancelOrderAdmins(final String orderId) {
+	public static Map<String, String> convertToDataCancelOrderAdmins(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@ORDER_ID@@", orderId);
+		data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
+		data.put("@@USER_EMAIL@@", user.getEmail());
+		data.put("@@ORDER_ID@@", order.getReadableId());
 		return data;
 	}
 
