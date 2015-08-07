@@ -484,7 +484,7 @@
 						<directory>src/main/resources</directory>
 						<filtering>true</filtering>
 						<excludes>
-							<exclude>env/heroku.properties</exclude>
+							<exclude>env/aws.properties</exclude>
 							<exclude>env/local.template.properties</exclude>
 							<exclude>env/log4j2.prod.xml</exclude>
 							<exclude>epickur-checkstyle.xml</exclude>
@@ -517,9 +517,8 @@
 			</build>
 		</profile>
 		<profile>
-			<id>heroku</id>
+			<id>aws</id>
 			<build>
-
 				<!-- Remove resources env and log4j.xml -->
 				<resources>
 					<resource>
@@ -560,7 +559,7 @@
 						</executions>
 					</plugin>
 
-					<!-- Inject heroku properties into project -->
+					<!-- Inject aws properties into project -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>properties-maven-plugin</artifactId>
@@ -573,33 +572,8 @@
 								</goals>
 								<configuration>
 									<files>
-										<file>${project.build.resources[0].directory}/env/heroku.properties</file>
+										<file>${project.build.resources[0].directory}/env/aws.properties</file>
 									</files>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-					<!-- Webapp Runner -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>2.10</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>copy</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>com.github.jsimone</groupId>
-											<artifactId>webapp-runner</artifactId>
-											<version>8.0.18.0-M1</version>
-											<destFileName>webapp-runner.jar</destFileName>
-										</artifactItem>
-									</artifactItems>
 								</configuration>
 							</execution>
 						</executions>
@@ -616,17 +590,13 @@
 						</configuration>
 					</plugin>
 
-					<!-- Heroku deployment -->
+					<!-- Rename war to ROOT to deploy directly in AWS -->
 					<plugin>
-						<groupId>com.heroku.sdk</groupId>
-						<artifactId>heroku-maven-plugin</artifactId>
-						<version>0.3.7</version>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
 						<configuration>
-							<appName>epickur-api</appName>
-							<jdkVersion>1.7</jdkVersion>
-							<configVars>
-								<WEBAPP_RUNNER_OPTS>--expand-war</WEBAPP_RUNNER_OPTS>
-							</configVars>
+							<warName>ROOT</warName>
+							<packagingExcludes>admin.html</packagingExcludes>
 						</configuration>
 					</plugin>
 				</plugins>
