@@ -85,8 +85,7 @@ public final class EmailUtils {
 	 *            The order
 	 */
 	private static void emailNewOrderUser(final User user, final Order order) {
-		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderUser(user.getName(), order.getReadableId(), order.getDish()
-				.getName());
+		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderUser(user, order);
 		Email.sendMail(EmailType.ORDER_USER_NEW, emailData, new String[] { user.getEmail() });
 	}
 
@@ -99,8 +98,7 @@ public final class EmailUtils {
 	 *            The order code
 	 */
 	private static void emailNewOrderCaterer(final User user, final Order order, final String orderCode) {
-		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderCaterer(user.getName(), user.getId().toHexString(), order.getReadableId(),
-				order.getDish().getName(), order.getDish().getCaterer().getName(), orderCode);
+		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderCaterer(user, order, orderCode);
 		Email.sendMail(EmailType.ORDER_CATERER_NEW, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
 
@@ -111,8 +109,7 @@ public final class EmailUtils {
 	 *            The order
 	 */
 	private static void emailNewOrderAdmin(final User user, final Order order) {
-		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderAdmins(user.getName(), order.getReadableId(), order.getDish().getName(),
-				order.getDish().getCaterer().getName());
+		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderAdmins(user, order);
 		Email.sendMail(EmailType.ORDER_ADMINS_NEW, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 	}
 
