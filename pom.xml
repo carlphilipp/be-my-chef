@@ -494,6 +494,7 @@
 						</excludes>
 					</resource>
 				</resources>
+
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -700,6 +701,7 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -807,8 +809,7 @@
 				<artifactId>xml-apis</artifactId>
 				<version>1.4.01</version>
 			</dependency>
-			<!-- <dependency> <groupId>com.lowagie</groupId> <artifactId>itext</artifactId> 
-				<version>5.5.6</version> </dependency> -->
 		</dependencies>
 	</dependencyManagement>
+
 </project>

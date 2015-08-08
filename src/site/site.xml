@@ -30,7 +30,7 @@
 			<!-- <item name="APT Format" href="format.html" /> <item name="Xdoc Example" 
 				href="xdoc.html" /> <item name="FAQ" href="faq.html" /> -->
 			<item name="Introduction" href="index.html" />
-			<item name="Api Doc" href="../../apidoc/index.html" />
+			<item name="Api Doc" href="apidoc/index.html" />
 		</menu>
 
 		<menu ref="reports" />
