@@ -1,7 +1,13 @@
 package com.epickur.api.business;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.epickur.api.dao.mongo.UserDaoImpl;
@@ -28,6 +34,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public final class UserBusiness {
 
+	/** Logger */
+	private static final Logger LOG = LogManager.getLogger(UserBusiness.class.getSimpleName());
 	/** User dao */
 	private UserDaoImpl userDao;
 	/** Key Business */
@@ -334,6 +342,32 @@ public final class UserBusiness {
 				res.setRole(null);
 				return res;
 			}
+		}
+	}
+
+	/**
+	 * Suscribe a user to newsletter
+	 * 
+	 * @param user
+	 */
+	public void suscribeToNewsletter(final User user) {
+		String url = "https://bemychef.us10.list-manage.com/subscribe/post-json?u=b0fe27a209ea8ffa59b813767&id=10d0ff2b3b&FNAME=@@FIRST@@&LNAME=@@LAST@@&EMAIL=@@EMAIL@@&ZCODE=VIC+3000&COUNTRY=au";
+		if (StringUtils.isBlank((user.getFirst()))) {
+			url = url.replaceFirst("@@FIRST@@", "-");
+		} else {
+			url = url.replaceFirst("@@FIRST@@", user.getFirst());
+		}
+		if (StringUtils.isBlank((user.getLast()))) {
+			url = url.replaceFirst("@@LAST@@", "-");
+		} else {
+			url = url.replaceFirst("@@LAST@@", user.getLast());
+		}
+		url = url.replaceFirst("@@EMAIL@@", user.getEmail());
+		HttpPost request = new HttpPost(url);
+		try {
+			HttpClientBuilder.create().build().execute(request);
+		} catch (IOException e) {
+			LOG.error("Could not suscribe " + user.getEmail() + " to our newsletter", e);
 		}
 	}
 }

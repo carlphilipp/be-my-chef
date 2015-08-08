@@ -58,8 +58,10 @@ public class NoKeyServiceTest {
 		User user = new User();
 		String userName = TestUtils.generateRandomString();
 		String userPassword = "epickur";
-		String userEmail = "mail@mail.com";
+		String userEmail = "mail@gmail.com";
 		user.setName(userName);
+		user.setFirst("test");
+		user.setLast("test");
 		user.setEmail(userEmail);
 		user.setPassword(userPassword);
 

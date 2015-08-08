@@ -97,6 +97,7 @@ public final class NoKeyService {
 			@QueryParam("check") final String check) throws EpickurException {
 		this.validator.checkCheckUser(email, check);
 		User user = this.userBusiness.checkCode(email, check);
+		this.userBusiness.suscribeToNewsletter(user);
 		return Response.ok().entity(user).build();
 	}
 
