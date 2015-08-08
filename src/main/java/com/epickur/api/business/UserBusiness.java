@@ -366,8 +366,8 @@ public final class UserBusiness {
 		HttpPost request = new HttpPost(url);
 		try {
 			HttpClientBuilder.create().build().execute(request);
-		} catch (IOException e) {
-			LOG.error("Could not suscribe " + user.getEmail() + " to our newsletter", e);
+		} catch (IOException ioe) {
+			LOG.error("Could not suscribe " + user.getEmail() + " to our newsletter", ioe);
 		}
 	}
 }
