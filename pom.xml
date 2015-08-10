@@ -266,6 +266,7 @@
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>cobertura-maven-plugin</artifactId>
 			<version>${cobertura.version}</version>
+			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>ch.qos.logback</groupId>
@@ -273,6 +274,15 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<!-- Servlet 3.1 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
 
 		<!-- Java mail needed for log4j -->
 		<dependency>
@@ -312,13 +322,6 @@
 			</exclusions>
 		</dependency>
 
-		<!-- Dropbox API -->
-		<dependency>
-			<groupId>com.dropbox.core</groupId>
-			<artifactId>dropbox-core-sdk</artifactId>
-			<version>1.7.7</version>
-		</dependency>
-
 		<!-- Generate PDF -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
@@ -336,6 +339,12 @@
 			<version>5.0.6</version>
 		</dependency>
 
+		<!-- Amazon API -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.10.10</version>
+		</dependency>
 
 	</dependencies>
 
@@ -497,6 +506,11 @@
 
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-site-plugin</artifactId>
+						<version>${site.version}</version>
+					</plugin>
+					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>properties-maven-plugin</artifactId>
 						<version>${properties.version}</version>
@@ -531,7 +545,6 @@
 							<exclude>epickur-eclipse-profil.xml</exclude>
 							<exclude>epickur.template.properties</exclude>
 							<exclude>stylesheet.css</exclude>
-							<exclude>log4j2.xml</exclude>
 						</excludes>
 					</resource>
 				</resources>
@@ -811,5 +824,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 </project>

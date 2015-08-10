@@ -1,12 +1,12 @@
 package com.epickur.api.cron;
 
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -75,22 +75,28 @@ public final class Jobs {
 	 *             If an error occurred while running jobs
 	 */
 	public void run() throws SchedulerException {
-		final Integer interval = Integer.valueOf(prop.getProperty("cron.cleankeys.interval"));
+		String cleanKeyInterval = prop.getProperty("cron.cleankeys.interval");
 		String identityKeys = "cleanKeys";
-		// String identityMongoDB = "mongodb";
+		String identityMongoDB = "mongodb";
 		JobDetail cleanKeys = JobBuilder.newJob(CleanKeysJob.class).withIdentity(identityKeys).build();
-		Trigger triggerCleanKeys = TriggerBuilder.newTrigger().withIdentity(identityKeys)
-				.withSchedule(simpleSchedule()
-						.withIntervalInMinutes(interval.intValue())
-						.repeatForever()).build();
+		Trigger triggerCleanKeys = TriggerBuilder.newTrigger()
+				.withIdentity(identityKeys)
+				.withSchedule(CronScheduleBuilder.cronSchedule("0 0/" + cleanKeyInterval + " * * * ?"))
+				.build();
 		scheduler.scheduleJob(cleanKeys, triggerCleanKeys);
 		LOG.info("Added job '" + identityKeys + "' to scheduler");
-		/*
-		 * JobDetail mongoDBDump = JobBuilder.newJob(MongoDBDumpJob.class).withIdentity(identityMongoDB).build(); Trigger triggerMongoDBDump =
-		 * TriggerBuilder.newTrigger().withIdentity(identityMongoDB) .withSchedule(simpleSchedule() .withIntervalInMinutes(5)
-		 * .repeatForever()).build(); scheduler.scheduleJob(mongoDBDump, triggerMongoDBDump); LOG.info("Added job '" + identityMongoDB +
-		 * "' to scheduler");
-		 */
+
+		String serverType = prop.getProperty("server.type");
+		if (StringUtils.isNotBlank(serverType) && serverType.equals("prod")) {
+			JobDetail mongoDBDump = JobBuilder.newJob(MongoDBDumpJob.class).withIdentity(identityMongoDB).build();
+			Trigger triggerMongoDBDump = TriggerBuilder.newTrigger()
+					.withIdentity(identityMongoDB)
+					.withSchedule(CronScheduleBuilder.cronSchedule("0 0 0/2 * * ?"))
+					.build();
+			scheduler.scheduleJob(mongoDBDump, triggerMongoDBDump);
+			LOG.info("Added job '" + identityMongoDB + "' to scheduler");
+		}
+
 		scheduler.start();
 		LOG.info("Scheduler started ");
 	}

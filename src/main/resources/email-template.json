@@ -15,22 +15,22 @@
 		"file":"order_user_new.html"
 	},
 	"order_admins_new":	{
-		"subject":"New order #@@ORDER_ID@@",
+		"subject":"New order #@@READABLE_ORDER_ID@@",
 		"folder":"order/new",
 		"file":"order_admins_new.html"
 	},
 	"order_caterer_new": {
-		"subject":"BE MY CHEF - New order #@@ORDER_ID@@",
+		"subject":"BE MY CHEF - New order #@@READABLE_ORDER_ID@@",
 		"folder":"order/new",
 		"file":"order_caterer_new.html"
 	},
 	"order_user_declined": {
-		"subject":"BE MY CHEF - Order declined #@@ORDER_ID@@",
+		"subject":"BE MY CHEF - Order declined #@@READABLE_ORDER_ID@@",
 		"folder":"order/decline",
 		"file":"order_user_declined.html"
 	},
 	"order_admins_declined": {
-		"subject":"Order declined #@@ORDER_ID@@",
+		"subject":"Order declined #@@READABLE_ORDER_ID@@",
 		"folder":"order/decline",
 		"file":"order_admins_declined.html"
 	},
@@ -40,42 +40,42 @@
 		"file":"order_user_success.html"
 	},
 	"order_caterer_success": {
-		"subject":"BE MY CHEF - Order confirmed #@@ORDER_ID@@",
+		"subject":"BE MY CHEF - Order confirmed #@@READABLE_ORDER_ID@@",
 		"folder":"order/accept/success",
 		"file":"order_caterer_success.html"
 	},
 	"order_admins_success":	{
-		"subject":"Order confirmed #@@ORDER_ID@@",
+		"subject":"Order confirmed #@@READABLE_ORDER_ID@@",
 		"folder":"order/accept/success",
 		"file":"order_admins_success.html"
 	},
 	"order_user_fail": {
-		"subject":"BE MY CHEF - Order canceled #@@ORDER_ID@@",
+		"subject":"BE MY CHEF - Order canceled #@@READABLE_ORDER_ID@@",
 		"folder":"order/accept/fail",
 		"file":"order_user_fail.html"
 	},
 	"order_caterer_fail": {
-		"subject":"BE MY CHEF - Order canceled #@@ORDER_ID@@",
+		"subject":"BE MY CHEF - Order canceled #@@READABLE_ORDER_ID@@",
 		"folder":"order/accept/fail",
 		"file":"order_caterer_fail.html"
 	},
 	"order_admins_fail": {
-		"subject":"Order canceled #@@ORDER_ID@@",
+		"subject":"Order canceled #@@READABLE_ORDER_ID@@",
 		"folder":"order/accept/fail",
 		"file":"order_admins_fail.html"
 	},
 	"order_user_cancel": {
-		"subject":"BE MY CHEF - Order canceled #@@ORDER_ID@@",
+		"subject":"BE MY CHEF - Order canceled #@@READABLE_ORDER_ID@@",
 		"folder":"order/cancel",
 		"file":"order_user_cancel.html"
 	},
 	"order_caterer_cancel": {
-		"subject":"BE MY CHEF - Order canceled #@@ORDER_ID@@",
+		"subject":"BE MY CHEF - Order canceled #@@READABLE_ORDER_ID@@",
 		"folder":"order/cancel",
 		"file":"order_caterer_cancel.html"
 	},
 	"order_admins_cancel": {
-		"subject":"Order canceled #@@ORDER_ID@@",
+		"subject":"Order canceled #@@READABLE_ORDER_ID@@",
 		"folder":"order/cancel",
 		"file":"order_admins_cancel.html"
 	},

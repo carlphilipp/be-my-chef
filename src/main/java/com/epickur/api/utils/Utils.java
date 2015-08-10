@@ -347,7 +347,7 @@ public final class Utils {
 				out.putNextEntry(new TarEntry(f, f.getName()));
 				origin = new BufferedInputStream(new FileInputStream(f));
 				int count;
-				byte [] data = new byte[2048];
+				byte[] data = new byte[2048];
 				while ((count = origin.read(data)) != -1) {
 					out.write(data, 0, count);
 				}
@@ -357,24 +357,11 @@ public final class Utils {
 			out.close();
 			dest.close();
 		} catch (IOException e) {
-			if (dest != null) {
-				try {
-					dest.close();
-				} catch (IOException e1) {
-				}
-			}
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e1) {
-				}
-			}
-			if (origin != null) {
-				try {
-					origin.close();
-				} catch (IOException e1) {
-				}
-			}
+			LOG.error("Error while creating tar.gz: " + e.getLocalizedMessage(), e);
+		} finally {
+			IOUtils.closeQuietly(dest);
+			IOUtils.closeQuietly(out);
+			IOUtils.closeQuietly(origin);
 		}
 	}
 }

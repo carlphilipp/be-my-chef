@@ -8,6 +8,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.epickur.api.dump.AmazonWebServices;
 import com.epickur.api.dump.MongoDBDump;
 import com.epickur.api.utils.Utils;
 
@@ -25,20 +26,23 @@ public final class MongoDBDumpJob implements Job {
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
 		LOG.info("Start DB dump...");
 		MongoDBDump m = new MongoDBDump(Utils.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
-		m.exportMongo();
+		boolean exported = m.exportMongo();
 		LOG.info("DB dump done");
-		LOG.info("Creating tar.gz...");
-		List<String> list = m.getListFiles();
-		Utils.createTarGz(list, m.getCurrentFullPathName());
-		LOG.info("tar.gz generated: " + m.getCurrentFullPathName());
-		/*
-		 * Dropbox dropbox = new Dropbox(); try { dropbox.deleteOldFile(); dropbox.uploadFile(m.getCurrentFullPathName()); } catch (IOException e) {
-		 * LOG.error(e.getLocalizedMessage(), e); } catch (DbxException e) { LOG.error(e.getLocalizedMessage(), e); }
-		 */
+		if (exported) {
+			LOG.info("Creating tar.gz...");
+			List<String> list = m.getListFiles();
+			Utils.createTarGz(list, m.getCurrentFullPathName());
+			LOG.info("tar.gz generated: " + m.getCurrentFullPathName());
+
+			AmazonWebServices aws = new AmazonWebServices();
+			aws.deleteOldFile();
+			aws.uploadFile(m.getCurrentFullPathName());
+
+			// Clean after upload
+			m.cleanDumpDirectory();
+			m.deleteDumpFile();
+		} else {
+			LOG.info("DB dump failed...:(");
+		}
 	}
-	
-/*	public static void main(String [] args) throws JobExecutionException{
-		MongoDBDumpJob dump = new MongoDBDumpJob();
-		dump.execute(null);
-	}*/
 }

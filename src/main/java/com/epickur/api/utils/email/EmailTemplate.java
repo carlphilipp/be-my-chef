@@ -339,6 +339,7 @@ public final class EmailTemplate {
 	public static Map<String, String> convertToDataFailOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
+		data.put("@@FIRST@@", user.getFirst());
 		data.put("@@ORDER_ID@@", order.getId().toHexString());
 		data.put("@@READABLE_ORDER_ID@@", order.getReadableId());
 		data.put("@@USER_EMAIL@@", user.getEmail());
@@ -384,6 +385,7 @@ public final class EmailTemplate {
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
 		data.put("@@USER_EMAIL@@", user.getEmail());
+		data.put("@@FIRST@@", user.getFirst());
 		data.put("@@ORDER_ID@@", order.getId().toHexString());
 		data.put("@@READABLE_ORDER_ID@@", order.getReadableId());
 		return data;

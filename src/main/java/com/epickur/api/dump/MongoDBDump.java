@@ -1,19 +1,21 @@
 package com.epickur.api.dump;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.epickur.api.utils.Utils;
-import com.wordnik.system.mongodb.RestoreUtil;
-import com.wordnik.system.mongodb.SnapshotUtil;
 
 /**
  * @author cph
@@ -58,6 +60,17 @@ public final class MongoDBDump {
 		this.username = prop.getProperty("mongo.user.login");
 		this.password = prop.getProperty("mongo.user.password");
 		this.backupPath = prop.getProperty("mongo.backup.path");
+		createFolderIfNotExists();
+	}
+
+	/**
+	 * 
+	 */
+	private void createFolderIfNotExists() {
+		File folder = new File(this.backupPath);
+		if (!folder.exists()) {
+			folder.mkdir();
+		}
 	}
 
 	/**
@@ -70,7 +83,7 @@ public final class MongoDBDump {
 		try {
 			computername = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
-			LOG.error("Host not found", e);
+			LOG.warn("Host not found: " + e.getLocalizedMessage());
 			computername = "unknown";
 		}
 		return "epickur_" + computername + "_" + date + TARGZEXT;
@@ -88,7 +101,7 @@ public final class MongoDBDump {
 	 */
 	public List<String> getListFiles() {
 		List<String> files = new ArrayList<String>();
-		File folder = new File(backupPath);
+		File folder = new File(backupPath + FILE_SEPARATOR + database);
 
 		File[] listOfFiles = folder.listFiles();
 
@@ -105,62 +118,62 @@ public final class MongoDBDump {
 	 * 
 	 * @return The backup directory
 	 */
-	public String exportMongo() {
-		cleanDirectory();
-		List<String> cmd = new ArrayList<String>();
-		cmd.add("-d");
-		cmd.add(database);
-		cmd.add("-o");
-		cmd.add(backupPath);
-		if (!StringUtils.isBlank(username)) {
-			cmd.add("-u");
-			cmd.add(username);
-		}
-		if (!StringUtils.isBlank(password)) {
-			cmd.add("-p");
-			cmd.add(password);
-		}
-		if (!StringUtils.isBlank(ip)) {
-			String address = ip;
-			if (!StringUtils.isBlank(port)) {
-				address += ":" + port;
+	public boolean exportMongo() {
+		boolean success = true;
+		InputStream in = null;
+		try {
+			StringBuilder dumpCommand = new StringBuilder();
+			dumpCommand.append("mongodump -d" + database + " -h " + ip + ":" + port);
+			if (StringUtils.isNotBlank(username)) {
+				dumpCommand.append(" -u " + username + " -p" + password);
 			}
-			cmd.add("-h");
-			cmd.add(address);
+			dumpCommand.append(" -o " + backupPath);
+			Runtime rt = Runtime.getRuntime();
+			Process process = rt.exec(dumpCommand.toString());
+			process.waitFor();
+			String output = IOUtils.toString(process.getInputStream());
+			String errorOutput = IOUtils.toString(process.getErrorStream());
+			if (StringUtils.isNotBlank(output)) {
+				LOG.info("\n" + output);
+			}
+			if (StringUtils.isNotBlank(errorOutput)) {
+				LOG.info("\n" + errorOutput);
+			}
+		} catch (Exception e) {
+			LOG.error("Error while trying to mongodump: " + e.getLocalizedMessage(), e);
+			success = false;
+		} finally {
+			IOUtils.closeQuietly(in);
 		}
-		SnapshotUtil.main(Utils.convertListToArray(cmd));
-		return backupPath;
+		return success;
 	}
 
-	/**
-	 * Import mongo
-	 */
-	public void importMongo() {
-		String[] derp2 = new String[7];
-		derp2[0] = "-i";
-		derp2[1] = "C:/tmp";
-		derp2[2] = "-h";
-		derp2[3] = "localhost";
-		derp2[4] = "-d";
-		derp2[5] = "epickur";
-		derp2[6] = "-D";
-		RestoreUtil.main(derp2);
+	public void cleanDumpDirectory() {
+		File folder = new File(backupPath + FILE_SEPARATOR + database);
+		try {
+			FileUtils.deleteDirectory(folder);
+		} catch (IOException e) {
+			LOG.error("Error while trying to delete dump directory: " + e.getLocalizedMessage(), e);
+		}
 	}
 
-	/**
-	 * Clean directory
-	 */
-	private void cleanDirectory() {
-		List<String> files = getListFiles();
-		if (files.size() != 0) {
-			File folder = new File(backupPath);
-			File[] listOfFiles = folder.listFiles();
-			for (int i = 0; i < listOfFiles.length; i++) {
-				boolean deleted = listOfFiles[i].delete();
-				if (!deleted) {
-					LOG.warn(listOfFiles[i].getName() + " has not been deleted");
-				}
-			}
+	public void deleteDumpFile() {
+		File file = new File(getCurrentFullPathName());
+		boolean deleted = file.delete();
+		if (!deleted) {
+			LOG.error("Could not delete dump file");
 		}
+	}
+
+	public static void main(String[] args) throws InterruptedException {
+		LOG.info("Starting Mongo dump");
+		MongoDBDump m = new MongoDBDump(Utils.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
+		m.exportMongo();
+		LOG.info("DB dump done");
+		LOG.info("Creating tar.gz...");
+		List<String> list = m.getListFiles();
+		Utils.createTarGz(list, m.getCurrentFullPathName());
+		LOG.info("tar.gz generated: " + m.getCurrentFullPathName());
+		m.cleanDumpDirectory();
 	}
 }
