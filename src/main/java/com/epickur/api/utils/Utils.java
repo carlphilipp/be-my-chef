@@ -113,7 +113,7 @@ public final class Utils {
 	public static Properties getEpickurProperties() {
 		Properties prop = new Properties();
 		try {
-			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("epickur.properties"));
+			prop.load(Utils.class.getClassLoader().getResourceAsStream("epickur.properties"));
 			if (prop.getProperty("address").equals("${address}")) {
 				prop = loadLocal(prop);
 			}
@@ -133,7 +133,7 @@ public final class Utils {
 	private static Properties loadLocal(final Properties properties) {
 		Properties prop = new Properties();
 		try {
-			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("env/local.properties"));
+			prop.load(Utils.class.getClassLoader().getResourceAsStream("env/local.properties"));
 			for (Entry<Object, Object> e : prop.entrySet()) {
 				properties.put(e.getKey(), e.getValue());
 			}

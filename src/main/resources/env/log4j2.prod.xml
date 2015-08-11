@@ -2,15 +2,13 @@
 <Configuration status="WARN">
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout
-        pattern="%d{dd/MM/yyyy HH:mm:ss}{America/Chicago} - %-5p [%c{1}:%L] %m%n" />
+      <PatternLayout pattern="%d{dd/MM/yyyy HH:mm:ss}{UTC} - %-5p [%c{1}:%L] %m%n" />
     </Console>
-    <SMTP name="Email" subject="[Be My Chef] Log Exception" from="carl@bemychef.com.au"
-      to="cp.harmant@gmail.com" smtpProtocol="smtps" smtpHost="smtp.zoho.com"
+    <SMTP name="Email" subject="[BE MY CHEF] Log Exception" from="carl@bemychef.com.au"
+      to="sys@bemychef.com.au" smtpProtocol="smtps" smtpHost="smtp.zoho.com"
       smtpPort="465" smtpUsername="carl@bemychef.com.au" smtpPassword="a3842100"
       smtpDebug="false" bufferSize="512">
-      <PatternLayout
-        pattern="%d{dd/MM/yyyy HH:mm:ss}{America/Chicago} - %-5p [%c{1}:%L] %m%n" />
+      <PatternLayout pattern="%d{dd/MM/yyyy HH:mm:ss}{UTC} - %-5p [%c{1}:%L] %m%n" />
     </SMTP>
   </Appenders>
   <Loggers>

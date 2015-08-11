@@ -91,6 +91,7 @@ public final class Jobs {
 			JobDetail mongoDBDump = JobBuilder.newJob(MongoDBDumpJob.class).withIdentity(identityMongoDB).build();
 			Trigger triggerMongoDBDump = TriggerBuilder.newTrigger()
 					.withIdentity(identityMongoDB)
+					//.withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
 					.withSchedule(CronScheduleBuilder.cronSchedule("0 0 0/2 * * ?"))
 					.build();
 			scheduler.scheduleJob(mongoDBDump, triggerMongoDBDump);

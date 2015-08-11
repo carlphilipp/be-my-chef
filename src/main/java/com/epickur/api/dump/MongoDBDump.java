@@ -28,6 +28,8 @@ public final class MongoDBDump {
 	private static final Logger LOG = LogManager.getLogger(MongoDBDump.class.getSimpleName());
 	/** File separator */
 	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+	/** Mongod */
+	private String mongod;
 	/** Ip */
 	private String ip;
 	/** Port */
@@ -54,6 +56,7 @@ public final class MongoDBDump {
 	public MongoDBDump(final String date) {
 		this.date = date;
 		Properties prop = Utils.getEpickurProperties();
+		this.mongod = prop.getProperty("mongod.path");
 		this.ip = prop.getProperty("mongo.address");
 		this.port = prop.getProperty("mongo.port");
 		this.database = prop.getProperty("mongo.db.name");
@@ -104,7 +107,6 @@ public final class MongoDBDump {
 		File folder = new File(backupPath + FILE_SEPARATOR + database);
 
 		File[] listOfFiles = folder.listFiles();
-
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
 				files.add(listOfFiles[i].getAbsolutePath());
@@ -123,12 +125,13 @@ public final class MongoDBDump {
 		InputStream in = null;
 		try {
 			StringBuilder dumpCommand = new StringBuilder();
-			dumpCommand.append("mongodump -d" + database + " -h " + ip + ":" + port);
-			if (StringUtils.isNotBlank(username)) {
-				dumpCommand.append(" -u " + username + " -p" + password);
+			dumpCommand.append(this.mongod + " -d " + this.database + " -h " + this.ip + ":" + this.port);
+			if (StringUtils.isNotBlank(this.username)) {
+				dumpCommand.append(" -u " + this.username + " -p" + this.password);
 			}
-			dumpCommand.append(" -o " + backupPath);
+			dumpCommand.append(" -o " + this.backupPath);
 			Runtime rt = Runtime.getRuntime();
+
 			Process process = rt.exec(dumpCommand.toString());
 			process.waitFor();
 			String output = IOUtils.toString(process.getInputStream());

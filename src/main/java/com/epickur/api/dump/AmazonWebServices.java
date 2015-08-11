@@ -36,7 +36,7 @@ public class AmazonWebServices {
 
 	public AmazonWebServices() {
 		Properties prop = Utils.getEpickurProperties();
-		String accessKeyId = prop.getProperty("aws.accessKeyId");
+		String accessKeyId = prop.getProperty("aws.access.KeyId");
 		String secretKey = prop.getProperty("aws.secretKey");
 		this.bucketName = prop.getProperty("aws.bucket");
 		BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKeyId, secretKey);

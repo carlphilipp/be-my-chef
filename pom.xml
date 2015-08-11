@@ -545,6 +545,7 @@
 							<exclude>epickur-eclipse-profil.xml</exclude>
 							<exclude>epickur.template.properties</exclude>
 							<exclude>stylesheet.css</exclude>
+							<exclude>log4j2.xml</exclude>
 						</excludes>
 					</resource>
 				</resources>
