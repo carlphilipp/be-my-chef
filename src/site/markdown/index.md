@@ -7,7 +7,7 @@ For full endpoint documentation please go [here](../../apidoc/index.html).
 
 ###Prerequisites:
 * Java SDK 7 http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
-* Tomcat8 http://tomcat.apache.org/download-80.cgi
+* Tomcat7 http://tomcat.apache.org/download-70.cgi
 * MongoDB 3.0 http://www.mongodb.org
 * Any IDE with Maven https://eclipse.org
 
@@ -16,7 +16,7 @@ Clone the Git repository in working directory:
 
 `git clone ssh://carlphilipp@git.code.sf.net/p/epickurapi/code epickur-api`
 
-Add Tomcat8 in Eclipse as a server.
+Add Tomcat7 in Eclipse as a server.
 
 ###Configure
 Two files need to be duplicated and renamed:
@@ -57,14 +57,14 @@ This file contains all the application properties. Maven will inject the value o
 
 Two profils are definied in pom.xml: 
 * local: The default one that should be used in local. 
-* heroku: Here to deploy in heroku.
+* aws: The Amazon Web Service profil, used to deploy on the production server.
 
 ###Test
 
 
 ####From Eclipse:
 
-MongoDB and Tomcat8 must be started.
+MongoDB and Tomcat7 must be started.
 
 Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing.
 
@@ -82,33 +82,39 @@ Integration testing: `mvn integration-test -P local`
 
 Generate war with Maven: `mvn warify -P local`
 
-Generate documentation with Maven: `mvn site -P local`
+Generate documentation with Maven in local: `mvn site -P local`
+
+Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it.
 
 Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Windows or `src/main/scripts/generate-api.sh` from Linux or OSX.
 
-###Heroku
+###Amazon Web Services
 
-To deploy on heroku:
+To deploy on AWS:
 
-`mvn clean heroku:deploy-war -P heroku`
+`mvn clean package antrun:run -P aws`
 
-To resolve an issue, I had to configure heroku with:
+The ant plugin run several commands:
+*Stop tomcat
+*Clean webbapps directory
+*Clean other temp directory
+*Push ROOT.war (war generatered) to $TOMCAT/webapps
+*Start tomcat
 
-`heroku config:set WEBAPP_RUNNER_OPTS="--expand-war` or in the pom.xml:
+To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml`
 
 ```
-<plugin>
-  <groupId>com.heroku.sdk</groupId>
-  <artifactId>heroku-maven-plugin</artifactId>
-  <version>0.3.7</version>
-  <configuration>
-    <appName>epickur-api</appName>
-    <jdkVersion>1.7</jdkVersion>
-    <configVars>
-      <WEBAPP_RUNNER_OPTS>--expand-war</WEBAPP_RUNNER_OPTS>
-    </configVars>
-   </configuration>
-</plugin>
+<profiles>
+    <profile>
+      <id>aws</id>
+      <properties>
+        <server.address>ADDRESS</server.address>
+        <server.login>LOGIN_SSH</server.login>
+        <server.password>PASSWORD_SSH</server.password>
+        <server.base>TOMCAT_BASE</server.base>
+      </properties>
+    </profile>
+</profiles>
 ```
 
 ###Known issue with Eclipse
