@@ -550,6 +550,8 @@
 				</plugins>
 			</build>
 		</profile>
+		
+		
 		<profile>
 			<id>aws</id>
 			<properties>
@@ -588,12 +590,59 @@
 								</goals>
 								<configuration>
 									<target>
+									  <echo message="Copying log4j prod file to target directory" />
 										<copy file="src/main/resources/env/log4j2.prod.xml"
 											tofile="target/epickur/WEB-INF/classes/log4j2.xml" />
 									</target>
 								</configuration>
 							</execution>
+							<execution>
+							 <id>upload</id>
+							 <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <echo message="Connecting to ${server.login}@${server.address}:${server.base}" />
+                    <echo message="Stoping tomcat..." />
+                    <sshexec 
+                        host="${server.address}" username="${server.login}"
+                        password="${server.password}" command="${server.base}/bin/shutdown.sh" />
+                  
+		                <echo
+		                  message="Cleaning webapps directory..." />
+		                <sshexec 
+		                  host="${server.address}" username="${server.login}"
+		                  password="${server.password}" command="rm -f -R ${server.base}/webapps/*" />
+		                  
+		                <echo
+		                  message="Cleaning temporary files..." />
+		                <sshexec 
+		                  host="${server.address}" username="${server.login}"
+		                  password="${server.password}" command="rm -f -R ${server.base}/work/*;rm -f -R ${server.base}/temp/*" />
+		                  
+		                <echo
+		                  message="Push ${war.name}.war to ${server.base}/webapps" />
+		                <scp trust="yes"
+		                  todir="${server.login}:${server.password}@${server.address}:${server.base}/webapps" 
+		                  file="${basedir}/target/${war.name}.war">
+		                </scp>
+		                
+		                <echo message="Starting tomcat..." />
+		                <sshexec 
+		                  host="${server.address}" username="${server.login}"
+		                  password="${server.password}" command="/opt/tomcat7/bin/startup.sh" />
+                  </target>
+                </configuration>
+							</execution>
 						</executions>
+						<dependencies>
+              <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant-jsch</artifactId>
+                <version>1.9.6</version>
+              </dependency>
+            </dependencies>
 					</plugin>
 
 					<!-- Inject aws properties into project -->
@@ -636,7 +685,7 @@
 							<packagingExcludes>admin.html</packagingExcludes>
 						</configuration>
 					</plugin>
-
+<!-- 
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
@@ -684,6 +733,7 @@
 							</dependency>
 						</dependencies>
 					</plugin>
+					 -->
 				</plugins>
 			</build>
 		</profile>

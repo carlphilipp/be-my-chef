@@ -92,14 +92,14 @@ Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Wind
 
 To deploy on AWS:
 
-`mvn clean package antrun:run -P aws`
+`mvn clean package "antrun:run@upload" -P aws`
 
 The ant plugin run several commands:
-*Stop tomcat
-*Clean webbapps directory
-*Clean other temp directory
-*Push ROOT.war (war generatered) to $TOMCAT/webapps
-*Start tomcat
+* Stop tomcat
+* Clean webbapps directory
+* Clean other temp directory
+* Push ROOT.war (war generatered) to $TOMCAT/webapps
+* Start tomcat
 
 To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml`
 
