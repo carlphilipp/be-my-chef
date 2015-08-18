@@ -348,7 +348,7 @@ public final class UserBusiness {
 	/**
 	 * Suscribe a user to newsletter
 	 * 
-	 * @param user
+	 * @param user The user.
 	 */
 	public void suscribeToNewsletter(final User user) {
 		String url = "https://bemychef.us10.list-manage.com/subscribe/post-json?u=b0fe27a209ea8ffa59b813767&id=10d0ff2b3b&FNAME=@@FIRST@@&LNAME=@@LAST@@&EMAIL=@@EMAIL@@&ZCODE=VIC+3000&COUNTRY=au";

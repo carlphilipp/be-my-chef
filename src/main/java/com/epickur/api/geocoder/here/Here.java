@@ -180,7 +180,7 @@ public class Here {
 			throw new HereException("Geolocation error", e);
 		}
 		if (geo == null) {
-			throw new HereException("Geolocation error with data: '" + data + "'");
+			throw new HereException("Geolocation error. Data sent by Here: '" + data + "'");
 		}
 		return geo;
 	}
