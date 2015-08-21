@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
+
 public class ObjectIdDeserializerTest {
 	
 	@Test(expected = IOException.class)

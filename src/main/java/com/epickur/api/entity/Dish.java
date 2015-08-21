@@ -15,12 +15,12 @@ import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
-import com.epickur.api.entity.databind.DateDeserializer;
-import com.epickur.api.entity.databind.DateSerializer;
-import com.epickur.api.entity.databind.DishTypeDeserializer;
-import com.epickur.api.entity.databind.DishTypeSerializer;
-import com.epickur.api.entity.databind.ObjectIdDeserializer;
-import com.epickur.api.entity.databind.ObjectIdSerializer;
+import com.epickur.api.entity.deserialize.DateDeserializer;
+import com.epickur.api.entity.deserialize.DishTypeDeserializer;
+import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
+import com.epickur.api.entity.serialize.DateSerializer;
+import com.epickur.api.entity.serialize.DishTypeSerializer;
+import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.View;
 import com.epickur.api.exception.EpickurParsingException;

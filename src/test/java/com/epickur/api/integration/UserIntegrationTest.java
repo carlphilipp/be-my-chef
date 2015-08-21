@@ -96,6 +96,9 @@ public class UserIntegrationTest {
 			json.put("name", name);
 			json.put("password", password);
 			json.put("email", start + "@" + end + ".com");
+			json.put("country", "USA");
+			json.put("state", "Illinois");
+			json.put("zipcode", "60614");
 
 			HttpPost request = new HttpPost(URL);
 			StringEntity requestEntity = new StringEntity(json.toString());
@@ -158,6 +161,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -203,6 +209,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -234,6 +243,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		request = new HttpPost(URL);
 		requestEntity = new StringEntity(json.toString());
@@ -275,6 +287,9 @@ public class UserIntegrationTest {
 		phoneNumber.put("nationalNumber", 383400775);
 		phoneNumber.put("countryCode", 33);
 		json.set("phoneNumber", phoneNumber);
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -329,6 +344,9 @@ public class UserIntegrationTest {
 		json.put("email", start + "@" + end + ".com");
 		phoneNumber.put("nationalNumber", "+33383400775");
 		json.set("phoneNumber", phoneNumber);
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -383,6 +401,9 @@ public class UserIntegrationTest {
 		json.put("email", start + "@" + end + ".com");
 		phoneNumber.put("nationalNumber", "00775");
 		json.set("phoneNumber", phoneNumber);
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -449,6 +470,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -513,6 +537,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -566,6 +593,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -660,6 +690,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -694,7 +727,7 @@ public class UserIntegrationTest {
 		dish.setCaterer(TestUtils.generateRandomCatererWithId());
 		dish.setName("Dish name");
 		dish.setDescription("A super cool dish");
-		dish.setType(DishType.VEGAN);
+		dish.setType(DishType.MAIN);
 		dish.setPrice(500);
 		dish.setCookingTime(5);
 		dish.setDifficultyLevel(8);
@@ -786,6 +819,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -818,7 +854,7 @@ public class UserIntegrationTest {
 		Dish dish = new Dish();
 		dish.setName("Dish name");
 		dish.setDescription("A super cool dish");
-		dish.setType(DishType.VEGAN);
+		dish.setType(DishType.MAIN);
 		dish.setPrice(500);
 		dish.setCookingTime(5);
 		dish.setDifficultyLevel(8);
@@ -910,6 +946,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
@@ -943,7 +982,7 @@ public class UserIntegrationTest {
 		Dish dish = new Dish();
 		dish.setName("Dish name");
 		dish.setDescription("A super cool dish");
-		dish.setType(DishType.VEGAN);
+		dish.setType(DishType.MAIN);
 		dish.setPrice(500);
 		dish.setCookingTime(5);
 		dish.setDifficultyLevel(8);
@@ -1052,6 +1091,9 @@ public class UserIntegrationTest {
 		json.put("name", name);
 		json.put("password", password);
 		json.put("email", start + "@" + end + ".com");
+		json.put("country", "USA");
+		json.put("state", "Illinois");
+		json.put("zipcode", "60614");
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());

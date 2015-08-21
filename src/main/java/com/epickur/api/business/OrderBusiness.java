@@ -6,9 +6,9 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
 import com.epickur.api.cron.Jobs;
-import com.epickur.api.dao.mongo.OrderDaoImpl;
-import com.epickur.api.dao.mongo.SequenceDaoImpl;
-import com.epickur.api.dao.mongo.UserDaoImpl;
+import com.epickur.api.dao.mongo.OrderDAOImpl;
+import com.epickur.api.dao.mongo.SequenceDAOImpl;
+import com.epickur.api.dao.mongo.UserDAOImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
@@ -35,19 +35,19 @@ import com.stripe.model.Charge;
 public final class OrderBusiness {
 
 	/** Order dao */
-	private OrderDaoImpl orderDao;
+	private OrderDAOImpl orderDao;
 	/** User dao */
-	private UserDaoImpl userDao;
+	private UserDAOImpl userDao;
 	/** Sequence Order dao */
-	private SequenceDaoImpl seqDao;
+	private SequenceDAOImpl seqDao;
 	/** User validator */
 	private UserValidator validator;
 
 	/** The constructor */
 	public OrderBusiness() {
-		this.orderDao = new OrderDaoImpl();
-		this.userDao = new UserDaoImpl();
-		this.seqDao = new SequenceDaoImpl();
+		this.orderDao = new OrderDAOImpl();
+		this.userDao = new UserDAOImpl();
+		this.seqDao = new SequenceDAOImpl();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
 

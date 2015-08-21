@@ -26,13 +26,13 @@ import com.mongodb.client.model.ReturnDocument;
  * @author cph
  * @version 1.0
  */
-public final class UserDaoImpl extends DaoCrud<User> {
+public final class UserDAOImpl extends DAOCrud<User> {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(UserDaoImpl.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(UserDAOImpl.class.getSimpleName());
 
 	/** Constructor */
-	public UserDaoImpl() {
+	public UserDAOImpl() {
 		init();
 	}
 

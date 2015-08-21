@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
-import com.epickur.api.dao.mongo.UserDaoImpl;
+import com.epickur.api.dao.mongo.UserDAOImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Operation;
@@ -37,7 +37,7 @@ public final class UserBusiness {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(UserBusiness.class.getSimpleName());
 	/** User dao */
-	private UserDaoImpl userDao;
+	private UserDAOImpl userDao;
 	/** Key Business */
 	private KeyBusiness keyBusiness;
 	/** User validator */
@@ -47,7 +47,7 @@ public final class UserBusiness {
 	 * The constructor
 	 */
 	public UserBusiness() {
-		this.userDao = new UserDaoImpl();
+		this.userDao = new UserDAOImpl();
 		this.keyBusiness = new KeyBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
@@ -102,17 +102,6 @@ public final class UserBusiness {
 	 * 
 	 * @param id
 	 *            the User id to read
-	 * @return The User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
-	 */
-	/**
-	 * Read a User
-	 * 
-	 * @param id
-	 *            the User id to read
-	 * @param key
-	 *            The Key
 	 * @return The User
 	 * @throws EpickurException
 	 *             If an epickur exception occurred

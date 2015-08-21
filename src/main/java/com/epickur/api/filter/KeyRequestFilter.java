@@ -11,7 +11,7 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.epickur.api.dao.mongo.KeyDaoImpl;
+import com.epickur.api.dao.mongo.KeyDAOImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
@@ -32,12 +32,12 @@ public final class KeyRequestFilter implements ContainerRequestFilter {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(KeyRequestFilter.class.getSimpleName());
 	/** Key dao */
-	private KeyDaoImpl keyDao;
+	private KeyDAOImpl keyDao;
 
 	/** Constructor */
 	public KeyRequestFilter() {
 		super();
-		this.keyDao = new KeyDaoImpl();
+		this.keyDao = new KeyDAOImpl();
 	}
 
 	@Override

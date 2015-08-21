@@ -13,5 +13,7 @@ public enum EndpointType {
 	/** The caterer endpoint */
 	CATERER,
 	/** The dish endpoint */
-	DISH;
+	DISH,
+	/** The voucher endpoint */
+	VOUCHER;
 }

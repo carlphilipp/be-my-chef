@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.epickur.api.entity.serialize.DateSerializer;
+
 public class DateSerializerTest {
 
 	@Test(expected = IOException.class)

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 
-import com.epickur.api.dao.mongo.CatererDaoImpl;
+import com.epickur.api.dao.mongo.CatererDAOImpl;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Order;
 import com.epickur.api.enumeration.Operation;
@@ -15,15 +15,15 @@ import com.epickur.api.validator.CatererValidator;
 import com.epickur.api.validator.FactoryValidator;
 
 /**
- * {@link Caterer} business layer. Execute logic and access {@link CatererDaoImpl} layer to update the database.
+ * {@link Caterer} business layer. Execute logic and access {@link CatererDAOImpl} layer to update the database.
  * 
  * @author cph
  * @version 1.0
  */
 public class CatererBusiness {
 
-	/** The DAO {@link CatererDaoImpl} */
-	private CatererDaoImpl dao;
+	/** The DAO {@link CatererDAOImpl} */
+	private CatererDAOImpl dao;
 	/** The validator {@link CatererValidator} */
 	private CatererValidator validator;
 
@@ -31,7 +31,7 @@ public class CatererBusiness {
 	 * Construct a Caterer Business
 	 */
 	public CatererBusiness() {
-		this.dao = new CatererDaoImpl();
+		this.dao = new CatererDAOImpl();
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
 

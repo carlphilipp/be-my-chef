@@ -398,7 +398,7 @@ public class DishIntegrationTest {
 
 	@Test
 	public void testSearchUsa() throws ClientProtocolException, IOException {
-		String type = "Meat";
+		String type = "main";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-19:00";
@@ -422,7 +422,7 @@ public class DishIntegrationTest {
 	@Test
 	public void testSearchUsa2() throws ClientProtocolException, IOException {
 		// Same test with another pickupdate
-		String type = "Meat";
+		String type = "Main";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-16:00";
@@ -445,7 +445,7 @@ public class DishIntegrationTest {
 
 	@Test
 	public void testSearchUsa3() throws ClientProtocolException, IOException {
-		String type = "Meat";
+		String type = "main";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-22:00";
@@ -468,7 +468,7 @@ public class DishIntegrationTest {
 
 	@Test
 	public void testSearchAustralia() throws ClientProtocolException, IOException {
-		String type = "Fish,Meat";
+		String type = "Main";
 		String limit = "100";
 		String address = "388 Bourke St Melbourne, Australia";
 		String pickupdate = "mon-19:00";

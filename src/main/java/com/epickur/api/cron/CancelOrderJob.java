@@ -6,8 +6,8 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.epickur.api.dao.mongo.OrderDaoImpl;
-import com.epickur.api.dao.mongo.UserDaoImpl;
+import com.epickur.api.dao.mongo.OrderDAOImpl;
+import com.epickur.api.dao.mongo.UserDAOImpl;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.OrderStatus;
@@ -26,16 +26,16 @@ public final class CancelOrderJob implements Job {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CancelOrderJob.class.getSimpleName());
 	/** Order dao */
-	private OrderDaoImpl orderDao;
+	private OrderDAOImpl orderDao;
 	/** User dao */
-	private UserDaoImpl userDao;
+	private UserDAOImpl userDao;
 
 	/**
 	 * Constructs a Cancel Order Job
 	 */
 	public CancelOrderJob() {
-		this.orderDao = new OrderDaoImpl();
-		this.userDao = new UserDaoImpl();
+		this.orderDao = new OrderDAOImpl();
+		this.userDao = new UserDAOImpl();
 	}
 
 	@Override

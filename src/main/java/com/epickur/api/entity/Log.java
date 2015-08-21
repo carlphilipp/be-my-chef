@@ -6,10 +6,10 @@ import java.util.Map;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
-import com.epickur.api.entity.databind.DateDeserializer;
-import com.epickur.api.entity.databind.DateSerializer;
-import com.epickur.api.entity.databind.ObjectIdDeserializer;
-import com.epickur.api.entity.databind.ObjectIdSerializer;
+import com.epickur.api.entity.deserialize.DateDeserializer;
+import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
+import com.epickur.api.entity.serialize.DateSerializer;
+import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

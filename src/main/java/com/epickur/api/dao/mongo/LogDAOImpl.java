@@ -17,13 +17,13 @@ import com.mongodb.MongoException;
  * @version 1.0
  *
  */
-public final class LogDaoImpl extends DaoCrud<Log> {
+public final class LogDAOImpl extends DAOCrud<Log> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Log.class.getSimpleName());
 
 	/** Constructor */
-	public LogDaoImpl() {
+	public LogDAOImpl() {
 		init();
 	}
 

@@ -31,13 +31,13 @@ import com.mongodb.client.model.ReturnDocument;
  * @author cph
  * @version 1.0
  */
-public final class DishDaoImpl extends DaoCrud<Dish> {
+public final class DishDAOImpl extends DAOCrud<Dish> {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(DishDaoImpl.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(DishDAOImpl.class.getSimpleName());
 
 	/** Constructor */
-	public DishDaoImpl() {
+	public DishDAOImpl() {
 		init();
 	}
 

@@ -1,4 +1,4 @@
-package com.epickur.api.entity.databind;
+package com.epickur.api.entity.deserialize;
 
 import java.io.IOException;
 

@@ -23,7 +23,7 @@ import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
-import com.epickur.api.dao.mongo.OrderDaoImpl;
+import com.epickur.api.dao.mongo.OrderDAOImpl;
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
@@ -364,6 +364,9 @@ public class TestUtils {
 		user.setPassword(generateRandomString());
 		user.setPhoneNumber(generateRandomPhoneNumber());
 		user.setRole(Role.USER);
+		user.setState("Illinois");
+		user.setZipcode("60614");
+		user.setCountry("USA");
 		return user;
 	}
 
@@ -544,7 +547,7 @@ public class TestUtils {
 
 	public static Order updateOrderStatusToSuccess(final Order order) throws EpickurException {
 		order.setStatus(OrderStatus.SUCCESSFUL);
-		OrderDaoImpl dao = new OrderDaoImpl();
+		OrderDAOImpl dao = new OrderDAOImpl();
 		return dao.update(order);
 	}
 }

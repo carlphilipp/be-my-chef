@@ -64,6 +64,9 @@ public class NoKeyServiceTest {
 		user.setLast("test");
 		user.setEmail(userEmail);
 		user.setPassword(userPassword);
+		user.setState("Illinois");
+		user.setCountry("USA");
+		user.setZipcode("60614");
 
 		Response result = userService.create(false, false, user, context);
 		if (result.getEntity() != null) {

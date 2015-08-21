@@ -24,13 +24,13 @@ import com.mongodb.client.model.ReturnDocument;
  * @author cph
  * @version 1.0
  */
-public final class CatererDaoImpl extends DaoCrud<Caterer> {
+public final class CatererDAOImpl extends DAOCrud<Caterer> {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(CatererDaoImpl.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(CatererDAOImpl.class.getSimpleName());
 
 	/** Constructor */
-	public CatererDaoImpl() {
+	public CatererDAOImpl() {
 		init();
 	}
 

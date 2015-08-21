@@ -83,7 +83,7 @@ public class OrderDaoImplTest {
 		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
-		OrderDaoImpl dao = new OrderDaoImpl();
+		OrderDAOImpl dao = new OrderDAOImpl();
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), null, null);
 		assertNotNull(orders);
 		assertEquals(2, orders.size());
@@ -101,7 +101,7 @@ public class OrderDaoImplTest {
 		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
-		OrderDaoImpl dao = new OrderDaoImpl();
+		OrderDAOImpl dao = new OrderDAOImpl();
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt(), order2.getCreatedAt());
 		assertNotNull(orders);
 		assertEquals(2, orders.size());
@@ -119,7 +119,7 @@ public class OrderDaoImplTest {
 		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
-		OrderDaoImpl dao = new OrderDaoImpl();
+		OrderDAOImpl dao = new OrderDAOImpl();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt().plus(1), order2.getCreatedAt());
@@ -139,7 +139,7 @@ public class OrderDaoImplTest {
 		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
-		OrderDaoImpl dao = new OrderDaoImpl();
+		OrderDAOImpl dao = new OrderDAOImpl();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt(), order2.getCreatedAt().minus(1));
@@ -160,7 +160,7 @@ public class OrderDaoImplTest {
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		// Test
-		OrderDaoImpl dao = new OrderDaoImpl();
+		OrderDAOImpl dao = new OrderDAOImpl();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt().plus(1), order2.getCreatedAt().minus(1));

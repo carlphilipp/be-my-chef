@@ -7,6 +7,7 @@ db.caterers.ensureIndex( { 'location.geo' : "2dsphere" } )
 db.dishes.ensureIndex( { 'caterer.location.geo' : "2dsphere" } )
 db.dishes.ensureIndex( { "caterer._id" : 1 }, { unique: false, sparse: true } )
 db.orders.createIndex( { "readableId": 1 }, { unique: true, sparse: true } )
+db.vauchers.createIndex( { "code": 1 }, { unique: true, sparse: true } )
 
 /** Insert caterers **/
 db.caterers.insert(
@@ -153,7 +154,7 @@ db.dishes.insert(
   [{
 	  "name": "Thai Inbox",
     "description": "Noodles with rice",
-    "type": "meat",
+    "type": "main",
     "price": NumberInt(500),
     "cookingTime": NumberInt(5),
     "difficultyLevel": NumberInt(1),
@@ -234,7 +235,7 @@ db.dishes.insert(
   	{
 	  	"name": "Fish and Chips",
 	  	"description": "Fresh fish and chips",
-	  	"type": "fish",
+	  	"type": "main",
 	  	"price": NumberInt(500),
 	  	"cookingTime": NumberInt(5),
 	  	"difficultyLevel": NumberInt(1),
@@ -310,7 +311,7 @@ db.dishes.insert(
   	},{
 	  	"name": "Noodles Curry",
 	  	"description": "Fresh Noodles with curry",
-    	"type": "meat",
+    	"type": "main",
     	"price": NumberInt(500),
     	"cookingTime": NumberInt(5),
     	"difficultyLevel": NumberInt(1),
@@ -399,7 +400,7 @@ db.dishes.insert(
       "_id" : "553292c04c399b1733997513",
 	  	"name": "Thai Inbox",
       "description": "Noodles with rice",
-      "type": "meat",
+      "type": "main",
       "price": NumberInt(500),
       "cookingTime": NumberInt(5),
       "difficultyLevel": NumberInt(1),

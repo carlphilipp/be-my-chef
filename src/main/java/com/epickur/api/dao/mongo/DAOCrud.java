@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
-import com.epickur.api.dao.IDaoCrud;
+import com.epickur.api.dao.IDAOCrud;
 import com.epickur.api.dao.MongoDb;
 import com.epickur.api.entity.AbstractEntity;
 import com.epickur.api.exception.EpickurException;
@@ -18,10 +18,10 @@ import com.mongodb.client.result.DeleteResult;
  * @param <T>
  *            Must be an AbstractEntity
  */
-public abstract class DaoCrud<T extends AbstractEntity> implements IDaoCrud<T> {
+public abstract class DAOCrud<T extends AbstractEntity> implements IDAOCrud<T> {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(DaoCrud.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(DAOCrud.class.getSimpleName());
 	/** Database */
 	private MongoDatabase db;
 	/** Database collection */

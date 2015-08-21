@@ -5,12 +5,14 @@ package com.epickur.api.enumeration;
  * @version 1.0
  */
 public enum DishType {
-	/** Meat */
-	MEAT("meat"),
-	/** Fish */
-	FISH("fish"),
-	/** Vegan */
-	VEGAN("vegan");
+	/** Starter */
+	STARTER("starter"),
+	/** Main */
+	MAIN("main"),
+	/** Dessert */
+	DESSERT("dessert"),
+	/** Combo */
+	COMBO("combo");
 
 	/**
 	 * The constructor

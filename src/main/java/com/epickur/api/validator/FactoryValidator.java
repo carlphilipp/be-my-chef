@@ -10,8 +10,10 @@ public final class FactoryValidator {
 	private static UserValidator userValidator = null;
 	/** Caterer validator */
 	private static CatererValidator catererValidator = null;
-	/** Service validator */
+	/** Dish validator */
 	private static DishValidator dishValidator = null;
+	/** Voucher validator */
+	private static VoucherValidator voucherValidator = null;
 
 	/** Constructor */
 	private FactoryValidator() {
@@ -40,6 +42,11 @@ public final class FactoryValidator {
 				dishValidator = new DishValidator();
 			}
 			return dishValidator;
+		} else if (name.equals("voucher")) {
+			if (voucherValidator == null) {
+				voucherValidator = new VoucherValidator();
+			}
+			return voucherValidator;
 		}
 		return null;
 	}

@@ -417,24 +417,24 @@ public class DishServiceTest {
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail3() throws EpickurException {
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		dishService.search(pickupdate, DishType.FISH.getType(), null, null, null, null, context);
+		dishService.search(pickupdate, DishType.MAIN.getType(), null, null, null, null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail4() throws EpickurException {
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		dishService.search(pickupdate, DishType.FISH.getType(), 8, null, "", null, context);
+		dishService.search(pickupdate, DishType.MAIN.getType(), 8, null, "", null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail5() throws EpickurException {
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		dishService.search(pickupdate, DishType.FISH.getType(), 0, null, null, null, context);
+		dishService.search(pickupdate, DishType.MAIN.getType(), 0, null, null, null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testSearchFail6() throws EpickurException {
 		String pickupdate = TestUtils.generateRandomPickupDate();
-		dishService.search(pickupdate, DishType.FISH.getType(), 0, null, "", null, context);
+		dishService.search(pickupdate, DishType.MAIN.getType(), 0, null, "", null, context);
 	}
 }

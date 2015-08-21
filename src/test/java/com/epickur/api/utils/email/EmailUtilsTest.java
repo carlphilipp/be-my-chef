@@ -4,7 +4,7 @@ import org.bson.types.ObjectId;
 import org.junit.Test;
 
 import com.epickur.api.TestUtils;
-import com.epickur.api.dao.mongo.SequenceDaoImpl;
+import com.epickur.api.dao.mongo.SequenceDAOImpl;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Order;
@@ -17,7 +17,7 @@ public class EmailUtilsTest {
 
 	private static final String EMAIL_TEST = "cp.harmant@gmail.com";
 	
-	private SequenceDaoImpl dao = new SequenceDaoImpl();
+	private SequenceDAOImpl dao = new SequenceDAOImpl();
 
 	@Test
 	public void emailNewRegistrationTest() {
