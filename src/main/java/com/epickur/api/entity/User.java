@@ -39,7 +39,8 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "role", "phoneNumber", "allow", "key", "allow", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "role", "phoneNumber", "zipcode", "state", "country", "allow",
+		"key", "allow", "createdAt", "updatedAt" })
 public final class User extends AbstractEntity {
 
 	/** Logger */
@@ -58,6 +59,12 @@ public final class User extends AbstractEntity {
 	private String email;
 	/** Phone number */
 	private PhoneNumber phoneNumber;
+	/** Zip code */
+	private String zipcode;
+	/** State */
+	private String state;
+	/** Country */
+	private String country;
 	/** Indicate if allowed to login */
 	private Integer allow;
 	/** Created at */
@@ -299,6 +306,51 @@ public final class User extends AbstractEntity {
 	}
 
 	/**
+	 * @return The zipcode
+	 */
+	public String getZipcode() {
+		return zipcode;
+	}
+
+	/**
+	 * @param zipcode
+	 *            The zipcode
+	 */
+	public void setZipcode(final String zipcode) {
+		this.zipcode = zipcode;
+	}
+
+	/**
+	 * @return The state
+	 */
+	public String getState() {
+		return state;
+	}
+
+	/**
+	 * @param state
+	 *            The state
+	 */
+	public void setState(final String state) {
+		this.state = state;
+	}
+
+	/**
+	 * @return The country
+	 */
+	public String getCountry() {
+		return country;
+	}
+
+	/**
+	 * @param country
+	 *            The country
+	 */
+	public void setCountry(final String country) {
+		this.country = country;
+	}
+
+	/**
 	 * @param obj
 	 *            The DBObject
 	 * @return The User
@@ -356,21 +408,26 @@ public final class User extends AbstractEntity {
 		int result = 1;
 		result = prime * result + ((allow == null) ? 0 : allow.hashCode());
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((country == null) ? 0 : country.hashCode());
 		result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((first == null) ? 0 : first.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + ((last == null) ? 0 : last.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((newPassword == null) ? 0 : newPassword.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
-		result = prime * result + ((role == null) ? 0 : role.hashCode());
 		result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
+		result = prime * result + ((role == null) ? 0 : role.hashCode());
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
+		result = prime * result + ((zipcode == null) ? 0 : zipcode.hashCode());
 		return result;
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -395,6 +452,13 @@ public final class User extends AbstractEntity {
 		} else if (!code.equals(other.code)) {
 			return false;
 		}
+		if (country == null) {
+			if (other.country != null) {
+				return false;
+			}
+		} else if (!country.equals(other.country)) {
+			return false;
+		}
 		if (createdAt == null) {
 			if (other.createdAt != null) {
 				return false;
@@ -409,6 +473,13 @@ public final class User extends AbstractEntity {
 		} else if (!email.equals(other.email)) {
 			return false;
 		}
+		if (first == null) {
+			if (other.first != null) {
+				return false;
+			}
+		} else if (!first.equals(other.first)) {
+			return false;
+		}
 		if (id == null) {
 			if (other.id != null) {
 				return false;
@@ -416,18 +487,18 @@ public final class User extends AbstractEntity {
 		} else if (!id.equals(other.id)) {
 			return false;
 		}
-		if (phoneNumber == null) {
-			if (other.phoneNumber != null) {
-				return false;
-			}
-		} else if (!phoneNumber.equals(other.phoneNumber)) {
-			return false;
-		}
 		if (key == null) {
 			if (other.key != null) {
 				return false;
 			}
 		} else if (!key.equals(other.key)) {
+			return false;
+		}
+		if (last == null) {
+			if (other.last != null) {
+				return false;
+			}
+		} else if (!last.equals(other.last)) {
 			return false;
 		}
 		if (name == null) {
@@ -451,6 +522,23 @@ public final class User extends AbstractEntity {
 		} else if (!password.equals(other.password)) {
 			return false;
 		}
+		if (phoneNumber == null) {
+			if (other.phoneNumber != null) {
+				return false;
+			}
+		} else if (!phoneNumber.equals(other.phoneNumber)) {
+			return false;
+		}
+		if (role != other.role) {
+			return false;
+		}
+		if (state == null) {
+			if (other.state != null) {
+				return false;
+			}
+		} else if (!state.equals(other.state)) {
+			return false;
+		}
 		if (updatedAt == null) {
 			if (other.updatedAt != null) {
 				return false;
@@ -458,11 +546,11 @@ public final class User extends AbstractEntity {
 		} else if (!updatedAt.equals(other.updatedAt)) {
 			return false;
 		}
-		if (role == null) {
-			if (other.role != null) {
+		if (zipcode == null) {
+			if (other.zipcode != null) {
 				return false;
 			}
-		} else if (!role.equals(other.role)) {
+		} else if (!zipcode.equals(other.zipcode)) {
 			return false;
 		}
 		return true;
