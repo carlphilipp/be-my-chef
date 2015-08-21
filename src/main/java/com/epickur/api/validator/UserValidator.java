@@ -48,6 +48,15 @@ public final class UserValidator extends Validator {
 		if (StringUtils.isBlank(user.getEmail())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "email"));
 		}
+		if(StringUtils.isBlank(user.getCountry())){
+			throw new EpickurIllegalArgument(fieldNull(getEntity(), "country"));
+		}
+		if(StringUtils.isBlank(user.getZipcode())){
+			throw new EpickurIllegalArgument(fieldNull(getEntity(), "zipcode"));
+		}
+		if(StringUtils.isBlank(user.getState())){
+			throw new EpickurIllegalArgument(fieldNull(getEntity(), "state"));
+		}
 		if (user.getPhoneNumber() != null) {
 			PhoneNumberUtil util = PhoneNumberUtil.getInstance();
 			if (!util.isValidNumber(user.getPhoneNumber())) {

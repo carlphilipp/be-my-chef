@@ -351,7 +351,7 @@ public final class UserBusiness {
 	 * @param user The user.
 	 */
 	public void suscribeToNewsletter(final User user) {
-		String url = "https://bemychef.us10.list-manage.com/subscribe/post-json?u=b0fe27a209ea8ffa59b813767&id=10d0ff2b3b&FNAME=@@FIRST@@&LNAME=@@LAST@@&EMAIL=@@EMAIL@@&ZCODE=VIC+3000&COUNTRY=au";
+		String url = "https://bemychef.us10.list-manage.com/subscribe/post-json?u=b0fe27a209ea8ffa59b813767&id=10d0ff2b3b&FNAME=@@FIRST@@&LNAME=@@LAST@@&EMAIL=@@EMAIL@@&ZCODE=@@ZIP@@&STATE=@@STATE@@&COUNTRY=@@COUNTRY@@";
 		if (StringUtils.isBlank((user.getFirst()))) {
 			url = url.replaceFirst("@@FIRST@@", "-");
 		} else {
@@ -363,6 +363,9 @@ public final class UserBusiness {
 			url = url.replaceFirst("@@LAST@@", user.getLast());
 		}
 		url = url.replaceFirst("@@EMAIL@@", user.getEmail());
+		url = url.replaceFirst("@@COUNTRY@@", user.getCountry());
+		url = url.replaceFirst("@@STATE@@", user.getState());
+		url = url.replaceFirst("@@ZIP@@", user.getZipcode());
 		HttpPost request = new HttpPost(url);
 		try {
 			HttpClientBuilder.create().build().execute(request);
