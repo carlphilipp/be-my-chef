@@ -20,6 +20,7 @@ import com.epickur.api.entity.serialize.DateSerializer;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.entity.serialize.OrderStatusSerializer;
 import com.epickur.api.enumeration.Currency;
+import com.epickur.api.enumeration.OrderMode;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.exception.EpickurParsingException;
@@ -68,6 +69,8 @@ public final class Order extends AbstractEntity {
 	private String chargeId;
 	/** Indicate if paid */
 	private Boolean paid;
+	/** Order mode */
+	private OrderMode mode;
 	/** Owner id */
 	private ObjectId createdBy;
 	/** Created at */
@@ -260,6 +263,14 @@ public final class Order extends AbstractEntity {
 		this.updatedAt = updatedAt;
 	}
 
+	public OrderMode getMode() {
+		return mode;
+	}
+
+	public void setMode(OrderMode mode) {
+		this.mode = mode;
+	}
+
 	/**
 	 * @return The user id that created the object
 	 */
@@ -308,16 +319,21 @@ public final class Order extends AbstractEntity {
 	}
 
 	public Integer calculateTotalAmount() {
+		Integer totalAmout = new Integer(0);
 		if (this.getVoucher() != null) {
 			Voucher voucher = this.getVoucher();
 			if (voucher.getDiscountType() == DiscountType.AMOUNT) {
-				return getAmount() - voucher.getDiscount();
+				totalAmout = getAmount() - voucher.getDiscount();
 			} else {
-				return getAmount() - (getAmount() * voucher.getDiscount() / 100);
+				totalAmout = getAmount() - (getAmount() * voucher.getDiscount() / 100);
 			}
 		} else {
-			return getAmount();
+			totalAmout = getAmount();
 		}
+		if(getMode() == OrderMode.CHEF){
+			totalAmout += 100;
+		}
+		return totalAmout;
 	}
 
 	/**
@@ -416,6 +432,7 @@ public final class Order extends AbstractEntity {
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((dish == null) ? 0 : dish.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((mode == null) ? 0 : mode.hashCode());
 		result = prime * result + ((paid == null) ? 0 : paid.hashCode());
 		result = prime * result + ((pickupdate == null) ? 0 : pickupdate.hashCode());
 		result = prime * result + ((readableId == null) ? 0 : readableId.hashCode());
@@ -494,6 +511,9 @@ public final class Order extends AbstractEntity {
 				return false;
 			}
 		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		if (mode != other.mode) {
 			return false;
 		}
 		if (paid == null) {

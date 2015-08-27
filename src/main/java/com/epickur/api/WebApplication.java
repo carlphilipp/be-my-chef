@@ -4,14 +4,10 @@ import javax.annotation.PostConstruct;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bson.BSON;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.quartz.SchedulerException;
 
 import com.epickur.api.cron.Jobs;
-import com.epickur.api.enumeration.DishType;
-import com.epickur.api.enumeration.OrderStatus;
-import com.epickur.api.utils.EnumTransformer;
 
 /**
  * Resource configuration that starts {@link Jobs}
@@ -27,8 +23,9 @@ public class WebApplication extends ResourceConfig {
 	/** Constructor */
 	public WebApplication() {
 		// Register new encoding to be able to serialize enum in MongoDB
-		BSON.addEncodingHook(DishType.class, new EnumTransformer());
-		BSON.addEncodingHook(OrderStatus.class, new EnumTransformer());
+		// TODO probably not needed, commented out, can probably be wiped out with EnumTransformer
+		// BSON.addEncodingHook(DishType.class, new EnumTransformer());
+		// BSON.addEncodingHook(OrderStatus.class, new EnumTransformer());
 	}
 
 	/**
