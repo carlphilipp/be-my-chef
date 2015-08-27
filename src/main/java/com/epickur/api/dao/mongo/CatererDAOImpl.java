@@ -24,7 +24,7 @@ import com.mongodb.client.model.ReturnDocument;
  * @author cph
  * @version 1.0
  */
-public final class CatererDAOImpl extends DAOCrud<Caterer> {
+public final class CatererDAOImpl extends CrudDAO<Caterer> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CatererDAOImpl.class.getSimpleName());

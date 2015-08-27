@@ -167,16 +167,4 @@ public final class MongoDBDump {
 			LOG.error("Could not delete dump file");
 		}
 	}
-
-	public static void main(String[] args) throws InterruptedException {
-		LOG.info("Starting Mongo dump");
-		MongoDBDump m = new MongoDBDump(Utils.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
-		m.exportMongo();
-		LOG.info("DB dump done");
-		LOG.info("Creating tar.gz...");
-		List<String> list = m.getListFiles();
-		Utils.createTarGz(list, m.getCurrentFullPathName());
-		LOG.info("tar.gz generated: " + m.getCurrentFullPathName());
-		m.cleanDumpDirectory();
-	}
 }

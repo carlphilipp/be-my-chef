@@ -36,7 +36,7 @@ public final class CleanKeysJob implements Job {
 	 */
 	@Override
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
-		LOG.info("Cleaning job");
+		LOG.info("Clean keys job starting...");
 		try {
 			List<Key> keys = keyDao.readAll();
 			for (Key key : keys) {

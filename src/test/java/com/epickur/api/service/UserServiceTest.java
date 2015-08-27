@@ -50,7 +50,7 @@ public class UserServiceTest {
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		context = mock(ContainerRequestContext.class);
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 		service = new UserService();
 		idsToDeleteUser = new ArrayList<ObjectId>();
@@ -601,7 +601,7 @@ public class UserServiceTest {
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
 
 				ContainerRequestContext context = mock(ContainerRequestContext.class);
-				Key key = TestUtils.generateRandomKey();
+				Key key = TestUtils.generateRandomAdminKey();
 				key.setRole(Role.USER);
 				Mockito.when(context.getProperty("key")).thenReturn(key);
 				

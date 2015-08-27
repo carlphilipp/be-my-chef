@@ -311,19 +311,6 @@ public final class Utils {
 	}
 
 	/**
-	 * @param list
-	 *            The list to convert
-	 * @return A converted array
-	 */
-	public static String[] convertListToArray(final List<String> list) {
-		String[] res = new String[list.size()];
-		for (int i = 0; i < list.size(); i++) {
-			res[i] = list.get(i);
-		}
-		return res;
-	}
-
-	/**
 	 * Create tar.gz file
 	 * 
 	 * @param inputs

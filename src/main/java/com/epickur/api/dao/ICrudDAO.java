@@ -11,7 +11,7 @@ import com.epickur.api.exception.EpickurException;
  * @param <T>
  *            Must be an AbstractEntity
  */
-public interface IDAOCrud<T extends AbstractEntity> {
+public interface ICrudDAO<T extends AbstractEntity> {
 
 	/**
 	 * Create an object

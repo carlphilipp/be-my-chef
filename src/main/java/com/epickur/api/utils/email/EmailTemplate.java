@@ -36,8 +36,8 @@ public final class EmailTemplate {
 	private static EmailTemplate emailTemplate = null;
 	/** Delay max for a caterer to answer */
 	private static String delay;
-	
-	static{
+
+	static {
 		delay = Utils.getEpickurProperties().getProperty("cron.order.timelimit");
 	}
 
@@ -179,13 +179,11 @@ public final class EmailTemplate {
 	/**
 	 * Convert data to order user
 	 * 
-	 * @param name
-	 *            The User name
-	 * @param orderId
-	 *            The Order id
-	 * @param dishName
-	 *            The Dish name
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataNewOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -200,19 +198,13 @@ public final class EmailTemplate {
 	/**
 	 * Convert data to Order Caterer
 	 * 
-	 * @param name
-	 *            The user name
-	 * @param userId
-	 *            The user id
-	 * @param orderId
-	 *            The Order Id
-	 * @param dishName
-	 *            The Dish name
-	 * @param catererName
-	 *            The Caterer Name
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
 	 * @param orderCode
-	 *            the Order code
-	 * @return A map
+	 *            The order code
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataNewOrderCaterer(final User user, final Order order, final String orderCode) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -231,15 +223,11 @@ public final class EmailTemplate {
 	/**
 	 * Convert data to Order admins
 	 * 
-	 * @param name
-	 *            The user name
-	 * @param orderId
-	 *            The Order id
-	 * @param dishName
-	 *            The Dish name
-	 * @param catererName
-	 *            The Caterer name
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataNewOrderAdmins(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -256,9 +244,11 @@ public final class EmailTemplate {
 	/**
 	 * Convert data for decline order user.
 	 * 
-	 * @param orderId
-	 *            The order id
-	 * @return A map.
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataDeclineOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -272,9 +262,11 @@ public final class EmailTemplate {
 	/**
 	 * Convert data for decline order admins.
 	 * 
-	 * @param orderId
-	 *            The order id
-	 * @return A map.
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataDeclineOrderAdmins(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -288,9 +280,11 @@ public final class EmailTemplate {
 
 	// ORDER: case 3 - The order is a success
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataSuccessOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -303,9 +297,11 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataSuccessOrderCaterer(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -317,9 +313,11 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataSuccessOrderAdmins(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -332,9 +330,11 @@ public final class EmailTemplate {
 
 	// ORDER: case 4 - The order has been accepted but the payment failed
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataFailOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -347,9 +347,11 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataFailOrderCaterer(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -361,9 +363,11 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataFailOrderAdmins(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -376,9 +380,11 @@ public final class EmailTemplate {
 
 	// ORDER: case 5 - The order has been received by the Caterer, but he did not answer it on time.
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataCancelOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -392,9 +398,11 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataCancelOrderCaterer(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -408,9 +416,11 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @return A map
+	 * @param user
+	 *            The user
+	 * @param order
+	 *            The order
+	 * @return A Map
 	 */
 	public static Map<String, String> convertToDataCancelOrderAdmins(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();

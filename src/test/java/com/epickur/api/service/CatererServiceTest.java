@@ -60,7 +60,7 @@ public class CatererServiceTest {
 	@BeforeClass
 	public static void beforeClass() {
 		context = mock(ContainerRequestContext.class);
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 		Mockito.when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
 		catererService = new CatererService();

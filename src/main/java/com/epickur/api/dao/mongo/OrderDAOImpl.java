@@ -23,7 +23,7 @@ import com.mongodb.client.model.ReturnDocument;
  * @author cph
  * @version 1.0
  */
-public class OrderDAOImpl extends DAOCrud<Order> {
+public class OrderDAOImpl extends CrudDAO<Order> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(OrderDAOImpl.class.getSimpleName());

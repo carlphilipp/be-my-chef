@@ -55,13 +55,15 @@ public final class StripePayment {
 			chargeMap.put("currency", currency.getCode());
 			chargeMap.put("card", cardToken);
 			charge = Charge.create(chargeMap);
-			LOG.info(charge);
+			LOG.debug(charge);
 		} catch (CardException e) {
 			// Since it's a decline, CardException will be caught
-			LOG.error("Card declined: " + chargeMap);
-			LOG.error("Status is: " + e.getCode());
-			LOG.error("Message is: " + e.getParam());
-			LOG.error(e.getLocalizedMessage(), e);
+			StringBuilder stb = new StringBuilder();
+			stb.append("Card declined: " + chargeMap);
+			stb.append("\nStatus is: " + e.getCode());
+			stb.append("\nMessage is: " + e.getParam());
+			stb.append("\n"+ e.getLocalizedMessage());
+			LOG.error(stb.toString(), e);
 			throw e;
 		} catch (InvalidRequestException e) {
 			// Invalid parameters were supplied to Stripe's API

@@ -20,7 +20,7 @@ public class DiscountTypeDeserializer extends JsonDeserializer<DiscountType> {
 	public DiscountType deserialize(final JsonParser jp, DeserializationContext context) throws IOException, JsonProcessingException {
 		try {
 			JsonNode objId = jp.readValueAsTree();
-			return DiscountType.valueOf(objId.asText());
+			return DiscountType.valueOf(objId.asText().toUpperCase());
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

@@ -33,10 +33,10 @@ public class KeyBusinessTest {
 
 	@Test
 	public void testReadAll() throws EpickurException {
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		business.create(key);
 		toDelete.add(key.getKey());
-		key = TestUtils.generateRandomKey();
+		key = TestUtils.generateRandomAdminKey();
 		business.create(key);
 		toDelete.add(key.getKey());
 

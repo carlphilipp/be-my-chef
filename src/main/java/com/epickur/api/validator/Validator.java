@@ -27,6 +27,8 @@ public abstract class Validator {
 	public static final String NO_CATERER_PROVIDED = "No caterer has been provided";
 	/** No Dish provided */
 	public static final String NO_DISH_PROVIDED = "No dish has been provided";
+	/** No Voucher provided */
+	public static final String NO_VOUCHER_PROVIDED = "No voucher has been provided";
 	/** Field Null */
 	public static final String FIELD_NULL = "The field @object@.@field@ is not allowed to be null or empty";
 

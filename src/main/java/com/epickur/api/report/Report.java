@@ -1,4 +1,4 @@
-package com.epickur.api.dao.report;
+package com.epickur.api.report;
 
 import java.io.InputStream;
 import java.util.HashMap;

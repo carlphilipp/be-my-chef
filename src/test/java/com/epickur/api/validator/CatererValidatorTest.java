@@ -244,7 +244,7 @@ public class CatererValidatorTest {
 	@Test
 	public void testCheckRightsAfter() throws EpickurException {
 		CatererValidator service = new CatererValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.ADMIN);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
@@ -256,7 +256,7 @@ public class CatererValidatorTest {
 	@Test
 	public void testCheckRightsAfter2() throws EpickurException {
 		CatererValidator service = new CatererValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.SUPER_USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
@@ -270,7 +270,7 @@ public class CatererValidatorTest {
 		thrown.expect(EpickurForbiddenException.class);
 
 		CatererValidator service = new CatererValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.SUPER_USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
@@ -284,7 +284,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("Rights issue. This case should not happen");
 
 		CatererValidator service = new CatererValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);

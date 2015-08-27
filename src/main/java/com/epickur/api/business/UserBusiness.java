@@ -37,7 +37,7 @@ public final class UserBusiness {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(UserBusiness.class.getSimpleName());
 	/** User dao */
-	private UserDAOImpl userDao;
+	private UserDAOImpl userDAO;
 	/** Key Business */
 	private KeyBusiness keyBusiness;
 	/** User validator */
@@ -47,7 +47,7 @@ public final class UserBusiness {
 	 * The constructor
 	 */
 	public UserBusiness() {
-		this.userDao = new UserDAOImpl();
+		this.userDAO = new UserDAOImpl();
 		this.keyBusiness = new KeyBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
@@ -66,7 +66,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User create(final User user, final boolean sendEmail, final boolean autoValidate) throws EpickurException {
-		if (userDao.exists(user.getName(), user.getEmail())) {
+		if (userDAO.exists(user.getName(), user.getEmail())) {
 			throw new EpickurDuplicateKeyException("The user already exists");
 		}
 		if (autoValidate) {
@@ -85,7 +85,7 @@ public final class UserBusiness {
 		code = Security.createUserCode(name, saltHashed, encryptedPasswordSalt, email);
 		user.setPassword(saltHashed + encryptedPasswordSalt);
 		user.setRole(Role.USER);
-		User res = userDao.create(user);
+		User res = userDAO.create(user);
 
 		if (sendEmail) {
 			EmailUtils.emailNewRegistration(name, user.getFirst(), code, email);
@@ -107,7 +107,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User read(final String id, final Key key) throws EpickurException {
-		User res = userDao.read(id);
+		User res = userDAO.read(id);
 		if (res != null) {
 			validator.checkUserRightsAfter(key.getRole(), key.getUserId(), res, Operation.READ);
 			res.setPassword(null);
@@ -126,7 +126,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User readWithEmail(final String email) throws EpickurException {
-		return userDao.readWithEmail(email);
+		return userDAO.readWithEmail(email);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User readWithName(final String name) throws EpickurException {
-		return userDao.readWithName(name);
+		return userDAO.readWithName(name);
 	}
 
 	/**
@@ -150,7 +150,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public List<User> readAll() throws EpickurException {
-		List<User> users = userDao.readAll();
+		List<User> users = userDAO.readAll();
 		for (User user : users) {
 			// We do not send back the password or the role
 			user.setPassword(null);
@@ -169,9 +169,9 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User update(final User user, final Key key) throws EpickurException {
-		User read = userDao.read(user.getId().toHexString());
+		User read = userDAO.read(user.getId().toHexString());
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
-		User res = userDao.update(user);
+		User res = userDAO.update(user);
 		if (res != null) {
 			// We do not send back the password or the role
 			res.setPassword(null);
@@ -190,7 +190,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
-		return userDao.delete(id);
+		return userDAO.delete(id);
 	}
 
 	/**
@@ -276,7 +276,7 @@ public final class UserBusiness {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 			} else {
 				dbUser.setAllow(1);
-				dbUser = userDao.update(dbUser);
+				dbUser = userDAO.update(dbUser);
 			}
 		} else {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
@@ -314,7 +314,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User resetPasswordSecondStep(final String id, final ObjectNode node, final String resetCode) throws EpickurException {
-		User user = userDao.read(id);
+		User user = userDAO.read(id);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
 		} else {
@@ -326,7 +326,7 @@ public final class UserBusiness {
 				String newPassword = node.get("password").asText();
 				String newEnryptedPassword = Utils.getEncryptedPassword(newPassword);
 				user.setPassword(newEnryptedPassword);
-				User res = userDao.update(user);
+				User res = userDAO.update(user);
 				res.setPassword(null);
 				res.setRole(null);
 				return res;

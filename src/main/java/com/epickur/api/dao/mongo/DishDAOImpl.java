@@ -31,7 +31,7 @@ import com.mongodb.client.model.ReturnDocument;
  * @author cph
  * @version 1.0
  */
-public final class DishDAOImpl extends DAOCrud<Dish> {
+public final class DishDAOImpl extends CrudDAO<Dish> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(DishDAOImpl.class.getSimpleName());

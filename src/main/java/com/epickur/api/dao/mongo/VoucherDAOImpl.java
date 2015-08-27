@@ -1,18 +1,27 @@
 package com.epickur.api.dao.mongo;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.lt;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.joda.time.DateTime;
 
-import com.epickur.api.entity.User;
 import com.epickur.api.entity.Voucher;
+import com.epickur.api.enumeration.voucher.ExpirationType;
+import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 
@@ -21,10 +30,23 @@ import com.mongodb.client.model.ReturnDocument;
  * @version 1.0
  *
  */
-public final class VoucherDAOImpl extends DAOCrud<Voucher> {
+public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(VoucherDAOImpl.class.getSimpleName());
+
+	/** Constructor */
+	public VoucherDAOImpl() {
+		init();
+	}
+
+	/**
+	 * Init function
+	 */
+	private void init() {
+		super.initDB();
+		setColl(getDb().getCollection("vouchers"));
+	}
 
 	@Override
 	public List<Voucher> readAll() throws EpickurException {
@@ -89,4 +111,25 @@ public final class VoucherDAOImpl extends DAOCrud<Voucher> {
 		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
 	}
 
+	public List<Voucher> readToClean() throws EpickurException {
+		try {
+			LOG.debug("Read all vouchers to clean");
+			DateTime date = new DateTime();
+			Bson query = and(eq("expirationType", ExpirationType.UNTIL), lt("expiration", date.getMillis()), eq("status", Status.VALID));
+			FindIterable<Document> find = getColl().find(query);
+			if (find != null) {
+				List<Voucher> res = new ArrayList<Voucher>();
+				MongoCursor<Document> cursor = find.iterator();
+				while (cursor.hasNext()) {
+					Voucher current = Voucher.getObject(cursor.next());
+					res.add(current);
+				}
+				return res;
+			} else {
+				return null;
+			}
+		} catch (MongoException e) {
+			throw new EpickurDBException("readToClean", e.getMessage(), e);
+		}
+	}
 }

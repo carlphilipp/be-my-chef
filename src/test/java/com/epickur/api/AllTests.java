@@ -56,10 +56,10 @@ import com.epickur.api.integration.DishIntegrationTest;
 import com.epickur.api.integration.UserIntegrationTest;
 import com.epickur.api.payment.stripe.StripePaymentTest;
 import com.epickur.api.service.CatererServiceTest;
-import com.epickur.api.service.NoKeyServiceTest;
 import com.epickur.api.service.DishServiceTest;
 import com.epickur.api.service.LoginServiceTest;
 import com.epickur.api.service.LogoutServiceTest;
+import com.epickur.api.service.NoKeyServiceTest;
 import com.epickur.api.service.UserServiceTest;
 import com.epickur.api.utils.UtilsTest;
 import com.epickur.api.utils.email.EmailUtilsTest;
@@ -67,9 +67,11 @@ import com.epickur.api.validator.AccessRightsCatererTest;
 import com.epickur.api.validator.AccessRightsDishTest;
 import com.epickur.api.validator.AccessRightsOrderTest;
 import com.epickur.api.validator.AccessRightsUserTest;
+import com.epickur.api.validator.AccessRightsVoucherTest;
 import com.epickur.api.validator.CatererValidatorTest;
 import com.epickur.api.validator.DishValidatorTest;
 import com.epickur.api.validator.UserValidatorTest;
+import com.epickur.api.validator.VoucherValidatorTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -138,7 +140,7 @@ import com.epickur.api.validator.UserValidatorTest;
 
 		// .utils
 		UtilsTest.class,
-		
+
 		// .utils.email
 		EmailUtilsTest.class,
 
@@ -147,9 +149,11 @@ import com.epickur.api.validator.UserValidatorTest;
 		AccessRightsDishTest.class,
 		AccessRightsOrderTest.class,
 		AccessRightsUserTest.class,
+		AccessRightsVoucherTest.class,
 		CatererValidatorTest.class,
 		DishValidatorTest.class,
 		UserValidatorTest.class,
+		VoucherValidatorTest.class,
 
 		WorkingTimesTest.class
 })

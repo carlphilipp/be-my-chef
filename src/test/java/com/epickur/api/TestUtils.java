@@ -446,11 +446,19 @@ public class TestUtils {
 		return token;
 	}
 
-	public static Key generateRandomKey() {
+	public static Key generateRandomAdminKey() {
 		Key key = new Key();
 		key.setKey(generateRandomString());
 		key.setUserId(new ObjectId());
 		key.setRole(Role.ADMIN);
+		return key;
+	}
+	
+	public static Key generateRandomUserKey() {
+		Key key = new Key();
+		key.setKey(generateRandomString());
+		key.setUserId(new ObjectId());
+		key.setRole(Role.USER);
 		return key;
 	}
 
@@ -481,7 +489,7 @@ public class TestUtils {
 		UserBusiness business = new UserBusiness();
 		User newUser = business.create(user, false, true);
 		newUser.setRole(Role.USER);
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.ADMIN);
 		business.update(newUser, key);
 		User login = business.login(newUser.getEmail(), password);
@@ -494,7 +502,7 @@ public class TestUtils {
 		UserBusiness business = new UserBusiness();
 		User newUser = business.create(user, false, true);
 		newUser.setRole(Role.SUPER_USER);
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.ADMIN);
 		business.update(newUser, key);
 		User login = business.login(newUser.getEmail(), password);
@@ -507,7 +515,7 @@ public class TestUtils {
 		UserBusiness business = new UserBusiness();
 		User newUser = business.create(user, false, true);
 		newUser.setRole(Role.ADMIN);
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.ADMIN);
 		business.update(newUser, key);
 		User login = business.login(newUser.getEmail(), password);

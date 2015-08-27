@@ -165,6 +165,12 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.5</version>
+		</dependency>
+
 
 		<!-- Date framework -->
 		<dependency>
@@ -383,7 +389,7 @@
 				<version>${war.version}</version>
 			</plugin>
 
-      <!-- Create API doc documentation into target/site directory -->
+			<!-- Create API doc documentation into target/site directory -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -398,7 +404,8 @@
 						<configuration>
 							<target>
 								<echo message="Creating API doc" />
-								<exec executable="src/main/scripts/windows/generate-api-maven.bat" />
+								<!-- Does not work on linux/mac. Need to fix that -->
+								<exec executable="src/main/scripts/windows/generate-api.bat" />
 							</target>
 						</configuration>
 					</execution>
@@ -420,6 +427,7 @@
 						<directory>src/main/resources</directory>
 						<filtering>true</filtering>
 						<excludes>
+						  <exclude>apidoc/**</exclude>
 							<exclude>env/aws.properties</exclude>
 							<exclude>env/local.template.properties</exclude>
 							<exclude>env/log4j2.prod.xml</exclude>
@@ -464,7 +472,6 @@
 							<execution>
 								<goals>
 									<goal>integration-test</goal>
-									<!-- <goal>verify</goal> -->
 								</goals>
 							</execution>
 						</executions>
@@ -474,7 +481,8 @@
 							</includes>
 						</configuration>
 					</plugin>
-
+					 
+					
 					<!-- Deploy Tomcat 7 -->
 					<plugin>
 						<groupId>org.codehaus.cargo</groupId>
@@ -482,13 +490,13 @@
 						<version>${cargo.version}</version>
 						<configuration>
 
-							<!-- Container configuration -->
+						 <!-- Container configuration -->
 							<container>
 								<containerId>tomcat7x</containerId>
 								<home>${project.tomcat7.path}</home>
 							</container>
 
-							<!-- Configuration to use with the container -->
+							 <!-- Configuration to use with the container -->
 							<configuration>
 								<home>${project.build.directory}/tomcat7x</home>
 								<properties>
@@ -520,8 +528,9 @@
 							</execution>
 						</executions>
 					</plugin>
+					
 
-					<!-- Cobertura -->
+					<!-- Cobertura
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>cobertura-maven-plugin</artifactId>
@@ -535,6 +544,7 @@
 							</instrumentation>
 						</configuration>
 					</plugin>
+					 -->
 
 					<!-- Site -->
 					<plugin>
@@ -550,6 +560,7 @@
 						</dependencies>
 					</plugin>
 
+          <!-- Inject local properties into project -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>properties-maven-plugin</artifactId>
@@ -585,6 +596,7 @@
 						<directory>src/main/resources</directory>
 						<filtering>true</filtering>
 						<excludes>
+						  <exclude>apidoc/**</exclude>
 							<exclude>env/**</exclude>
 							<exclude>epickur-checkstyle.xml</exclude>
 							<exclude>epickur-eclipse-profil.xml</exclude>
@@ -657,6 +669,13 @@
 									<target>
 										<echo
 											message="Connecting to ${server.login}@${server.address}:${server.base}" />
+											
+										<echo message="Push ${war.name}.war to /home/tomcat7" />
+                    <scp trust="yes"
+                      todir="${server.login}:${server.password}@${server.address}:/home/tomcat7"
+                      file="${basedir}/target/${war.name}.war">
+                    </scp>
+											
 										<echo message="Stoping tomcat..." />
 										<sshexec host="${server.address}" username="${server.login}"
 											password="${server.password}" command="${server.base}/bin/shutdown.sh" />
@@ -670,11 +689,10 @@
 											password="${server.password}"
 											command="rm -f -R ${server.base}/work/*;rm -f -R ${server.base}/temp/*" />
 
-										<echo message="Push ${war.name}.war to ${server.base}/webapps" />
-										<scp trust="yes"
-											todir="${server.login}:${server.password}@${server.address}:${server.base}/webapps"
-											file="${basedir}/target/${war.name}.war">
-										</scp>
+										<echo message="Move ${war.name}.war from /home/tomcat7 to ${server.base}/webapps" />
+										<sshexec host="${server.address}" username="${server.login}"
+                      password="${server.password}"
+                      command="mv /home/tomcat7/${war.name}.war ${server.base}/webapps" />
 
 										<echo message="Starting tomcat..." />
 										<sshexec host="${server.address}" username="${server.login}"
@@ -691,9 +709,7 @@
 								<configuration>
 									<target>
 										<echo message="Creating API doc" />
-										<!-- exec executable="apidoc -i src/java/ -o target/site/apidoc/" 
-											/ -->
-										<exec executable="src/main/scripts/windows/generate-api-maven.bat" />
+										<exec executable="src/main/scripts/windows/generate-api.bat" />
 									</target>
 								</configuration>
 							</execution>
@@ -750,6 +766,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.18.1</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -931,7 +948,7 @@
 	<distributionManagement>
 		<site>
 			<id>website</id>
-			<url>scp://52.64.19.117/var/www/html</url>
+			<url>scp://beta.bemychef.com.au/var/www/html</url>
 		</site>
 	</distributionManagement>
 </project>

@@ -52,7 +52,7 @@ public class OrderDaoImplTest {
 
 		userService = new UserService();
 		context = mock(ContainerRequestContext.class);
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 		idsToDeleteUser = new ArrayList<ObjectId>();
 		idsToDeleteOrder = new HashMap<String, List<ObjectId>>();

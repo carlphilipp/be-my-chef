@@ -77,7 +77,6 @@ public final class Jobs {
 	public void run() throws SchedulerException {
 		String cleanKeyInterval = prop.getProperty("cron.cleankeys.interval");
 		String identityKeys = "cleanKeys";
-		String identityMongoDB = "mongodb";
 		JobDetail cleanKeys = JobBuilder.newJob(CleanKeysJob.class).withIdentity(identityKeys).build();
 		Trigger triggerCleanKeys = TriggerBuilder.newTrigger()
 				.withIdentity(identityKeys)
@@ -88,15 +87,23 @@ public final class Jobs {
 
 		String serverType = prop.getProperty("server.type");
 		if (StringUtils.isNotBlank(serverType) && serverType.equals("prod")) {
+			String identityMongoDB = "mongodb";
 			JobDetail mongoDBDump = JobBuilder.newJob(MongoDBDumpJob.class).withIdentity(identityMongoDB).build();
 			Trigger triggerMongoDBDump = TriggerBuilder.newTrigger()
 					.withIdentity(identityMongoDB)
-					//.withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
 					.withSchedule(CronScheduleBuilder.cronSchedule("0 0 0/2 * * ?"))
 					.build();
 			scheduler.scheduleJob(mongoDBDump, triggerMongoDBDump);
 			LOG.info("Added job '" + identityMongoDB + "' to scheduler");
 		}
+		String identityVouchers = "cleanVouchers";
+		JobDetail cleanVouchers = JobBuilder.newJob(CleanVouchersJob.class).withIdentity(identityVouchers).build();
+		Trigger triggerCleanVouchers = TriggerBuilder.newTrigger()
+				.withIdentity(identityVouchers)
+				.withSchedule(CronScheduleBuilder.cronSchedule("0 0 12 * * ?"))
+				.build();
+		scheduler.scheduleJob(cleanVouchers, triggerCleanVouchers);
+		LOG.info("Added job '" + identityVouchers + "' to scheduler");
 
 		scheduler.start();
 		LOG.info("Scheduler started ");

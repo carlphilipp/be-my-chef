@@ -9,9 +9,51 @@ public enum ExpirationType {
 	/**
 	 * One time voucher
 	 */
-	ONETIME,
+	ONETIME("onetime"),
 	/**
 	 * Until voucher
 	 */
-	UNTIL
+	UNTIL("until");
+	
+	/**
+	 * The constructor
+	 * 
+	 * @param type
+	 *            The type
+	 */
+	ExpirationType(final String type) {
+		this.type = type;
+	}
+
+	/**
+	 * @param value
+	 *            The value to convert
+	 * @return A ExpirationType
+	 */
+	public static ExpirationType fromString(final String value) {
+		if (value == null) {
+			throw new IllegalArgumentException();
+		}
+		for (ExpirationType expType : values()) {
+			if (value.equalsIgnoreCase(expType.getType())) {
+				return expType;
+			}
+		}
+		throw new IllegalArgumentException();
+	}
+
+	@Override
+	public String toString() {
+		return super.toString().toLowerCase();
+	}
+
+	/**
+	 * @return A String
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/** The type */
+	private String type;
 }

@@ -53,11 +53,9 @@ Another notable file:
 
 This file contains all the application properties. Maven will inject the value of your local.properties into this fiel. The properties of that file should not be modified.
 
-###Maven
-
-Two profils are definied in pom.xml: 
-* local: The default one that should be used in local. 
-* aws: The Amazon Web Service profil, used to deploy on the production server.
+###Maven profiles
+* local: The default one that should be used in local
+* aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production server
 
 ###Test
 
@@ -95,6 +93,7 @@ To deploy on AWS:
 `mvn clean package "antrun:run@upload" -P aws`
 
 The ant plugin run several commands:
+
 * Stop tomcat
 * Clean webbapps directory
 * Clean other temp directory

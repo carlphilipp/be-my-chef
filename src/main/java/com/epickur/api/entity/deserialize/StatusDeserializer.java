@@ -20,7 +20,7 @@ public class StatusDeserializer extends JsonDeserializer<Status> {
 	public Status deserialize(final JsonParser jp, DeserializationContext context) throws IOException, JsonProcessingException {
 		try {
 			JsonNode objId = jp.readValueAsTree();
-			return Status.valueOf(objId.asText());
+			return Status.valueOf(objId.asText().toUpperCase());
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

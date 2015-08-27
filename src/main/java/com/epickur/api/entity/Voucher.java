@@ -26,6 +26,7 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +39,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "code", "discount", "discountType", "expirationType", "expirationDate", "status", "usedCount", "createdAt",
+@JsonPropertyOrder(value = { "id", "code", "discount", "discountType", "expirationType", "expiration", "status", "usedCount", "createdAt",
 		"updatedAt" })
 public final class Voucher extends AbstractEntity {
 
@@ -148,7 +149,7 @@ public final class Voucher extends AbstractEntity {
 	 * @return The expiration date
 	 */
 	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getExpirationDate() {
+	public DateTime getExpiration() {
 		return this.expiration;
 	}
 
@@ -157,7 +158,7 @@ public final class Voucher extends AbstractEntity {
 	 *            The expiration date
 	 */
 	@JsonDeserialize(using = DateDeserializer.class)
-	public void setExpirationDate(final DateTime expiration) {
+	public void setExpiration(final DateTime expiration) {
 		this.expiration = expiration;
 	}
 
@@ -256,6 +257,29 @@ public final class Voucher extends AbstractEntity {
 		return user;
 	}
 
+	/**
+	 * @return a Document
+	 * @throws EpickurParsingException
+	 *             If an epickur exception occurred
+	 */
+	@JsonIgnore
+	public Document getUpdateDocument() throws EpickurParsingException {
+		String apiView = toStringAPIView();
+		Document found = Document.parse(apiView);
+		Document args = new Document();
+		Document result = new Document().append("$set", args);
+		Set<Entry<String, Object>> set = found.entrySet();
+		Iterator<Entry<String, Object>> iterator = set.iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Object> entry = iterator.next();
+			String k = entry.getKey();
+			if (!k.equals("id")) {
+				args.put(k, found.get(k));
+			}
+		}
+		return result;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -274,7 +298,7 @@ public final class Voucher extends AbstractEntity {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -336,36 +360,9 @@ public final class Voucher extends AbstractEntity {
 		} else if (!updatedAt.equals(other.updatedAt)) {
 			return false;
 		}
-		if (usedCount == null) {
-			if (other.usedCount != null) {
-				return false;
-			}
-		} else if (!usedCount.equals(other.usedCount)) {
+		if (usedCount != other.usedCount) {
 			return false;
 		}
 		return true;
 	}
-
-	/**
-	 * @return a Document
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
-	 */
-	public Document getUpdateDocument() throws EpickurParsingException {
-		String apiView = toStringAPIView();
-		Document found = Document.parse(apiView);
-		Document args = new Document();
-		Document result = new Document().append("$set", args);
-		Set<Entry<String, Object>> set = found.entrySet();
-		Iterator<Entry<String, Object>> iterator = set.iterator();
-		while (iterator.hasNext()) {
-			Entry<String, Object> entry = iterator.next();
-			String k = entry.getKey();
-			if (!k.equals("id")) {
-				args.put(k, found.get(k));
-			}
-		}
-		return result;
-	}
-
 }

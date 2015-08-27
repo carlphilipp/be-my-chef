@@ -38,7 +38,7 @@ public class LogoutServiceTest {
 		userService = new UserService();
 		idsToDelete = new ArrayList<ObjectId>();
 		context = mock(ContainerRequestContext.class);
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 	}
 

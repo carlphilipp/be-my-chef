@@ -27,17 +27,19 @@ public final class EpickurDBExceptionMapper implements ExceptionMapper<EpickurDB
 
 	@Override
 	public Response toResponse(final EpickurDBException exception) {
-		LOG.error("Request " + exception.getOperation() + " failed");
+		StringBuilder stb = new StringBuilder();
+		stb.append("Request " + exception.getOperation() + " failed");
+		
 		if (exception.getDocument() != null) {
-			LOG.error("With: " + exception.getDocument());
+			stb.append(" with: " + exception.getDocument());
 		}
 		if (exception.getId() != null) {
-			LOG.error("Id: " + exception.getId());
+			stb.append(" - id: " + exception.getId());
 		}
 		if (exception.getUpdate() != null) {
-			LOG.error("Update: " + exception.getUpdate());
+			stb.append(" - update: " + exception.getUpdate());
 		}
-		LOG.error(exception.getLocalizedMessage(), exception);
+		LOG.error(exception.getLocalizedMessage() + " - " + stb, exception);
 		return ErrorUtils.error(Response.Status.INTERNAL_SERVER_ERROR, ErrorUtils.INTERNAL_SERVER_ERROR);
 	}
 }

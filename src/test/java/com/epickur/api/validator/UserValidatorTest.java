@@ -87,6 +87,39 @@ public class UserValidatorTest {
 	}
 
 	@Test
+	public void testCheckCreateUser4() {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The field user.country is not allowed to be null or empty");
+
+		UserValidator validator = new UserValidator();
+		User user = TestUtils.generateRandomUser();
+		user.setCountry(null);
+		validator.checkCreateUser(user);
+	}
+
+	@Test
+	public void testCheckCreateUser5() {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The field user.zipcode is not allowed to be null or empty");
+
+		UserValidator validator = new UserValidator();
+		User user = TestUtils.generateRandomUser();
+		user.setZipcode(null);
+		validator.checkCreateUser(user);
+	}
+
+	@Test
+	public void testCheckCreateUser6() {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The field user.state is not allowed to be null or empty");
+
+		UserValidator validator = new UserValidator();
+		User user = TestUtils.generateRandomUser();
+		user.setState(null);
+		validator.checkCreateUser(user);
+	}
+
+	@Test
 	public void testCheckUpdateUser() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field user.id is not allowed to be null or empty");
@@ -243,11 +276,83 @@ public class UserValidatorTest {
 		Order order = null;
 		validator.checkCreateOneOrder(new ObjectId().toHexString(), order);
 	}
+	
+	@Test
+	public void testCheckCreateOneOrder3() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The field order.cardToken is not allowed to be null or empty");
+		
+		UserValidator validator = new UserValidator();
+		Order order = TestUtils.generateRandomOrder();
+		order.setCardToken(null);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order);
+	}
+	
+	@Test
+	public void testCheckCreateOneOrder4() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The field order.description is not allowed to be null or empty");
+		
+		UserValidator validator = new UserValidator();
+		Order order = TestUtils.generateRandomOrder();
+		order.setDescription(null);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order);
+	}
+	
+	@Test
+	public void testCheckCreateOneOrder5() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The field order.amount is not allowed to be null or empty");
+		
+		UserValidator validator = new UserValidator();
+		Order order = TestUtils.generateRandomOrder();
+		order.setAmount(null);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order);
+	}
+	
+	@Test
+	public void testCheckCreateOneOrder6() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The field order.currency is not allowed to be null or empty");
+		
+		UserValidator validator = new UserValidator();
+		Order order = TestUtils.generateRandomOrder();
+		order.setCurrency(null);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order);
+	}
+	
+	@Test
+	public void testCheckCreateOneOrder7() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The field order.pickupdate is not allowed to be null or empty");
+		
+		UserValidator validator = new UserValidator();
+		Order order = TestUtils.generateRandomOrder();
+		order.setPickupdate(null);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order);
+	}
+	
+	@Test
+	public void testCheckCreateOneOrder8() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The field order.paid can not be true");
+		
+		UserValidator validator = new UserValidator();
+		Order order = TestUtils.generateRandomOrder();
+		order.setPaid(true);
+		validator.checkCreateOneOrder(new ObjectId().toHexString(), order);
+	}
 
 	@Test
 	public void testCheckRightsAfter() throws EpickurException {
 		UserValidator validator = new UserValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
@@ -259,7 +364,7 @@ public class UserValidatorTest {
 	@Test
 	public void testCheckRightsAfter2() throws EpickurException {
 		UserValidator validator = new UserValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
@@ -271,7 +376,7 @@ public class UserValidatorTest {
 	@Test
 	public void testCheckRightsAfter3() throws EpickurException {
 		UserValidator validator = new UserValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.SUPER_USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
@@ -283,7 +388,7 @@ public class UserValidatorTest {
 	@Test
 	public void testCheckRightsAfter4() throws EpickurException {
 		UserValidator validator = new UserValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.SUPER_USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
@@ -295,7 +400,7 @@ public class UserValidatorTest {
 	@Test(expected = EpickurForbiddenException.class)
 	public void testCheckRightsAfter5() throws EpickurException {
 		UserValidator validator = new UserValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.SUPER_USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
@@ -307,7 +412,7 @@ public class UserValidatorTest {
 	@Test(expected = EpickurException.class)
 	public void testCheckRightsAfter6() throws EpickurException {
 		UserValidator validator = new UserValidator();
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.USER);
 		User user = TestUtils.generateRandomUser();
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.CREATE);

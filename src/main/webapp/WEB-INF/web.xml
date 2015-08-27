@@ -5,7 +5,7 @@
   http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
 	<display-name>epickur</display-name>
 	<servlet>
-		<servlet-name>myrest</servlet-name>
+		<servlet-name>epickur</servlet-name>
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 
 		<!-- Possibility to configure trace via HTTP Header. See documentation -->
@@ -32,7 +32,7 @@
 
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>com.epickur.api.service;com.epickur.api.filter;com.fasterxml.jackson.jaxrs;com.epickur.api.exception.mapper;com.epickur.api.service.param</param-value>
+			<param-value>com.epickur.api.service;com.epickur.api.filter;com.fasterxml.jackson.jaxrs;com.epickur.api.exception.mapper</param-value>
 		</init-param>
 		<init-param>
 			<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
@@ -53,7 +53,7 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>myrest</servlet-name>
+		<servlet-name>epickur</servlet-name>
 		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
 

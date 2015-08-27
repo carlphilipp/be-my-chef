@@ -1,12 +1,15 @@
 package com.epickur.api.validator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.Voucher;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
@@ -23,6 +26,9 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
  * @version 1.0
  */
 public final class UserValidator extends Validator {
+
+	/** Logger */
+	private static final Logger LOG = LogManager.getLogger(UserValidator.class.getSimpleName());
 
 	/**
 	 * Constructor
@@ -48,13 +54,13 @@ public final class UserValidator extends Validator {
 		if (StringUtils.isBlank(user.getEmail())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "email"));
 		}
-		if(StringUtils.isBlank(user.getCountry())){
+		if (StringUtils.isBlank(user.getCountry())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "country"));
 		}
-		if(StringUtils.isBlank(user.getZipcode())){
+		if (StringUtils.isBlank(user.getZipcode())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "zipcode"));
 		}
-		if(StringUtils.isBlank(user.getState())){
+		if (StringUtils.isBlank(user.getState())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "state"));
 		}
 		if (user.getPhoneNumber() != null) {
@@ -126,48 +132,58 @@ public final class UserValidator extends Validator {
 			DishValidator validator = new DishValidator();
 			validator.checkCreateData(order.getDish());
 			if (StringUtils.isBlank(order.getCardToken())) {
-				throw new EpickurIllegalArgument(fieldNull(getEntity(), "cardToken"));
+				throw new EpickurIllegalArgument(fieldNull("order", "cardToken"));
 			}
 			if (StringUtils.isBlank(order.getDescription())) {
-				throw new EpickurIllegalArgument(fieldNull(getEntity(), "description"));
+				throw new EpickurIllegalArgument(fieldNull("order", "description"));
 			}
 			if (order.getAmount() == null) {
-				throw new EpickurIllegalArgument(fieldNull(getEntity(), "amount"));
+				throw new EpickurIllegalArgument(fieldNull("order", "amount"));
 			}
 			if (order.getCurrency() == null) {
-				throw new EpickurIllegalArgument(fieldNull(getEntity(), "currency"));
+				throw new EpickurIllegalArgument(fieldNull("order", "currency"));
 			}
 			if (StringUtils.isBlank(order.getPickupdate())) {
-				throw new EpickurIllegalArgument(fieldNull(getEntity(), "pickupdate"));
+				throw new EpickurIllegalArgument(fieldNull("order", "pickupdate"));
 			} else {
 				Object[] result = Utils.parsePickupdate(order.getPickupdate());
 				if (result == null) {
 					throw new EpickurIllegalArgument(
-							"The field pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
+							"The field order.pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
 									+ order.getPickupdate());
 				} else {
 					Caterer caterer = order.getDish().getCaterer();
 					WorkingTimes workingTimes = caterer.getWorkingTimes();
 					if (!workingTimes.canBePickup((String) result[0], (Integer) result[1])) {
-						System.out.println("1: " + (String) result[0]);
-						System.out.println("2: " + result[1]);
-						System.out.println("Prep time: " + workingTimes.getMinimumPreparationTime());
+						LOG.info("1: " + (String) result[0]);
+						LOG.info("2: " + result[1]);
+						LOG.info("Prep time: " + workingTimes.getMinimumPreparationTime());
 						try {
-							System.out.println("Hours: " + workingTimes.getHours().toStringAPIView());
+							LOG.info("Hours: " + workingTimes.getHours().toStringAPIView());
 						} catch (EpickurParsingException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							LOG.error(e.getLocalizedMessage(), e);
 						}
-						throw new EpickurIllegalArgument("The order has a wrong pickupdate.");
+						throw new EpickurIllegalArgument("The order has a wrong pickupdate");
 					}
 				}
 			}
 			if (order.getPaid() != null) {
 				if (order.getPaid()) {
-					throw new EpickurIllegalArgument("The field order.paid can not be true.");
+					throw new EpickurIllegalArgument("The field order.paid can not be true");
 				}
 			}
+			if(order.getVoucher() != null){
+				checkVoucherData(order.getVoucher());
+			}
 		}
+	}
+
+	/**
+	 * @param voucher
+	 */
+	private void checkVoucherData(final Voucher voucher) {
+		VoucherValidator validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
+		validator.checkVoucher(voucher, "order");
 	}
 
 	/**
@@ -278,16 +294,6 @@ public final class UserValidator extends Validator {
 					throw new EpickurForbiddenException();
 				}
 			}
-		}
-	}
-
-	/**
-	 * @param role
-	 *            The role
-	 */
-	public void checkResetRightsBefore(final Role role) {
-		if (role != Role.ADMIN) {
-			throw new EpickurForbiddenException();
 		}
 	}
 

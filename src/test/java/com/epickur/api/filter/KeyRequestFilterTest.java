@@ -45,7 +45,7 @@ public class KeyRequestFilterTest {
 		keyBusiness = new KeyBusiness();
 		keysToDelete = new ArrayList<String>();
 		context = mock(ContainerRequestContext.class);
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 	}
 

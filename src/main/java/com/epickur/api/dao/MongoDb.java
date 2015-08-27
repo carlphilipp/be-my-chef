@@ -10,6 +10,8 @@ import org.bson.codecs.configuration.CodecRegistry;
 
 import com.epickur.api.dao.mongo.codec.CoordinatesCodec;
 import com.epickur.api.dao.mongo.codec.DishTypeCodec;
+import com.epickur.api.dao.mongo.codec.ExpirationTypeCodec;
+import com.epickur.api.dao.mongo.codec.StatusCodec;
 import com.epickur.api.utils.Utils;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -63,11 +65,15 @@ public final class MongoDb {
 
 		CoordinatesCodec coordinatesCodec = new CoordinatesCodec();
 		DishTypeCodec dishTypeCodec = new DishTypeCodec();
+		ExpirationTypeCodec expirationTypeCodec = new ExpirationTypeCodec();
+		StatusCodec statusCodec = new StatusCodec();
 
 		CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
 				MongoClient.getDefaultCodecRegistry(),
 				CodecRegistries.fromCodecs(coordinatesCodec),
-				CodecRegistries.fromCodecs(dishTypeCodec)
+				CodecRegistries.fromCodecs(dishTypeCodec),
+				CodecRegistries.fromCodecs(expirationTypeCodec),
+				CodecRegistries.fromCodecs(statusCodec)
 				);
 
 		MongoClientOptions options = MongoClientOptions.builder().codecRegistry(codecRegistry).build();

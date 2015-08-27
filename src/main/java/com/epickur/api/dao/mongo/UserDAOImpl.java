@@ -26,7 +26,7 @@ import com.mongodb.client.model.ReturnDocument;
  * @author cph
  * @version 1.0
  */
-public final class UserDAOImpl extends DAOCrud<User> {
+public final class UserDAOImpl extends CrudDAO<User> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(UserDAOImpl.class.getSimpleName());

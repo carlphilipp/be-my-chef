@@ -17,7 +17,7 @@ import com.mongodb.MongoException;
  * @version 1.0
  *
  */
-public final class LogDAOImpl extends DAOCrud<Log> {
+public final class LogDAOImpl extends CrudDAO<Log> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Log.class.getSimpleName());

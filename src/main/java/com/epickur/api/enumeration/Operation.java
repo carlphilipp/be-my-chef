@@ -24,5 +24,7 @@ public enum Operation {
 	/** Payement Info */
 	PAYEMENT_INFO,
 	/** Search dish */
-	SEARCH_DISH;
+	SEARCH_DISH,
+	/** Generate voucher */
+	GENERATE_VOUCHER;
 }

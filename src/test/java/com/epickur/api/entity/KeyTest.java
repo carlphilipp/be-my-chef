@@ -11,7 +11,7 @@ public class KeyTest {
 
 	@Test
 	public void testKey() {
-		Key key = TestUtils.generateRandomKey();
+		Key key = TestUtils.generateRandomAdminKey();
 		Key key2 = key.clone();
 
 		assertEquals(key.hashCode(), key2.hashCode());

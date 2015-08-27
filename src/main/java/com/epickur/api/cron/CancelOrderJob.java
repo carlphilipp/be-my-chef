@@ -6,6 +6,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.epickur.api.business.VoucherBusiness;
 import com.epickur.api.dao.mongo.OrderDAOImpl;
 import com.epickur.api.dao.mongo.UserDAOImpl;
 import com.epickur.api.entity.Order;
@@ -26,29 +27,34 @@ public final class CancelOrderJob implements Job {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CancelOrderJob.class.getSimpleName());
 	/** Order dao */
-	private OrderDAOImpl orderDao;
+	private OrderDAOImpl orderDAO;
 	/** User dao */
-	private UserDAOImpl userDao;
+	private UserDAOImpl userDAO;
+	/** Voucher Business */
+	private VoucherBusiness voucherBusiness;
 
 	/**
 	 * Constructs a Cancel Order Job
 	 */
 	public CancelOrderJob() {
-		this.orderDao = new OrderDAOImpl();
-		this.userDao = new UserDAOImpl();
+		this.orderDAO = new OrderDAOImpl();
+		this.userDAO = new UserDAOImpl();
 	}
 
 	@Override
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
 		try {
 			String orderId = context.getJobDetail().getJobDataMap().getString("orderId");
-			Order order = orderDao.read(orderId);
+			Order order = this.orderDAO.read(orderId);
 			String userId = context.getJobDetail().getJobDataMap().getString("userId");
-			User user = userDao.read(userId);
+			User user = this.userDAO.read(userId);
 			if (user != null && order != null) {
 				LOG.info("Cancel order id: " + orderId + " with user id: " + userId);
 				order.setStatus(OrderStatus.CANCELED);
-				order = orderDao.update(order);
+				order = this.orderDAO.update(order);
+				if (order.getVoucher() != null) {
+					this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+				}
 				EmailUtils.emailCancelOrder(user, order);
 			}
 		} catch (EpickurException e) {

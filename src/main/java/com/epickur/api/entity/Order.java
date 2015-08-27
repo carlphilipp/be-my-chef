@@ -21,6 +21,7 @@ import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.entity.serialize.OrderStatusSerializer;
 import com.epickur.api.enumeration.Currency;
 import com.epickur.api.enumeration.OrderStatus;
+import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,7 +39,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "readableId", "userId", "description", "amount", "status", "currency", "pickupdate", "cardToken", "chargeId",
-		"paid", "dish", "createdBy", "createdAt", "updatedAt" })
+		"paid", "dish", "voucher", "createdBy", "createdAt", "updatedAt" })
 public final class Order extends AbstractEntity {
 
 	/** Logger */
@@ -59,6 +60,8 @@ public final class Order extends AbstractEntity {
 	private String pickupdate;
 	/** Dish */
 	private Dish dish;
+	/** Voucher */
+	private Voucher voucher;
 	/** Stripe Card Token */
 	private String cardToken;
 	/** ChargeId from Stripe */
@@ -106,6 +109,14 @@ public final class Order extends AbstractEntity {
 	 */
 	public void setDish(final Dish dish) {
 		this.dish = dish;
+	}
+
+	public Voucher getVoucher() {
+		return voucher;
+	}
+
+	public void setVoucher(Voucher voucher) {
+		this.voucher = voucher;
 	}
 
 	/**
@@ -296,6 +307,19 @@ public final class Order extends AbstractEntity {
 		this.readableId = readableId;
 	}
 
+	public Integer calculateTotalAmount() {
+		if (this.getVoucher() != null) {
+			Voucher voucher = this.getVoucher();
+			if (voucher.getDiscountType() == DiscountType.AMOUNT) {
+				return getAmount() - voucher.getDiscount();
+			} else {
+				return getAmount() - (getAmount() * voucher.getDiscount() / 100);
+			}
+		} else {
+			return getAmount();
+		}
+	}
+
 	/**
 	 * @return The Document
 	 * @throws EpickurParsingException
@@ -384,20 +408,25 @@ public final class Order extends AbstractEntity {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
+		result = prime * result + ((cardToken == null) ? 0 : cardToken.hashCode());
 		result = prime * result + ((chargeId == null) ? 0 : chargeId.hashCode());
 		result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
+		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
 		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((dish == null) ? 0 : dish.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((paid == null) ? 0 : paid.hashCode());
+		result = prime * result + ((pickupdate == null) ? 0 : pickupdate.hashCode());
+		result = prime * result + ((readableId == null) ? 0 : readableId.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
-		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
+		result = prime * result + ((voucher == null) ? 0 : voucher.hashCode());
 		return result;
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -415,6 +444,13 @@ public final class Order extends AbstractEntity {
 		} else if (!amount.equals(other.amount)) {
 			return false;
 		}
+		if (cardToken == null) {
+			if (other.cardToken != null) {
+				return false;
+			}
+		} else if (!cardToken.equals(other.cardToken)) {
+			return false;
+		}
 		if (chargeId == null) {
 			if (other.chargeId != null) {
 				return false;
@@ -427,6 +463,13 @@ public final class Order extends AbstractEntity {
 				return false;
 			}
 		} else if (!createdAt.equals(other.createdAt)) {
+			return false;
+		}
+		if (createdBy == null) {
+			if (other.createdBy != null) {
+				return false;
+			}
+		} else if (!createdBy.equals(other.createdBy)) {
 			return false;
 		}
 		if (currency != other.currency) {
@@ -460,11 +503,21 @@ public final class Order extends AbstractEntity {
 		} else if (!paid.equals(other.paid)) {
 			return false;
 		}
-		if (createdBy == null) {
-			if (other.createdBy != null) {
+		if (pickupdate == null) {
+			if (other.pickupdate != null) {
 				return false;
 			}
-		} else if (!createdBy.equals(other.createdBy)) {
+		} else if (!pickupdate.equals(other.pickupdate)) {
+			return false;
+		}
+		if (readableId == null) {
+			if (other.readableId != null) {
+				return false;
+			}
+		} else if (!readableId.equals(other.readableId)) {
+			return false;
+		}
+		if (status != other.status) {
 			return false;
 		}
 		if (updatedAt == null) {
@@ -472,6 +525,13 @@ public final class Order extends AbstractEntity {
 				return false;
 			}
 		} else if (!updatedAt.equals(other.updatedAt)) {
+			return false;
+		}
+		if (voucher == null) {
+			if (other.voucher != null) {
+				return false;
+			}
+		} else if (!voucher.equals(other.voucher)) {
 			return false;
 		}
 		return true;

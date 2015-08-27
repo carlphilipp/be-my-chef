@@ -12,6 +12,7 @@ import com.epickur.api.dao.mongo.UserDAOImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
@@ -35,19 +36,22 @@ import com.stripe.model.Charge;
 public final class OrderBusiness {
 
 	/** Order dao */
-	private OrderDAOImpl orderDao;
+	private OrderDAOImpl orderDAO;
 	/** User dao */
-	private UserDAOImpl userDao;
+	private UserDAOImpl userDAO;
 	/** Sequence Order dao */
-	private SequenceDAOImpl seqDao;
+	private SequenceDAOImpl seqDAO;
+	/** Voucher dao */
+	private VoucherBusiness voucherBusiness;
 	/** User validator */
 	private UserValidator validator;
 
 	/** The constructor */
 	public OrderBusiness() {
-		this.orderDao = new OrderDAOImpl();
-		this.userDao = new UserDAOImpl();
-		this.seqDao = new SequenceDAOImpl();
+		this.orderDAO = new OrderDAOImpl();
+		this.userDAO = new UserDAOImpl();
+		this.seqDAO = new SequenceDAOImpl();
+		this.voucherBusiness = new VoucherBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
 
@@ -66,15 +70,20 @@ public final class OrderBusiness {
 	 */
 	public Order create(final String userId, final Order order, final boolean sendEmail)
 			throws EpickurException {
-		User user = this.userDao.read(userId);
+		User user = this.userDAO.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
 		} else {
+			Voucher current = order.getVoucher();
+			if (current != null) {
+				Voucher updated = this.voucherBusiness.validateVoucher(current.getCode());
+				order.setVoucher(updated);
+			}
 			order.setCreatedBy(new ObjectId(userId));
 			order.setStatus(OrderStatus.PENDING);
-			String sequence = seqDao.getNextId();
+			String sequence = seqDAO.getNextId();
 			order.setReadableId(sequence);
-			Order res = this.orderDao.create(order);
+			Order res = this.orderDAO.create(order);
 			String orderCode = Security.createOrderCode(res.getId(), order.getCardToken());
 			if (sendEmail) {
 				EmailUtils.emailNewOrder(user, res, orderCode);
@@ -94,7 +103,7 @@ public final class OrderBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public Order read(final String id, final Key key) throws EpickurException {
-		Order order = orderDao.read(id);
+		Order order = this.orderDAO.read(id);
 		if (order != null) {
 			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Operation.READ);
 			return order;
@@ -110,7 +119,7 @@ public final class OrderBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public List<Order> readAllWithUserId(final String userId) throws EpickurException {
-		return orderDao.readAllWithUserId(userId);
+		return this.orderDAO.readAllWithUserId(userId);
 	}
 
 	/**
@@ -125,7 +134,7 @@ public final class OrderBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
-		return orderDao.readAllWithCatererId(catererId, start, end);
+		return this.orderDAO.readAllWithCatererId(catererId, start, end);
 	}
 
 	/**
@@ -138,13 +147,13 @@ public final class OrderBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public Order update(final Order order, final Key key) throws EpickurException {
-		Order read = orderDao.read(order.getId().toHexString());
+		Order read = this.orderDAO.read(order.getId().toHexString());
 		if (read != null) {
-			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
+			this.validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
 			if (read.getStatus() != OrderStatus.PENDING) {
 				throw new EpickurException("It's not allowed to modify an order that has a " + order.getStatus() + " status");
 			}
-			return orderDao.update(order);
+			return this.orderDAO.update(order);
 		}
 		return null;
 	}
@@ -157,7 +166,7 @@ public final class OrderBusiness {
 	 *             If an EpickurException occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
-		return orderDao.delete(id);
+		return this.orderDAO.delete(id);
 	}
 
 	/**
@@ -181,11 +190,11 @@ public final class OrderBusiness {
 	 */
 	public Order executeOrder(final String userId, final String orderId, final boolean confirm, final boolean sendEmail,
 			final boolean shouldCharge, final String orderCode) throws EpickurException {
-		User user = userDao.read(userId);
+		User user = this.userDAO.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
 		} else {
-			Order order = orderDao.read(orderId);
+			Order order = this.orderDAO.read(orderId);
 			if (order != null) {
 				if (!orderCode.equals(Security.createOrderCode(new ObjectId(orderId), order.getCardToken()))) {
 					throw new EpickurForbiddenException();
@@ -194,13 +203,16 @@ public final class OrderBusiness {
 					if (shouldCharge) {
 						StripePayment stripe = new StripePayment();
 						try {
-							Charge charge = stripe.chargeCard(order.getCardToken(), order.getAmount(), order.getCurrency());
+							Charge charge = stripe.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
 							if (charge == null || !charge.getPaid()) {
 								order.setPaid(false);
 								order.setStatus(OrderStatus.FAILED);
 								// Send email to User, Caterer and admins - Order fail
 								if (sendEmail) {
 									EmailUtils.emailFailOrder(user, order);
+								}
+								if (order.getVoucher() != null) {
+									this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
 								}
 							} else {
 								order.setChargeId(charge.getId());
@@ -218,8 +230,11 @@ public final class OrderBusiness {
 							if (sendEmail) {
 								EmailUtils.emailFailOrder(user, order);
 							}
+							if (order.getVoucher() != null) {
+								this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+							}
 						} finally {
-							order = orderDao.update(order);
+							order = orderDAO.update(order);
 						}
 					}
 				} else {
@@ -227,8 +242,11 @@ public final class OrderBusiness {
 					if (sendEmail) {
 						EmailUtils.emailDeclineOrder(user, order);
 					}
+					if (order.getVoucher() != null) {
+						this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+					}
 					order.setStatus(OrderStatus.DECLINED);
-					order = orderDao.update(order);
+					order = orderDAO.update(order);
 				}
 				Jobs.getInstance().removeTemporaryOrderJob(orderId);
 				return order;
