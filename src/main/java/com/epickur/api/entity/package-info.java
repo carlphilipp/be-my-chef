@@ -1,5 +1,5 @@
 /**
- * Custom Jackson serializer/deserializer.
+ * Application entities.
  *
  * @author cph
  * @version 1.0

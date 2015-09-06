@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.mapper.EpickurIllegalArgumentMapper;
 import com.mongodb.DBObject;
 
 public class EpickurIllegalArgumentMapperTest {

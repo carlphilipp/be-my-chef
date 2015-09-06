@@ -6,6 +6,8 @@ import com.epickur.api.entity.AbstractEntity;
 import com.epickur.api.exception.EpickurException;
 
 /**
+ * Interface that defines the CRUD operation and a readAll operation that needs to be implemented.
+ * 
  * @author carl
  * @version 1.0
  * @param <T>

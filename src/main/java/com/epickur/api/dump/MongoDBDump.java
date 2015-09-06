@@ -18,6 +18,8 @@ import org.apache.logging.log4j.Logger;
 import com.epickur.api.utils.Utils;
 
 /**
+ * Create a MongoDB dump.
+ * 
  * @author cph
  * @version 1.0
  *

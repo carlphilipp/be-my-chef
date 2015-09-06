@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import com.epickur.api.mapper.ThrowableExeptionMapper;
 import com.mongodb.DBObject;
 
 public class ThrowableExeptionMapperTest {

@@ -17,6 +17,8 @@ import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
 
 /**
+ * Voucher business layer. Access voucher DAO layer and executes logic.
+ * 
  * @author cph
  * @version 1.0
  *

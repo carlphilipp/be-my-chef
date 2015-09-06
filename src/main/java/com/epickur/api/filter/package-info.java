@@ -1,5 +1,5 @@
 /**
- * Filter the request within Jersey and operate some modification on it or custom actions.
+ * Request/Response filters. Filter either the request or the response within Jersey. Operates some modification on it or custom actions.
  *
  * @author cph
  * @version 1.0

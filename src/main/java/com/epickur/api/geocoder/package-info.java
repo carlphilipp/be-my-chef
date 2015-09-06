@@ -1,5 +1,5 @@
 /**
- * Classes that will handle geocoding with Here as a provider.
+ * Classes that will handle geocoding.
  *
  * @author cph
  * @version 1.0

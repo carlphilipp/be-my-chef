@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 
 import com.epickur.api.exception.EpickurIOException;
+import com.epickur.api.mapper.EpickurIOExceptionMapper;
 import com.mongodb.DBObject;
 
 public class EpickurIOExceptionMapperTest {

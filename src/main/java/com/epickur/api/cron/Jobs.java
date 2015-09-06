@@ -21,7 +21,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.utils.Utils;
 
 /**
- * The goal of this class is to run {@link CleanKeysJob} that clean the keys into MongodDB
+ * The goal of this class is to start all the cron jobs.
  * 
  * @author cph
  * @version 1.0

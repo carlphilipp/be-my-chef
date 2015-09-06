@@ -10,6 +10,8 @@ import com.epickur.api.business.VoucherBusiness;
 import com.epickur.api.exception.EpickurException;
 
 /**
+ * Cron clean vouchers jobs.
+ * 
  * @author cph
  * @version 1.0
  *

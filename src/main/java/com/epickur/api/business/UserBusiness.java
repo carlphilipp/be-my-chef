@@ -27,7 +27,7 @@ import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * User business layer. Access User DAO layer and execute logic.
+ * User business layer. Accesses User DAO layer and executes logic.
  * 
  * @author cph
  * @version 1.0

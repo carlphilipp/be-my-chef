@@ -1,4 +1,4 @@
-package com.epickur.api.exception.mapper;
+package com.epickur.api.mapper;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;

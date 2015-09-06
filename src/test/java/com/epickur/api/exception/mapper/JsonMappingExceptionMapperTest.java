@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import com.epickur.api.mapper.JsonMappingExceptionMapper;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.mongodb.DBObject;
 

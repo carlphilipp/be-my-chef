@@ -9,7 +9,7 @@ import org.bson.codecs.EncoderContext;
 import com.epickur.api.enumeration.DishType;
 
 /**
- * A codec to serialize and deserialize at MongoDB level
+ * Codec to allow MongoDB to Serliaze and Deserialize a DishType (enum). This is needed when using the enum into a query to MongoDB.
  * 
  * @author cph
  * @version 1.0

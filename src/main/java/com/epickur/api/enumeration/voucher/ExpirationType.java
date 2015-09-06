@@ -51,7 +51,7 @@ public enum ExpirationType {
 	 * @return A String
 	 */
 	public String getType() {
-		return type;
+		return type.toLowerCase();
 	}
 
 	/** The type */

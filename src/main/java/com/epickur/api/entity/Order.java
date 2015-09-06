@@ -330,7 +330,7 @@ public final class Order extends AbstractEntity {
 		} else {
 			totalAmout = getAmount();
 		}
-		if(getMode() == OrderMode.CHEF){
+		if(getMode() != null && getMode() == OrderMode.CHEF){
 			totalAmout += 100;
 		}
 		return totalAmout;

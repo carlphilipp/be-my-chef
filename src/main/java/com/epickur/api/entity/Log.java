@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
+ * Log entity.
+ * 
  * @author cph
  * @version 1.0
  *

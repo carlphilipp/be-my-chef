@@ -1,5 +1,5 @@
 /**
- * Email classes. 
+ * Email utility classes. 
  *
  * @author cph
  * @version 1.0

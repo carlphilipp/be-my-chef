@@ -26,6 +26,8 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 
 /**
+ * Voucher DAO access with CRUD operations.
+ * 
  * @author cph
  * @version 1.0
  *
@@ -110,12 +112,16 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 	public boolean delete(final String id) throws EpickurException {
 		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
 	}
+	
+	public void deleteAll(){
+		getColl().drop();
+	}
 
 	public List<Voucher> readToClean() throws EpickurException {
 		try {
 			LOG.debug("Read all vouchers to clean");
 			DateTime date = new DateTime();
-			Bson query = and(eq("expirationType", ExpirationType.UNTIL), lt("expiration", date.getMillis()), eq("status", Status.VALID));
+			Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()), eq("status", Status.VALID.getType()));
 			FindIterable<Document> find = getColl().find(query);
 			if (find != null) {
 				List<Voucher> res = new ArrayList<Voucher>();

@@ -32,7 +32,7 @@
 
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>com.epickur.api.service;com.epickur.api.filter;com.fasterxml.jackson.jaxrs;com.epickur.api.exception.mapper</param-value>
+			<param-value>com.epickur.api.service;com.epickur.api.filter;com.fasterxml.jackson.jaxrs;com.epickur.api.mapper</param-value>
 		</init-param>
 		<init-param>
 			<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>

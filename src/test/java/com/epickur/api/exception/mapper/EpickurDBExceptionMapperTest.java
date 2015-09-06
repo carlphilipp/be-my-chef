@@ -9,6 +9,7 @@ import org.bson.Document;
 import org.junit.Test;
 
 import com.epickur.api.exception.EpickurDBException;
+import com.epickur.api.mapper.EpickurDBExceptionMapper;
 import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;

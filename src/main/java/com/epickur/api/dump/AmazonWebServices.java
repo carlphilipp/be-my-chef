@@ -19,6 +19,8 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.epickur.api.utils.Utils;
 
 /**
+ * Class that communicates with Amazon S3 server. It connects and sends the DB dump to it.
+ * 
  * @author cph
  * @version 1.0
  *
@@ -32,7 +34,6 @@ public class AmazonWebServices {
 	private AmazonS3 s3client;
 	/** Amazon Bucket name */
 	private String bucketName;
-	
 
 	public AmazonWebServices() {
 		Properties prop = Utils.getEpickurProperties();

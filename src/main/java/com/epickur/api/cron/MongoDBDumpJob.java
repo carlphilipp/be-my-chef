@@ -13,6 +13,8 @@ import com.epickur.api.dump.MongoDBDump;
 import com.epickur.api.utils.Utils;
 
 /**
+ * Job that creat a dump of MongoDB and send it to Amazon servers.
+ * 
  * @author cph
  * @version 1.0
  *

@@ -34,6 +34,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
+ * Voucher entity.
+ * 
  * @author cph
  * @version 1.0
  *

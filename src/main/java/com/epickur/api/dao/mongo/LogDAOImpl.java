@@ -13,6 +13,8 @@ import com.epickur.api.exception.EpickurException;
 import com.mongodb.MongoException;
 
 /**
+ * Log DAO access with CRUD operations.
+ * 
  * @author cph
  * @version 1.0
  *

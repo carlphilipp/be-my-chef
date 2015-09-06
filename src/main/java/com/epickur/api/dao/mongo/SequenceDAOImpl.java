@@ -12,6 +12,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 /**
+ * Sequence DAO access with CRUD operations.
  * @author cph
  * @version 1.0
  *

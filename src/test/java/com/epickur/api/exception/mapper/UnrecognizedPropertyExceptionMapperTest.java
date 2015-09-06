@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import com.epickur.api.mapper.UnrecognizedPropertyExceptionMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.mongodb.DBObject;
 

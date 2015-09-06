@@ -14,6 +14,7 @@ import com.epickur.api.business.DishBusinessTest;
 import com.epickur.api.business.KeyBusinessTest;
 import com.epickur.api.business.OrderBusinessTest;
 import com.epickur.api.business.UserBusinessTest;
+import com.epickur.api.business.VoucherBusinessTest;
 import com.epickur.api.dao.mongo.OrderDaoImplTest;
 import com.epickur.api.entity.AddressTest;
 import com.epickur.api.entity.CatererTest;
@@ -82,6 +83,7 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		KeyBusinessTest.class,
 		OrderBusinessTest.class,
 		UserBusinessTest.class,
+		VoucherBusinessTest.class,
 
 		OrderDaoImplTest.class,
 		AddressTest.class,

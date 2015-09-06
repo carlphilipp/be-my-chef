@@ -13,6 +13,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 
 /**
+ * Abstract class that implement that helps manipulalting the delete operation.
+ * 
  * @author cph
  * @version 1.0
  * @param <T>

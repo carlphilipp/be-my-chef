@@ -9,6 +9,8 @@ import org.bson.codecs.EncoderContext;
 import com.epickur.api.enumeration.voucher.Status;
 
 /**
+ * Codec to allow MongoDB to Serliaze and Deserialize a StatusCodec (enum). This is needed when using the enum into a query to MongoDB.
+ * 
  * @author cph
  * @version 1.0
  *

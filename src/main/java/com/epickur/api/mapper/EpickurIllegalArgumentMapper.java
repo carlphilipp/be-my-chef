@@ -1,4 +1,4 @@
-package com.epickur.api.exception.mapper;
+package com.epickur.api.mapper;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -10,24 +10,25 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.epickur.api.exception.EpickurIOException;
+import com.epickur.api.exception.EpickurIllegalArgument;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 
 /**
- * @author cph
- * @author 1.0
+ * Called whenever an Epickur Illegal Exception occurs. It logs an error and build the response.
  * 
+ * @author cph
+ * @version 1.0
  */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
-public final class EpickurIOExceptionMapper implements ExceptionMapper<EpickurIOException> {
+public final class EpickurIllegalArgumentMapper implements ExceptionMapper<EpickurIllegalArgument> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(EpickurIllegalArgumentMapper.class.getSimpleName());
 
 	@Override
-	public Response toResponse(final EpickurIOException exception) {
+	public Response toResponse(final EpickurIllegalArgument exception) {
 		DBObject bdb = BasicDBObjectBuilder.start().get();
 		bdb.put("error", Response.Status.BAD_REQUEST.getStatusCode());
 		bdb.put("message", Response.Status.BAD_REQUEST.getReasonPhrase());
