@@ -78,9 +78,9 @@ public class EpickurDBException extends EpickurException {
 	 * @param message
 	 *            The message
 	 * @param doc
-	 *            The DBObject
+	 *            The Document
 	 * @param update
-	 *            The update DBObject
+	 *            The update Document
 	 * @param exception
 	 *            The Exception
 	 */
@@ -108,7 +108,7 @@ public class EpickurDBException extends EpickurException {
 	}
 
 	/**
-	 * @return A DBObject
+	 * @return A Document
 	 */
 	public final Document getDocument() {
 		return this.doc;

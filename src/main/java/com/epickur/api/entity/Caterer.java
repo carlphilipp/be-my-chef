@@ -265,7 +265,7 @@ public final class Caterer extends AbstractEntity {
 			if (!key.equals("id")) {
 				if (key.equals("location")) {
 					Location loc = Location.getObject((Document) found.get(key));
-					Map<String, Object> locations = loc.getUpdateListBasicDBObject(prefix + ".location");
+					Map<String, Object> locations = loc.getUpdateMap(prefix + ".location");
 					for (Entry<String, Object> entry : locations.entrySet()) {
 						result.put(entry.getKey(), entry.getValue());
 					}

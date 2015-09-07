@@ -123,7 +123,7 @@ public final class Geo extends AbstractEntity {
 	 *            The minimum distance
 	 * @param maxDistance
 	 *            The maximum distance
-	 * @return a BasicDBObject
+	 * @return a Document
 	 */
 	public Document getSearch(final Integer minDistance, final Integer maxDistance) {
 		Document nearSphere = new Document();

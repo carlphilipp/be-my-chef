@@ -156,7 +156,7 @@ public final class Key extends AbstractEntity {
 
 	/**
 	 * @param obj
-	 *            The DBObject
+	 *            The Document
 	 * @return The Key
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred

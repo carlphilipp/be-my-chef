@@ -373,8 +373,8 @@ public final class Order extends AbstractEntity {
 					if (key2.equals("id")) {
 						dishDoc.put("_id", dishStr.get("id"));
 					} else if (key2.equals("caterer")) {
-						Document catererDBObject = new Document();
-						dishDoc.put("caterer", catererDBObject);
+						Document catererDocument = new Document();
+						dishDoc.put("caterer", catererDocument);
 						Document caterer = (Document) dishStr.get("caterer");
 						Set<Entry<String, Object>> setCaterer = caterer.entrySet();
 						Iterator<Entry<String, Object>> iteratorCaterer = setCaterer.iterator();
@@ -382,9 +382,9 @@ public final class Order extends AbstractEntity {
 							Entry<String, Object> entry2 = iteratorCaterer.next();
 							String key3 = entry2.getKey();
 							if (key3.equals("id")) {
-								catererDBObject.put("_id", caterer.get("id"));
+								catererDocument.put("_id", caterer.get("id"));
 							} else {
-								catererDBObject.put(key3, caterer.get(key3));
+								catererDocument.put(key3, caterer.get(key3));
 							}
 						}
 					} else {
@@ -414,7 +414,7 @@ public final class Order extends AbstractEntity {
 
 	/**
 	 * @param obj
-	 *            The DBObject
+	 *            The Document
 	 * @return An Order
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred

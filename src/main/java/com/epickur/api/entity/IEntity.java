@@ -14,7 +14,7 @@ interface IEntity extends Cloneable {
 	/**
 	 * Get an API view of the current object. For instance will provide field id instead of _id
 	 * 
-	 * @return a DBObject
+	 * @return a Document
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
@@ -23,7 +23,7 @@ interface IEntity extends Cloneable {
 	/**
 	 * Get an API view of the current object. For instance will provide field _id instead of id
 	 * 
-	 * @return a DBObject
+	 * @return a Document
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */

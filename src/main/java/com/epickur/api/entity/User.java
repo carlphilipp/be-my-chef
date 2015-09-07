@@ -352,7 +352,7 @@ public final class User extends AbstractEntity {
 
 	/**
 	 * @param obj
-	 *            The DBObject
+	 *            The Document
 	 * @return The User
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
