@@ -16,7 +16,7 @@ import com.epickur.api.exception.EpickurException;
  * @version 1.0
  *
  */
-public class CleanVouchersJob implements Job {
+public final class CleanVouchersJob implements Job {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CleanVouchersJob.class.getSimpleName());

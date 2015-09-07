@@ -112,16 +112,25 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 	public boolean delete(final String id) throws EpickurException {
 		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
 	}
-	
-	public void deleteAll(){
+
+	/**
+	 * Delete all
+	 */
+	public void deleteAll() {
 		getColl().drop();
 	}
 
+	/**
+	 * @return A list of voucher that can be cleaned
+	 * @throws EpickurException
+	 *             If an EpickurException occurred
+	 */
 	public List<Voucher> readToClean() throws EpickurException {
 		try {
 			LOG.debug("Read all vouchers to clean");
 			DateTime date = new DateTime();
-			Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()), eq("status", Status.VALID.getType()));
+			Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()),
+					eq("status", Status.VALID.getType()));
 			FindIterable<Document> find = getColl().find(query);
 			if (find != null) {
 				List<Voucher> res = new ArrayList<Voucher>();

@@ -136,10 +136,10 @@ public final class EmailTemplate {
 
 	// Registration
 	/**
-	 * Convert data to registration
-	 * 
 	 * @param name
 	 *            The user name
+	 * @param first
+	 *            The user first name
 	 * @param email
 	 *            The user email
 	 * @param code

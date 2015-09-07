@@ -62,7 +62,7 @@ public final class StripePayment {
 			stb.append("Card declined: " + chargeMap);
 			stb.append("\nStatus is: " + e.getCode());
 			stb.append("\nMessage is: " + e.getParam());
-			stb.append("\n"+ e.getLocalizedMessage());
+			stb.append("\n" + e.getLocalizedMessage());
 			LOG.error(stb.toString(), e);
 			throw e;
 		} catch (InvalidRequestException e) {

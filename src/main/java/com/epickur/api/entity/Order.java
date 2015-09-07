@@ -114,11 +114,17 @@ public final class Order extends AbstractEntity {
 		this.dish = dish;
 	}
 
+	/**
+	 * @return
+	 */
 	public Voucher getVoucher() {
 		return voucher;
 	}
 
-	public void setVoucher(Voucher voucher) {
+	/**
+	 * @param voucher
+	 */
+	public void setVoucher(final Voucher voucher) {
 		this.voucher = voucher;
 	}
 
@@ -319,18 +325,18 @@ public final class Order extends AbstractEntity {
 	}
 
 	public Integer calculateTotalAmount() {
-		Integer totalAmout = new Integer(0);
+		Integer totalAmout = Integer.valueOf(0);
 		if (this.getVoucher() != null) {
-			Voucher voucher = this.getVoucher();
-			if (voucher.getDiscountType() == DiscountType.AMOUNT) {
-				totalAmout = getAmount() - voucher.getDiscount();
+			Voucher v = this.getVoucher();
+			if (v.getDiscountType() == DiscountType.AMOUNT) {
+				totalAmout = getAmount() - v.getDiscount();
 			} else {
-				totalAmout = getAmount() - (getAmount() * voucher.getDiscount() / 100);
+				totalAmout = getAmount() - (getAmount() * v.getDiscount() / 100);
 			}
 		} else {
 			totalAmout = getAmount();
 		}
-		if(getMode() != null && getMode() == OrderMode.CHEF){
+		if (getMode() != null && getMode() == OrderMode.CHEF) {
 			totalAmout += 100;
 		}
 		return totalAmout;
@@ -356,8 +362,8 @@ public final class Order extends AbstractEntity {
 				resultSet.put(key, found.get(key));
 			}
 			if (key.equals("dish")) {
-				Document dishDBObject = new Document();
-				resultSet.put("dish", dishDBObject);
+				Document dishDoc = new Document();
+				resultSet.put("dish", dishDoc);
 				Document dishStr = (Document) found.get("dish");
 				Set<Entry<String, Object>> setDish = dishStr.entrySet();
 				Iterator<Entry<String, Object>> iteratorDish = setDish.iterator();
@@ -365,10 +371,10 @@ public final class Order extends AbstractEntity {
 					Entry<String, Object> entry = iteratorDish.next();
 					String key2 = entry.getKey();
 					if (key2.equals("id")) {
-						dishDBObject.put("_id", dishStr.get("id"));
+						dishDoc.put("_id", dishStr.get("id"));
 					} else if (key2.equals("caterer")) {
 						Document catererDBObject = new Document();
-						dishDBObject.put("caterer", catererDBObject);
+						dishDoc.put("caterer", catererDBObject);
 						Document caterer = (Document) dishStr.get("caterer");
 						Set<Entry<String, Object>> setCaterer = caterer.entrySet();
 						Iterator<Entry<String, Object>> iteratorCaterer = setCaterer.iterator();
@@ -382,7 +388,23 @@ public final class Order extends AbstractEntity {
 							}
 						}
 					} else {
-						dishDBObject.put(key2, dishStr.get(key2));
+						dishDoc.put(key2, dishStr.get(key2));
+					}
+				}
+			}
+			if (key.equals("voucher")) {
+				Document v = new Document();
+				resultSet.put("voucher", v);
+				Document voucherDoc = (Document) found.get("voucher");
+				Set<Entry<String, Object>> setVoucher = voucherDoc.entrySet();
+				Iterator<Entry<String, Object>> iteratorVoucher = setVoucher.iterator();
+				while (iteratorVoucher.hasNext()) {
+					Entry<String, Object> entry = iteratorVoucher.next();
+					String key2 = entry.getKey();
+					if (key2.equals("id")) {
+						v.put("_id", voucherDoc.get("id"));
+					} else {
+						v.put(key2, voucherDoc.get(key2));
 					}
 				}
 			}

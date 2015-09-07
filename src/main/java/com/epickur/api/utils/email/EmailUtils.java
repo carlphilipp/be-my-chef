@@ -25,6 +25,8 @@ public final class EmailUtils {
 	/**
 	 * @param name
 	 *            The user name
+	 * @param first
+	 *            The user first name
 	 * @param code
 	 *            The code
 	 * @param email
@@ -38,6 +40,8 @@ public final class EmailUtils {
 	/**
 	 * @param name
 	 *            The user name
+	 * @param first
+	 *            The user first name
 	 * @param code
 	 *            The code
 	 * @param email
@@ -137,6 +141,8 @@ public final class EmailUtils {
 	}
 
 	/**
+	 * @param user
+	 *            The user
 	 * @param order
 	 *            The order
 	 */
@@ -170,6 +176,8 @@ public final class EmailUtils {
 	}
 
 	/**
+	 * @param user
+	 *            The user
 	 * @param order
 	 *            The order
 	 */
@@ -179,6 +187,8 @@ public final class EmailUtils {
 	}
 
 	/**
+	 * @param user
+	 *            The user
 	 * @param order
 	 *            The order
 	 */
@@ -212,6 +222,8 @@ public final class EmailUtils {
 	}
 
 	/**
+	 * @param user
+	 *            The user
 	 * @param order
 	 *            The order
 	 */
@@ -221,6 +233,8 @@ public final class EmailUtils {
 	}
 
 	/**
+	 * @param user
+	 *            The user
 	 * @param order
 	 *            The order
 	 */
@@ -254,6 +268,8 @@ public final class EmailUtils {
 	}
 
 	/**
+	 * @param user
+	 *            The user
 	 * @param order
 	 *            The order
 	 */
@@ -263,6 +279,8 @@ public final class EmailUtils {
 	}
 
 	/**
+	 * @param user
+	 *            The user
 	 * @param order
 	 *            The order
 	 */

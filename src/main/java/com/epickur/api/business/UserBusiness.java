@@ -98,10 +98,10 @@ public final class UserBusiness {
 	}
 
 	/**
-	 * Read a User
-	 * 
 	 * @param id
 	 *            the User id to read
+	 * @param key
+	 *            The key
 	 * @return The User
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -337,10 +337,19 @@ public final class UserBusiness {
 	/**
 	 * Suscribe a user to newsletter
 	 * 
-	 * @param user The user.
+	 * @param user
+	 *            The user.
 	 */
 	public void suscribeToNewsletter(final User user) {
-		String url = "https://bemychef.us10.list-manage.com/subscribe/post-json?u=b0fe27a209ea8ffa59b813767&id=10d0ff2b3b&FNAME=@@FIRST@@&LNAME=@@LAST@@&EMAIL=@@EMAIL@@&ZCODE=@@ZIP@@&STATE=@@STATE@@&COUNTRY=@@COUNTRY@@";
+		String url = "https://bemychef.us10.list-manage.com/subscribe/post-json"
+				+ "?u=b0fe27a209ea8ffa59b813767"
+				+ "&id=10d0ff2b3b"
+				+ "&FNAME=@@FIRST@@"
+				+ "&LNAME=@@LAST@@"
+				+ "&EMAIL=@@EMAIL@@"
+				+ "&ZCODE=@@ZIP@@"
+				+ "&STATE=@@STATE@@"
+				+ "&COUNTRY=@@COUNTRY@@";
 		if (StringUtils.isBlank((user.getFirst()))) {
 			url = url.replaceFirst("@@FIRST@@", "-");
 		} else {

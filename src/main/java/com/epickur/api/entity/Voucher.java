@@ -156,7 +156,7 @@ public final class Voucher extends AbstractEntity {
 	}
 
 	/**
-	 * @param expirationDate
+	 * @param expiration
 	 *            The expiration date
 	 */
 	@JsonDeserialize(using = DateDeserializer.class)
@@ -300,7 +300,7 @@ public final class Voucher extends AbstractEntity {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -362,9 +362,14 @@ public final class Voucher extends AbstractEntity {
 		} else if (!updatedAt.equals(other.updatedAt)) {
 			return false;
 		}
-		if (usedCount != other.usedCount) {
+		if (usedCount == null) {
+			if (other.usedCount != null) {
+				return false;
+			}
+		} else if (!usedCount.equals(other.usedCount)) {
 			return false;
 		}
 		return true;
 	}
+
 }

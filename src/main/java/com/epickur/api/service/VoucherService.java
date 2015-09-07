@@ -87,7 +87,7 @@ public final class VoucherService {
 	 *            The voucher code
 	 * @param context
 	 *            The container context
-	 * @return
+	 * @return A response
 	 * @throws EpickurException
 	 *             If an EpickurException occured
 	 */
@@ -167,7 +167,7 @@ public final class VoucherService {
 	 *            The expiration date format. If not provided MM/dd/yyyy
 	 * @param context
 	 *            The container context
-	 * @return
+	 * @return The response
 	 * @throws EpickurException
 	 *             If an EpickurException occured
 	 */

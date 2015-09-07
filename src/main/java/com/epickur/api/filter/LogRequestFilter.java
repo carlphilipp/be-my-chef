@@ -34,6 +34,9 @@ public final class LogRequestFilter implements ContainerRequestFilter {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(LogRequestFilter.class.getSimpleName());
 
+	/**
+	 * Servlet request injected
+	 */
 	@Context
 	private HttpServletRequest servletRequest;
 

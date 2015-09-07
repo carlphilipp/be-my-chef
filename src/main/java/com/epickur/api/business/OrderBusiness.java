@@ -105,7 +105,7 @@ public final class OrderBusiness {
 	public Order read(final String id, final Key key) throws EpickurException {
 		Order order = this.orderDAO.read(id);
 		if (order != null) {
-			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Operation.READ);
+			this.validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Operation.READ);
 			return order;
 		}
 		return null;
@@ -205,15 +205,7 @@ public final class OrderBusiness {
 						try {
 							Charge charge = stripe.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
 							if (charge == null || !charge.getPaid()) {
-								order.setPaid(false);
-								order.setStatus(OrderStatus.FAILED);
-								// Send email to User, Caterer and admins - Order fail
-								if (sendEmail) {
-									EmailUtils.emailFailOrder(user, order);
-								}
-								if (order.getVoucher() != null) {
-									this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
-								}
+								orderFailed(order, user, sendEmail);
 							} else {
 								order.setChargeId(charge.getId());
 								order.setPaid(charge.getPaid());
@@ -224,15 +216,7 @@ public final class OrderBusiness {
 								}
 							}
 						} catch (StripeException e) {
-							order.setPaid(false);
-							order.setStatus(OrderStatus.FAILED);
-							// Send email to User, Caterer and admins - Order fail
-							if (sendEmail) {
-								EmailUtils.emailFailOrder(user, order);
-							}
-							if (order.getVoucher() != null) {
-								this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
-							}
+							orderFailed(order, user, sendEmail);
 						} finally {
 							order = orderDAO.update(order);
 						}
@@ -243,16 +227,40 @@ public final class OrderBusiness {
 						EmailUtils.emailDeclineOrder(user, order);
 					}
 					if (order.getVoucher() != null) {
-						this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+						Voucher voucher = this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+						order.setVoucher(voucher);
 					}
 					order.setStatus(OrderStatus.DECLINED);
-					order = orderDAO.update(order);
+					order = this.orderDAO.update(order);
 				}
 				Jobs.getInstance().removeTemporaryOrderJob(orderId);
 				return order;
 			} else {
 				throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, orderId);
 			}
+		}
+	}
+
+	/**
+	 * @param order
+	 *            The Order
+	 * @param user
+	 *            The User
+	 * @param sendEmail
+	 *            If we send an email
+	 * @throws EpickurException
+	 *             If an EpickurException occurred
+	 */
+	protected void orderFailed(final Order order, final User user, final boolean sendEmail) throws EpickurException {
+		order.setPaid(false);
+		order.setStatus(OrderStatus.FAILED);
+		// Send email to User, Caterer and admins - Order failed
+		if (sendEmail) {
+			EmailUtils.emailFailOrder(user, order);
+		}
+		if (order.getVoucher() != null) {
+			Voucher voucher = this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+			order.setVoucher(voucher);
 		}
 	}
 }

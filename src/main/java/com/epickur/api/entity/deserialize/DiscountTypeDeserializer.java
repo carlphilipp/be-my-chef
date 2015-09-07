@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,10 +13,10 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @version 1.0
  *
  */
-public class DiscountTypeDeserializer extends JsonDeserializer<DiscountType> {
+public final class DiscountTypeDeserializer extends JsonDeserializer<DiscountType> {
 
 	@Override
-	public DiscountType deserialize(final JsonParser jp, DeserializationContext context) throws IOException, JsonProcessingException {
+	public DiscountType deserialize(final JsonParser jp, final DeserializationContext context) throws IOException {
 		try {
 			JsonNode objId = jp.readValueAsTree();
 			return DiscountType.valueOf(objId.asText().toUpperCase());
@@ -25,5 +24,4 @@ public class DiscountTypeDeserializer extends JsonDeserializer<DiscountType> {
 			throw new IOException(e);
 		}
 	}
-
 }

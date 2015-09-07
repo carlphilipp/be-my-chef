@@ -25,7 +25,7 @@ import com.epickur.api.utils.Utils;
  * @version 1.0
  *
  */
-public class AmazonWebServices {
+public final class AmazonWebServices {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(AmazonWebServices.class.getSimpleName());
 	/** Maximum amount of dump we keep on S3 */
@@ -35,6 +35,9 @@ public class AmazonWebServices {
 	/** Amazon Bucket name */
 	private String bucketName;
 
+	/**
+	 * Construct a Amazon Web Services
+	 */
 	public AmazonWebServices() {
 		Properties prop = Utils.getEpickurProperties();
 		String accessKeyId = prop.getProperty("aws.access.KeyId");
@@ -69,6 +72,9 @@ public class AmazonWebServices {
 		}
 	}
 
+	/**
+	 * Delete an old file
+	 */
 	public void deleteOldFile() {
 		LOG.info("Deleting old file in AWS...");
 		ObjectListing listing = this.s3client.listObjects(bucketName);
@@ -93,10 +99,4 @@ public class AmazonWebServices {
 		}
 		LOG.info("Delete done");
 	}
-
-	public static void main(String[] args) {
-		AmazonWebServices aws = new AmazonWebServices();
-		aws.deleteOldFile();
-	}
-
 }

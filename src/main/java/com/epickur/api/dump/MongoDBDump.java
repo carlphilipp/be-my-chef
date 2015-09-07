@@ -153,6 +153,9 @@ public final class MongoDBDump {
 		return success;
 	}
 
+	/**
+	 * Clean dump directory
+	 */
 	public void cleanDumpDirectory() {
 		File folder = new File(backupPath + FILE_SEPARATOR + database);
 		try {
@@ -162,6 +165,9 @@ public final class MongoDBDump {
 		}
 	}
 
+	/**
+	 * Delete the dump file
+	 */
 	public void deleteDumpFile() {
 		File file = new File(getCurrentFullPathName());
 		boolean deleted = file.delete();

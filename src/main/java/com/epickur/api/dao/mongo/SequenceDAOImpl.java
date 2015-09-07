@@ -57,7 +57,7 @@ public final class SequenceDAOImpl {
 			Document res = (Document) this.coll.findOneAndUpdate(query, update);
 			LOG.debug("Read next Order id");
 			if (res != null) {
-				return Integer.toHexString(Integer.valueOf(res.get(sequenceField).toString()));
+				return Integer.toHexString(Integer.parseInt(res.get(sequenceField).toString()));
 			} else {
 				// Put 1 as new seq and return 0 as current sequence
 				query.append(sequenceField, 1);

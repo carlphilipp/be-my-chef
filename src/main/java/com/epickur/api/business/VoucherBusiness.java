@@ -93,7 +93,7 @@ public final class VoucherBusiness {
 	}
 
 	/**
-	 * Clean vouchers
+	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public void clean() throws EpickurException {
 		List<Voucher> vouchers = this.voucherDAO.readToClean();
@@ -179,7 +179,7 @@ public final class VoucherBusiness {
 	 *            Max size
 	 * @return A Random consonants string
 	 */
-	private String getRandomConsonants(int size) {
+	private String getRandomConsonants(final int size) {
 		// Removed l
 		String[] consonants = { "q", "w", "r", "t", "p", "s", "d", "f", "g", "h", "j", "k", "z", "x", "c", "v", "b", "n", "m" };
 		StringBuilder res = new StringBuilder();

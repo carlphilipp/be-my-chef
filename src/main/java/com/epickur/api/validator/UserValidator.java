@@ -172,14 +172,14 @@ public final class UserValidator extends Validator {
 					throw new EpickurIllegalArgument("The field order.paid can not be true");
 				}
 			}
-			if(order.getVoucher() != null){
+			if (order.getVoucher() != null) {
 				checkVoucherData(order.getVoucher());
 			}
 		}
 	}
 
 	/**
-	 * @param voucher
+	 * @param voucher The voucher
 	 */
 	private void checkVoucherData(final Voucher voucher) {
 		VoucherValidator validator = (VoucherValidator) FactoryValidator.getValidator("voucher");

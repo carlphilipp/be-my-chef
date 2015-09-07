@@ -42,66 +42,111 @@ public final class Log extends AbstractEntity {
 	/** User agent */
 	private String userAgent;
 
+	/**
+	 * @return
+	 */
 	@JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId getId() {
 		return id;
 	}
 
+	/**
+	 * @param id
+	 */
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setId(ObjectId id) {
 		this.id = id;
 	}
 
+	/**
+	 * @return
+	 */
 	@JsonSerialize(using = DateSerializer.class)
 	public DateTime getTime() {
 		return time;
 	}
 
+	/**
+	 * @param time
+	 */
 	@JsonDeserialize(using = DateDeserializer.class)
 	public void setTime(DateTime time) {
 		this.time = time;
 	}
 
+	/**
+	 * @return
+	 */
 	public String getUrl() {
 		return url;
 	}
 
+	/**
+	 * @param url
+	 */
 	public void setUrl(String url) {
 		this.url = url;
 	}
 
+	/**
+	 * @return
+	 */
 	public String getMethod() {
 		return method;
 	}
 
+	/**
+	 * @param method
+	 */
 	public void setMethod(String method) {
 		this.method = method;
 	}
 
+	/**
+	 * @return
+	 */
 	public String getProtocol() {
 		return protocol;
 	}
 
+	/**
+	 * @param protocol
+	 */
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
 	}
 
+	/**
+	 * @return
+	 */
 	public String getRemoteAddr() {
 		return remoteAddr;
 	}
 
+	/**
+	 * @param remoteAddr
+	 */
 	public void setRemoteAddr(String remoteAddr) {
 		this.remoteAddr = remoteAddr;
 	}
 
+	/**
+	 * @return
+	 */
 	public String getUserAgent() {
 		return userAgent;
 	}
 
+	/**
+	 * @param userAgent
+	 */
 	public void setUserAgent(final String userAgent) {
 		this.userAgent = userAgent;
 	}
 
+	/**
+	 * @return
+	 */
 	public Map<String, String> getArgs() {
 		if (this.args == null) {
 			this.args = new HashMap<String, String>();

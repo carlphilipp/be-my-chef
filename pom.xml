@@ -48,45 +48,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-		<checkstyle.version>2.14</checkstyle.version>
-		<cargo.version>1.4.12</cargo.version>
-		<cargo.port>8180</cargo.port>
-		<cobertura.version>2.7</cobertura.version>
-		<codec.version>1.10</codec.version>
-		<configuration.version>1.10</configuration.version>
-		<compiler.version>3.1</compiler.version>
-		<c3p0.version>0.9.1.1</c3p0.version>
-		<doxia.version>1.0</doxia.version>
-		<failsafe.version>2.17</failsafe.version>
-		<findbugs.version>3.0.0</findbugs.version>
-		<hamcrest.version>1.3</hamcrest.version>
-		<httpclient.version>4.4.1</httpclient.version>
-		<info.version>2.8</info.version>
-		<io.version>2.4</io.version>
-		<java.version>1.7</java.version>
-		<javadoc.version>2.10.1</javadoc.version>
-		<javancss.version>2.1</javancss.version>
-		<jackson.version>2.5.3</jackson.version>
-		<jersey.version>2.19</jersey.version>
-		<joda.version>2.7</joda.version>
-		<junit.version>4.12</junit.version>
-		<lang3.version>3.4</lang3.version>
-		<log4j.version>2.2</log4j.version>
-		<mandrill.version>1.1</mandrill.version>
-		<mockito.version>1.10.19</mockito.version>
-		<mongodb.version>3.0.1</mongodb.version>
-		<plexus.version>3.0.22</plexus.version>
-		<pmd.version>3.4</pmd.version>
-		<properties.version>1.0-alpha-2</properties.version>
-		<quartz.version>2.2.1</quartz.version>
-		<site.version>3.4</site.version>
-		<slf4j.version>1.7.12</slf4j.version>
-		<stripe.version>1.28.0</stripe.version>
-		<surfire.version>2.18.1</surfire.version>
-		<tag.version>2.4</tag.version>
-		<versions.version>2.2</versions.version>
-		<war.version>2.4</war.version>
 	</properties>
 
 	<dependencies>
@@ -95,19 +56,19 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>${mongodb.version}</version>
+			<version>3.0.1</version>
 		</dependency>
 
 		<!-- Jersey and Jackson as JSON provider -->
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
-			<version>${jersey.version}</version>
+			<version>2.19</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
-			<version>${jersey.version}</version>
+			<version>2.19</version>
 		</dependency>
 
 		<!-- Unit testing -->
@@ -121,7 +82,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
+			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -129,31 +90,31 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>${log4j.version}</version>
+			<version>2.2</version>
 		</dependency>
 
 		<!-- Scheduler -->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
-			<version>${quartz.version}</version>
+			<version>2.2.1</version>
 		</dependency>
 
 		<!-- Utils -->
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>${codec.version}</version>
+			<version>1.10</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>${io.version}</version>
+			<version>2.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
+			<version>4.4.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-codec</groupId>
@@ -176,19 +137,19 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>${joda.version}</version>
+			<version>2.7</version>
 		</dependency>
 
 		<!-- Stripe payment -->
 		<dependency>
 			<groupId>com.stripe</groupId>
 			<artifactId>stripe-java</artifactId>
-			<version>${stripe.version}</version>
+			<version>1.28.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
-			<version>${hamcrest.version}</version>
+			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -196,7 +157,7 @@
 		<dependency>
 			<groupId>org.kohsuke</groupId>
 			<artifactId>doxia-module-markdown</artifactId>
-			<version>${doxia.version}</version>
+			<version>1.0</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
@@ -218,7 +179,7 @@
 		<dependency>
 			<groupId>com.cribbstechnologies.clients</groupId>
 			<artifactId>mandrillClient</artifactId>
-			<version>${mandrill.version}</version>
+			<version>1.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
@@ -245,7 +206,7 @@
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
-			<version>${configuration.version}</version>
+			<version>1.10</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -271,7 +232,7 @@
 		<dependency>
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>cobertura-maven-plugin</artifactId>
-			<version>${cobertura.version}</version>
+			<version>2.7</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -375,10 +336,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${compiler.version}</version>
+				<version>3.1</version>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 
@@ -386,7 +347,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>${war.version}</version>
+				<version>2.4</version>
 			</plugin>
 
 			<!-- Create API doc documentation into target/site directory -->
@@ -445,7 +406,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>${surfire.version}</version>
+						<version>2.18.1</version>
 						<configuration>
 							<includes>
 								<include>**/com/epickur/api/WebApplicationTest.java</include>
@@ -467,7 +428,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>${failsafe.version}</version>
+						<version>2.17</version>
 						<executions>
 							<execution>
 								<goals>
@@ -487,7 +448,7 @@
 					<plugin>
 						<groupId>org.codehaus.cargo</groupId>
 						<artifactId>cargo-maven2-plugin</artifactId>
-						<version>${cargo.version}</version>
+						<version>1.4.12</version>
 						<configuration>
 
 						 <!-- Container configuration -->
@@ -500,7 +461,7 @@
 							<configuration>
 								<home>${project.build.directory}/tomcat7x</home>
 								<properties>
-									<cargo.servlet.port>${cargo.port}</cargo.servlet.port>
+									<cargo.servlet.port>8180</cargo.servlet.port>
 								</properties>
 							</configuration>
 							<deployables>
@@ -528,29 +489,12 @@
 							</execution>
 						</executions>
 					</plugin>
-					
-
-					<!-- Cobertura
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>cobertura-maven-plugin</artifactId>
-						<version>${cobertura.version}</version>
-						<configuration>
-							<instrumentation>
-								<excludes>
-									<exclude>com/epickur/api/service/*Test.class</exclude>
-									<exclude>**/*$*.class</exclude>
-								</excludes>
-							</instrumentation>
-						</configuration>
-					</plugin>
-					 -->
 
 					<!-- Site -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-site-plugin</artifactId>
-						<version>${site.version}</version>
+						<version>3.4</version>
 						<dependencies>
 							<dependency><!-- add support for ssh/scp -->
 								<groupId>org.apache.maven.wagon</groupId>
@@ -564,7 +508,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>properties-maven-plugin</artifactId>
-						<version>${properties.version}</version>
+						<version>1.0-alpha-2</version>
 						<executions>
 							<execution>
 								<phase>initialize</phase>
@@ -613,7 +557,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>properties-maven-plugin</artifactId>
-						<version>${properties.version}</version>
+						<version>1.0-alpha-2</version>
 						<executions>
 							<execution>
 								<phase>initialize</phase>
@@ -633,7 +577,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>${surfire.version}</version>
+						<version>2.18.1</version>
 						<configuration>
 							<!-- Do NEVER change this value to false, risk of losing data -->
 							<skipTests>true</skipTests>
@@ -742,12 +686,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>${site.version}</version>
+				<version>3.4</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>${info.version}</version>
+				<version>2.8</version>
 				<configuration>
 					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 				</configuration>
@@ -755,7 +699,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>${cobertura.version}</version>
+				<version>2.7</version>
 				<configuration>
 					<formats>
 						<format>html</format>
@@ -771,7 +715,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${javadoc.version}</version>
+				<version>2.10.1</version>
 				<configuration>
 					<stylesheetfile>${project.build.resources[0].directory}/stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
@@ -787,7 +731,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${checkstyle.version}</version>
+				<version>2.14</version>
 				<configuration>
 					<configLocation>${project.build.resources[0].directory}/epickur-checkstyle.xml</configLocation>
 				</configuration>
@@ -802,7 +746,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>${pmd.version}</version>
+				<version>3.4</version>
 				<configuration>
 					<skipEmptyReport>false</skipEmptyReport>
 				</configuration>
@@ -810,22 +754,22 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
-				<version>${tag.version}</version>
+				<version>2.4</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>${findbugs.version}</version>
+				<version>3.0.0</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
-				<version>${versions.version}</version>
+				<version>2.2</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>javancss-maven-plugin</artifactId>
-				<version>${javancss.version}</version>
+				<version>2.1</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -840,27 +784,27 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-utils</artifactId>
-				<version>${plexus.version}</version>
+				<version>3.0.22</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
-				<version>${jackson.version}</version>
+				<version>2.6.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
-				<version>${jackson.version}</version>
+				<version>2.6.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>${jackson.version}</version>
+				<version>2.6.1</version>
 			</dependency>
 			<dependency>
 				<groupId>c3p0</groupId>
 				<artifactId>c3p0</artifactId>
-				<version>${c3p0.version}</version>
+				<version>0.9.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -885,7 +829,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>${junit.version}</version>
+				<version>4.12</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -903,24 +847,9 @@
 				<version>1.1.4</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.maven.reporting</groupId>
-				<artifactId>maven-reporting-api</artifactId>
-				<version>2.0.8</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-plugin-api</artifactId>
-				<version>2.0.8</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-project</artifactId>
-				<version>2.0.8</version>
-			</dependency>
-			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-container-default</artifactId>
-				<version>1.0-alpha-30</version>
+				<version>1.6</version>
 			</dependency>
 			<dependency>
 				<groupId>xerces</groupId>

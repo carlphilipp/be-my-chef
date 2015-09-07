@@ -27,6 +27,9 @@ public class Report {
 	/** Parameters sent to Jasper APIs **/
 	private Map<String, Object> parameters;
 
+	/**
+	 * Construct a report
+	 */
 	public Report() {
 		this.parameters = new HashMap<String, Object>();
 	}
@@ -48,6 +51,7 @@ public class Report {
 	 * 
 	 * @return a jasper print
 	 * @throws EpickurException
+	 *             If an epickur exception occurred
 	 */
 	public final byte[] getReport() throws EpickurException {
 		InputStream inputStream = null;
