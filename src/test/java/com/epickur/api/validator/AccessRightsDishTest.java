@@ -107,7 +107,6 @@ public class AccessRightsDishTest {
 
 	@Test
 	public void webReadTest() {
-		thrown.expect(EpickurForbiddenException.class);
 		AccessRights.check(Role.EPICKUR_WEB, Operation.READ, endpoint);
 	}
 
