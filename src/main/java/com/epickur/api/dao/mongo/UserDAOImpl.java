@@ -10,11 +10,11 @@ import org.bson.BsonDocument;
 import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
@@ -46,35 +46,30 @@ public final class UserDAOImpl extends CrudDAO<User> {
 
 	@Override
 	public User create(final User user) throws EpickurException {
-		user.setId(null);
-		DateTime time = new DateTime();
-		user.setCreatedAt(time);
-		user.setUpdatedAt(time);
-		user.setKey(null);
-		Document doc = null;
+		user.prepareUserToInsertIntoDB();
+		LOG.debug("Create user: " + user);
+		Document doc = user.getDocumentDBView();
+		insertUser(doc);
+		return User.getDocumentAsUser(doc);
+	}
+
+	private void insertUser(final Document user) throws EpickurDBException {
 		try {
-			doc = user.getDBView();
-			LOG.debug("Create user: " + user);
-			getColl().insertOne(doc);
-			return User.getObject(doc);
+			getColl().insertOne(user);
 		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), doc, e);
+			throw new EpickurDBException("create", e.getMessage(), user, e);
 		}
 	}
 
 	@Override
 	public User read(final String id) throws EpickurException {
-		try {
-			LOG.debug("Read user: " + id);
-			Document query = new Document().append("_id", new ObjectId(id));
-			Document find = getColl().find(query).first();
-			if (find != null) {
-				return User.getObject(find);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), id, e);
+		LOG.debug("Read user with id: " + id);
+		Document query = convertAttibuteToDocument("_id", new ObjectId(id));
+		Document find = findUser(query);
+		if (find != null) {
+			return User.getDocumentAsUser(find);
+		} else {
+			return null;
 		}
 	}
 
@@ -88,18 +83,10 @@ public final class UserDAOImpl extends CrudDAO<User> {
 	 *             if an epickur exception occurred
 	 */
 	public User readWithName(final String name) throws EpickurException {
-		try {
-			LOG.debug("Read user name: " + name);
-			Document query = new Document().append("name", name);
-			Document find = getColl().find(query).first();
-			if (find != null) {
-				return User.getObject(find);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), name, e);
-		}
+		LOG.debug("Read user with name: " + name);
+		Document query = convertAttibuteToDocument("name", name);
+		Document find = findUser(query);
+		return processAfterQuery(find);
 	}
 
 	/**
@@ -112,36 +99,41 @@ public final class UserDAOImpl extends CrudDAO<User> {
 	 *             if an epickur exception occurred
 	 */
 	public User readWithEmail(final String email) throws EpickurException {
+		LOG.debug("Read user with email: " + email);
+		Document query = convertAttibuteToDocument("email", email);
+		Document find = findUser(query); 
+		return processAfterQuery(find);
+	}
+	
+	private Document findUser(final Document query) throws EpickurDBException {
 		try {
-			LOG.debug("Read user email: " + email);
-			Document query = new Document().append("email", email);
-			Document find = getColl().find(query).first();
-			if (find != null) {
-				return User.getObject(find);
-			} else {
-				return null;
-			}
+			return getColl().find(query).first();
 		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), email, e);
+			throw new EpickurDBException("read", e.getMessage(), query, e);
 		}
 	}
 
 	@Override
 	public User update(final User user) throws EpickurException {
-		Document filter = new Document().append("_id", user.getId());
-		DateTime time = new DateTime();
-		user.setCreatedAt(null);
-		user.setUpdatedAt(time);
-		user.setKey(null);
+		user.prepareUserToBeUpdatedIntoDB();
 		LOG.debug("Update user: " + user);
-		Document update = user.getUpdateDocument();
+		Document filter = convertAttibuteToDocument("_id", user.getId());
+		Document update = user.getUserUpdateQuery();
+		Document updated = updateUser(filter, update);
+		return processAfterQuery(updated);
+	}
+
+	private User processAfterQuery(final Document user) throws EpickurParsingException {
+		if (user != null) {
+			return User.getDocumentAsUser(user);
+		} else {
+			return null;
+		}
+	}
+
+	private Document updateUser(final Document filter, final Document update) throws EpickurDBException {
 		try {
-			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
-			if (updated != null) {
-				return User.getObject(updated);
-			} else {
-				return null;
-			}
+			return getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
 		} catch (MongoException e) {
 			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
 		}
@@ -149,13 +141,22 @@ public final class UserDAOImpl extends CrudDAO<User> {
 
 	@Override
 	public boolean delete(final String id) throws EpickurException {
+		LOG.debug("Delete user with id: " + id);
+		Document filter = convertAttibuteToDocument("_id", new ObjectId(id));
+		return deleteUser(filter);
+	}
+
+	private boolean deleteUser(final Document filter) throws EpickurDBException {
 		try {
-			Document filter = new Document().append("_id", new ObjectId(id));
-			LOG.debug("Delete user: " + id);
 			return this.isDeleted(getColl().deleteOne(filter), "delete");
 		} catch (MongoException e) {
-			throw new EpickurDBException("delete", e.getMessage(), id, e);
+			throw new EpickurDBException("delete", e.getMessage(), filter, e);
 		}
+	}
+
+	private Document convertAttibuteToDocument(final String attributeName, final Object attributeValue) {
+		Document document = new Document().append(attributeName, attributeValue);
+		return document;
 	}
 
 	@Override
@@ -165,7 +166,7 @@ public final class UserDAOImpl extends CrudDAO<User> {
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
-				User user = User.getObject(cursor.next());
+				User user = User.getDocumentAsUser(cursor.next());
 				users.add(user);
 			}
 		} catch (MongoException e) {

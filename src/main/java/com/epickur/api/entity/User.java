@@ -351,14 +351,41 @@ public final class User extends AbstractEntity {
 	}
 
 	/**
+	 * Prepare user to be inserted into DB.
+	 * Set create date and update to current time.
+	 * Reset id and key to null.
+	 */
+	public void prepareUserToInsertIntoDB(){
+		DateTime time = new DateTime();
+		this.setCreatedAt(time);
+		this.setUpdatedAt(time);
+	
+		this.setId(null);
+		this.setKey(null);
+	}
+	
+	/**
+	 * Prepare user to be updated into DB.
+	 * Set created date to null and update date to current time.
+	 * Reset key to null
+	 */
+	public void prepareUserToBeUpdatedIntoDB(){
+		DateTime time = new DateTime();
+		this.setCreatedAt(null);
+		this.setUpdatedAt(time);
+		
+		this.setKey(null);
+	}
+	
+	/**
 	 * @param obj
 	 *            The Document
 	 * @return The User
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static User getObject(final Document obj) throws EpickurParsingException {
-		return User.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
+	public static User getDocumentAsUser(final Document obj) throws EpickurParsingException {
+		return User.getJsonStringAsUser(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
@@ -368,15 +395,14 @@ public final class User extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	private static User getObject(final String json) throws EpickurParsingException {
-		User user = null;
+	private static User getJsonStringAsUser(final String json) throws EpickurParsingException {
 		try {
 			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
-			user = mapper.readValue(json, User.class);
+			User user = mapper.readValue(json, User.class);
+			return user;
 		} catch (IOException e) {
 			throw new EpickurParsingException("Can not convert string to User: " + json, e);
 		}
-		return user;
 	}
 
 	/**
@@ -385,7 +411,7 @@ public final class User extends AbstractEntity {
 	 *             If an epickur exception occurred
 	 */
 	@JsonIgnore
-	public Document getUpdateDocument() throws EpickurParsingException {
+	public Document getUserUpdateQuery() throws EpickurParsingException {
 		String apiView = toStringAPIView();
 		Document found = Document.parse(apiView);
 		Document args = new Document();

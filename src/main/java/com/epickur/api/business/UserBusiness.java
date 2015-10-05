@@ -74,21 +74,17 @@ public final class UserBusiness {
 		} else {
 			user.setAllow(0);
 		}
-		String name = user.getName();
-		String email = user.getEmail();
-		String saltHashed = null;
-		String encryptedPasswordSalt = null;
-		String code = null;
+		
 		String passwordHashed = Security.encodeToSha256(user.getPassword());
-		saltHashed = Security.generateSalt();
-		encryptedPasswordSalt = Security.encodeToSha256(passwordHashed + saltHashed);
-		code = Security.createUserCode(name, saltHashed, encryptedPasswordSalt, email);
+		String saltHashed = Security.generateSalt();
+		String encryptedPasswordSalt = Security.encodeToSha256(passwordHashed + saltHashed);
+		String code = Security.createUserCode(user.getName(), saltHashed, encryptedPasswordSalt, user.getEmail());
 		user.setPassword(saltHashed + encryptedPasswordSalt);
 		user.setRole(Role.USER);
 		User res = userDAO.create(user);
 
 		if (sendEmail) {
-			EmailUtils.emailNewRegistration(name, user.getFirst(), code, email);
+			EmailUtils.emailNewRegistration(user.getName(), user.getFirst(), code, user.getEmail());
 		}
 		// We do not send back the password
 		res.setPassword(null);

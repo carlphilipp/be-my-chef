@@ -647,7 +647,7 @@ public final class CatererService {
 				BasicDBList list = new BasicDBList();
 				for (Order order : orders) {
 					order.setDish(null);
-					list.add(order.getAPIView());
+					list.add(order.getDocumentAPIView());
 				}
 				bdb.put("orders", list);
 				return Response.ok().entity(bdb).type(MediaType.APPLICATION_JSON).build();

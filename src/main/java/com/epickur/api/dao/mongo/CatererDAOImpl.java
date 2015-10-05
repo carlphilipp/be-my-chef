@@ -51,7 +51,7 @@ public final class CatererDAOImpl extends CrudDAO<Caterer> {
 		LOG.debug("Create caterer: " + caterer);
 		Document doc = null;
 		try {
-			doc = caterer.getDBView();
+			doc = caterer.getDocumentDBView();
 			getColl().insertOne(doc);
 			return Caterer.getObject(doc, View.DB);
 		} catch (MongoException e) {

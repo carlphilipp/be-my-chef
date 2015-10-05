@@ -48,7 +48,7 @@ public final class KeyDAOImpl extends CrudDAO<Key> {
 		LOG.debug("Create key: " + key);
 		Document doc = null;
 		try {
-			doc = key.getDBView();
+			doc = key.getDocumentDBView();
 			getColl().insertOne(doc);
 			return Key.getObject(doc);
 		} catch (MongoException e) {

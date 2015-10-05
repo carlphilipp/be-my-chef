@@ -18,7 +18,7 @@ interface IEntity extends Cloneable {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	Document getAPIView() throws EpickurException;
+	Document getDocumentAPIView() throws EpickurException;
 
 	/**
 	 * Get an API view of the current object. For instance will provide field _id instead of id
@@ -27,5 +27,5 @@ interface IEntity extends Cloneable {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	Document getDBView() throws EpickurException;
+	Document getDocumentDBView() throws EpickurException;
 }

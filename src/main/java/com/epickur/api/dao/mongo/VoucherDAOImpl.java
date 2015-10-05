@@ -63,7 +63,7 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 		voucher.setUpdatedAt(time);
 		Document doc = null;
 		try {
-			doc = voucher.getDBView();
+			doc = voucher.getDocumentDBView();
 			LOG.debug("Create voucher: " + voucher);
 			getColl().insertOne(doc);
 			return Voucher.getObject(doc);

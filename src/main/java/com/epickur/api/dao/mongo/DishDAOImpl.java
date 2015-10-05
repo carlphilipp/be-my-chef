@@ -58,7 +58,7 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 		LOG.debug("Create dish: " + dish);
 		Document doc = null;
 		try {
-			doc = dish.getDBView();
+			doc = dish.getDocumentDBView();
 			getColl().insertOne(doc);
 			return Dish.getObject(doc);
 		} catch (MongoException e) {

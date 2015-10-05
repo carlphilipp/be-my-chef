@@ -25,7 +25,7 @@ public abstract class AbstractEntity implements IEntity {
 
 	@JsonIgnore
 	@Override
-	public final Document getAPIView() throws EpickurParsingException {
+	public final Document getDocumentAPIView() throws EpickurParsingException {
 		String json = null;
 		try {
 			ObjectMapper om = ObjectMapperWrapperAPI.getInstance();
@@ -40,7 +40,7 @@ public abstract class AbstractEntity implements IEntity {
 
 	@JsonIgnore
 	@Override
-	public final Document getDBView() throws EpickurParsingException {
+	public final Document getDocumentDBView() throws EpickurParsingException {
 		String json = null;
 		try {
 			ObjectMapper om = ObjectMapperWrapperDB.getInstance();
@@ -61,7 +61,7 @@ public abstract class AbstractEntity implements IEntity {
 	 *             If an epickur exception occurred
 	 */
 	public final String toStringAPIView() throws EpickurParsingException {
-		return getAPIView().toJson();
+		return getDocumentAPIView().toJson();
 	}
 
 	@Override

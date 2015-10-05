@@ -46,7 +46,7 @@ public final class LogDAOImpl extends CrudDAO<Log> {
 	public Log create(final Log obj) throws EpickurException {
 		Document doc = null;
 		try {
-			doc = obj.getDBView();
+			doc = obj.getDocumentDBView();
 			LOG.trace("Create log: " + obj);
 			getColl().insertOne(doc);
 			return null;

@@ -49,7 +49,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 		order.setUpdatedAt(time);
 		Document doc = null;
 		try {
-			doc = order.getDBView();
+			doc = order.getDocumentDBView();
 			LOG.debug("Create order: " + order);
 			getColl().insertOne(doc);
 			return Order.getObject(doc);
