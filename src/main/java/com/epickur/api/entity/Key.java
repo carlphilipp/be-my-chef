@@ -25,6 +25,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Key entity
  * 
@@ -33,6 +39,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "key", "userId", "role", "createdAt", "updatedAt" })
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public final class Key extends AbstractEntity {
 
 	/** Logger */
@@ -49,10 +60,6 @@ public final class Key extends AbstractEntity {
 	private DateTime createdAt;
 	/** Updated at */
 	private DateTime updatedAt;
-
-	/** Constructor */
-	public Key() {
-	}
 
 	/**
 	 * @return The ObjectId
@@ -87,22 +94,7 @@ public final class Key extends AbstractEntity {
 	public void setUserId(final ObjectId userId) {
 		this.userId = userId;
 	}
-
-	/**
-	 * @return The Key
-	 */
-	public String getKey() {
-		return key;
-	}
-
-	/**
-	 * @param key
-	 *            The Key
-	 */
-	public void setKey(final String key) {
-		this.key = key;
-	}
-
+	
 	/**
 	 * @return The creation date
 	 */
@@ -181,76 +173,6 @@ public final class Key extends AbstractEntity {
 			throw new EpickurParsingException("Can not convert string to Key: " + json, e);
 		}
 		return key;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
-		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-		result = prime * result + ((role == null) ? 0 : role.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Key)) {
-			return false;
-		}
-		Key other = (Key) obj;
-		if (createdAt == null) {
-			if (other.createdAt != null) {
-				return false;
-			}
-		} else if (!createdAt.equals(other.createdAt)) {
-			return false;
-		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		if (key == null) {
-			if (other.key != null) {
-				return false;
-			}
-		} else if (!key.equals(other.key)) {
-			return false;
-		}
-		if (updatedAt == null) {
-			if (other.updatedAt != null) {
-				return false;
-			}
-		} else if (!updatedAt.equals(other.updatedAt)) {
-			return false;
-		}
-		if (userId == null) {
-			if (other.userId != null) {
-				return false;
-			}
-		} else if (!userId.equals(other.userId)) {
-			return false;
-		}
-		if (role == null) {
-			if (other.role != null) {
-				return false;
-			}
-		} else if (!role.equals(other.role)) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override

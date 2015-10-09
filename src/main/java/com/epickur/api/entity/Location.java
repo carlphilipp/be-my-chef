@@ -17,6 +17,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Location entity
  * 
@@ -25,6 +31,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "address", "geo" })
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public final class Location extends AbstractEntity {
 
 	/** Logger */
@@ -33,40 +44,6 @@ public final class Location extends AbstractEntity {
 	private Address address;
 	/** Geo */
 	private Geo geo;
-
-	/** Constructor */
-	public Location() {
-	}
-
-	/**
-	 * @return The Addres
-	 */
-	public Address getAddress() {
-		return address;
-	}
-
-	/**
-	 * @param address
-	 *            The Addres
-	 */
-	public void setAddress(final Address address) {
-		this.address = address;
-	}
-
-	/**
-	 * @return The Geo
-	 */
-	public Geo getGeo() {
-		return geo;
-	}
-
-	/**
-	 * @param geo
-	 *            The Geo
-	 */
-	public void setGeo(final Geo geo) {
-		this.geo = geo;
-	}
 
 	/**
 	 * @param obj
@@ -113,45 +90,7 @@ public final class Location extends AbstractEntity {
 		}
 		return res;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((address == null) ? 0 : address.hashCode());
-		result = prime * result + ((geo == null) ? 0 : geo.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Location)) {
-			return false;
-		}
-		Location other = (Location) obj;
-		if (address == null) {
-			if (other.address != null) {
-				return false;
-			}
-		} else if (!address.equals(other.address)) {
-			return false;
-		}
-		if (geo == null) {
-			if (other.geo != null) {
-				return false;
-			}
-		} else if (!geo.equals(other.geo)) {
-			return false;
-		}
-		return true;
-	}
-
+	
 	@Override
 	public Location clone() {
 		try {

@@ -34,6 +34,7 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -46,10 +47,11 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "role", "phoneNumber", "zipcode", "state", "country", "allow",
 		"key", "allow", "createdAt", "updatedAt" })
-@Getter 
+@NoArgsConstructor
+@Getter
 @Setter
 @ToString
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public final class User extends AbstractEntity {
 
 	/** Logger */
@@ -89,10 +91,6 @@ public final class User extends AbstractEntity {
 	private String newPassword;
 	/** Role. Not exposed to User */
 	private Role role;
-
-	/** Constructor */
-	public User() {
-	}
 
 	/**
 	 * @return An ObjectId
@@ -180,32 +178,28 @@ public final class User extends AbstractEntity {
 	}
 
 	/**
-	 * Prepare user to be inserted into DB.
-	 * Set create date and update to current time.
-	 * Reset id and key to null.
+	 * Prepare user to be inserted into DB. Set create date and update to current time. Reset id and key to null.
 	 */
-	public void prepareUserToInsertIntoDB(){
+	public void prepareUserToInsertIntoDB() {
 		DateTime time = new DateTime();
 		this.setCreatedAt(time);
 		this.setUpdatedAt(time);
-	
+
 		this.setId(null);
 		this.setKey(null);
 	}
-	
+
 	/**
-	 * Prepare user to be updated into DB.
-	 * Set created date to null and update date to current time.
-	 * Reset key to null
+	 * Prepare user to be updated into DB. Set created date to null and update date to current time. Reset key to null
 	 */
-	public void prepareUserToBeUpdatedIntoDB(){
+	public void prepareUserToBeUpdatedIntoDB() {
 		DateTime time = new DateTime();
 		this.setCreatedAt(null);
 		this.setUpdatedAt(time);
-		
+
 		this.setKey(null);
 	}
-	
+
 	/**
 	 * @param obj
 	 *            The Document

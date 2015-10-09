@@ -32,6 +32,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Dish entity
  * 
@@ -41,6 +47,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "description", "type", "price", "cookingTime", "difficultyLevel", "videoUrl", "nutritionFacts",
 		"ingredients", "condiments", "steps", "utensils", "caterer", "createdAt", "updatedAt" })
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public final class Dish extends AbstractEntity {
 
 	/** Logger */
@@ -82,10 +93,6 @@ public final class Dish extends AbstractEntity {
 	/** Updated at */
 	private DateTime updatedAt;
 
-	/** Constructor */
-	public Dish() {
-	}
-
 	/**
 	 * @return The ObjectId
 	 */
@@ -104,66 +111,6 @@ public final class Dish extends AbstractEntity {
 	}
 
 	/**
-	 * @return The name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *            The name
-	 */
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	/**
-	 * @return The price
-	 */
-	public Integer getPrice() {
-		return price;
-	}
-
-	/**
-	 * @param price
-	 *            The price
-	 */
-	public void setPrice(final Integer price) {
-		this.price = price;
-	}
-
-	/**
-	 * @return The list of Ingredient
-	 */
-	public List<Ingredient> getIngredients() {
-		return ingredients;
-	}
-
-	/**
-	 * @param ingredients
-	 *            The list of Ingredient
-	 */
-	public void setIngredients(final List<Ingredient> ingredients) {
-		this.ingredients = ingredients;
-	}
-
-	/**
-	 * @return The Caterer
-	 */
-	public Caterer getCaterer() {
-		return caterer;
-	}
-
-	/**
-	 * @param caterer
-	 *            The Caterer
-	 */
-	public void setCaterer(final Caterer caterer) {
-		this.caterer = caterer;
-	}
-
-	/**
 	 * @return The type
 	 */
 	@JsonSerialize(using = DishTypeSerializer.class)
@@ -178,111 +125,6 @@ public final class Dish extends AbstractEntity {
 	@JsonDeserialize(using = DishTypeDeserializer.class)
 	public void setType(final DishType type) {
 		this.type = type;
-	}
-
-	/**
-	 * @return The description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @param description
-	 *            The description
-	 */
-	public void setDescription(final String description) {
-		this.description = description;
-	}
-
-	/**
-	 * @return The cooking time
-	 */
-	public Integer getCookingTime() {
-		return cookingTime;
-	}
-
-	/**
-	 * @param cookingTime
-	 *            The cooking time
-	 */
-	public void setCookingTime(final Integer cookingTime) {
-		this.cookingTime = cookingTime;
-	}
-
-	/**
-	 * @return The difficulty level
-	 */
-	public Integer getDifficultyLevel() {
-		return difficultyLevel;
-	}
-
-	/**
-	 * @param difficultyLevel
-	 *            The difficulty level
-	 */
-	public void setDifficultyLevel(final Integer difficultyLevel) {
-		this.difficultyLevel = difficultyLevel;
-	}
-
-	/**
-	 * @return The list of steps
-	 */
-	public List<String> getSteps() {
-		return steps;
-	}
-
-	/**
-	 * @param steps
-	 *            The list of steps
-	 */
-	public void setSteps(final List<String> steps) {
-		this.steps = steps;
-	}
-
-	/**
-	 * @return The list of NutritionFact
-	 */
-	public List<NutritionFact> getNutritionFacts() {
-		return nutritionFacts;
-	}
-
-	/**
-	 * @param nutritionFacts
-	 *            The list of NutritionFact
-	 */
-	public void setNutritionFacts(final List<NutritionFact> nutritionFacts) {
-		this.nutritionFacts = nutritionFacts;
-	}
-
-	/**
-	 * @return The image after url
-	 */
-	public String getImageAfterUrl() {
-		return imageAfterUrl;
-	}
-
-	/**
-	 * @param imageAfterUrl
-	 *            The image after url
-	 */
-	public void setImageAfterUrl(final String imageAfterUrl) {
-		this.imageAfterUrl = imageAfterUrl;
-	}
-
-	/**
-	 * @return The video url
-	 */
-	public String getVideoUrl() {
-		return videoUrl;
-	}
-
-	/**
-	 * @param videoUrl
-	 *            The video url
-	 */
-	public void setVideoUrl(final String videoUrl) {
-		this.videoUrl = videoUrl;
 	}
 
 	/**
@@ -394,184 +236,6 @@ public final class Dish extends AbstractEntity {
 			throw new EpickurParsingException("Can not convert string to Dish: " + json, e);
 		}
 		return dish;
-	}
-
-	/**
-	 * @return A list of condiments
-	 */
-	public List<String> getCondiments() {
-		return condiments;
-	}
-
-	/**
-	 * @param condiments A list of condiments
-	 */
-	public void setCondiments(final List<String> condiments) {
-		this.condiments = condiments;
-	}
-
-	/**
-	 * @return A list of utensils
-	 */
-	public List<String> getUtensils() {
-		return utensils;
-	}
-
-	/**
-	 * @param utensils A list of utensils
-	 */
-	public void setUtensils(final List<String> utensils) {
-		this.utensils = utensils;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((caterer == null) ? 0 : caterer.hashCode());
-		result = prime * result + ((cookingTime == null) ? 0 : cookingTime.hashCode());
-		result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((difficultyLevel == null) ? 0 : difficultyLevel.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((ingredients == null) ? 0 : ingredients.hashCode());
-		result = prime * result + ((utensils == null) ? 0 : utensils.hashCode());
-		result = prime * result + ((condiments == null) ? 0 : condiments.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((nutritionFacts == null) ? 0 : nutritionFacts.hashCode());
-		result = prime * result + ((price == null) ? 0 : price.hashCode());
-		result = prime * result + ((steps == null) ? 0 : steps.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
-		result = prime * result + ((videoUrl == null) ? 0 : videoUrl.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Dish)) {
-			return false;
-		}
-		Dish other = (Dish) obj;
-		if (caterer == null) {
-			if (other.caterer != null) {
-				return false;
-			}
-		} else if (!caterer.equals(other.caterer)) {
-			return false;
-		}
-		if (cookingTime == null) {
-			if (other.cookingTime != null) {
-				return false;
-			}
-		} else if (!cookingTime.equals(other.cookingTime)) {
-			return false;
-		}
-		if (createdAt == null) {
-			if (other.createdAt != null) {
-				return false;
-			}
-		} else if (!createdAt.equals(other.createdAt)) {
-			return false;
-		}
-		if (description == null) {
-			if (other.description != null) {
-				return false;
-			}
-		} else if (!description.equals(other.description)) {
-			return false;
-		}
-		if (difficultyLevel == null) {
-			if (other.difficultyLevel != null) {
-				return false;
-			}
-		} else if (!difficultyLevel.equals(other.difficultyLevel)) {
-			return false;
-		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		if (ingredients == null) {
-			if (other.ingredients != null) {
-				return false;
-			}
-		} else if (!ingredients.equals(other.ingredients)) {
-			return false;
-		}
-		if (condiments == null) {
-			if (other.condiments != null) {
-				return false;
-			}
-		} else if (!condiments.equals(other.condiments)) {
-			return false;
-		}
-		if (utensils == null) {
-			if (other.utensils != null) {
-				return false;
-			}
-		} else if (!utensils.equals(other.utensils)) {
-			return false;
-		}
-		if (name == null) {
-			if (other.name != null) {
-				return false;
-			}
-		} else if (!name.equals(other.name)) {
-			return false;
-		}
-		if (nutritionFacts == null) {
-			if (other.nutritionFacts != null) {
-				return false;
-			}
-		} else if (!nutritionFacts.equals(other.nutritionFacts)) {
-			return false;
-		}
-		if (price == null) {
-			if (other.price != null) {
-				return false;
-			}
-		} else if (!price.equals(other.price)) {
-			return false;
-		}
-		if (steps == null) {
-			if (other.steps != null) {
-				return false;
-			}
-		} else if (!steps.equals(other.steps)) {
-			return false;
-		}
-		if (type == null) {
-			if (other.type != null) {
-				return false;
-			}
-		} else if (!type.equals(other.type)) {
-			return false;
-		}
-		if (updatedAt == null) {
-			if (other.updatedAt != null) {
-				return false;
-			}
-		} else if (!updatedAt.equals(other.updatedAt)) {
-			return false;
-		}
-		if (videoUrl == null) {
-			if (other.videoUrl != null) {
-				return false;
-			}
-		} else if (!videoUrl.equals(other.videoUrl)) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override

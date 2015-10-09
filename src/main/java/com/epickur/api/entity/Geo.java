@@ -14,6 +14,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 /**
  * Geo entity
  * 
@@ -22,6 +25,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "type", "coordinates" })
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public final class Geo extends AbstractEntity {
 
 	/** Logger */
@@ -135,40 +140,6 @@ public final class Geo extends AbstractEntity {
 		nearSphere.append("$minDistance", minDistance);
 		nearSphere.append("$maxDistance", maxDistance);
 		return nearSphere;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(coordinates);
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Geo)) {
-			return false;
-		}
-		Geo other = (Geo) obj;
-		if (!Arrays.equals(coordinates, other.coordinates)) {
-			return false;
-		}
-		if (type == null) {
-			if (other.type != null) {
-				return false;
-			}
-		} else if (!type.equals(other.type)) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override

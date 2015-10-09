@@ -31,6 +31,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Caterer entity
  * 
@@ -40,6 +46,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "description", "manager", "email", "phone", "location", "workingTimes", "createdBy", "createdAt",
 		"updatedAt" })
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public final class Caterer extends AbstractEntity {
 
 	/** Logger */
@@ -67,10 +78,6 @@ public final class Caterer extends AbstractEntity {
 	/** Updated at */
 	private DateTime updatedAt;
 
-	/** Construct a Caterer */
-	public Caterer() {
-	}
-
 	/**
 	 * @return The ObjectId
 	 */
@@ -89,81 +96,6 @@ public final class Caterer extends AbstractEntity {
 	}
 
 	/**
-	 * @return The name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *            The name
-	 */
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	/**
-	 * @return The description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @param description
-	 *            The description
-	 */
-	public void setDescription(final String description) {
-		this.description = description;
-	}
-
-	/**
-	 * @return The manager
-	 */
-	public String getManager() {
-		return manager;
-	}
-
-	/**
-	 * @param manager
-	 *            The manager
-	 */
-	public void setManager(final String manager) {
-		this.manager = manager;
-	}
-
-	/**
-	 * @return The email
-	 */
-	public String getEmail() {
-		return email;
-	}
-
-	/**
-	 * @param email
-	 *            The email
-	 */
-	public void setEmail(final String email) {
-		this.email = email;
-	}
-
-	/**
-	 * @return The phone
-	 */
-	public String getPhone() {
-		return phone;
-	}
-
-	/**
-	 * @param phone
-	 *            The phone
-	 */
-	public void setPhone(final String phone) {
-		this.phone = phone;
-	}
-
-	/**
 	 * @return The user id that created the object
 	 */
 	@JsonSerialize(using = ObjectIdSerializer.class)
@@ -178,36 +110,6 @@ public final class Caterer extends AbstractEntity {
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setCreatedBy(final ObjectId ownerId) {
 		this.createdBy = ownerId;
-	}
-
-	/**
-	 * @return The Location
-	 */
-	public Location getLocation() {
-		return location;
-	}
-
-	/**
-	 * @param location
-	 *            The Location
-	 */
-	public void setLocation(final Location location) {
-		this.location = location;
-	}
-
-	/**
-	 * @return A Working Times
-	 */
-	public WorkingTimes getWorkingTimes() {
-		return workingTimes;
-	}
-
-	/**
-	 * @param workingTimes
-	 *            The working times
-	 */
-	public void setWorkingTimes(final WorkingTimes workingTimes) {
-		this.workingTimes = workingTimes;
 	}
 
 	/**
@@ -340,96 +242,6 @@ public final class Caterer extends AbstractEntity {
 			throw new EpickurParsingException("Can not convert string to Caterer: " + json, e);
 		}
 		return caterer;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		// result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((location == null) ? 0 : location.hashCode());
-		result = prime * result + ((manager == null) ? 0 : manager.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
-		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Caterer)) {
-			return false;
-		}
-		Caterer other = (Caterer) obj;
-		/*
-		 * if (createdAt == null) { if (other.createdAt != null) { return false; } } else if (!createdAt.equals(other.createdAt)) { return false; }
-		 */
-		if (description == null) {
-			if (other.description != null) {
-				return false;
-			}
-		} else if (!description.equals(other.description)) {
-			return false;
-		}
-		if (email == null) {
-			if (other.email != null) {
-				return false;
-			}
-		} else if (!email.equals(other.email)) {
-			return false;
-		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		if (location == null) {
-			if (other.location != null) {
-				return false;
-			}
-		} else if (!location.equals(other.location)) {
-			return false;
-		}
-		if (manager == null) {
-			if (other.manager != null) {
-				return false;
-			}
-		} else if (!manager.equals(other.manager)) {
-			return false;
-		}
-		if (name == null) {
-			if (other.name != null) {
-				return false;
-			}
-		} else if (!name.equals(other.name)) {
-			return false;
-		}
-		if (phone == null) {
-			if (other.phone != null) {
-				return false;
-			}
-		} else if (!phone.equals(other.phone)) {
-			return false;
-		}
-		if (updatedAt == null) {
-			if (other.updatedAt != null) {
-				return false;
-			}
-		} else if (!updatedAt.equals(other.updatedAt)) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override

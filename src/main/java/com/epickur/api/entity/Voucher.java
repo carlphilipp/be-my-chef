@@ -33,6 +33,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Voucher entity.
  * 
@@ -43,6 +49,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "code", "discount", "discountType", "expirationType", "expiration", "status", "usedCount", "createdAt",
 		"updatedAt" })
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public final class Voucher extends AbstractEntity {
 
 	/** Id */
@@ -81,36 +92,6 @@ public final class Voucher extends AbstractEntity {
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setId(final ObjectId id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return The Code
-	 */
-	public String getCode() {
-		return code;
-	}
-
-	/**
-	 * @param code
-	 *            The Code
-	 */
-	public void setCode(final String code) {
-		this.code = code;
-	}
-
-	/**
-	 * @return The discount
-	 */
-	public Integer getDiscount() {
-		return discount;
-	}
-
-	/**
-	 * @param discount
-	 *            The discount
-	 */
-	public void setDiscount(final Integer discount) {
-		this.discount = discount;
 	}
 
 	/**
@@ -179,21 +160,6 @@ public final class Voucher extends AbstractEntity {
 	@JsonDeserialize(using = StatusDeserializer.class)
 	public void setStatus(final Status status) {
 		this.status = status;
-	}
-
-	/**
-	 * @return Used count
-	 */
-	public Integer getUsedCount() {
-		return usedCount;
-	}
-
-	/**
-	 * @param usedCount
-	 *            Used count
-	 */
-	public void setUsedCount(final Integer usedCount) {
-		this.usedCount = usedCount;
 	}
 
 	/**
@@ -281,95 +247,4 @@ public final class Voucher extends AbstractEntity {
 		}
 		return result;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
-		result = prime * result + ((discount == null) ? 0 : discount.hashCode());
-		result = prime * result + ((discountType == null) ? 0 : discountType.hashCode());
-		result = prime * result + ((expiration == null) ? 0 : expiration.hashCode());
-		result = prime * result + ((expirationType == null) ? 0 : expirationType.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
-		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
-		result = prime * result + ((usedCount == null) ? 0 : usedCount.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Voucher)) {
-			return false;
-		}
-		Voucher other = (Voucher) obj;
-		if (code == null) {
-			if (other.code != null) {
-				return false;
-			}
-		} else if (!code.equals(other.code)) {
-			return false;
-		}
-		if (createdAt == null) {
-			if (other.createdAt != null) {
-				return false;
-			}
-		} else if (!createdAt.equals(other.createdAt)) {
-			return false;
-		}
-		if (discount == null) {
-			if (other.discount != null) {
-				return false;
-			}
-		} else if (!discount.equals(other.discount)) {
-			return false;
-		}
-		if (discountType != other.discountType) {
-			return false;
-		}
-		if (expiration == null) {
-			if (other.expiration != null) {
-				return false;
-			}
-		} else if (!expiration.equals(other.expiration)) {
-			return false;
-		}
-		if (expirationType != other.expirationType) {
-			return false;
-		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		if (status != other.status) {
-			return false;
-		}
-		if (updatedAt == null) {
-			if (other.updatedAt != null) {
-				return false;
-			}
-		} else if (!updatedAt.equals(other.updatedAt)) {
-			return false;
-		}
-		if (usedCount == null) {
-			if (other.usedCount != null) {
-				return false;
-			}
-		} else if (!usedCount.equals(other.usedCount)) {
-			return false;
-		}
-		return true;
-	}
-
 }

@@ -32,6 +32,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Order entity
  * 
@@ -41,6 +47,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "readableId", "userId", "description", "amount", "status", "currency", "pickupdate", "cardToken", "chargeId",
 		"paid", "dish", "voucher", "createdBy", "createdAt", "updatedAt" })
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public final class Order extends AbstractEntity {
 
 	/** Logger */
@@ -78,10 +89,6 @@ public final class Order extends AbstractEntity {
 	/** Updated at */
 	private DateTime updatedAt;
 
-	/** Constructor */
-	public Order() {
-	}
-
 	/**
 	 * @return The ObjectId
 	 */
@@ -100,65 +107,6 @@ public final class Order extends AbstractEntity {
 	}
 
 	/**
-	 * @return The Dish
-	 */
-	public Dish getDish() {
-		return dish;
-	}
-
-	/**
-	 * @param dish
-	 *            The Dish
-	 */
-	public void setDish(final Dish dish) {
-		this.dish = dish;
-	}
-
-	/**
-	 * @return
-	 */
-	public Voucher getVoucher() {
-		return voucher;
-	}
-
-	/**
-	 * @param voucher
-	 */
-	public void setVoucher(final Voucher voucher) {
-		this.voucher = voucher;
-	}
-
-	/**
-	 * @return The description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @param description
-	 *            The description
-	 */
-	public void setDescription(final String description) {
-		this.description = description;
-	}
-
-	/**
-	 * @return The amount
-	 */
-	public Integer getAmount() {
-		return amount;
-	}
-
-	/**
-	 * @param amount
-	 *            The amount
-	 */
-	public void setAmount(final Integer amount) {
-		this.amount = amount;
-	}
-
-	/**
 	 * @return The order status
 	 */
 	@JsonSerialize(using = OrderStatusSerializer.class)
@@ -173,66 +121,6 @@ public final class Order extends AbstractEntity {
 	@JsonDeserialize(using = OrderStatusDeserializer.class)
 	public void setStatus(final OrderStatus status) {
 		this.status = status;
-	}
-
-	/**
-	 * @return The currency
-	 */
-	public Currency getCurrency() {
-		return currency;
-	}
-
-	/**
-	 * @param currency
-	 *            The currency
-	 */
-	public void setCurrency(final Currency currency) {
-		this.currency = currency;
-	}
-
-	/**
-	 * @return The pickupdate.
-	 */
-	public String getPickupdate() {
-		return pickupdate;
-	}
-
-	/**
-	 * @param pickupdate
-	 *            The pickupdate.
-	 */
-	public void setPickupdate(final String pickupdate) {
-		this.pickupdate = pickupdate;
-	}
-
-	/**
-	 * @return The charge id
-	 */
-	public String getChargeId() {
-		return chargeId;
-	}
-
-	/**
-	 * @param chargeId
-	 *            The charge id
-	 */
-	public void setChargeId(final String chargeId) {
-		this.chargeId = chargeId;
-	}
-
-	/**
-	 * @return If is paid
-	 */
-	public Boolean getPaid() {
-		return paid;
-	}
-
-	/**
-	 * @param paid
-	 *            If is paid
-	 */
-	public void setPaid(final Boolean paid) {
-		this.paid = paid;
 	}
 
 	/**
@@ -269,14 +157,6 @@ public final class Order extends AbstractEntity {
 		this.updatedAt = updatedAt;
 	}
 
-	public OrderMode getMode() {
-		return mode;
-	}
-
-	public void setMode(OrderMode mode) {
-		this.mode = mode;
-	}
-
 	/**
 	 * @return The user id that created the object
 	 */
@@ -292,36 +172,6 @@ public final class Order extends AbstractEntity {
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setCreatedBy(final ObjectId createdBy) {
 		this.createdBy = createdBy;
-	}
-
-	/**
-	 * @return A card token
-	 */
-	public String getCardToken() {
-		return cardToken;
-	}
-
-	/**
-	 * @param cardToken
-	 *            A card token
-	 */
-	public void setCardToken(final String cardToken) {
-		this.cardToken = cardToken;
-	}
-
-	/**
-	 * @return A readable id
-	 */
-	public String getReadableId() {
-		return readableId;
-	}
-
-	/**
-	 * @param readableId
-	 *            A readable id
-	 */
-	public void setReadableId(final String readableId) {
-		this.readableId = readableId;
 	}
 
 	public Integer calculateTotalAmount() {
@@ -439,144 +289,6 @@ public final class Order extends AbstractEntity {
 			throw new EpickurParsingException("Can not convert string to Order: " + json, e);
 		}
 		return user;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
-		result = prime * result + ((cardToken == null) ? 0 : cardToken.hashCode());
-		result = prime * result + ((chargeId == null) ? 0 : chargeId.hashCode());
-		result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
-		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((dish == null) ? 0 : dish.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((mode == null) ? 0 : mode.hashCode());
-		result = prime * result + ((paid == null) ? 0 : paid.hashCode());
-		result = prime * result + ((pickupdate == null) ? 0 : pickupdate.hashCode());
-		result = prime * result + ((readableId == null) ? 0 : readableId.hashCode());
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
-		result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
-		result = prime * result + ((voucher == null) ? 0 : voucher.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Order)) {
-			return false;
-		}
-		Order other = (Order) obj;
-		if (amount == null) {
-			if (other.amount != null) {
-				return false;
-			}
-		} else if (!amount.equals(other.amount)) {
-			return false;
-		}
-		if (cardToken == null) {
-			if (other.cardToken != null) {
-				return false;
-			}
-		} else if (!cardToken.equals(other.cardToken)) {
-			return false;
-		}
-		if (chargeId == null) {
-			if (other.chargeId != null) {
-				return false;
-			}
-		} else if (!chargeId.equals(other.chargeId)) {
-			return false;
-		}
-		if (createdAt == null) {
-			if (other.createdAt != null) {
-				return false;
-			}
-		} else if (!createdAt.equals(other.createdAt)) {
-			return false;
-		}
-		if (createdBy == null) {
-			if (other.createdBy != null) {
-				return false;
-			}
-		} else if (!createdBy.equals(other.createdBy)) {
-			return false;
-		}
-		if (currency != other.currency) {
-			return false;
-		}
-		if (description == null) {
-			if (other.description != null) {
-				return false;
-			}
-		} else if (!description.equals(other.description)) {
-			return false;
-		}
-		if (dish == null) {
-			if (other.dish != null) {
-				return false;
-			}
-		} else if (!dish.equals(other.dish)) {
-			return false;
-		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		if (mode != other.mode) {
-			return false;
-		}
-		if (paid == null) {
-			if (other.paid != null) {
-				return false;
-			}
-		} else if (!paid.equals(other.paid)) {
-			return false;
-		}
-		if (pickupdate == null) {
-			if (other.pickupdate != null) {
-				return false;
-			}
-		} else if (!pickupdate.equals(other.pickupdate)) {
-			return false;
-		}
-		if (readableId == null) {
-			if (other.readableId != null) {
-				return false;
-			}
-		} else if (!readableId.equals(other.readableId)) {
-			return false;
-		}
-		if (status != other.status) {
-			return false;
-		}
-		if (updatedAt == null) {
-			if (other.updatedAt != null) {
-				return false;
-			}
-		} else if (!updatedAt.equals(other.updatedAt)) {
-			return false;
-		}
-		if (voucher == null) {
-			if (other.voucher != null) {
-				return false;
-			}
-		} else if (!voucher.equals(other.voucher)) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override
