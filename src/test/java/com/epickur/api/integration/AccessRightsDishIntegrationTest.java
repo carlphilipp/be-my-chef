@@ -71,7 +71,7 @@ public class AccessRightsDishIntegrationTest {
 		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), new ObjectId());
 		dish.setCaterer(caterer);
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -118,7 +118,7 @@ public class AccessRightsDishIntegrationTest {
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -166,7 +166,7 @@ public class AccessRightsDishIntegrationTest {
 		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), new ObjectId());
 		dish.setCaterer(caterer);
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -196,7 +196,7 @@ public class AccessRightsDishIntegrationTest {
 		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), user.getId());
 		dish.setCaterer(caterer);
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -245,7 +245,7 @@ public class AccessRightsDishIntegrationTest {
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -271,7 +271,7 @@ public class AccessRightsDishIntegrationTest {
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -345,7 +345,7 @@ public class AccessRightsDishIntegrationTest {
 		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), new ObjectId());
 		dish.setCaterer(caterer);
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -376,7 +376,7 @@ public class AccessRightsDishIntegrationTest {
 		dish.setCaterer(caterer);
 		dish.setCreatedBy(user.getId());
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -425,7 +425,7 @@ public class AccessRightsDishIntegrationTest {
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -451,7 +451,7 @@ public class AccessRightsDishIntegrationTest {
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
 
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);

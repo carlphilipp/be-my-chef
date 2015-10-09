@@ -110,7 +110,7 @@ public class DishIntegrationTest {
 		ObjectMapper mapper = new ObjectMapper();
 		HttpPost request = new HttpPost(URL);
 		// String asText = json.toString();
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
@@ -168,7 +168,7 @@ public class DishIntegrationTest {
 		ObjectMapper mapper = new ObjectMapper();
 
 		HttpPost request = new HttpPost(URL);
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
@@ -238,7 +238,7 @@ public class DishIntegrationTest {
 		ObjectMapper mapper = new ObjectMapper();
 
 		HttpPost request = new HttpPost(URL);
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
@@ -336,7 +336,7 @@ public class DishIntegrationTest {
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
 		HttpPost request = new HttpPost(URL);
-		StringEntity requestEntity = new StringEntity(dish.toString());
+		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 

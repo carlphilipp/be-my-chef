@@ -65,7 +65,7 @@ public class AccessRightsCatererIntegrationTest {
 
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 
-		StringEntity requestEntity = new StringEntity(caterer.toString());
+		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -111,7 +111,7 @@ public class AccessRightsCatererIntegrationTest {
 		Caterer user = TestUtils.generateRandomCatererWithId();
 		user.setId(caterer.getId());
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -154,7 +154,7 @@ public class AccessRightsCatererIntegrationTest {
 
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 
-		StringEntity requestEntity = new StringEntity(caterer.toString());
+		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -201,7 +201,7 @@ public class AccessRightsCatererIntegrationTest {
 		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
 
-		StringEntity requestEntity = new StringEntity(caterer.toString());
+		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -226,7 +226,7 @@ public class AccessRightsCatererIntegrationTest {
 		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
 
-		StringEntity requestEntity = new StringEntity(caterer.toString());
+		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -269,7 +269,7 @@ public class AccessRightsCatererIntegrationTest {
 
 		Caterer caterer = TestUtils.generateRandomCatererWithId();
 
-		StringEntity requestEntity = new StringEntity(caterer.toString());
+		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -316,7 +316,7 @@ public class AccessRightsCatererIntegrationTest {
 		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
 
-		StringEntity requestEntity = new StringEntity(caterer.toString());
+		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);

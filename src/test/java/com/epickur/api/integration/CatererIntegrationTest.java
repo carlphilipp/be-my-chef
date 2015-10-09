@@ -32,6 +32,7 @@ import com.epickur.api.entity.Location;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurParsingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -141,7 +142,7 @@ public class CatererIntegrationTest {
 	}
 
 	@Test
-	public void testCreate() throws ClientProtocolException, IOException {
+	public void testCreate() throws ClientProtocolException, IOException, EpickurParsingException {
 		String jsonMimeType = "application/json";
 
 		// Create
@@ -171,7 +172,7 @@ public class CatererIntegrationTest {
 		caterer.setWorkingTimes(TestUtils.generateRandomWorkingTimes());
 
 		HttpPost request = new HttpPost(URL);
-		StringEntity requestEntity = new StringEntity(caterer.toString());
+		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 

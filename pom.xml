@@ -8,7 +8,6 @@
 	<packaging>war</packaging>
 	<name>Epickur API</name>
 	<url>https://www.bemychef.com.au</url>
-
 	<description>The API that allow users to connect to Epickur data.</description>
 
 	<organization>
@@ -100,7 +99,7 @@
 			<version>2.2.1</version>
 		</dependency>
 
-		<!-- Utils -->
+		<!-- Apache -->
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -276,25 +275,6 @@
 			<version>1.1</version>
 		</dependency>
 
-		<!-- MongoDB util (import/export) -->
-		<!-- 
-		<dependency>
-			<groupId>com.wordnik</groupId>
-			<artifactId>mongo-admin-utils_2.10.0</artifactId>
-			<version>1.1.6</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.mongodb</groupId>
-					<artifactId>mongo-java-driver</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.module</groupId>
-					<artifactId>jackson-module-jaxb-annotations</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
- -->
- 
 		<!-- Generate PDF -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
@@ -317,6 +297,14 @@
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk</artifactId>
 			<version>1.10.16</version>
+		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.6</version>
+			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>
@@ -390,7 +378,7 @@
 						<directory>src/main/resources</directory>
 						<filtering>true</filtering>
 						<excludes>
-						  <exclude>apidoc/**</exclude>
+							<exclude>apidoc/**</exclude>
 							<exclude>env/aws.properties</exclude>
 							<exclude>env/local.template.properties</exclude>
 							<exclude>env/log4j2.prod.xml</exclude>
@@ -444,8 +432,8 @@
 							</includes>
 						</configuration>
 					</plugin>
-					 
-					
+
+
 					<!-- Deploy Tomcat 7 -->
 					<plugin>
 						<groupId>org.codehaus.cargo</groupId>
@@ -453,13 +441,13 @@
 						<version>1.4.12</version>
 						<configuration>
 
-						 <!-- Container configuration -->
+							<!-- Container configuration -->
 							<container>
 								<containerId>tomcat7x</containerId>
 								<home>${project.tomcat7.path}</home>
 							</container>
 
-							 <!-- Configuration to use with the container -->
+							<!-- Configuration to use with the container -->
 							<configuration>
 								<home>${project.build.directory}/tomcat7x</home>
 								<properties>
@@ -506,7 +494,7 @@
 						</dependencies>
 					</plugin>
 
-          <!-- Inject local properties into project -->
+					<!-- Inject local properties into project -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>properties-maven-plugin</artifactId>
@@ -542,7 +530,7 @@
 						<directory>src/main/resources</directory>
 						<filtering>true</filtering>
 						<excludes>
-						  <exclude>apidoc/**</exclude>
+							<exclude>apidoc/**</exclude>
 							<exclude>env/**</exclude>
 							<exclude>epickur-checkstyle.xml</exclude>
 							<exclude>epickur-eclipse-profil.xml</exclude>
@@ -615,13 +603,13 @@
 									<target>
 										<echo
 											message="Connecting to ${server.login}@${server.address}:${server.base}" />
-											
+
 										<echo message="Push ${war.name}.war to /home/tomcat7" />
-                    <scp trust="yes"
-                      todir="${server.login}:${server.password}@${server.address}:/home/tomcat7"
-                      file="${basedir}/target/${war.name}.war">
-                    </scp>
-											
+										<scp trust="yes"
+											todir="${server.login}:${server.password}@${server.address}:/home/tomcat7"
+											file="${basedir}/target/${war.name}.war">
+										</scp>
+
 										<echo message="Stoping tomcat..." />
 										<sshexec host="${server.address}" username="${server.login}"
 											password="${server.password}" command="${server.base}/bin/shutdown.sh" />
@@ -635,10 +623,11 @@
 											password="${server.password}"
 											command="rm -f -R ${server.base}/work/*;rm -f -R ${server.base}/temp/*" />
 
-										<echo message="Move ${war.name}.war from /home/tomcat7 to ${server.base}/webapps" />
+										<echo
+											message="Move ${war.name}.war from /home/tomcat7 to ${server.base}/webapps" />
 										<sshexec host="${server.address}" username="${server.login}"
-                      password="${server.password}"
-                      command="mv /home/tomcat7/${war.name}.war ${server.base}/webapps" />
+											password="${server.password}"
+											command="mv /home/tomcat7/${war.name}.war ${server.base}/webapps" />
 
 										<echo message="Starting tomcat..." />
 										<sshexec host="${server.address}" username="${server.login}"
@@ -782,13 +771,8 @@
 
 	<dependencyManagement>
 		<dependencies>
-		<!-- 
-			<dependency>
-				<groupId>org.codehaus.plexus</groupId>
-				<artifactId>plexus-utils</artifactId>
-				<version>3.0.22</version>
-			</dependency>
-			-->
+			<!-- <dependency> <groupId>org.codehaus.plexus</groupId> <artifactId>plexus-utils</artifactId> 
+				<version>3.0.22</version> </dependency> -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
@@ -804,39 +788,15 @@
 				<artifactId>jackson-databind</artifactId>
 				<version>2.6.1</version>
 			</dependency>
-			<!--  
-			<dependency>
-				<groupId>c3p0</groupId>
-				<artifactId>c3p0</artifactId>
-				<version>0.9.1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>1.9.2</version>
-			</dependency>
-			<dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-collections4</artifactId>
-        <version>4.0</version>
-      </dependency>
-			<dependency>
-				<groupId>commons-collections</groupId>
-				<artifactId>commons-collections</artifactId>
-				<version>3.2.1</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>commons-lang</groupId>
-				<artifactId>commons-lang</artifactId>
-				<version>2.6</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>1.2</version>
-			</dependency>
-			 -->
+			<!-- <dependency> <groupId>c3p0</groupId> <artifactId>c3p0</artifactId> 
+				<version>0.9.1.1</version> </dependency> <dependency> <groupId>commons-beanutils</groupId> 
+				<artifactId>commons-beanutils</artifactId> <version>1.9.2</version> </dependency> 
+				<dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-collections4</artifactId> 
+				<version>4.0</version> </dependency> <dependency> <groupId>commons-collections</groupId> 
+				<artifactId>commons-collections</artifactId> <version>3.2.1</version> </dependency> 
+				<dependency> <groupId>commons-lang</groupId> <artifactId>commons-lang</artifactId> 
+				<version>2.6</version> </dependency> <dependency> <groupId>commons-logging</groupId> 
+				<artifactId>commons-logging</artifactId> <version>1.2</version> </dependency> -->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -847,33 +807,14 @@
 				<artifactId>commons-lang3</artifactId>
 				<version>3.4</version>
 			</dependency>
-			<!--
-			<dependency>
-				<groupId>org.apache.maven.doxia</groupId>
-				<artifactId>doxia-core</artifactId>
-				<version>1.6</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven.doxia</groupId>
-				<artifactId>doxia-sink-api</artifactId>
-				<version>1.6</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.plexus</groupId>
-				<artifactId>plexus-container-default</artifactId>
-				<version>1.6</version>
-			</dependency>
-			<dependency>
-				<groupId>xerces</groupId>
-				<artifactId>xercesImpl</artifactId>
-				<version>2.11.0</version>
-			</dependency>
-			<dependency>
-				<groupId>classworlds</groupId>
-				<artifactId>classworlds</artifactId>
-				<version>1.1</version>
-			</dependency>
-			-->
+			<!-- <dependency> <groupId>org.apache.maven.doxia</groupId> <artifactId>doxia-core</artifactId> 
+				<version>1.6</version> </dependency> <dependency> <groupId>org.apache.maven.doxia</groupId> 
+				<artifactId>doxia-sink-api</artifactId> <version>1.6</version> </dependency> 
+				<dependency> <groupId>org.codehaus.plexus</groupId> <artifactId>plexus-container-default</artifactId> 
+				<version>1.6</version> </dependency> <dependency> <groupId>xerces</groupId> 
+				<artifactId>xercesImpl</artifactId> <version>2.11.0</version> </dependency> 
+				<dependency> <groupId>classworlds</groupId> <artifactId>classworlds</artifactId> 
+				<version>1.1</version> </dependency> -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>

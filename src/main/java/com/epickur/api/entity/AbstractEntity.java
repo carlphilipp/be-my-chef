@@ -1,7 +1,5 @@
 package com.epickur.api.entity;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.epickur.api.exception.EpickurParsingException;
@@ -19,9 +17,6 @@ import com.mongodb.util.JSONParseException;
  * @version 1.0
  */
 public abstract class AbstractEntity implements IEntity {
-
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(AbstractEntity.class.getSimpleName());
 
 	@JsonIgnore
 	@Override
@@ -62,17 +57,6 @@ public abstract class AbstractEntity implements IEntity {
 	 */
 	public final String toStringAPIView() throws EpickurParsingException {
 		return getDocumentAPIView().toJson();
-	}
-
-	@Override
-	public final String toString() {
-		try {
-			ObjectMapper om = ObjectMapperWrapperAPI.getInstance();
-			return om.writeValueAsString(this);
-		} catch (JsonProcessingException e) {
-			LOG.error(e.getLocalizedMessage(), e);
-			return "error";
-		}
 	}
 
 	@Override

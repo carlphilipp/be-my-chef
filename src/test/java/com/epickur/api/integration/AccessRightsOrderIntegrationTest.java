@@ -86,7 +86,7 @@ public class AccessRightsOrderIntegrationTest {
 
 		Order order = TestUtils.generateRandomOrder();
 
-		StringEntity requestEntity = new StringEntity(order.toString());
+		StringEntity requestEntity = new StringEntity(order.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("charge-agent", "true");
@@ -168,7 +168,7 @@ public class AccessRightsOrderIntegrationTest {
 		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
-		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -195,7 +195,7 @@ public class AccessRightsOrderIntegrationTest {
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
-		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -244,7 +244,7 @@ public class AccessRightsOrderIntegrationTest {
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		Order order = TestUtils.generateRandomOrder();
-		StringEntity requestEntity = new StringEntity(order.toString());
+		StringEntity requestEntity = new StringEntity(order.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("charge-agent", "true");
@@ -351,7 +351,7 @@ public class AccessRightsOrderIntegrationTest {
 		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
-		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -380,7 +380,7 @@ public class AccessRightsOrderIntegrationTest {
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + sUser.getKey();
 
-		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -428,7 +428,7 @@ public class AccessRightsOrderIntegrationTest {
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		Order order = TestUtils.generateRandomOrder();
-		StringEntity requestEntity = new StringEntity(order.toString());
+		StringEntity requestEntity = new StringEntity(order.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("charge-agent", "true");
@@ -533,7 +533,7 @@ public class AccessRightsOrderIntegrationTest {
 		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
-		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -559,7 +559,7 @@ public class AccessRightsOrderIntegrationTest {
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
-		StringEntity requestEntity = new StringEntity(updatedOrder.toString());
+		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);

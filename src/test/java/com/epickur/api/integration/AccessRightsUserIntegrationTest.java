@@ -74,7 +74,7 @@ public class AccessRightsUserIntegrationTest {
 
 		User user = TestUtils.generateRandomUser();
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("email-agent", "false");
@@ -123,7 +123,7 @@ public class AccessRightsUserIntegrationTest {
 		User user = TestUtils.generateRandomUser();
 		user.setId(normalUser.getId());
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -167,7 +167,7 @@ public class AccessRightsUserIntegrationTest {
 
 		User user = TestUtils.generateRandomUser();
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("email-agent", "false");
@@ -246,7 +246,7 @@ public class AccessRightsUserIntegrationTest {
 		User user = TestUtils.generateRandomUser();
 		user.setId(superUser.getId());
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -276,7 +276,7 @@ public class AccessRightsUserIntegrationTest {
 		User user = TestUtils.generateRandomUser();
 		user.setId(new ObjectId(id));
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -321,7 +321,7 @@ public class AccessRightsUserIntegrationTest {
 
 		User user = TestUtils.generateRandomUser();
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("email-agent", "false");
@@ -400,7 +400,7 @@ public class AccessRightsUserIntegrationTest {
 		User user = TestUtils.generateRandomUser();
 		user.setId(normalUser.getId());
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -427,7 +427,7 @@ public class AccessRightsUserIntegrationTest {
 		User user = TestUtils.generateRandomUser();
 		user.setId(new ObjectId(id));
 
-		StringEntity requestEntity = new StringEntity(user.toString());
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
