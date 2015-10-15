@@ -13,11 +13,8 @@ import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 
-import com.epickur.api.entity.deserialize.DateDeserializer;
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
-import com.epickur.api.entity.serialize.DateSerializer;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.View;
@@ -50,13 +47,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(callSuper = false)
-public final class Caterer extends AbstractEntity {
+@EqualsAndHashCode(callSuper = true)
+public final class Caterer extends AbstractMainDBEntity {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Caterer.class.getSimpleName());
-	/** Id */
-	private ObjectId id;
 	/** Name */
 	private String name;
 	/** Description */
@@ -73,27 +68,6 @@ public final class Caterer extends AbstractEntity {
 	private WorkingTimes workingTimes;
 	/** Owner id */
 	private ObjectId createdBy;
-	/** Created at */
-	private DateTime createdAt;
-	/** Updated at */
-	private DateTime updatedAt;
-
-	/**
-	 * @return The ObjectId
-	 */
-	@JsonSerialize(using = ObjectIdSerializer.class)
-	public ObjectId getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            The ObjectId
-	 */
-	@JsonDeserialize(using = ObjectIdDeserializer.class)
-	public void setId(final ObjectId id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return The user id that created the object
@@ -110,40 +84,6 @@ public final class Caterer extends AbstractEntity {
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setCreatedBy(final ObjectId ownerId) {
 		this.createdBy = ownerId;
-	}
-
-	/**
-	 * @return The creation date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	/**
-	 * @param createdAt
-	 *            The creation date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setCreatedAt(final DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	/**
-	 * @return The updated date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	/**
-	 * @param updatedAt
-	 *            The updated date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setUpdatedAt(final DateTime updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	/**
@@ -215,8 +155,21 @@ public final class Caterer extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an EpickurParsingException exception occurred
 	 */
-	public static Caterer getObject(final Document obj, final View view) throws EpickurParsingException {
-		return Caterer.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)), view);
+	public static Caterer getDocumentAsCatererDBView(final Document obj) throws EpickurParsingException {
+		return Caterer.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)), View.DB);
+	}
+
+	/**
+	 * @param obj
+	 *            The Document
+	 * @param view
+	 *            The View
+	 * @return the Caterer
+	 * @throws EpickurParsingException
+	 *             If an EpickurParsingException exception occurred
+	 */
+	public static Caterer getDocumentAsCatererAPIView(final Document obj) throws EpickurParsingException {
+		return Caterer.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)), View.API);
 	}
 
 	/**

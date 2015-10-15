@@ -11,7 +11,6 @@ import org.bson.BsonInt32;
 import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
@@ -20,10 +19,9 @@ import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.model.ReturnDocument;
 
 /**
  * Dish DAO access with CRUD operations.
@@ -51,67 +49,44 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 
 	@Override
 	public Dish create(final Dish dish) throws EpickurException {
-		dish.setId(null);
-		DateTime time = new DateTime();
-		dish.setCreatedAt(time);
-		dish.setUpdatedAt(time);
+		dish.prepareForInsertionIntoDB();
 		LOG.debug("Create dish: " + dish);
-		Document doc = null;
-		try {
-			doc = dish.getDocumentDBView();
-			getColl().insertOne(doc);
-			return Dish.getObject(doc);
-		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), doc, e);
-		}
+		Document doc = dish.getDocumentDBView();
+		insert(doc);
+		return Dish.getDocumentAsDish(doc);
 	}
 
 	@Override
 	public Dish read(final String id) throws EpickurException {
-		try {
-			Document query = new Document().append("_id", new ObjectId(id));
-			LOG.debug("Read dish: " + id);
-			Document find = getColl().find(query).first();
-			if (find != null) {
-				return Dish.getObject(find);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), id, e);
-		}
+		LOG.debug("Read dish with id: " + id);
+		Document query = convertAttributeToDocument("_id", new ObjectId(id));
+		Document find = find(query);
+		return processAfterQuery(find);
 	}
 
 	@Override
 	public Dish update(final Dish dish) throws EpickurException {
-		Document filter = new Document().append("_id", dish.getId());
-		DateTime time = new DateTime();
-		dish.setCreatedAt(null);
-		dish.setUpdatedAt(time);
+		dish.prepareForUpdateIntoDB();
 		LOG.debug("Update dish: " + dish);
+		Document filter = convertAttributeToDocument("_id", dish.getId());
 		Document update = dish.getUpdateDocument();
-		try {
-			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
-			if (updated != null) {
-				return Dish.getObject(updated);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			LOG.error(e.getLocalizedMessage(), e);
-			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
+		Document updated = update(filter, update);
+		return processAfterQuery(updated);
+	}
+
+	private Dish processAfterQuery(final Document document) throws EpickurParsingException {
+		if (document != null) {
+			return Dish.getDocumentAsDish(document);
+		} else {
+			return null;
 		}
 	}
 
 	@Override
 	public boolean delete(final String id) throws EpickurException {
-		try {
-			Document filter = new Document().append("_id", new ObjectId(id));
-			LOG.debug("Delete dish: " + id);
-			return this.isDeleted(getColl().deleteOne(filter), "delete");
-		} catch (MongoException e) {
-			throw new EpickurDBException("delete", e.getMessage(), id, e);
-		}
+		LOG.debug("Delete dish with id: " + id);
+		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
+		return delete(filter);
 	}
 
 	@Override
@@ -121,7 +96,7 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
-				Dish dish = Dish.getObject(cursor.next());
+				Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
 		} catch (MongoException e) {
@@ -185,7 +160,7 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 		try {
 			cursor = getColl().find(find).limit(limit).iterator();
 			while (cursor.hasNext()) {
-				Dish dish = Dish.getObject(cursor.next());
+				Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
 		} catch (MongoException e) {
@@ -223,7 +198,7 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 		try {
 			cursor = getColl().find(find).iterator();
 			while (cursor.hasNext()) {
-				Dish dish = Dish.getObject(cursor.next());
+				Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
 		} catch (MongoException e) {

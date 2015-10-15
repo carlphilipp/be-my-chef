@@ -7,16 +7,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 
 import com.epickur.api.entity.Caterer;
-import com.epickur.api.enumeration.View;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.model.ReturnDocument;
 
 /**
  * Caterer DAO access with CRUD operations.
@@ -44,66 +41,44 @@ public final class CatererDAOImpl extends CrudDAO<Caterer> {
 
 	@Override
 	public Caterer create(final Caterer caterer) throws EpickurException {
-		caterer.setId(null);
-		DateTime time = new DateTime();
-		caterer.setCreatedAt(time);
-		caterer.setUpdatedAt(time);
+		caterer.prepareForInsertionIntoDB();
 		LOG.debug("Create caterer: " + caterer);
-		Document doc = null;
-		try {
-			doc = caterer.getDocumentDBView();
-			getColl().insertOne(doc);
-			return Caterer.getObject(doc, View.DB);
-		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getLocalizedMessage(), doc, e);
-		}
+		Document doc = caterer.getDocumentDBView();
+		insert(doc);
+		return Caterer.getDocumentAsCatererDBView(doc);
 	}
 
 	@Override
 	public Caterer read(final String id) throws EpickurException {
-		try {
-			LOG.debug("Read caterer: " + id);
-			Document query = new Document().append("_id", new ObjectId(id));
-			Document find = getColl().find(query).first();
-			if (find != null) {
-				return Caterer.getObject(find, View.DB);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getLocalizedMessage(), id, e);
-		}
+		LOG.debug("Read caterer: " + id);
+		Document query = convertAttributeToDocument("_id", new ObjectId(id));
+		Document find = find(query);
+		return processAfterQuery(find);
 	}
 
 	@Override
 	public Caterer update(final Caterer caterer) throws EpickurException {
-		Document filter = new Document().append("_id", caterer.getId());
-		DateTime time = new DateTime();
-		caterer.setCreatedAt(null);
-		caterer.setUpdatedAt(time);
+		caterer.prepareForUpdateIntoDB();
 		LOG.debug("Update caterer: " + caterer);
+		Document filter = convertAttributeToDocument("_id", caterer.getId());
 		Document update = caterer.getUpdateDocument();
-		try {
-			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
-			if (updated != null) {
-				return Caterer.getObject(updated, View.DB);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("update", e.getLocalizedMessage(), filter, update, e);
+		Document updated = update(filter, update);
+		return processAfterQuery(updated);
+	}
+
+	private Caterer processAfterQuery(final Document caterer) throws EpickurParsingException {
+		if (caterer != null) {
+			return Caterer.getDocumentAsCatererDBView(caterer);
+		} else {
+			return null;
 		}
 	}
 
 	@Override
 	public boolean delete(final String id) throws EpickurException {
-		try {
-			Document filter = new Document().append("_id", new ObjectId(id));
-			LOG.debug("Delete caterer: " + id);
-			return this.isDeleted(getColl().deleteOne(filter), "delete");
-		} catch (MongoException e) {
-			throw new EpickurDBException("delete", e.getLocalizedMessage(), id, e);
-		}
+		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
+		LOG.debug("Delete caterer: " + id);
+		return delete(filter);
 	}
 
 	@Override
@@ -113,7 +88,7 @@ public final class CatererDAOImpl extends CrudDAO<Caterer> {
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
-				Caterer user = Caterer.getObject(cursor.next(), View.DB);
+				Caterer user = Caterer.getDocumentAsCatererDBView(cursor.next());
 				caterers.add(user);
 			}
 		} catch (MongoException e) {

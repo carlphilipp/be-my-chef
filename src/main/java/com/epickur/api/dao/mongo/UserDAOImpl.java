@@ -17,8 +17,6 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.model.ReturnDocument;
 
 /**
  * User DAO access with CRUD operations.
@@ -46,31 +44,19 @@ public final class UserDAOImpl extends CrudDAO<User> {
 
 	@Override
 	public User create(final User user) throws EpickurException {
-		user.prepareUserToInsertIntoDB();
+		user.prepareForInsertionIntoDB();
 		LOG.debug("Create user: " + user);
 		Document doc = user.getDocumentDBView();
-		insertUser(doc);
+		insert(doc);
 		return User.getDocumentAsUser(doc);
-	}
-
-	private void insertUser(final Document user) throws EpickurDBException {
-		try {
-			getColl().insertOne(user);
-		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), user, e);
-		}
 	}
 
 	@Override
 	public User read(final String id) throws EpickurException {
 		LOG.debug("Read user with id: " + id);
-		Document query = convertAttibuteToDocument("_id", new ObjectId(id));
-		Document find = findUser(query);
-		if (find != null) {
-			return User.getDocumentAsUser(find);
-		} else {
-			return null;
-		}
+		Document query = convertAttributeToDocument("_id", new ObjectId(id));
+		Document find = find(query);
+		return processAfterQuery(find);
 	}
 
 	/**
@@ -84,8 +70,8 @@ public final class UserDAOImpl extends CrudDAO<User> {
 	 */
 	public User readWithName(final String name) throws EpickurException {
 		LOG.debug("Read user with name: " + name);
-		Document query = convertAttibuteToDocument("name", name);
-		Document find = findUser(query);
+		Document query = convertAttributeToDocument("name", name);
+		Document find = find(query);
 		return processAfterQuery(find);
 	}
 
@@ -100,26 +86,18 @@ public final class UserDAOImpl extends CrudDAO<User> {
 	 */
 	public User readWithEmail(final String email) throws EpickurException {
 		LOG.debug("Read user with email: " + email);
-		Document query = convertAttibuteToDocument("email", email);
-		Document find = findUser(query); 
+		Document query = convertAttributeToDocument("email", email);
+		Document find = find(query);
 		return processAfterQuery(find);
-	}
-	
-	private Document findUser(final Document query) throws EpickurDBException {
-		try {
-			return getColl().find(query).first();
-		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), query, e);
-		}
 	}
 
 	@Override
 	public User update(final User user) throws EpickurException {
-		user.prepareUserToBeUpdatedIntoDB();
+		user.prepareForUpdateIntoDB();
 		LOG.debug("Update user: " + user);
-		Document filter = convertAttibuteToDocument("_id", user.getId());
+		Document filter = convertAttributeToDocument("_id", user.getId());
 		Document update = user.getUserUpdateQuery();
-		Document updated = updateUser(filter, update);
+		Document updated = update(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -131,32 +109,11 @@ public final class UserDAOImpl extends CrudDAO<User> {
 		}
 	}
 
-	private Document updateUser(final Document filter, final Document update) throws EpickurDBException {
-		try {
-			return getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
-		} catch (MongoException e) {
-			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
-		}
-	}
-
 	@Override
 	public boolean delete(final String id) throws EpickurException {
 		LOG.debug("Delete user with id: " + id);
-		Document filter = convertAttibuteToDocument("_id", new ObjectId(id));
-		return deleteUser(filter);
-	}
-
-	private boolean deleteUser(final Document filter) throws EpickurDBException {
-		try {
-			return this.isDeleted(getColl().deleteOne(filter), "delete");
-		} catch (MongoException e) {
-			throw new EpickurDBException("delete", e.getMessage(), filter, e);
-		}
-	}
-
-	private Document convertAttibuteToDocument(final String attributeName, final Object attributeValue) {
-		Document document = new Document().append(attributeName, attributeValue);
-		return document;
+		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
+		return delete(filter);
 	}
 
 	@Override

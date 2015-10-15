@@ -10,15 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 
-import com.epickur.api.entity.deserialize.DateDeserializer;
-import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.deserialize.PhoneNumberDeserializer;
 import com.epickur.api.entity.deserialize.RoleDeserializer;
-import com.epickur.api.entity.serialize.DateSerializer;
-import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.entity.serialize.PhoneNumberSerializer;
 import com.epickur.api.entity.serialize.RoleSerializer;
 import com.epickur.api.enumeration.Role;
@@ -51,13 +45,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(callSuper = false)
-public final class User extends AbstractEntity {
+@EqualsAndHashCode(callSuper = true)
+public final class User extends AbstractMainDBEntity {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(User.class.getSimpleName());
-	/** Id */
-	private ObjectId id;
 	/** Name */
 	private String name;
 	/** First */
@@ -78,10 +70,6 @@ public final class User extends AbstractEntity {
 	private String country;
 	/** Indicate if allowed to login */
 	private Integer allow;
-	/** Created at */
-	private DateTime createdAt;
-	/** Updated at */
-	private DateTime updatedAt;
 	/** Code generated the first time on create */
 	@JsonIgnore
 	private String code;
@@ -91,57 +79,6 @@ public final class User extends AbstractEntity {
 	private String newPassword;
 	/** Role. Not exposed to User */
 	private Role role;
-
-	/**
-	 * @return An ObjectId
-	 */
-	@JsonSerialize(using = ObjectIdSerializer.class)
-	public ObjectId getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            An ObjectId
-	 */
-	@JsonDeserialize(using = ObjectIdDeserializer.class)
-	public void setId(final ObjectId id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return The creation date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	/**
-	 * @param createdAt
-	 *            The creation date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setCreatedAt(final DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	/**
-	 * @return The updated date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	/**
-	 * @param updatedAt
-	 *            The updated date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setUpdatedAt(final DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
 
 	/**
 	 * @return The User role
@@ -177,26 +114,15 @@ public final class User extends AbstractEntity {
 		this.phoneNumber = phoneNumber;
 	}
 
-	/**
-	 * Prepare user to be inserted into DB. Set create date and update to current time. Reset id and key to null.
-	 */
-	public void prepareUserToInsertIntoDB() {
-		DateTime time = new DateTime();
-		this.setCreatedAt(time);
-		this.setUpdatedAt(time);
-
-		this.setId(null);
+	@Override
+	public void prepareForInsertionIntoDB() {
+		super.prepareForInsertionIntoDB();
 		this.setKey(null);
 	}
 
-	/**
-	 * Prepare user to be updated into DB. Set created date to null and update date to current time. Reset key to null
-	 */
-	public void prepareUserToBeUpdatedIntoDB() {
-		DateTime time = new DateTime();
-		this.setCreatedAt(null);
-		this.setUpdatedAt(time);
-
+	@Override
+	public void prepareForUpdateIntoDB() {
+		super.prepareForUpdateIntoDB();
 		this.setKey(null);
 	}
 

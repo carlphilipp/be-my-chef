@@ -7,9 +7,13 @@ import org.bson.Document;
 import com.epickur.api.dao.ICrudDAO;
 import com.epickur.api.dao.MongoDb;
 import com.epickur.api.entity.AbstractEntity;
+import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.result.DeleteResult;
 
 /**
@@ -45,6 +49,43 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 
 	@Override
 	public abstract boolean delete(String id) throws EpickurException;
+	
+	protected final void insert(final Document document) throws EpickurDBException {
+		try {
+			getColl().insertOne(document);
+		} catch (MongoException e) {
+			throw new EpickurDBException("create", e.getMessage(), document, e);
+		}
+	}
+	
+	protected Document find(final Document query) throws EpickurDBException {
+		try {
+			return getColl().find(query).first();
+		} catch (MongoException e) {
+			throw new EpickurDBException("read", e.getMessage(), query, e);
+		}
+	}
+	
+	protected Document update(final Document filter, final Document update) throws EpickurDBException {
+		try {
+			return getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
+		} catch (MongoException e) {
+			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
+		}
+	}
+	
+	protected boolean delete(final Document filter) throws EpickurDBException {
+		try {
+			return this.isDeleted(getColl().deleteOne(filter), "delete");
+		} catch (MongoException e) {
+			throw new EpickurDBException("delete", e.getMessage(), filter, e);
+		}
+	}
+	
+	protected Document convertAttributeToDocument(final String attributeName, final Object attributeValue) {
+		Document document = new Document().append(attributeName, attributeValue);
+		return document;
+	}
 
 	/**
 	 * Check if the query is a succes
