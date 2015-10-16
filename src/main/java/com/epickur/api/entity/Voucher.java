@@ -143,7 +143,7 @@ public final class Voucher extends AbstractMainDBEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Voucher getObject(final Document obj) throws EpickurParsingException {
+	public static Voucher getDocumentAsVoucher(final Document obj) throws EpickurParsingException {
 		return Voucher.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 

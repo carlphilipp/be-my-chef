@@ -34,6 +34,7 @@ public final class KeyBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public Key create(final Key key) throws EpickurException {
+		key.prepareForInsertionIntoDB();
 		return this.keyDao.create(key);
 	}
 

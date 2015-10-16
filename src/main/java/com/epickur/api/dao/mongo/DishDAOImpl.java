@@ -49,7 +49,6 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 
 	@Override
 	public Dish create(final Dish dish) throws EpickurException {
-		dish.prepareForInsertionIntoDB();
 		LOG.debug("Create dish: " + dish);
 		Document doc = dish.getDocumentDBView();
 		insert(doc);
@@ -66,7 +65,6 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 
 	@Override
 	public Dish update(final Dish dish) throws EpickurException {
-		dish.prepareForUpdateIntoDB();
 		LOG.debug("Update dish: " + dish);
 		Document filter = convertAttributeToDocument("_id", dish.getId());
 		Document update = dish.getUpdateDocument();

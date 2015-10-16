@@ -85,6 +85,7 @@ public final class VoucherBusiness {
 				if (temp != null) {
 					result.remove(voucher);
 				} else {
+					voucher.prepareForInsertionIntoDB();
 					voucherDAO.create(voucher);
 				}
 			}
@@ -100,6 +101,7 @@ public final class VoucherBusiness {
 		for (Voucher voucher : vouchers) {
 			LOG.info("Expire voucher " + voucher.getCode() + " " + voucher.getExpiration());
 			voucher.setStatus(Status.EXPIRED);
+			voucher.prepareForUpdateIntoDB();
 			this.voucherDAO.update(voucher);
 		}
 	}
@@ -128,6 +130,7 @@ public final class VoucherBusiness {
 				found.setUsedCount(1);
 			}
 		}
+		found.prepareForUpdateIntoDB();
 		Voucher updated = this.voucherDAO.update(found);
 		return updated;
 	}
@@ -149,6 +152,7 @@ public final class VoucherBusiness {
 		} else if (found.getExpirationType() == ExpirationType.UNTIL) {
 			found.setUsedCount(found.getUsedCount() - 1);
 		}
+		found.prepareForUpdateIntoDB();
 		Voucher updated = this.voucherDAO.update(found);
 		return updated;
 	}

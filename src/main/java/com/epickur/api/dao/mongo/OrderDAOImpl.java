@@ -3,6 +3,7 @@ package com.epickur.api.dao.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -42,7 +43,6 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 
 	@Override
 	public final Order create(final Order order) throws EpickurException {
-		order.prepareForInsertionIntoDB();
 		LOG.debug("Create order: " + order);
 		Document doc = order.getDocumentDBView();
 		insert(doc);
@@ -59,7 +59,6 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 
 	@Override
 	public final Order update(final Order order) throws EpickurException {
-		order.prepareForUpdateIntoDB();
 		LOG.debug("Update order: " + order);
 		Document filter = convertAttributeToDocument("_id", order.getId());
 		Document update = order.getOrderUpdateQuery();
@@ -84,7 +83,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 
 	@Override
 	public final List<Order> readAll() throws EpickurException {
-		throw new EpickurDBException();
+		throw new NotImplementedException();
 	}
 
 	/**

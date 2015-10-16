@@ -6,11 +6,11 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
-import org.joda.time.DateTime;
 
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
@@ -41,35 +41,18 @@ public final class KeyDAOImpl extends CrudDAO<Key> {
 
 	@Override
 	public Key create(final Key key) throws EpickurException {
-		key.setId(null);
-		DateTime time = new DateTime();
-		key.setCreatedAt(time);
-		key.setUpdatedAt(time);
 		LOG.debug("Create key: " + key);
-		Document doc = null;
-		try {
-			doc = key.getDocumentDBView();
-			getColl().insertOne(doc);
-			return Key.getObject(doc);
-		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), doc, e);
-		}
+		Document doc = key.getDocumentDBView();
+		insert(doc);
+		return Key.getDocumentAsKey(doc);
 	}
 
 	@Override
 	public Key read(final String key) throws EpickurException {
-		try {
-			Document query = new Document().append("key", key);
-			LOG.debug("Read key: " + key);
-			Document find = getColl().find(query).first();
-			if (find != null) {
-				return Key.getObject(find);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), key, e);
-		}
+		LOG.debug("Read key: " + key);
+		Document query = convertAttributeToDocument("key", key);
+		Document find = find(query);
+		return processAfterQuery(find);
 	}
 
 	/**
@@ -82,35 +65,30 @@ public final class KeyDAOImpl extends CrudDAO<Key> {
 	 *             if an epickur exception occurred
 	 */
 	public Key readWithName(final String userName) throws EpickurException {
-		try {
-			LOG.debug("Read key name: " + userName);
-			Document query = new Document().append("userName", userName);
-			Document find = getColl().find(query).first();
-			if (find != null) {
-				return Key.getObject(find);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), userName, e);
-		}
+		LOG.debug("Read key with name: " + userName);
+		Document query = convertAttributeToDocument("userName", userName);
+		Document find = find(query);
+		return processAfterQuery(find);
 	}
 
 	@Override
 	public Key update(final Key key) throws EpickurException {
-		// Not implemented
 		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
+	}
+
+	private Key processAfterQuery(final Document key) throws EpickurParsingException {
+		if (key != null) {
+			return Key.getDocumentAsKey(key);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public boolean delete(final String key) throws EpickurException {
-		try {
-			Document filter = new Document().append("key", key);
-			LOG.debug("Delete key: " + key);
-			return this.isDeleted(getColl().deleteOne(filter), "delete");
-		} catch (MongoException e) {
-			throw new EpickurDBException("delete", e.getMessage(), key, e);
-		}
+		LOG.debug("Delete key: " + key);
+		Document filter = convertAttributeToDocument("key", key);
+		return delete(filter);
 	}
 
 	@Override
@@ -120,7 +98,7 @@ public final class KeyDAOImpl extends CrudDAO<Key> {
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
-				Key key = Key.getObject(cursor.next());
+				Key key = Key.getDocumentAsKey(cursor.next());
 				keys.add(key);
 			}
 		} catch (MongoException e) {

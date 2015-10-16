@@ -83,6 +83,7 @@ public final class OrderBusiness {
 			order.setStatus(OrderStatus.PENDING);
 			String sequence = seqDAO.getNextId();
 			order.setReadableId(sequence);
+			order.prepareForInsertionIntoDB();
 			Order res = this.orderDAO.create(order);
 			String orderCode = Security.createOrderCode(res.getId(), order.getCardToken());
 			if (sendEmail) {
@@ -153,6 +154,7 @@ public final class OrderBusiness {
 			if (read.getStatus() != OrderStatus.PENDING) {
 				throw new EpickurException("It's not allowed to modify an order that has a " + order.getStatus() + " status");
 			}
+			order.prepareForUpdateIntoDB();
 			return this.orderDAO.update(order);
 		}
 		return null;
@@ -218,6 +220,7 @@ public final class OrderBusiness {
 						} catch (StripeException e) {
 							orderFailed(order, user, sendEmail);
 						} finally {
+							order.prepareForUpdateIntoDB();
 							order = orderDAO.update(order);
 						}
 					}

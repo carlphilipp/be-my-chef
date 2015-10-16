@@ -39,16 +39,16 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	}
 
 	@Override
-	public abstract T create(T obj) throws EpickurException;
+	public abstract T create(final T obj) throws EpickurException;
 
 	@Override
-	public abstract T read(String id) throws EpickurException;
+	public abstract T read(final String id) throws EpickurException;
 
 	@Override
-	public abstract T update(T obj) throws EpickurException;
+	public abstract T update(final T obj) throws EpickurException;
 
 	@Override
-	public abstract boolean delete(String id) throws EpickurException;
+	public abstract boolean delete(final String id) throws EpickurException;
 	
 	protected final void insert(final Document document) throws EpickurDBException {
 		try {

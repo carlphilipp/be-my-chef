@@ -44,7 +44,6 @@ public final class UserDAOImpl extends CrudDAO<User> {
 
 	@Override
 	public User create(final User user) throws EpickurException {
-		user.prepareForInsertionIntoDB();
 		LOG.debug("Create user: " + user);
 		Document doc = user.getDocumentDBView();
 		insert(doc);
@@ -93,7 +92,6 @@ public final class UserDAOImpl extends CrudDAO<User> {
 
 	@Override
 	public User update(final User user) throws EpickurException {
-		user.prepareForUpdateIntoDB();
 		LOG.debug("Update user: " + user);
 		Document filter = convertAttributeToDocument("_id", user.getId());
 		Document update = user.getUserUpdateQuery();

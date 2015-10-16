@@ -93,7 +93,7 @@ public final class Key extends AbstractMainDBEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Key getObject(final Document obj) throws EpickurParsingException {
+	public static Key getDocumentAsKey(final Document obj) throws EpickurParsingException {
 		return Key.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 

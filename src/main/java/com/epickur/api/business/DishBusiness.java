@@ -45,6 +45,7 @@ public class DishBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Dish create(final Dish dish) throws EpickurException {
+		dish.prepareForInsertionIntoDB();
 		return dao.create(dish);
 	}
 
@@ -86,6 +87,7 @@ public class DishBusiness {
 	public final Dish update(final Dish dish, final Key key) throws EpickurException {
 		Dish read = dao.read(dish.getId().toHexString());
 		validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
+		dish.prepareForUpdateIntoDB();
 		return dao.update(dish);
 	}
 

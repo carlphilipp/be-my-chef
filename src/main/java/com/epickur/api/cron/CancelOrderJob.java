@@ -51,6 +51,7 @@ public final class CancelOrderJob implements Job {
 			if (user != null && order != null) {
 				LOG.info("Cancel order id: " + orderId + " with user id: " + userId);
 				order.setStatus(OrderStatus.CANCELED);
+				order.prepareForUpdateIntoDB();
 				order = this.orderDAO.update(order);
 				if (order.getVoucher() != null) {
 					this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
