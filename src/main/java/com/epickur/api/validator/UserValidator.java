@@ -137,6 +137,9 @@ public final class UserValidator extends Validator {
 			if (StringUtils.isBlank(order.getDescription())) {
 				throw new EpickurIllegalArgument(fieldNull("order", "description"));
 			}
+			if (order.getQuantity() == null) {
+				throw new EpickurIllegalArgument(fieldNull("order", "quantity"));
+			}
 			if (order.getAmount() == null) {
 				throw new EpickurIllegalArgument(fieldNull("order", "amount"));
 			}

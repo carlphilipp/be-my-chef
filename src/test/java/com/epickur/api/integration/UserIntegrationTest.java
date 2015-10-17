@@ -630,6 +630,7 @@ public class UserIntegrationTest {
 		dish.setId(new ObjectId());
 		json.set("dish", mapper.readTree(dish.toStringAPIView()));
 		json.put("description", "A new order");
+		json.put("quantity", 2);
 		json.put("amount", 500);
 		json.put("currency", "AUD");
 		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
@@ -741,6 +742,7 @@ public class UserIntegrationTest {
 		dish.setImageAfterUrl("url");
 		json.set("dish", mapper.readTree(dish.toStringAPIView()));
 		json.put("description", "A new order");
+		json.put("quantity", 2);
 		json.put("amount", 500);
 		json.put("currency", "AUD");
 		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
@@ -869,6 +871,7 @@ public class UserIntegrationTest {
 		dish.setCaterer(TestUtils.generateRandomCatererWithId());
 		json.set("dish", mapper.readTree(dish.toStringAPIView()));
 		json.put("description", "A new order");
+		json.put("quantity", 2);
 		json.put("amount", 500);
 		json.put("currency", "AUD");
 		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
@@ -997,6 +1000,7 @@ public class UserIntegrationTest {
 		dish.setCaterer(TestUtils.generateRandomCatererWithId());
 		json.set("dish", mapper.readTree(dish.toStringAPIView()));
 		json.put("description", "A new order");
+		json.put("quantity", 6);
 		json.put("amount", 500);
 		json.put("currency", "AUD");
 		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
@@ -1128,6 +1132,7 @@ public class UserIntegrationTest {
 		dish.setId(new ObjectId());
 		json.set("dish", mapper.readTree(dish.toStringAPIView()));
 		json.put("description", "A new order");
+		json.put("quantity", 2);
 		json.put("amount", 500);
 		json.put("currency", "AUD");
 		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());

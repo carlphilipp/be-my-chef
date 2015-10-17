@@ -403,6 +403,7 @@ public class TestUtils {
 	public static Order generateRandomOrder() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
 		Order order = new Order();
+		order.setQuantity(2);
 		order.setAmount(generateRandomStripAmount());
 		order.setCurrency(generateRandomCurrency());
 		order.setDescription(generateRandomString());

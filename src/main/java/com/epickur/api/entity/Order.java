@@ -45,7 +45,7 @@ import lombok.ToString;
  * @version 1.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "readableId", "userId", "description", "amount", "status", "currency", "pickupdate", "cardToken", "chargeId",
+@JsonPropertyOrder(value = { "id", "readableId", "userId", "description", "quantity", "amount", "status", "currency", "pickupdate", "cardToken", "chargeId",
 		"paid", "dish", "voucher", "createdBy", "createdAt", "updatedAt" })
 @NoArgsConstructor
 @Getter
@@ -62,6 +62,8 @@ public final class Order extends AbstractEntity {
 	private String readableId;
 	/** Description */
 	private String description;
+	/** Quantity */
+	private Integer quantity;
 	/** Amount */
 	private Integer amount;
 	/** Amount */

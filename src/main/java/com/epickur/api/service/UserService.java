@@ -530,6 +530,7 @@ public final class UserService {
 	 * @apiSuccess (Response: JSON Object) {Order} id Id of the Order.
 	 * @apiSuccess (Response: JSON Object) {String} userId Id of the User.
 	 * @apiSuccess (Response: JSON Object) {String} description Description of the Order.
+	 * @apiSuccess (Response: JSON Object) {Number} quantity Quantity of the related Dish.
 	 * @apiSuccess (Response: JSON Object) {Number} amount Price of the Order.
 	 * @apiSuccess (Response: JSON Object) {Dish} dish Dish of the Order.
 	 * @apiSuccess (Response: JSON Object) {String} chargeId Stripe charge id.
