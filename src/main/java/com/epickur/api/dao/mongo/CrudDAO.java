@@ -81,7 +81,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	
 	protected final boolean deleteDocument(final Document filter) throws EpickurDBException {
 		try {
-			return this.isDeleted(getColl().deleteOne(filter), "delete");
+			return this.isDeleted(getColl().deleteOne(filter));
 		} catch (MongoException e) {
 			throw new EpickurDBException("delete", e.getMessage(), filter, e);
 		}
@@ -93,7 +93,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	}
 
 	/**
-	 * Check if the query is a succes
+	 * Check if the query is a success
 	 * 
 	 * @param deleteResult
 	 *            The result of the query
@@ -101,13 +101,8 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 *            The type of the query
 	 * @return True if the query is a success
 	 */
-	protected final boolean isDeleted(final DeleteResult deleteResult, final String type) {
-		boolean res = true;
-		if (deleteResult.getDeletedCount() != 1) {
-			res = false;
-			LOG.debug("Request type: " + type + " failed");
-		}
-		return res;
+	protected final boolean isDeleted(final DeleteResult deleteResult) {
+		return deleteResult.getDeletedCount() == 1;
 	}
 
 	/**
