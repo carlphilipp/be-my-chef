@@ -87,11 +87,6 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 		}
 	}
 	
-	protected final Document convertAttributeToDocument(final String attributeName, final Object attributeValue) {
-		Document document = new Document().append(attributeName, attributeValue);
-		return document;
-	}
-
 	/**
 	 * Check if the query is a success
 	 * 
@@ -101,8 +96,12 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 *            The type of the query
 	 * @return True if the query is a success
 	 */
-	protected final boolean isDeleted(final DeleteResult deleteResult) {
+	private final boolean isDeleted(final DeleteResult deleteResult) {
 		return deleteResult.getDeletedCount() == 1;
+	}
+	
+	protected final Document convertAttributeToDocument(final String attributeName, final Object attributeValue) {
+		return new Document().append(attributeName, attributeValue);
 	}
 
 	/**
