@@ -8,8 +8,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
+import com.epickur.api.entity.message.ErrorMessage;
 
 /**
  * Called whenever a not found Exception occurs. It logs an error and build the response.
@@ -23,10 +22,10 @@ public final class NotFoundExceptionMapper implements ExceptionMapper<NotFoundEx
 
 	@Override
 	public Response toResponse(final NotFoundException exception) {
-		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.NOT_FOUND.getStatusCode());
-		bdb.put("message", Response.Status.NOT_FOUND.getReasonPhrase());
-		bdb.put("description", "Endpoint not found");
-		return Response.status(Status.NOT_FOUND).type(MediaType.APPLICATION_JSON).entity(bdb).build();
+		ErrorMessage errorMessage = new ErrorMessage();
+		errorMessage.setError(Response.Status.NOT_FOUND.getStatusCode());
+		errorMessage.setMessage(Response.Status.NOT_FOUND.getReasonPhrase());
+		errorMessage.setDescription("Endpoint not found");
+		return Response.status(Status.NOT_FOUND).type(MediaType.APPLICATION_JSON).entity(errorMessage).build();
 	}
 }

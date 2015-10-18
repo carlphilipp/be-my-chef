@@ -24,6 +24,7 @@ import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
@@ -32,8 +33,6 @@ import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
 
 /**
  * JAX-RS User Service
@@ -299,8 +298,10 @@ public final class UserService {
 		validator.checkId(id);
 		boolean isDeleted = userBusiness.delete(id);
 		if (isDeleted) {
-			DBObject res = BasicDBObjectBuilder.start("id", id).add("deleted", isDeleted).get();
-			return Response.ok().entity(res).build();
+			DeletedMessage deletedMessage = new DeletedMessage();
+			deletedMessage.setId(id);
+			deletedMessage.setDeleted(isDeleted);
+			return Response.ok().entity(deletedMessage).build();
 		} else {
 			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
 		}
@@ -727,8 +728,10 @@ public final class UserService {
 		validator.checkDeleteOneOrder(id, orderId);
 		boolean isDeleted = orderBusiness.delete(orderId);
 		if (isDeleted) {
-			DBObject result = BasicDBObjectBuilder.start("id", id).add("deleted", isDeleted).get();
-			return Response.ok().entity(result).build();
+			DeletedMessage deletedMessage = new DeletedMessage();
+			deletedMessage.setId(id);
+			deletedMessage.setDeleted(isDeleted);
+			return Response.ok().entity(deletedMessage).build();
 		} else {
 			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, orderId);
 		}

@@ -7,19 +7,19 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bson.BasicBSONObject;
-import org.bson.types.BasicBSONList;
 
 import com.epickur.api.entity.Geo;
 import com.epickur.api.exception.HereException;
 import com.epickur.api.utils.Utils;
-import com.mongodb.BasicDBObject;
-import com.mongodb.util.JSON;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.util.JSONParseException;
 
 /**
@@ -142,29 +142,34 @@ public class Here {
 	 * @throws HereException
 	 *             If we could not access the coordinates
 	 */
+	@SuppressWarnings("unchecked")
 	private Geo getGeoFromStr(final String data) throws HereException {
 		Geo geo = null;
 		try {
-			BasicDBObject dbo = (BasicDBObject) JSON.parse(data);
-			if (dbo.containsField("response")) {
-				BasicBSONObject response = (BasicBSONObject) dbo.get("response");
-				if (response.containsField("view")) {
-					BasicBSONList views = (BasicBSONList) response.get("view");
+			LOG.info(data);
+			ObjectMapper mapper = new ObjectMapper();
+			Map<String, Object> mapObject = null;
+			mapObject = mapper.readValue(data, new TypeReference<Map<String, Object>>(){});
+
+			if (mapObject.containsKey("response")) {
+				Map<String, Object> response = (Map<String, Object>) mapObject.get("response");
+				if (response.containsKey("view")) {
+					List<Map<String,Object>> views = (List<Map<String,Object>>) response.get("view");
 					if (views.size() > 0) {
-						BasicBSONObject view = (BasicBSONObject) views.get(0);
-						if (view.containsField("result")) {
-							BasicBSONList results = (BasicBSONList) view.get("result");
+						Map<String,Object> view = (Map<String,Object>) views.get(0);
+						if (view.containsKey("result")) {
+							List<Map<String,Object>> results = (List<Map<String,Object>>) view.get("result");
 							if (results.size() > 0) {
-								BasicBSONObject result = (BasicBSONObject) results.get(0);
-								double relevance = result.getDouble("relevance");
+								Map<String,Object> result = (Map<String,Object>) results.get(0);
+								double relevance = (double) result.get("relevance");
 								if (relevance >= RELEVANCE_THRESHOLD) {
-									if (result.containsField("location")) {
-										BasicBSONObject location = (BasicBSONObject) result.get("location");
-										if (location.containsField("displayPosition")) {
-											BasicBSONObject displayPosition = (BasicBSONObject) location.get("displayPosition");
+									if (result.containsKey("location")) {
+										Map<String,Object> location = (Map<String,Object>) result.get("location");
+										if (location.containsKey("displayPosition")) {
+											Map<String,Object> displayPosition = (Map<String,Object>) location.get("displayPosition");
 											geo = new Geo();
-											geo.setLatitude(Double.parseDouble(displayPosition.getString("latitude")));
-											geo.setLongitude(Double.parseDouble(displayPosition.getString("longitude")));
+											geo.setLatitude((double) displayPosition.get("latitude"));
+											geo.setLongitude((double) displayPosition.get("longitude"));
 										}
 									}
 								} else {
@@ -176,7 +181,7 @@ public class Here {
 					}
 				}
 			}
-		} catch (IndexOutOfBoundsException | JSONParseException e) {
+		} catch (IndexOutOfBoundsException | JSONParseException | IOException e) {
 			throw new HereException("Geolocation error", e);
 		}
 		if (geo == null) {

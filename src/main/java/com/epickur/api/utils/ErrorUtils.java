@@ -2,8 +2,7 @@ package com.epickur.api.utils;
 
 import javax.ws.rs.core.Response;
 
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
+import com.epickur.api.entity.message.ErrorMessage;
 
 /**
  * Error Service
@@ -56,10 +55,10 @@ public final class ErrorUtils {
 	 * @return A response
 	 */
 	public static Response error(final Response.Status status, final String message) {
-		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", status.getStatusCode());
-		bdb.put("message", message);
-		return Response.status(status.getStatusCode()).entity(bdb).build();
+		ErrorMessage error = new ErrorMessage();
+		error.setError(status.getStatusCode());
+		error.setMessage(message);
+		return Response.status(status.getStatusCode()).entity(error).build();
 	}
 
 	/**
@@ -71,23 +70,21 @@ public final class ErrorUtils {
 	 *            The Id
 	 * @return The Response
 	 */
-	public static Response notFound(final String message, final String id) {
-		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.NOT_FOUND.getStatusCode());
-		bdb.put("message", Response.Status.NOT_FOUND.getReasonPhrase());
-		bdb.put("description", message + ": " + id);
-		return Response.status(Response.Status.NOT_FOUND).entity(bdb).build();
+	public static Response notFound(final String message, final String id) {		
+		ErrorMessage error = new ErrorMessage();
+		error.setError(Response.Status.NOT_FOUND.getStatusCode());
+		error.setMessage(Response.Status.NOT_FOUND.getReasonPhrase());
+		error.setDescription(message + ": " + id);
+		return Response.status(Response.Status.NOT_FOUND).entity(error).build();
 	}
 
 	/**
 	 * @return The response
 	 */
-	// TODO probably delete this usless method
 	public static Response noResult() {
-		// Change from no content to bad request because the entity is actually null in the answer when no content
-		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.BAD_REQUEST.getStatusCode());
-		bdb.put("message", Response.Status.BAD_REQUEST.getReasonPhrase());
-		return Response.status(Response.Status.BAD_REQUEST).entity(bdb).build();
+		ErrorMessage error = new ErrorMessage();
+		error.setError(Response.Status.BAD_REQUEST.getStatusCode());
+		error.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
+		return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
 	}
 }

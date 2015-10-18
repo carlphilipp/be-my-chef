@@ -8,9 +8,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.epickur.api.business.KeyBusiness;
+import com.epickur.api.entity.message.SuccessMessage;
 import com.epickur.api.exception.EpickurException;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
 
 /**
  * Logout Service
@@ -59,7 +58,7 @@ public final class LogoutService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response logout(@QueryParam("key") final String key) throws EpickurException {
 		this.keyBusiness.deleteWithKey(key);
-		DBObject obj = BasicDBObjectBuilder.start("result", "success").get();
-		return Response.ok().entity(obj).build();
+		SuccessMessage successMessage = new SuccessMessage();
+		return Response.ok().entity(successMessage).build();
 	}
 }

@@ -20,8 +20,8 @@ import org.mockito.Mockito;
 import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.message.SuccessMessage;
 import com.epickur.api.exception.EpickurException;
-import com.mongodb.DBObject;
 
 public class LogoutServiceTest {
 
@@ -71,8 +71,8 @@ public class LogoutServiceTest {
 				assertNotNull(userResult2.getKey());
 				Response result3 = logoutService.logout(userResult2.getKey());
 				if (result3.getEntity() != null) {
-					DBObject obj = (DBObject) result3.getEntity();
-					assertEquals("success", obj.get("result"));
+					SuccessMessage obj = (SuccessMessage) result3.getEntity();
+					assertEquals("success", obj.getResult());
 				} else {
 					fail("Logout returned is null");
 				}

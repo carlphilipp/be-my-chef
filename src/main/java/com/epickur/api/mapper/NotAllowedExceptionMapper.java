@@ -8,8 +8,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
+import com.epickur.api.entity.message.ErrorMessage;
 
 /**
  * Called whenever a not allowed exception happens. It logs an error and build the response.
@@ -23,9 +22,9 @@ public final class NotAllowedExceptionMapper implements ExceptionMapper<NotAllow
 
 	@Override
 	public Response toResponse(final NotAllowedException exception) {
-		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.METHOD_NOT_ALLOWED.getStatusCode());
-		bdb.put("message", Response.Status.METHOD_NOT_ALLOWED.getReasonPhrase());
-		return Response.status(Status.METHOD_NOT_ALLOWED).entity(bdb).type(MediaType.APPLICATION_JSON).build();
+		ErrorMessage errorMessage = new ErrorMessage();
+		errorMessage.setError(Response.Status.METHOD_NOT_ALLOWED.getStatusCode());
+		errorMessage.setMessage(Response.Status.METHOD_NOT_ALLOWED.getReasonPhrase());
+		return Response.status(Status.METHOD_NOT_ALLOWED).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
 	}
 }

@@ -7,9 +7,10 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.exception.EpickurNotFoundException;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
 
 /**
  * @author cph
@@ -22,12 +23,12 @@ public final class EpickurNotFoundExceptionMapper implements ExceptionMapper<Epi
 
 	@Override
 	public Response toResponse(final EpickurNotFoundException exception) {
-		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.NOT_FOUND.getStatusCode());
-		bdb.put("message", Response.Status.NOT_FOUND.getReasonPhrase());
-		if (exception != null && exception.getMessage() != null && !exception.getMessage().equals("")) {
-			bdb.put("description", exception.getMessage());
+		ErrorMessage errorMessage = new ErrorMessage();
+		errorMessage.setError(Response.Status.NOT_FOUND.getStatusCode());
+		errorMessage.setMessage(Response.Status.NOT_FOUND.getReasonPhrase());
+		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
+			errorMessage.setDescription(exception.getMessage());
 		}
-		return Response.status(Status.NOT_FOUND).entity(bdb).type(MediaType.APPLICATION_JSON).build();
+		return Response.status(Status.NOT_FOUND).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
 	}
 }

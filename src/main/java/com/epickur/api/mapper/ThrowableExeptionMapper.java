@@ -10,8 +10,7 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
+import com.epickur.api.entity.message.ErrorMessage;
 
 /**
  * Called whenever an Throwable occurs. It logs an error and build the response.
@@ -28,10 +27,10 @@ public final class ThrowableExeptionMapper implements ExceptionMapper<Throwable>
 
 	@Override
 	public Response toResponse(final Throwable throwable) {
+		ErrorMessage errorMessage = new ErrorMessage();
+		errorMessage.setError(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+		errorMessage.setMessage(Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
 		LOG.error("Fatal Error: " + throwable.getLocalizedMessage(), throwable);
-		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-		bdb.put("message", Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(bdb).type(MediaType.APPLICATION_JSON).build();
+		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
 	}
 }

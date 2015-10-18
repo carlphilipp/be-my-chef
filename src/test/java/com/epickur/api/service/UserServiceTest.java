@@ -28,11 +28,12 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.message.DeletedMessage;
+import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.integration.UserIntegrationTest;
-import com.mongodb.DBObject;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -124,13 +125,7 @@ public class UserServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testCreateFail() throws EpickurException {
-		Response result = service.create(false, false, null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("User returned is null");
-		}
+		service.create(false, false, null, context);
 	}
 
 	@Test
@@ -166,8 +161,8 @@ public class UserServiceTest {
 	public void testReadFail2() throws EpickurException {
 		Response result = service.read(new ObjectId().toHexString(), context);
 		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(404, dbObject.get("error"));
+			ErrorMessage errorMessage = (ErrorMessage) result.getEntity();
+			assertEquals(404, errorMessage.getError().intValue());
 		} else {
 			fail("User returned is null");
 		}
@@ -264,8 +259,8 @@ public class UserServiceTest {
 		user.setAllow(null);
 		Response result = service.update(user.getId().toHexString(), user, context);
 		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(404, dbObject.get("error"));
+			ErrorMessage errorMessage = (ErrorMessage) result.getEntity();
+			assertEquals(404, errorMessage.getError().intValue());
 		} else {
 			fail("User returned is null");
 		}
@@ -273,13 +268,7 @@ public class UserServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testUpdateFail2() throws EpickurException {
-		Response result = service.update(null, null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("User returned is null");
-		}
+		service.update(null, null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
@@ -294,13 +283,7 @@ public class UserServiceTest {
 			User dishResultModified = userResult.clone();
 			dishResultModified.setNewPassword("new password");
 
-			Response result2 = service.update(dishResultModified.getId().toHexString(), dishResultModified, context);
-			if (result2.getEntity() != null) {
-				DBObject dbObject = (DBObject) result2.getEntity();
-				assertEquals(500, dbObject.get("error"));
-			} else {
-				fail(" returned is null");
-			}
+			service.update(dishResultModified.getId().toHexString(), dishResultModified, context);
 		} else {
 			fail("User returned is null");
 		}
@@ -310,26 +293,14 @@ public class UserServiceTest {
 	public void testUpdateFail4() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		user.setId(new ObjectId());
-		Response result = service.update(null, user, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("User returned is null");
-		}
+		service.update(null, user, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testUpdateFail5() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		user.setId(new ObjectId());
-		Response result = service.update(user.getId().toHexString(), null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("User returned is null");
-		}
+		service.update(user.getId().toHexString(), null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
@@ -350,8 +321,8 @@ public class UserServiceTest {
 
 			Response result2 = service.delete(userResult.getId().toHexString(), context);
 			if (result2.getEntity() != null) {
-				DBObject userResult2 = (DBObject) result2.getEntity();
-				assertTrue((Boolean) userResult2.get("deleted"));
+				DeletedMessage userResult2 = (DeletedMessage) result2.getEntity();
+				assertTrue(userResult2.getDeleted());
 			} else {
 				fail("Answer is null");
 			}
@@ -362,21 +333,15 @@ public class UserServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testDeleteFail() throws EpickurException {
-		Response result = service.delete(null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("User returned is null");
-		}
+		service.delete(null, context);
 	}
 
 	@Test
 	public void testDeleteFail2() throws EpickurException {
 		Response result = service.delete(new ObjectId().toHexString(), context);
 		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(404, dbObject.get("error"));
+			ErrorMessage errorMessage = (ErrorMessage) result.getEntity();
+			assertEquals(404, errorMessage.getError().intValue());
 		} else {
 			fail("User returned is null");
 		}
@@ -445,13 +410,7 @@ public class UserServiceTest {
 			idsToDeleteUser.add(userResult.getId());
 
 			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(null, false, order, context);
-			if (result2.getEntity() != null) {
-				DBObject dbObject = (DBObject) result2.getEntity();
-				assertEquals(500, dbObject.get("error"));
-			} else {
-				fail("Order returned is null");
-			}
+			service.createOneOrder(null, false, order, context);
 		} else {
 			fail("User returned is null");
 		}
@@ -466,13 +425,7 @@ public class UserServiceTest {
 			assertNotNull(userResult.getId());
 			idsToDeleteUser.add(userResult.getId());
 
-			Response result2 = service.createOneOrder("", false, null, context);
-			if (result2.getEntity() != null) {
-				DBObject dbObject = (DBObject) result2.getEntity();
-				assertEquals(500, dbObject.get("error"));
-			} else {
-				fail("Order returned is null");
-			}
+			service.createOneOrder("", false, null, context);
 		} else {
 			fail("User returned is null");
 		}
@@ -566,13 +519,7 @@ public class UserServiceTest {
 				assertNotNull(userResult2.getId());
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
 
-				Response result3 = service.readAllOrders(null, context);
-				if (result3.getEntity() != null) {
-					DBObject dbObject = (DBObject) result3.getEntity();
-					assertEquals(500, dbObject.get("error"));
-				} else {
-					fail("List Order returned is null");
-				}
+				service.readAllOrders(null, context);
 			} else {
 				fail("Order returned is null");
 			}
@@ -642,13 +589,7 @@ public class UserServiceTest {
 				assertNotNull(userResult2.getId());
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
 
-				Response result3 = service.readOneOrder(null, userResult2.getId().toHexString(), context);
-				if (result3.getEntity() != null) {
-					DBObject dbObject = (DBObject) result3.getEntity();
-					assertEquals(500, dbObject.get("error"));
-				} else {
-					fail("Order returned is null");
-				}
+				service.readOneOrder(null, userResult2.getId().toHexString(), context);
 			} else {
 				fail("Order returned is null");
 			}
@@ -674,13 +615,7 @@ public class UserServiceTest {
 				assertNotNull(userResult2.getId());
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
 
-				Response result3 = service.readOneOrder(userResult.getId().toHexString(), null, context);
-				if (result3.getEntity() != null) {
-					DBObject dbObject = (DBObject) result3.getEntity();
-					assertEquals(500, dbObject.get("error"));
-				} else {
-					fail("Order returned is null");
-				}
+				service.readOneOrder(userResult.getId().toHexString(), null, context);
 			} else {
 				fail("Order returned is null");
 			}
@@ -708,8 +643,8 @@ public class UserServiceTest {
 
 				Response result3 = service.readOneOrder(userResult.getId().toHexString(), new ObjectId().toHexString(), context);
 				if (result3.getEntity() != null) {
-					DBObject dbObject = (DBObject) result3.getEntity();
-					assertEquals(404, dbObject.get("error"));
+					ErrorMessage errorMessage = (ErrorMessage) result3.getEntity();
+					assertEquals(404, errorMessage.getError().intValue());
 				} else {
 					fail("Order returned is null");
 				}
@@ -773,13 +708,7 @@ public class UserServiceTest {
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
 
 				userResult2.setDescription("new description");
-				Response result3 = service.updateOneOrder(null, userResult2.getId().toHexString(), userResult2, context);
-				if (result3.getEntity() != null) {
-					DBObject dbObject = (DBObject) result3.getEntity();
-					assertEquals(500, dbObject.get("error"));
-				} else {
-					fail("order returned is null");
-				}
+				service.updateOneOrder(null, userResult2.getId().toHexString(), userResult2, context);
 			} else {
 				fail("order returned is null");
 			}
@@ -806,13 +735,7 @@ public class UserServiceTest {
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
 
 				userResult2.setDescription("new description");
-				Response result3 = service.updateOneOrder(userResult.getId().toHexString(), null, userResult2, context);
-				if (result3.getEntity() != null) {
-					DBObject dbObject = (DBObject) result3.getEntity();
-					assertEquals(500, dbObject.get("error"));
-				} else {
-					fail("order returned is null");
-				}
+				service.updateOneOrder(userResult.getId().toHexString(), null, userResult2, context);
 			} else {
 				fail("order returned is null");
 			}
@@ -839,13 +762,7 @@ public class UserServiceTest {
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
 
 				userResult2.setDescription("new description");
-				Response result3 = service.updateOneOrder(userResult.getId().toHexString(), userResult2.getId().toHexString(), null, context);
-				if (result3.getEntity() != null) {
-					DBObject dbObject = (DBObject) result3.getEntity();
-					assertEquals(500, dbObject.get("error"));
-				} else {
-					fail("order returned is null");
-				}
+				service.updateOneOrder(userResult.getId().toHexString(), userResult2.getId().toHexString(), null, context);
 			} else {
 				fail("order returned is null");
 			}
@@ -868,8 +785,8 @@ public class UserServiceTest {
 			order.setId(new ObjectId());
 			Response result3 = service.updateOneOrder(userResult.getId().toHexString(), order.getId().toHexString(), order, context);
 			if (result3.getEntity() != null) {
-				DBObject dbObject = (DBObject) result3.getEntity();
-				assertEquals(404, dbObject.get("error"));
+				ErrorMessage errorMessage = (ErrorMessage) result3.getEntity();
+				assertEquals(404, errorMessage.getError().intValue());
 			} else {
 				fail("Order returned is null");
 			}
@@ -897,9 +814,9 @@ public class UserServiceTest {
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
 				Response result3 = service.deleteOneOrder(userResult.getId().toHexString(), userResult2.getId().toHexString(), context);
 				if (result3.getEntity() != null) {
-					DBObject res = (DBObject) result3.getEntity();
-					assertNotNull(res.get("deleted"));
-					assertTrue((Boolean) res.get("deleted"));
+					DeletedMessage res = (DeletedMessage) result3.getEntity();
+					assertNotNull(res.getDeleted());
+					assertTrue(res.getDeleted());
 				} else {
 					fail("Order returned is null");
 				}
@@ -927,13 +844,7 @@ public class UserServiceTest {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-				Response result3 = service.deleteOneOrder(null, userResult2.getId().toHexString(), context);
-				if (result3.getEntity() != null) {
-					DBObject dbObject = (DBObject) result3.getEntity();
-					assertEquals(500, dbObject.get("error"));
-				} else {
-					fail("Order returned is null");
-				}
+				service.deleteOneOrder(null, userResult2.getId().toHexString(), context);
 			} else {
 				fail("Order returned is null");
 			}
@@ -958,13 +869,7 @@ public class UserServiceTest {
 				Order userResult2 = (Order) result2.getEntity();
 				assertNotNull(userResult2.getId());
 				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-				Response result3 = service.deleteOneOrder(userResult.getId().toHexString(), null, context);
-				if (result3.getEntity() != null) {
-					DBObject dbObject = (DBObject) result3.getEntity();
-					assertEquals(500, dbObject.get("error"));
-				} else {
-					fail("Order returned is null");
-				}
+				service.deleteOneOrder(userResult.getId().toHexString(), null, context);
 			} else {
 				fail("Order returned is null");
 			}

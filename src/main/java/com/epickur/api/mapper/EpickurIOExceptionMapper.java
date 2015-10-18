@@ -7,12 +7,12 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.exception.EpickurIOException;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
 
 /**
  * @author cph
@@ -28,13 +28,13 @@ public final class EpickurIOExceptionMapper implements ExceptionMapper<EpickurIO
 
 	@Override
 	public Response toResponse(final EpickurIOException exception) {
-		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.BAD_REQUEST.getStatusCode());
-		bdb.put("message", Response.Status.BAD_REQUEST.getReasonPhrase());
-		if (exception != null && exception.getMessage() != null && !exception.getMessage().equals("")) {
-			bdb.put("description", exception.getMessage());
+		ErrorMessage errorMessage = new ErrorMessage();
+		errorMessage.setError(Response.Status.BAD_REQUEST.getStatusCode());
+		errorMessage.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
+		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
+			errorMessage.setDescription(exception.getMessage());
 		}
 		LOG.error("Error: ", exception);
-		return Response.status(Status.BAD_REQUEST).entity(bdb).type(MediaType.APPLICATION_JSON).build();
+		return Response.status(Status.BAD_REQUEST).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
 	}
 }

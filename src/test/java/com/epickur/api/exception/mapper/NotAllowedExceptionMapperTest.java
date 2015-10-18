@@ -9,8 +9,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.mapper.NotAllowedExceptionMapper;
-import com.mongodb.DBObject;
 
 public class NotAllowedExceptionMapperTest {
 
@@ -22,10 +22,10 @@ public class NotAllowedExceptionMapperTest {
 		assertEquals(Response.Status.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatus());
 		assertNotNull(response.getEntity());
 
-		DBObject dbo = (DBObject) response.getEntity();
-		assertNotNull(dbo.get("error"));
-		assertEquals(Response.Status.METHOD_NOT_ALLOWED.getStatusCode(), dbo.get("error"));
-		assertNotNull(dbo.get("message"));
-		assertEquals(Response.Status.METHOD_NOT_ALLOWED.getReasonPhrase(), dbo.get("message"));
+		ErrorMessage errorMessage = (ErrorMessage) response.getEntity();
+		assertNotNull(errorMessage.getError());
+		assertEquals(Response.Status.METHOD_NOT_ALLOWED.getStatusCode(), errorMessage.getError().intValue());
+		assertNotNull(errorMessage.getMessage());
+		assertEquals(Response.Status.METHOD_NOT_ALLOWED.getReasonPhrase(), errorMessage.getMessage());
 	}
 }
