@@ -45,7 +45,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 	public final Order create(final Order order) throws EpickurException {
 		LOG.debug("Create order: " + order);
 		Document doc = order.getDocumentDBView();
-		insert(doc);
+		insertDocument(doc);
 		return Order.getDocumentAsOrder(doc);
 	}
 
@@ -53,7 +53,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 	public final Order read(final String id) throws EpickurException {
 		LOG.debug("Read order with id: " + id);
 		Document query = convertAttributeToDocument("_id", new ObjectId(id));
-		Document find = find(query);
+		Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -62,7 +62,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 		LOG.debug("Update order: " + order);
 		Document filter = convertAttributeToDocument("_id", order.getId());
 		Document update = order.getOrderUpdateQuery();
-		Document updated = update(filter, update);
+		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -72,13 +72,6 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 		} else {
 			return null;
 		}
-	}
-
-	@Override
-	public final boolean delete(final String id) throws EpickurException {
-		LOG.debug("Delete order with id: " + id);
-		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
-		return delete(filter);
 	}
 
 	@Override

@@ -58,7 +58,7 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 	public Voucher create(final Voucher voucher) throws EpickurException {
 		LOG.debug("Create voucher: " + voucher);
 		Document doc = voucher.getDocumentDBView();
-		insert(doc);
+		insertDocument(doc);
 		return Voucher.getDocumentAsVoucher(doc);
 	}
 
@@ -66,7 +66,7 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 	public Voucher read(final String code) throws EpickurException {
 		LOG.debug("Read voucher with code: " + code);
 		Document query = convertAttributeToDocument("code", code);
-		Document find = find(query);
+		Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -76,7 +76,7 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 		LOG.debug("Update voucher: " + voucher);
 		Document filter = convertAttributeToDocument("_id", voucher.getId());
 		Document update = voucher.getUpdateDocument();
-		Document updated = update(filter, update);
+		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -86,11 +86,6 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 		} else {
 			return null;
 		}
-	}
-
-	@Override
-	public boolean delete(final String id) throws EpickurException {
-		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
 	}
 
 	/**

@@ -43,7 +43,7 @@ public final class CatererDAOImpl extends CrudDAO<Caterer> {
 	public Caterer create(final Caterer caterer) throws EpickurException {
 		LOG.debug("Create caterer: " + caterer);
 		Document doc = caterer.getDocumentDBView();
-		insert(doc);
+		insertDocument(doc);
 		return Caterer.getDocumentAsCatererDBView(doc);
 	}
 
@@ -51,7 +51,7 @@ public final class CatererDAOImpl extends CrudDAO<Caterer> {
 	public Caterer read(final String id) throws EpickurException {
 		LOG.debug("Read caterer: " + id);
 		Document query = convertAttributeToDocument("_id", new ObjectId(id));
-		Document find = find(query);
+		Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -60,7 +60,7 @@ public final class CatererDAOImpl extends CrudDAO<Caterer> {
 		LOG.debug("Update caterer: " + caterer);
 		Document filter = convertAttributeToDocument("_id", caterer.getId());
 		Document update = caterer.getUpdateDocument();
-		Document updated = update(filter, update);
+		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -70,13 +70,6 @@ public final class CatererDAOImpl extends CrudDAO<Caterer> {
 		} else {
 			return null;
 		}
-	}
-
-	@Override
-	public boolean delete(final String id) throws EpickurException {
-		LOG.debug("Delete caterer with: " + id);
-		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
-		return delete(filter);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import com.epickur.api.exception.EpickurException;
 /**
  * Interface that defines the CRUD operation and a readAll operation that needs to be implemented.
  * 
- * @author carl
+ * @author cph
  * @version 1.0
  * @param <T>
  *            Must be an AbstractEntity

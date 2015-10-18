@@ -51,7 +51,7 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 	public Dish create(final Dish dish) throws EpickurException {
 		LOG.debug("Create dish: " + dish);
 		Document doc = dish.getDocumentDBView();
-		insert(doc);
+		insertDocument(doc);
 		return Dish.getDocumentAsDish(doc);
 	}
 
@@ -59,7 +59,7 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 	public Dish read(final String id) throws EpickurException {
 		LOG.debug("Read dish with id: " + id);
 		Document query = convertAttributeToDocument("_id", new ObjectId(id));
-		Document find = find(query);
+		Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -68,7 +68,7 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 		LOG.debug("Update dish: " + dish);
 		Document filter = convertAttributeToDocument("_id", dish.getId());
 		Document update = dish.getUpdateDocument();
-		Document updated = update(filter, update);
+		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -78,13 +78,6 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 		} else {
 			return null;
 		}
-	}
-
-	@Override
-	public boolean delete(final String id) throws EpickurException {
-		LOG.debug("Delete dish with id: " + id);
-		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
-		return delete(filter);
 	}
 
 	@Override

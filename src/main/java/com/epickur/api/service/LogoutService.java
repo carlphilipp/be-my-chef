@@ -58,7 +58,7 @@ public final class LogoutService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response logout(@QueryParam("key") final String key) throws EpickurException {
-		this.keyBusiness.delete(key);
+		this.keyBusiness.deleteWithKey(key);
 		DBObject obj = BasicDBObjectBuilder.start("result", "success").get();
 		return Response.ok().entity(obj).build();
 	}

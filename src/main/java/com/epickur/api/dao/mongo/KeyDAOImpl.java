@@ -43,7 +43,7 @@ public final class KeyDAOImpl extends CrudDAO<Key> {
 	public Key create(final Key key) throws EpickurException {
 		LOG.debug("Create key: " + key);
 		Document doc = key.getDocumentDBView();
-		insert(doc);
+		insertDocument(doc);
 		return Key.getDocumentAsKey(doc);
 	}
 
@@ -51,7 +51,7 @@ public final class KeyDAOImpl extends CrudDAO<Key> {
 	public Key read(final String key) throws EpickurException {
 		LOG.debug("Read key: " + key);
 		Document query = convertAttributeToDocument("key", key);
-		Document find = find(query);
+		Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -67,7 +67,7 @@ public final class KeyDAOImpl extends CrudDAO<Key> {
 	public Key readWithName(final String userName) throws EpickurException {
 		LOG.debug("Read key with name: " + userName);
 		Document query = convertAttributeToDocument("userName", userName);
-		Document find = find(query);
+		Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -84,11 +84,10 @@ public final class KeyDAOImpl extends CrudDAO<Key> {
 		}
 	}
 
-	@Override
-	public boolean delete(final String key) throws EpickurException {
+	public boolean deleteWithKey(final String key) throws EpickurException {
 		LOG.debug("Delete key: " + key);
 		Document filter = convertAttributeToDocument("key", key);
-		return delete(filter);
+		return deleteDocument(filter);
 	}
 
 	@Override

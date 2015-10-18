@@ -46,7 +46,7 @@ public final class UserDAOImpl extends CrudDAO<User> {
 	public User create(final User user) throws EpickurException {
 		LOG.debug("Create user: " + user);
 		Document doc = user.getDocumentDBView();
-		insert(doc);
+		insertDocument(doc);
 		return User.getDocumentAsUser(doc);
 	}
 
@@ -54,7 +54,7 @@ public final class UserDAOImpl extends CrudDAO<User> {
 	public User read(final String id) throws EpickurException {
 		LOG.debug("Read user with id: " + id);
 		Document query = convertAttributeToDocument("_id", new ObjectId(id));
-		Document find = find(query);
+		Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -70,7 +70,7 @@ public final class UserDAOImpl extends CrudDAO<User> {
 	public User readWithName(final String name) throws EpickurException {
 		LOG.debug("Read user with name: " + name);
 		Document query = convertAttributeToDocument("name", name);
-		Document find = find(query);
+		Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -86,7 +86,7 @@ public final class UserDAOImpl extends CrudDAO<User> {
 	public User readWithEmail(final String email) throws EpickurException {
 		LOG.debug("Read user with email: " + email);
 		Document query = convertAttributeToDocument("email", email);
-		Document find = find(query);
+		Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -95,7 +95,7 @@ public final class UserDAOImpl extends CrudDAO<User> {
 		LOG.debug("Update user: " + user);
 		Document filter = convertAttributeToDocument("_id", user.getId());
 		Document update = user.getUserUpdateQuery();
-		Document updated = update(filter, update);
+		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -105,13 +105,6 @@ public final class UserDAOImpl extends CrudDAO<User> {
 		} else {
 			return null;
 		}
-	}
-
-	@Override
-	public boolean delete(final String id) throws EpickurException {
-		LOG.debug("Delete user with id: " + id);
-		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
-		return delete(filter);
 	}
 
 	@Override

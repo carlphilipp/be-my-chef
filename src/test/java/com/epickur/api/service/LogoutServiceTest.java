@@ -61,15 +61,15 @@ public class LogoutServiceTest {
 			
 			Response result2 = loginService.login(user.getEmail(), password);
 			if (result2.getEntity() != null) {
-				User catererResult2 = (User) result2.getEntity();
-				assertNotNull(catererResult2.getId());
-				assertEquals(user.getName(), catererResult2.getName());
-				assertEquals(user.getEmail(), catererResult2.getEmail());
-				assertNotNull(catererResult2.getAllow());
-				assertNotNull(catererResult2.getCreatedAt());
-				assertNotNull(catererResult2.getUpdatedAt());
-				assertNotNull(catererResult2.getKey());
-				Response result3 = logoutService.logout(catererResult2.getKey());
+				User userResult2 = (User) result2.getEntity();
+				assertNotNull(userResult2.getId());
+				assertEquals(user.getName(), userResult2.getName());
+				assertEquals(user.getEmail(), userResult2.getEmail());
+				assertNotNull(userResult2.getAllow());
+				assertNotNull(userResult2.getCreatedAt());
+				assertNotNull(userResult2.getUpdatedAt());
+				assertNotNull(userResult2.getKey());
+				Response result3 = logoutService.logout(userResult2.getKey());
 				if (result3.getEntity() != null) {
 					DBObject obj = (DBObject) result3.getEntity();
 					assertEquals("success", obj.get("result"));

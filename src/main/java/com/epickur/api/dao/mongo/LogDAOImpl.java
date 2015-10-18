@@ -44,7 +44,7 @@ public final class LogDAOImpl extends CrudDAO<Log> {
 	public Log create(final Log obj) throws EpickurException {
 		LOG.trace("Create log: " + obj);
 		Document doc = obj.getDocumentDBView();
-		insert(doc);
+		insertDocument(doc);
 		return null;
 	}
 
@@ -55,11 +55,6 @@ public final class LogDAOImpl extends CrudDAO<Log> {
 
 	@Override
 	public Log update(final Log obj) throws EpickurException {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public boolean delete(final String id) throws EpickurException {
 		throw new NotImplementedException();
 	}
 }

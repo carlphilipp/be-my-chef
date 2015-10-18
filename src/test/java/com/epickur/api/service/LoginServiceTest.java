@@ -52,7 +52,7 @@ public class LoginServiceTest {
 			userService.delete(id.toHexString(), context);
 		}
 		for (String id : keysToDelete) {
-			keyBusiness.delete(id);
+			keyBusiness.deleteWithKey(id);
 		}
 	}
 
