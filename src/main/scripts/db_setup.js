@@ -160,7 +160,7 @@ db.dishes.insert(
     "difficultyLevel": NumberInt(1),
     "caterer": 
       {
-        "_id" : "54e90015b634980ccd05e3bc",
+        "_id" : ObjectId("54e90015b634980ccd05e3bc"),
         "name": "Super Thai",
         "description": "Super Thai - Noodles, Curry dishes",
         "manager": "John Lee",
@@ -241,7 +241,7 @@ db.dishes.insert(
 	  	"difficultyLevel": NumberInt(1),
 	  	"caterer": 
         {
-          "_id" : "54e90015b634980ccd05e3be",
+          "_id" : ObjectId("54e90015b634980ccd05e3be"),
           "name": "Fish & Chips",
           "description": "The bast Fish & Chips down under",
           "manager": "Dean Prob",
@@ -317,7 +317,7 @@ db.dishes.insert(
     	"difficultyLevel": NumberInt(1),
     	"caterer": 
       {
-        "_id" : "54e90015b634980ccd05e3be",
+        "_id" : ObjectId("54e90015b634980ccd05e3be"),
         "name": "Fish & Chips",
         "description": "The bast Fish & Chips down under",
         "manager": "Dean Prob",

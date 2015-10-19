@@ -185,7 +185,7 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 		MongoCursor<Document> cursor = null;
 		List<Dish> dishes = new ArrayList<Dish>();
 		Document find = new Document();
-		find.append("caterer._id", catererId);
+		find.append("caterer._id", new ObjectId(catererId));
 		try {
 			cursor = getColl().find(find).iterator();
 			while (cursor.hasNext()) {
