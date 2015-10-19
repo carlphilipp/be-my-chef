@@ -34,6 +34,7 @@ public final class KeyBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public Key create(final Key key) throws EpickurException {
+		key.prepareForInsertionIntoDB();
 		return this.keyDao.create(key);
 	}
 
@@ -60,6 +61,10 @@ public final class KeyBusiness {
 	 */
 	public void delete(final String id) throws EpickurException {
 		this.keyDao.delete(id);
+	}
+	
+	public void deleteWithKey(final String key) throws EpickurException{
+		this.keyDao.deleteWithKey(key);
 	}
 
 	/**

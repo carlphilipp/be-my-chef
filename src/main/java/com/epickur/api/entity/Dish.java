@@ -13,16 +13,12 @@ import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 
-import com.epickur.api.entity.deserialize.DateDeserializer;
 import com.epickur.api.entity.deserialize.DishTypeDeserializer;
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
-import com.epickur.api.entity.serialize.DateSerializer;
 import com.epickur.api.entity.serialize.DishTypeSerializer;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.enumeration.DishType;
-import com.epickur.api.enumeration.View;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -51,13 +47,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(callSuper = false)
-public final class Dish extends AbstractEntity {
+@EqualsAndHashCode(callSuper = true)
+public final class Dish extends AbstractMainDBEntity {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Dish.class.getSimpleName());
-	/** Id */
-	private ObjectId id;
 	/** Name */
 	private String name;
 	/** Description */
@@ -88,27 +82,6 @@ public final class Dish extends AbstractEntity {
 	private Caterer caterer;
 	/** Owner id */
 	private ObjectId createdBy;
-	/** Created at */
-	private DateTime createdAt;
-	/** Updated at */
-	private DateTime updatedAt;
-
-	/**
-	 * @return The ObjectId
-	 */
-	@JsonSerialize(using = ObjectIdSerializer.class)
-	public ObjectId getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            The ObjectId
-	 */
-	@JsonDeserialize(using = ObjectIdDeserializer.class)
-	public void setId(final ObjectId id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return The type
@@ -125,40 +98,6 @@ public final class Dish extends AbstractEntity {
 	@JsonDeserialize(using = DishTypeDeserializer.class)
 	public void setType(final DishType type) {
 		this.type = type;
-	}
-
-	/**
-	 * @return The creation date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	/**
-	 * @param createdAt
-	 *            The creation date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setCreatedAt(final DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	/**
-	 * @return The updated date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	/**
-	 * @param updatedAt
-	 *            The updated date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setUpdatedAt(final DateTime updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	/**
@@ -196,7 +135,7 @@ public final class Dish extends AbstractEntity {
 			String key = en.getKey();
 			if (!key.equals("id")) {
 				if (key.equals("caterer")) {
-					Caterer cat = Caterer.getObject((Document) found.get(key), View.API);
+					Caterer cat = Caterer.getDocumentAsCatererAPIView((Document) found.get(key));
 					Map<String, Object> caterers = cat.getUpdateMap("caterer");
 					for (Entry<String, Object> entry : caterers.entrySet()) {
 						args.put(entry.getKey(), entry.getValue());
@@ -216,7 +155,7 @@ public final class Dish extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Dish getObject(final Document obj) throws EpickurParsingException {
+	public static Dish getDocumentAsDish(final Document obj) throws EpickurParsingException {
 		return Dish.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 

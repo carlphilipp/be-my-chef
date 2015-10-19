@@ -25,11 +25,12 @@ import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
+import com.epickur.api.entity.message.DeletedMessage;
+import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBObject;
 
 public class DishServiceTest {
 
@@ -81,13 +82,7 @@ public class DishServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testCreateFail() throws EpickurException {
-		Response result = dishService.create(null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Fail");
-		}
+		dishService.create(null, context);
 	}
 
 	@Test
@@ -141,8 +136,8 @@ public class DishServiceTest {
 	public void testReadFail() throws EpickurException {
 		Response result = dishService.read(new ObjectId().toHexString(), context);
 		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(404, dbObject.get("error"));
+			ErrorMessage errorMessage = (ErrorMessage) result.getEntity();
+			assertEquals(404, errorMessage.getError().intValue());
 		} else {
 			fail("Fail");
 		}
@@ -150,13 +145,7 @@ public class DishServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testReadFail2() throws EpickurException {
-		Response result = dishService.read(null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Fail");
-		}
+		dishService.read(null, context);
 	}
 
 	@Test
@@ -232,8 +221,8 @@ public class DishServiceTest {
 		dish.setId(new ObjectId());
 		Response result = dishService.update(dish.getId().toHexString(), dish, context);
 		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(404, dbObject.get("error"));
+			ErrorMessage errorMessage = (ErrorMessage) result.getEntity();
+			assertEquals(404, errorMessage.getError().intValue());
 		} else {
 			fail("Dish returned is null");
 		}
@@ -241,37 +230,19 @@ public class DishServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testUpdateFail2() throws EpickurException {
-		Response result = dishService.update(null, null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Dish returned is null");
-		}
+		dishService.update(null, null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testUpdateFail3() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
 		dish.setId(new ObjectId());
-		Response result = dishService.update(null, dish, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Dish returned is null");
-		}
+		dishService.update(null, dish, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testUpdateFail4() throws EpickurException {
-		Response result = dishService.update("", null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Dish returned is null");
-		}
+		dishService.update("", null, context);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
@@ -298,8 +269,8 @@ public class DishServiceTest {
 
 			Response result2 = dishService.delete(dishResult.getId().toHexString(), context);
 			if (result2.getEntity() != null) {
-				DBObject dishResult2 = (DBObject) result2.getEntity();
-				assertTrue((Boolean) dishResult2.get("deleted"));
+				DeletedMessage dishResult2 = (DeletedMessage) result2.getEntity();
+				assertTrue(dishResult2.getDeleted());
 			} else {
 				fail("Answer is null");
 			}
@@ -310,13 +281,7 @@ public class DishServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testDeleteFail() throws EpickurException {
-		Response result = dishService.delete(null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Dish returned is null");
-		}
+		dishService.delete(null, context);
 	}
 
 	// Search dish

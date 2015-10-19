@@ -32,11 +32,13 @@ import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.message.DeletedMessage;
+import com.epickur.api.entity.message.ErrorMessage;
+import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.integration.UserIntegrationTest;
 import com.epickur.api.validator.Validator;
-import com.mongodb.DBObject;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -116,13 +118,7 @@ public class CatererServiceTest {
 		thrown.expectMessage("No caterer has been provided");
 
 		Caterer caterer = null;
-		Response result = catererService.create(caterer, context);
-		if (result.getEntity() != null) {
-			DBObject obj = (DBObject) result.getEntity();
-			assertEquals(500, obj.get("error"));
-		} else {
-			fail("Caterer returned is null");
-		}
+		catererService.create(caterer, context);
 	}
 
 	@Test
@@ -151,13 +147,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.PARAM_ID_NULL);
 
-		Response result = catererService.read(null, context);
-		if (result.getEntity() != null) {
-			DBObject obj = (DBObject) result.getEntity();
-			assertEquals(500, obj.get("error"));
-		} else {
-			fail("Caterer returned is null");
-		}
+		catererService.read(null, context);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -336,13 +326,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.PARAM_ID_NULL);
 
-		Response result = catererService.update(null, null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Caterer returned is null");
-		}
+		catererService.update(null, null, context);
 	}
 
 	@Test
@@ -350,13 +334,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_CATERER_PROVIDED);
 
-		Response result = catererService.update(new ObjectId().toHexString(), null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Caterer returned is null");
-		}
+		catererService.update(new ObjectId().toHexString(), null, context);
 	}
 
 	@Test
@@ -364,13 +342,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_CATERER_PROVIDED);
 
-		Response result = catererService.update(new ObjectId().toHexString(), null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Caterer returned is null");
-		}
+		catererService.update(new ObjectId().toHexString(), null, context);
 	}
 
 	@Test
@@ -379,8 +351,8 @@ public class CatererServiceTest {
 		caterer.setId(new ObjectId());
 		Response result = catererService.update(caterer.getId().toHexString(), caterer, context);
 		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(404, dbObject.get("error"));
+			ErrorMessage errorMessage = (ErrorMessage) result.getEntity();
+			assertEquals(404, errorMessage.getError().intValue());
 		} else {
 			fail("Caterer should not be found");
 		}
@@ -398,14 +370,14 @@ public class CatererServiceTest {
 			Response result2 = catererService.delete(catererResult.getId().toHexString(), context);
 			if (result2.getEntity() != null) {
 				int statusCode = result2.getStatus();
-				String entityResult = ((DBObject) result2.getEntity()).toString();
+				String entityResult = ((DeletedMessage) result2.getEntity()).toString();
 				assertEquals("Wrong status code: " + statusCode + " with " + entityResult, 200, statusCode);
-				DBObject deleted = (DBObject) result2.getEntity();
-				assertTrue((Boolean) deleted.get("deleted"));
+				DeletedMessage deleted = (DeletedMessage) result2.getEntity();
+				assertTrue(deleted.getDeleted());
 
 				Response result3 = catererService.read(catererResult.getId().toHexString(), context);
-				DBObject dbObject = (DBObject) result3.getEntity();
-				assertEquals(404, dbObject.get("error"));
+				ErrorMessage errorMessage = (ErrorMessage) result3.getEntity();
+				assertEquals(404, errorMessage.getError().intValue());
 			}
 		} else {
 			fail("Caterer returned is null");
@@ -417,13 +389,7 @@ public class CatererServiceTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.PARAM_ID_NULL);
 
-		Response result = catererService.delete(null, context);
-		if (result.getEntity() != null) {
-			DBObject dbObject = (DBObject) result.getEntity();
-			assertEquals(500, dbObject.get("error"));
-		} else {
-			fail("Fail");
-		}
+		catererService.delete(null, context);
 	}
 
 	@Test
@@ -445,9 +411,9 @@ public class CatererServiceTest {
 		Response result = catererService.paymentInfo(caterer.getId().toHexString(), null, null, null, context);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
-			DBObject entityResult = (DBObject) result.getEntity();
+			PayementInfoMessage entityResult = (PayementInfoMessage) result.getEntity();
 			assertEquals("Wrong status code: " + statusCode + " with " + entityResult, 200, statusCode);
-			assertTrue((int) entityResult.get("amount") > 0);
+			assertTrue((int) entityResult.getAmount().intValue() > 0);
 		}
 	}
 
@@ -473,9 +439,9 @@ public class CatererServiceTest {
 		Response result = catererService.paymentInfo(caterer.getId().toHexString(), start, null, defaultFormat, context);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
-			DBObject entityResult = (DBObject) result.getEntity();
+			PayementInfoMessage entityResult = (PayementInfoMessage) result.getEntity();
 			assertEquals("Wrong status code: " + statusCode + " with " + entityResult, 200, statusCode);
-			assertTrue((int) entityResult.get("amount") > 0);
+			assertTrue((int) entityResult.getAmount() > 0);
 		}
 	}
 
@@ -499,7 +465,7 @@ public class CatererServiceTest {
 		Response result = catererService.paymentInfo(caterer.getId().toHexString(), start, end, defaultFormat, context);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
-			DBObject entityResult = (DBObject) result.getEntity();
+			PayementInfoMessage entityResult = (PayementInfoMessage) result.getEntity();
 			assertEquals("Wrong status code: " + statusCode + " with " + entityResult, 200, statusCode);
 		}
 	}
@@ -514,7 +480,7 @@ public class CatererServiceTest {
 		Response result = catererService.paymentInfo(new ObjectId().toHexString(), start, end, defaultFormat, context);
 		if (result.getEntity() != null) {
 			int statusCode = result.getStatus();
-			DBObject entityResult = (DBObject) result.getEntity();
+			ErrorMessage entityResult = (ErrorMessage) result.getEntity();
 			assertEquals("Wrong status code: " + statusCode + " with " + entityResult, 404, statusCode);
 		}
 	}

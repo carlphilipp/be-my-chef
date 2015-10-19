@@ -23,7 +23,6 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
-import com.mongodb.DBObject;
 
 public class LoginServiceTest {
 
@@ -52,7 +51,7 @@ public class LoginServiceTest {
 			userService.delete(id.toHexString(), context);
 		}
 		for (String id : keysToDelete) {
-			keyBusiness.delete(id);
+			keyBusiness.deleteWithKey(id);
 		}
 	}
 
@@ -88,19 +87,6 @@ public class LoginServiceTest {
 	public void testLoginFail() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = user.getPassword();
-		Response result = loginService.login(null, password);
-		if (result.getEntity() != null) {
-			DBObject obj = (DBObject) result.getEntity();
-			assertEquals(500, obj.get("error"));
-		} else {
-			fail("User returned is null");
-		}
-		result = loginService.login("login", null);
-		if (result.getEntity() != null) {
-			DBObject obj = (DBObject) result.getEntity();
-			assertEquals(500, obj.get("error"));
-		} else {
-			fail("User returned is null");
-		}
+		loginService.login(null, password);
 	}
 }

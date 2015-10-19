@@ -10,9 +10,8 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.epickur.api.entity.message.ErrorMessage;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
 
 /**
  * Called whenever an JSON mapping Exception occurs. It logs an error and build the response.
@@ -29,12 +28,12 @@ public final class JsonMappingExceptionMapper implements ExceptionMapper<JsonMap
 
 	@Override
 	public Response toResponse(final JsonMappingException exception) {
-		DBObject bdb = BasicDBObjectBuilder.start().get();
-		bdb.put("error", Response.Status.BAD_REQUEST.getStatusCode());
-		bdb.put("message", Response.Status.BAD_REQUEST.getReasonPhrase());
-		bdb.put("description", exception.getOriginalMessage());
+		ErrorMessage errorMessage = new ErrorMessage();
+		errorMessage.setError(Response.Status.BAD_REQUEST.getStatusCode());
+		errorMessage.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
+		errorMessage.setDescription(exception.getOriginalMessage());
 		LOG.error(exception.getLocalizedMessage(), exception);
-		return Response.status(Status.BAD_REQUEST).entity(bdb).type(MediaType.APPLICATION_JSON).build();
+		return Response.status(Status.BAD_REQUEST).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
 	}
 
 }

@@ -45,6 +45,7 @@ public class CatererBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Caterer create(final Caterer caterer) throws EpickurException {
+		caterer.prepareForInsertionIntoDB();
 		return dao.create(caterer);
 	}
 
@@ -87,6 +88,7 @@ public class CatererBusiness {
 		Caterer read = dao.read(caterer.getId().toHexString());
 		if (read != null) {
 			validator.checkRightsAfter(role, userId, read, Operation.UPDATE);
+			caterer.prepareForUpdateIntoDB();
 			return dao.update(caterer);
 		}
 		return read;

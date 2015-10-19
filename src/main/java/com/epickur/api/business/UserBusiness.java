@@ -81,6 +81,7 @@ public final class UserBusiness {
 		String code = Security.createUserCode(user.getName(), saltHashed, encryptedPasswordSalt, user.getEmail());
 		user.setPassword(saltHashed + encryptedPasswordSalt);
 		user.setRole(Role.USER);
+		user.prepareForInsertionIntoDB();
 		User res = userDAO.create(user);
 
 		if (sendEmail) {
@@ -167,6 +168,7 @@ public final class UserBusiness {
 	public User update(final User user, final Key key) throws EpickurException {
 		User read = userDAO.read(user.getId().toHexString());
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
+		user.prepareForUpdateIntoDB();
 		User res = userDAO.update(user);
 		if (res != null) {
 			// We do not send back the password or the role
@@ -272,6 +274,7 @@ public final class UserBusiness {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 			} else {
 				dbUser.setAllow(1);
+				dbUser.prepareForUpdateIntoDB();
 				dbUser = userDAO.update(dbUser);
 			}
 		} else {
@@ -322,6 +325,7 @@ public final class UserBusiness {
 				String newPassword = node.get("password").asText();
 				String newEnryptedPassword = Utils.getEncryptedPassword(newPassword);
 				user.setPassword(newEnryptedPassword);
+				user.prepareForUpdateIntoDB();
 				User res = userDAO.update(user);
 				res.setPassword(null);
 				res.setRole(null);

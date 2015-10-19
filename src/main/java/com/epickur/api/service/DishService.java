@@ -25,6 +25,7 @@ import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
+import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
@@ -34,8 +35,6 @@ import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.DishValidator;
 import com.epickur.api.validator.FactoryValidator;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
 
 /**
  * JAX-RS Dish Service
@@ -446,8 +445,10 @@ public final class DishService {
 		validator.checkId(id);
 		boolean isDeleted = dishBusiness.delete(id, key);
 		if (isDeleted) {
-			DBObject result = BasicDBObjectBuilder.start("id", id).add("deleted", isDeleted).get();
-			return Response.ok().entity(result).build();
+			DeletedMessage message = new DeletedMessage();
+			message.setId(id);
+			message.setDeleted(isDeleted);
+			return Response.ok().entity(message).build();
 		} else {
 			return ErrorUtils.notFound(ErrorUtils.DISH_NOT_FOUND, id);
 		}

@@ -7,8 +7,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.mapper.ThrowableExeptionMapper;
-import com.mongodb.DBObject;
 
 public class ThrowableExeptionMapperTest {
 
@@ -20,10 +20,10 @@ public class ThrowableExeptionMapperTest {
 		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 		assertNotNull(response.getEntity());
 
-		DBObject dbo = (DBObject) response.getEntity();
-		assertNotNull(dbo.get("error"));
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), dbo.get("error"));
-		assertNotNull(dbo.get("message"));
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase(), dbo.get("message"));
+		ErrorMessage errorMessage = (ErrorMessage) response.getEntity();
+		assertNotNull(errorMessage.getError());
+		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), errorMessage.getError().intValue());
+		assertNotNull(errorMessage.getMessage());
+		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase(), errorMessage.getMessage());
 	}
 }

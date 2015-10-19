@@ -557,6 +557,7 @@ public class TestUtils {
 	public static Order updateOrderStatusToSuccess(final Order order) throws EpickurException {
 		order.setStatus(OrderStatus.SUCCESSFUL);
 		OrderDAOImpl dao = new OrderDAOImpl();
+		order.prepareForUpdateIntoDB();
 		return dao.update(order);
 	}
 }

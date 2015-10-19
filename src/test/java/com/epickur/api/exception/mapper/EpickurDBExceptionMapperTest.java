@@ -8,10 +8,10 @@ import javax.ws.rs.core.Response;
 import org.bson.Document;
 import org.junit.Test;
 
+import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.mapper.EpickurDBExceptionMapper;
 import com.epickur.api.utils.ErrorUtils;
-import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
 public class EpickurDBExceptionMapperTest {
@@ -25,11 +25,11 @@ public class EpickurDBExceptionMapperTest {
 		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 		assertNotNull(response.getEntity());
 
-		DBObject dbo = (DBObject) response.getEntity();
-		assertNotNull(dbo.get("error"));
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), dbo.get("error"));
-		assertNotNull(dbo.get("message"));
-		assertEquals(ErrorUtils.INTERNAL_SERVER_ERROR, dbo.get("message"));
+		ErrorMessage dbo = (ErrorMessage) response.getEntity();
+		assertNotNull(dbo.getError());
+		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), dbo.getError().intValue());
+		assertNotNull(dbo.getMessage());
+		assertEquals(ErrorUtils.INTERNAL_SERVER_ERROR, dbo.getMessage());
 	}
 
 	@Test
@@ -41,10 +41,10 @@ public class EpickurDBExceptionMapperTest {
 		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 		assertNotNull(response.getEntity());
 
-		DBObject dbo = (DBObject) response.getEntity();
-		assertNotNull(dbo.get("error"));
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), dbo.get("error"));
-		assertNotNull(dbo.get("message"));
-		assertEquals(ErrorUtils.INTERNAL_SERVER_ERROR, dbo.get("message"));
+		ErrorMessage dbo = (ErrorMessage) response.getEntity();
+		assertNotNull(dbo.getError());
+		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), dbo.getError().intValue());
+		assertNotNull(dbo.getMessage());
+		assertEquals(ErrorUtils.INTERNAL_SERVER_ERROR, dbo.getMessage());
 	}
 }

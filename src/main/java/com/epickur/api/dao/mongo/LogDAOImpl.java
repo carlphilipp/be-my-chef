@@ -8,9 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.epickur.api.entity.Log;
-import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
-import com.mongodb.MongoException;
 
 /**
  * Log DAO access with CRUD operations.
@@ -44,15 +42,10 @@ public final class LogDAOImpl extends CrudDAO<Log> {
 
 	@Override
 	public Log create(final Log obj) throws EpickurException {
-		Document doc = null;
-		try {
-			doc = obj.getDocumentDBView();
-			LOG.trace("Create log: " + obj);
-			getColl().insertOne(doc);
-			return null;
-		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), doc, e);
-		}
+		LOG.trace("Create log: " + obj);
+		Document doc = obj.getDocumentDBView();
+		insertDocument(doc);
+		return null;
 	}
 
 	@Override
@@ -62,11 +55,6 @@ public final class LogDAOImpl extends CrudDAO<Log> {
 
 	@Override
 	public Log update(final Log obj) throws EpickurException {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public boolean delete(final String id) throws EpickurException {
 		throw new NotImplementedException();
 	}
 }

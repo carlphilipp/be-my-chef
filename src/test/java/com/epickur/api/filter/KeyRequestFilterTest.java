@@ -56,7 +56,7 @@ public class KeyRequestFilterTest {
 		}
 
 		for (String id : keysToDelete) {
-			keyBusiness.delete(id);
+			keyBusiness.deleteWithKey(id);
 		}
 
 	}

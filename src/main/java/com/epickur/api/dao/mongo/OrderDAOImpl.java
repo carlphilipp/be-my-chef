@@ -3,6 +3,7 @@ package com.epickur.api.dao.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -12,10 +13,9 @@ import org.joda.time.DateTime;
 import com.epickur.api.entity.Order;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.model.ReturnDocument;
 
 /**
  * Order DAO access with CRUD operations.
@@ -43,72 +43,40 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 
 	@Override
 	public final Order create(final Order order) throws EpickurException {
-		order.setId(null);
-		DateTime time = new DateTime();
-		order.setCreatedAt(time);
-		order.setUpdatedAt(time);
-		Document doc = null;
-		try {
-			doc = order.getDocumentDBView();
-			LOG.debug("Create order: " + order);
-			getColl().insertOne(doc);
-			return Order.getObject(doc);
-		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), doc, e);
-		}
+		LOG.debug("Create order: " + order);
+		Document doc = order.getDocumentDBView();
+		insertDocument(doc);
+		return Order.getDocumentAsOrder(doc);
 	}
 
 	@Override
 	public final Order read(final String id) throws EpickurException {
-		try {
-			LOG.debug("Read order: " + id);
-			Document query = new Document().append("_id", new ObjectId(id));
-			Document find = getColl().find(query).first();
-			if (find != null) {
-				return Order.getObject(find);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), id, e);
-		}
+		LOG.debug("Read order with id: " + id);
+		Document query = convertAttributeToDocument("_id", new ObjectId(id));
+		Document find = findDocument(query);
+		return processAfterQuery(find);
 	}
 
 	@Override
 	public final Order update(final Order order) throws EpickurException {
-		Document filter = new Document().append("_id", order.getId());
-		DateTime time = new DateTime();
-		order.setReadableId(null);
-		order.setCreatedAt(null);
-		order.setUpdatedAt(time);
 		LOG.debug("Update order: " + order);
-		Document update = order.getUpdateDocument();
-		try {
-			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
-			if (updated != null) {
-				return Order.getObject(updated);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
-		}
+		Document filter = convertAttributeToDocument("_id", order.getId());
+		Document update = order.getOrderUpdateQuery();
+		Document updated = updateDocument(filter, update);
+		return processAfterQuery(updated);
 	}
 
-	@Override
-	public final boolean delete(final String id) throws EpickurException {
-		try {
-			Document filter = new Document().append("_id", new ObjectId(id));
-			LOG.debug("Delete order: " + id);
-			return this.isDeleted(getColl().deleteOne(filter), "delete");
-		} catch (MongoException e) {
-			throw new EpickurDBException("delete", e.getMessage(), id, e);
+	private Order processAfterQuery(final Document document) throws EpickurParsingException {
+		if (document != null) {
+			return Order.getDocumentAsOrder(document);
+		} else {
+			return null;
 		}
 	}
 
 	@Override
 	public final List<Order> readAll() throws EpickurException {
-		throw new EpickurDBException();
+		throw new NotImplementedException();
 	}
 
 	/**
@@ -127,7 +95,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 		try {
 			cursor = getColl().find(query).iterator();
 			while (cursor.hasNext()) {
-				Order user = Order.getObject(cursor.next());
+				Order user = Order.getDocumentAsOrder(cursor.next());
 				orders.add(user);
 			}
 		} catch (MongoException e) {
@@ -168,7 +136,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 		try {
 			cursor = getColl().find(query).iterator();
 			while (cursor.hasNext()) {
-				Order user = Order.getObject(cursor.next());
+				Order user = Order.getDocumentAsOrder(cursor.next());
 				orders.add(user);
 			}
 		} catch (MongoException e) {

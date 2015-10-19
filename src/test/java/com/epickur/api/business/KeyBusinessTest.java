@@ -27,7 +27,7 @@ public class KeyBusinessTest {
 	@AfterClass
 	public static void afterClass() throws EpickurException {
 		for (String key : toDelete) {
-			business.delete(key);
+			business.deleteWithKey(key);
 		}
 	}
 

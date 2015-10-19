@@ -3,17 +3,22 @@ package com.epickur.api.dao.mongo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.epickur.api.dao.ICrudDAO;
 import com.epickur.api.dao.MongoDb;
 import com.epickur.api.entity.AbstractEntity;
+import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.result.DeleteResult;
 
 /**
- * Abstract class that implement that helps manipulalting the delete operation.
+ * Abstract class that helps the manipulation of Documents.
  * 
  * @author cph
  * @version 1.0
@@ -35,19 +40,55 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	}
 
 	@Override
-	public abstract T create(T obj) throws EpickurException;
+	public abstract T create(final T obj) throws EpickurException;
 
 	@Override
-	public abstract T read(String id) throws EpickurException;
+	public abstract T read(final String id) throws EpickurException;
 
 	@Override
-	public abstract T update(T obj) throws EpickurException;
+	public abstract T update(final T obj) throws EpickurException;
 
 	@Override
-	public abstract boolean delete(String id) throws EpickurException;
-
+	public final boolean delete(final String id) throws EpickurException {
+		LOG.debug("Delete with id: " + id);
+		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
+		return deleteDocument(filter);
+	}
+	
+	protected final void insertDocument(final Document document) throws EpickurDBException {
+		try {
+			getColl().insertOne(document);
+		} catch (MongoException e) {
+			throw new EpickurDBException("create", e.getMessage(), document, e);
+		}
+	}
+	
+	protected final Document findDocument(final Document query) throws EpickurDBException {
+		try {
+			return getColl().find(query).first();
+		} catch (MongoException e) {
+			throw new EpickurDBException("read", e.getMessage(), query, e);
+		}
+	}
+	
+	protected final Document updateDocument(final Document filter, final Document update) throws EpickurDBException {
+		try {
+			return getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
+		} catch (MongoException e) {
+			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
+		}
+	}
+	
+	protected final boolean deleteDocument(final Document filter) throws EpickurDBException {
+		try {
+			return this.isDeleted(getColl().deleteOne(filter));
+		} catch (MongoException e) {
+			throw new EpickurDBException("delete", e.getMessage(), filter, e);
+		}
+	}
+	
 	/**
-	 * Check if the query is a succes
+	 * Check if the query is a success
 	 * 
 	 * @param deleteResult
 	 *            The result of the query
@@ -55,13 +96,12 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 *            The type of the query
 	 * @return True if the query is a success
 	 */
-	protected final boolean isDeleted(final DeleteResult deleteResult, final String type) {
-		boolean res = true;
-		if (deleteResult.getDeletedCount() != 1) {
-			res = false;
-			LOG.debug("Request type: " + type + " failed");
-		}
-		return res;
+	private final boolean isDeleted(final DeleteResult deleteResult) {
+		return deleteResult.getDeletedCount() == 1;
+	}
+	
+	protected final Document convertAttributeToDocument(final String attributeName, final Object attributeValue) {
+		return new Document().append(attributeName, attributeValue);
 	}
 
 	/**
@@ -69,7 +109,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 * 
 	 * @return The DB object
 	 */
-	public final MongoDatabase getDb() {
+	protected final MongoDatabase getDb() {
 		return db;
 	}
 
@@ -78,7 +118,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 * 
 	 * @return The DBCollection
 	 */
-	public final MongoCollection<Document> getColl() {
+	protected final MongoCollection<Document> getColl() {
 		return coll;
 	}
 
@@ -88,7 +128,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 * @param coll
 	 *            The DBCollection to set
 	 */
-	public final void setColl(final MongoCollection<Document> coll) {
+	protected final void setColl(final MongoCollection<Document> coll) {
 		this.coll = coll;
 	}
 }

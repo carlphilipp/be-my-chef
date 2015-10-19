@@ -18,12 +18,11 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.model.ReturnDocument;
 
 /**
  * Voucher DAO access with CRUD operations.
@@ -57,60 +56,35 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 
 	@Override
 	public Voucher create(final Voucher voucher) throws EpickurException {
-		voucher.setId(null);
-		DateTime time = new DateTime();
-		voucher.setCreatedAt(time);
-		voucher.setUpdatedAt(time);
-		Document doc = null;
-		try {
-			doc = voucher.getDocumentDBView();
-			LOG.debug("Create voucher: " + voucher);
-			getColl().insertOne(doc);
-			return Voucher.getObject(doc);
-		} catch (MongoException e) {
-			throw new EpickurDBException("create", e.getMessage(), doc, e);
-		}
+		LOG.debug("Create voucher: " + voucher);
+		Document doc = voucher.getDocumentDBView();
+		insertDocument(doc);
+		return Voucher.getDocumentAsVoucher(doc);
 	}
 
 	@Override
 	public Voucher read(final String code) throws EpickurException {
-		try {
-			LOG.debug("Read voucher: " + code);
-			Document query = new Document().append("code", code);
-			Document find = getColl().find(query).first();
-			if (find != null) {
-				return Voucher.getObject(find);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("read", e.getMessage(), code, e);
-		}
+		LOG.debug("Read voucher with code: " + code);
+		Document query = convertAttributeToDocument("code", code);
+		Document find = findDocument(query);
+		return processAfterQuery(find);
 	}
 
 	@Override
 	public Voucher update(final Voucher voucher) throws EpickurException {
-		Document filter = new Document().append("_id", voucher.getId());
-		DateTime time = new DateTime();
-		voucher.setCreatedAt(null);
-		voucher.setUpdatedAt(time);
 		LOG.debug("Update voucher: " + voucher);
+		Document filter = convertAttributeToDocument("_id", voucher.getId());
 		Document update = voucher.getUpdateDocument();
-		try {
-			Document updated = getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
-			if (updated != null) {
-				return Voucher.getObject(updated);
-			} else {
-				return null;
-			}
-		} catch (MongoException e) {
-			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
-		}
+		Document updated = updateDocument(filter, update);
+		return processAfterQuery(updated);
 	}
 
-	@Override
-	public boolean delete(final String id) throws EpickurException {
-		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
+	private Voucher processAfterQuery(final Document voucher) throws EpickurParsingException {
+		if (voucher != null) {
+			return Voucher.getDocumentAsVoucher(voucher);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -136,7 +110,7 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 				List<Voucher> res = new ArrayList<Voucher>();
 				MongoCursor<Document> cursor = find.iterator();
 				while (cursor.hasNext()) {
-					Voucher current = Voucher.getObject(cursor.next());
+					Voucher current = Voucher.getDocumentAsVoucher(cursor.next());
 					res.add(current);
 				}
 				return res;

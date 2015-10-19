@@ -8,8 +8,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.mapper.NotFoundExceptionMapper;
-import com.mongodb.DBObject;
 
 public class NotFoundExceptionMapperTest {
 	@Test
@@ -20,11 +20,10 @@ public class NotFoundExceptionMapperTest {
 		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
 		assertNotNull(response.getEntity());
 
-		DBObject dbo = (DBObject) response.getEntity();
-		assertNotNull(dbo.get("error"));
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), dbo.get("error"));
-		assertNotNull(dbo.get("message"));
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), dbo.get("message"));
-		;
+		ErrorMessage errorMessage = (ErrorMessage) response.getEntity();
+		assertNotNull(errorMessage.getError());
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), errorMessage.getError().intValue());
+		assertNotNull(errorMessage.getMessage());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), errorMessage.getMessage());
 	}
 }

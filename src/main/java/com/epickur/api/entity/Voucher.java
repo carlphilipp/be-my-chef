@@ -8,18 +8,15 @@ import java.util.Set;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
-import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
 import com.epickur.api.entity.deserialize.DateDeserializer;
 import com.epickur.api.entity.deserialize.DiscountTypeDeserializer;
 import com.epickur.api.entity.deserialize.ExpirationTypeDeserializer;
-import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.deserialize.StatusDeserializer;
 import com.epickur.api.entity.serialize.DateSerializer;
 import com.epickur.api.entity.serialize.DiscountTypeSerializer;
 import com.epickur.api.entity.serialize.ExpirationTypeSerializer;
-import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.entity.serialize.StatusSerializer;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
@@ -53,11 +50,9 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(callSuper = false)
-public final class Voucher extends AbstractEntity {
+@EqualsAndHashCode(callSuper = true)
+public final class Voucher extends AbstractMainDBEntity {
 
-	/** Id */
-	private ObjectId id;
 	/** Code */
 	private String code;
 	/** Discount */
@@ -72,27 +67,6 @@ public final class Voucher extends AbstractEntity {
 	private Status status;
 	/** Used count */
 	private Integer usedCount;
-	/** Created at */
-	private DateTime createdAt;
-	/** Updated at */
-	private DateTime updatedAt;
-
-	/**
-	 * @return The Id
-	 */
-	@JsonSerialize(using = ObjectIdSerializer.class)
-	public ObjectId getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            The Id
-	 */
-	@JsonDeserialize(using = ObjectIdDeserializer.class)
-	public void setId(final ObjectId id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return The discount type
@@ -163,47 +137,13 @@ public final class Voucher extends AbstractEntity {
 	}
 
 	/**
-	 * @return The creation date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	/**
-	 * @param createdAt
-	 *            The creation date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setCreatedAt(final DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	/**
-	 * @return The updated date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	/**
-	 * @param updatedAt
-	 *            The updated date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setUpdatedAt(final DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	/**
 	 * @param obj
 	 *            The Document
 	 * @return The User
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Voucher getObject(final Document obj) throws EpickurParsingException {
+	public static Voucher getDocumentAsVoucher(final Document obj) throws EpickurParsingException {
 		return Voucher.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 

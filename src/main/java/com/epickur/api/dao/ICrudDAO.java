@@ -8,7 +8,7 @@ import com.epickur.api.exception.EpickurException;
 /**
  * Interface that defines the CRUD operation and a readAll operation that needs to be implemented.
  * 
- * @author carl
+ * @author cph
  * @version 1.0
  * @param <T>
  *            Must be an AbstractEntity
@@ -24,7 +24,7 @@ public interface ICrudDAO<T extends AbstractEntity> {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	T create(T obj) throws EpickurException;
+	T create(final T obj) throws EpickurException;
 
 	/**
 	 * Read an object
@@ -35,7 +35,7 @@ public interface ICrudDAO<T extends AbstractEntity> {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	T read(String id) throws EpickurException;
+	T read(final String id) throws EpickurException;
 
 	/**
 	 * Update an object
@@ -46,7 +46,7 @@ public interface ICrudDAO<T extends AbstractEntity> {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	T update(T obj) throws EpickurException;
+	T update(final T obj) throws EpickurException;
 
 	/**
 	 * Delete an object
@@ -57,7 +57,7 @@ public interface ICrudDAO<T extends AbstractEntity> {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	boolean delete(String id) throws EpickurException;
+	boolean delete(final String id) throws EpickurException;
 
 	/**
 	 * Read all

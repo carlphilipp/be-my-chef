@@ -25,7 +25,6 @@ import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.utils.Security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mongodb.DBObject;
 
 public class NoKeyServiceTest {
 
@@ -89,24 +88,12 @@ public class NoKeyServiceTest {
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testCheckUserServiceFail() throws EpickurException {
-		Response result = noKeyService.checkUser(null, null);
-		if (result.getEntity() != null) {
-			DBObject obj = (DBObject) result.getEntity();
-			assertEquals(500, obj.get("error"));
-		} else {
-			fail("Failed");
-		}
+		noKeyService.checkUser(null, null);
 	}
 
 	@Test(expected = EpickurIllegalArgument.class)
 	public void testCheckUserServiceFail2() throws EpickurException {
-		Response result = noKeyService.checkUser(new String(), null);
-		if (result.getEntity() != null) {
-			DBObject obj = (DBObject) result.getEntity();
-			assertEquals(500, obj.get("error"));
-		} else {
-			fail("Failed");
-		}
+		noKeyService.checkUser(new String(), null);
 	}
 
 	@Test

@@ -1,5 +1,6 @@
 package com.epickur.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -26,6 +27,8 @@ import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
+import com.epickur.api.entity.message.DeletedMessage;
+import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
@@ -35,9 +38,6 @@ import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.CatererValidator;
 import com.epickur.api.validator.FactoryValidator;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
 
 /**
  * JAX-RS Caterer service
@@ -363,8 +363,10 @@ public final class CatererService {
 		validator.checkId(id);
 		boolean resBool = catererBusiness.delete(id);
 		if (resBool) {
-			DBObject result = BasicDBObjectBuilder.start("id", id).add("deleted", resBool).get();
-			return Response.ok().entity(result).build();
+			DeletedMessage deletedMessage = new DeletedMessage();
+			deletedMessage.setId(id);
+			deletedMessage.setDeleted(resBool);
+			return Response.ok().entity(deletedMessage).build();
 		} else {
 			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
 		}
@@ -633,24 +635,20 @@ public final class CatererService {
 			List<Order> orders = orderBusiness.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
 			Integer amount = catererBusiness.getTotalAmountSuccessful(orders);
 			if (context.getMediaType() != null && context.getMediaType().toString().equalsIgnoreCase(MediaType.APPLICATION_JSON)) {
-				DBObject bdb = BasicDBObjectBuilder.start().get();
-				bdb.put("id", caterer.getId().toHexString());
-				bdb.put("name", caterer.getName());
-				bdb.put("amount", amount);
-				if (start != null) {
-					bdb.put("start", start);
-				}
-				if (end != null) {
-					bdb.put("end", end);
-				}
-				bdb.put("format", format);
-				BasicDBList list = new BasicDBList();
+
+				PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
+				payementInfoMessage.setId(caterer.getId().toHexString());
+				payementInfoMessage.setName(caterer.getName());
+				payementInfoMessage.setAmount(amount);
+				payementInfoMessage.setStart(start);
+				payementInfoMessage.setEnd(end);
+				payementInfoMessage.setFormat(format);
+				List<String> list = new ArrayList<String>();
 				for (Order order : orders) {
 					order.setDish(null);
-					list.add(order.getDocumentAPIView());
+					list.add(order.getDocumentAPIView().toJson());
 				}
-				bdb.put("orders", list);
-				return Response.ok().entity(bdb).type(MediaType.APPLICATION_JSON).build();
+				return Response.ok().entity(payementInfoMessage).type(MediaType.APPLICATION_JSON).build();
 			} else {
 				Report report = new Report();
 				report.addParam("caterer", caterer);

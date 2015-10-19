@@ -11,12 +11,9 @@ import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 
-import com.epickur.api.entity.deserialize.DateDeserializer;
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.deserialize.OrderStatusDeserializer;
-import com.epickur.api.entity.serialize.DateSerializer;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.entity.serialize.OrderStatusSerializer;
 import com.epickur.api.enumeration.Currency;
@@ -51,13 +48,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(callSuper = false)
-public final class Order extends AbstractEntity {
+@EqualsAndHashCode(callSuper = true)
+public final class Order extends AbstractMainDBEntity {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Order.class.getSimpleName());
-	/** Id */
-	private ObjectId id;
 	/** Readable Id */
 	private String readableId;
 	/** Description */
@@ -86,27 +81,6 @@ public final class Order extends AbstractEntity {
 	private OrderMode mode;
 	/** Owner id */
 	private ObjectId createdBy;
-	/** Created at */
-	private DateTime createdAt;
-	/** Updated at */
-	private DateTime updatedAt;
-
-	/**
-	 * @return The ObjectId
-	 */
-	@JsonSerialize(using = ObjectIdSerializer.class)
-	public ObjectId getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            The ObjectId
-	 */
-	@JsonDeserialize(using = ObjectIdDeserializer.class)
-	public void setId(final ObjectId id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return The order status
@@ -126,40 +100,6 @@ public final class Order extends AbstractEntity {
 	}
 
 	/**
-	 * @return The creation date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	/**
-	 * @param createdAt
-	 *            The creation date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setCreatedAt(final DateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	/**
-	 * @return The updated date
-	 */
-	@JsonSerialize(using = DateSerializer.class)
-	public DateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	/**
-	 * @param updatedAt
-	 *            The updated date
-	 */
-	@JsonDeserialize(using = DateDeserializer.class)
-	public void setUpdatedAt(final DateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	/**
 	 * @return The user id that created the object
 	 */
 	@JsonSerialize(using = ObjectIdSerializer.class)
@@ -174,6 +114,12 @@ public final class Order extends AbstractEntity {
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setCreatedBy(final ObjectId createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	@Override
+	public void prepareForUpdateIntoDB() {
+		super.prepareForUpdateIntoDB();
+		this.setReadableId(null);
 	}
 
 	public Integer calculateTotalAmount() {
@@ -200,7 +146,7 @@ public final class Order extends AbstractEntity {
 	 *             If a parsing exception occured
 	 */
 	@JsonIgnore
-	public Document getUpdateDocument() throws EpickurParsingException {
+	public Document getOrderUpdateQuery() throws EpickurParsingException {
 		String apiView = toStringAPIView();
 		Document found = Document.parse(apiView);
 		Document resultSet = new Document();
@@ -271,7 +217,7 @@ public final class Order extends AbstractEntity {
 	 * @throws EpickurParsingException
 	 *             If an epickur exception occurred
 	 */
-	public static Order getObject(final Document obj) throws EpickurParsingException {
+	public static Order getDocumentAsOrder(final Document obj) throws EpickurParsingException {
 		return Order.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 

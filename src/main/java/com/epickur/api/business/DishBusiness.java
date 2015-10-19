@@ -45,6 +45,7 @@ public class DishBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public final Dish create(final Dish dish) throws EpickurException {
+		dish.prepareForInsertionIntoDB();
 		return dao.create(dish);
 	}
 
@@ -86,6 +87,7 @@ public class DishBusiness {
 	public final Dish update(final Dish dish, final Key key) throws EpickurException {
 		Dish read = dao.read(dish.getId().toHexString());
 		validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
+		dish.prepareForUpdateIntoDB();
 		return dao.update(dish);
 	}
 
@@ -116,7 +118,7 @@ public class DishBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public final List<Dish> searchDishesForOneCaterer(final String catererId) throws EpickurException {
-		return dao.search(catererId);
+		return dao.searchWithCatererId(catererId);
 	}
 
 	/**
@@ -141,8 +143,7 @@ public class DishBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public final List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
-			final String searchtext, final int distance)
-			throws EpickurException {
+			final String searchtext, final int distance) throws EpickurException {
 		if (geo == null) {
 			IGeocoder geocoder = new GeocoderHereImpl();
 			Geo geoFound = geocoder.getPosition(searchtext);
