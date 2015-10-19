@@ -72,7 +72,6 @@ public final class VoucherDAOImpl extends CrudDAO<Voucher> {
 
 	@Override
 	public Voucher update(final Voucher voucher) throws EpickurException {
-		voucher.prepareForUpdateIntoDB();
 		LOG.debug("Update voucher: " + voucher);
 		Document filter = convertAttributeToDocument("_id", voucher.getId());
 		Document update = voucher.getUpdateDocument();

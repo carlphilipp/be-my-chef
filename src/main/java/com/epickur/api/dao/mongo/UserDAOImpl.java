@@ -135,22 +135,28 @@ public final class UserDAOImpl extends CrudDAO<User> {
 	 * @param email
 	 *            The User email
 	 * @return true if the user if found
+	 * @throws EpickurDBException
+	 *             If an epickur exception occurred
 	 */
-	public boolean exists(final String name, final String email) {
-		boolean res = false;
-		Document find = new Document();
+	public boolean exists(final String name, final String email) throws EpickurDBException {
+		Document query = createExistsQuery(name, email);
+		Document found = findDocument(query);
+		return found != null;
+	}
+
+	private Document createExistsQuery(final String name, final String email) {
+		Document query = new Document();
 		BsonArray or = new BsonArray();
+		
 		BsonDocument bsonName = new BsonDocument();
-		bsonName.append("name", new BsonString(name));
 		BsonDocument bsonEmail = new BsonDocument();
+		bsonName.append("name", new BsonString(name));
 		bsonEmail.append("email", new BsonString(email));
+		
 		or.add(bsonName);
 		or.add(bsonEmail);
-		find.append("$or", or);
-		Document found = getColl().find(find).first();
-		if (found != null) {
-			res = true;
-		}
-		return res;
+		
+		query.append("$or", or);
+		return query;
 	}
 }

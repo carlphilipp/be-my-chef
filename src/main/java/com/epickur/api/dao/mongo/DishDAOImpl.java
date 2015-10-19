@@ -181,7 +181,7 @@ public final class DishDAOImpl extends CrudDAO<Dish> {
 	 * @throws EpickurException
 	 *             if an epickur exception occurred
 	 */
-	public List<Dish> search(final String catererId) throws EpickurException {
+	public List<Dish> searchWithCatererId(final String catererId) throws EpickurException {
 		MongoCursor<Document> cursor = null;
 		List<Dish> dishes = new ArrayList<Dish>();
 		Document find = new Document();
