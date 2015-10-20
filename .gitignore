@@ -1,2 +1,5 @@
 /target/
 /apidoc/
+.classpath
+.project
+.settings/*
