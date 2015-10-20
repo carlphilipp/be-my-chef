@@ -18,6 +18,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
 
 import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
@@ -34,6 +35,7 @@ import com.epickur.api.entity.Location;
 import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.Voucher;
 import com.epickur.api.entity.times.Hours;
 import com.epickur.api.entity.times.TimeFrame;
 import com.epickur.api.entity.times.WorkingTimes;
@@ -42,6 +44,8 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.MeasurementUnit;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.enumeration.Role;
+import com.epickur.api.enumeration.voucher.DiscountType;
+import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ObjectMapperWrapperAPI;
 import com.epickur.api.utils.Utils;
@@ -257,6 +261,24 @@ public class TestUtils {
 		geo.setLongitude(-87.650276);
 		return geo;
 	}
+	
+	public static Voucher generateVoucher(){
+		Voucher voucher = new Voucher();
+		voucher.setDiscountType(DiscountType.AMOUNT);
+		voucher.setDiscount(5);
+		voucher.setCode(generateRandomString());
+		voucher.setExpiration(new DateTime());
+		voucher.setStatus(Status.VALID);
+		return voucher;
+	}
+	
+	public static Voucher mockVoucherAfterCreate(final Voucher voucher){
+		Voucher mockVoucher = voucher.clone();
+		DateTime now = new DateTime();
+		mockVoucher.setCreatedAt(now);
+		mockVoucher.setUpdatedAt(now);
+		return mockVoucher;
+	}
 
 	public static Dish generateRandomDish() {
 		Dish dish = new Dish();
@@ -274,6 +296,12 @@ public class TestUtils {
 		dish.setVideoUrl(generateRandomString());
 		dish.setImageAfterUrl(generateRandomString());
 		dish.setCreatedBy(new ObjectId());
+		return dish;
+	}
+	
+	public static Dish generateRandomDishWithId(){
+		Dish dish = generateRandomDish();
+		dish.setId(new ObjectId());
 		return dish;
 	}
 
@@ -361,6 +389,8 @@ public class TestUtils {
 		user.setAllow(0);
 		user.setEmail(generateRandomString());
 		user.setName(generateRandomString());
+		user.setFirst(generateRandomString());
+		user.setLast(generateRandomString());
 		user.setPassword(generateRandomString());
 		user.setPhoneNumber(generateRandomPhoneNumber());
 		user.setRole(Role.USER);
@@ -368,6 +398,61 @@ public class TestUtils {
 		user.setZipcode("60614");
 		user.setCountry("USA");
 		return user;
+	}
+
+	public static User generateRandomUserWithId() {
+		User user = generateRandomUser();
+		user.setId(new ObjectId());
+		return user;
+	}
+
+	public static Token generateToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		Map<String, Object> cardParams = new HashMap<String, Object>();
+		cardParams.put("number", "4242424242424242");
+		cardParams.put("exp_month", 2);
+		cardParams.put("exp_year", 2016);
+		cardParams.put("cvc", "314");
+		tokenParams.put("card", cardParams);
+		Token token = Token.create(tokenParams);
+		return token;
+	}
+
+	public static User mockUserAfterCreate(final User user) {
+		User userMock = user.clone();
+		userMock.setId(new ObjectId());
+		DateTime now = new DateTime();
+		userMock.setCreatedAt(now);
+		userMock.setUpdatedAt(now);
+		userMock.setCode(generateRandomString());
+		return userMock;
+	}
+	
+	public static Dish mockDishAfterCreate(final Dish dish) {
+		Dish dishMock = dish.clone();
+		dishMock.setId(new ObjectId());
+		DateTime now = new DateTime();
+		dishMock.setCreatedAt(now);
+		dishMock.setUpdatedAt(now);
+		return dishMock;
+	}
+
+	public static Caterer mockCatererAfterCreate(final Caterer caterer) {
+		Caterer catererMock = caterer.clone();
+		catererMock.setId(new ObjectId());
+		DateTime now = new DateTime();
+		catererMock.setCreatedAt(now);
+		catererMock.setUpdatedAt(now);
+		return catererMock;
+	}
+
+	public static Order mockOrderAfterCreate(final Order order, final Token token) {
+		Order orderAfterCreate = order.clone();
+		orderAfterCreate.setId(new ObjectId());
+		orderAfterCreate.setCardToken(token.getId());
+		DateTime now = new DateTime();
+		orderAfterCreate.setCreatedAt(now);
+		return orderAfterCreate;
 	}
 
 	private static PhoneNumber generateRandomPhoneNumber() {
@@ -433,6 +518,13 @@ public class TestUtils {
 		return order;
 	}
 
+	public static Order generateRandomOrderWithId()
+			throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
+		Order order = generateRandomOrder();
+		order.setId(new ObjectId());
+		return order;
+	}
+
 	public static Token generateRandomToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
 		Map<String, Object> tokenParams = new HashMap<String, Object>();
@@ -455,6 +547,15 @@ public class TestUtils {
 		return key;
 	}
 	
+	public static Key mockKeyAfterCreate(final Key key){
+		Key keyMock = key.clone();
+		keyMock.setId(new ObjectId());
+		DateTime now = new DateTime();
+		keyMock.setCreatedAt(now);
+		keyMock.setUpdatedAt(now);
+		return keyMock;
+	}
+
 	public static Key generateRandomUserKey() {
 		Key key = new Key();
 		key.setKey(generateRandomString());

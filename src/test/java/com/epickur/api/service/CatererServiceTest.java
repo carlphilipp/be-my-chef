@@ -37,7 +37,7 @@ import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
-import com.epickur.api.integration.UserIntegrationTest;
+import com.epickur.api.integration.UserIT;
 import com.epickur.api.validator.Validator;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
@@ -72,7 +72,7 @@ public class CatererServiceTest {
 		idsDishes = new ArrayList<ObjectId>();
 		idsOrders = new HashMap<String, List<ObjectId>>();
 		try {
-			InputStreamReader in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+			InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
 			in.close();

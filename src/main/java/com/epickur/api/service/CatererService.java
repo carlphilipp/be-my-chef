@@ -309,7 +309,7 @@ public final class CatererService {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.CATERER);
 		validator.checkUpdateCaterer(id, caterer);
-		Caterer result = catererBusiness.update(caterer, key.getRole(), key.getUserId());
+		Caterer result = catererBusiness.update(caterer, key);
 		if (result == null) {
 			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
 		} else {

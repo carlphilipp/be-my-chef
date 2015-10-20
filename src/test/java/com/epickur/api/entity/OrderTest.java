@@ -11,7 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.epickur.api.TestUtils;
-import com.epickur.api.integration.UserIntegrationTest;
+import com.epickur.api.integration.UserIT;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -25,7 +25,7 @@ public class OrderTest {
 	public static void beforeClass() {
 		InputStreamReader in = null;
 		try {
-			in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
 			in.close();

@@ -34,6 +34,11 @@ public class DishBusiness {
 		this.dao = new DishDAOImpl();
 		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
 	}
+	
+	public DishBusiness(final DishDAOImpl dishDAO) {
+		this.dao = dishDAO;
+		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
+	}
 
 	/**
 	 * Create a {@link Dish}

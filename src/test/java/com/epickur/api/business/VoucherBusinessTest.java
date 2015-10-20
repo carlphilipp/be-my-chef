@@ -2,18 +2,26 @@ package com.epickur.api.business;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.VoucherDAOImpl;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.voucher.DiscountType;
@@ -21,154 +29,185 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VoucherBusinessTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	private static VoucherBusiness business;
-	private static VoucherDAOImpl dao;
-
-	@BeforeClass
-	public static void beforeClass() {
-		business = new VoucherBusiness();
-		dao = new VoucherDAOImpl();
-		dao.deleteAll();
-	}
-
-	@AfterClass
-	public static void afterClass() throws EpickurException {
-		dao.deleteAll();
-	}
+	private VoucherBusiness voucherBusiness;
+	@Mock
+	private VoucherDAOImpl voucherDAO;
 
 	@Before
 	public void before() {
-		dao.deleteAll();
+		reset(voucherDAO);
+		this.voucherBusiness = new VoucherBusiness(voucherDAO);
+	}
+	
+	@Test
+	public void testRead() throws EpickurException{
+		Voucher voucher = TestUtils.generateVoucher();
+		
+		when(voucherDAO.read(anyString())).thenReturn(voucher);
+		
+		Voucher actual = voucherBusiness.read(TestUtils.generateRandomString());
+		assertNotNull(actual);
+	}
+	
+	@Test
+	public void testGenerate() throws EpickurException{
+		when(voucherDAO.read(anyString())).thenReturn(null);
+		
+		int count = 10;
+		Set<Voucher> actuals = voucherBusiness.generate(count, DiscountType.AMOUNT, 15, ExpirationType.ONETIME, new DateTime());
+		assertNotNull(actuals);
+		assertEquals(count, actuals.size());
 	}
 
 	@Test
 	public void testClean() throws EpickurException {
-		DateTime date = new DateTime();
-		date = date.minusWeeks(1);
-		Set<Voucher> vouchers = business.generate(1, DiscountType.AMOUNT, 5, ExpirationType.UNTIL, date);
-		assertNotNull(vouchers);
-		assertEquals(1, vouchers.size());
-		Voucher voucher = vouchers.iterator().next();
-		business.clean();
-		Voucher actual = business.read(voucher.getCode());
+		Voucher voucher = TestUtils.generateVoucher();
+		List<Voucher> vouchers = new ArrayList<Voucher>();
+		vouchers.add(voucher);
+		
+		when(voucherDAO.readToClean()).thenReturn(vouchers);
+		when(voucherDAO.update((Voucher) anyObject())).thenReturn(null);
+		
+		List<Voucher> actuals = voucherBusiness.clean();
+		assertNotNull(actuals);
+		assertEquals(1, actuals.size());
+		assertEquals(Status.EXPIRED, actuals.get(0).getStatus());
+	}
+
+	@Test
+	public void testValidate() throws EpickurException {
+		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucherAfter = TestUtils.mockVoucherAfterCreate(voucher);
+		voucherAfter.setStatus(Status.VALID);
+		voucherAfter.setExpirationType(ExpirationType.ONETIME);
+		
+		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfter);
+		when(voucherDAO.update((Voucher) anyObject())).thenReturn(voucherAfter);
+		
+		Voucher actual = voucherBusiness.validateVoucher(voucher.getCode());
 		assertNotNull(actual);
 		assertEquals(Status.EXPIRED, actual.getStatus());
 	}
 
 	@Test
-	public void testValidate1() throws EpickurException {
-		Set<Voucher> vouchers = business.generate(1, DiscountType.AMOUNT, 5, ExpirationType.ONETIME, null);
-		assertNotNull(vouchers);
-		assertEquals(1, vouchers.size());
-		Voucher voucher = vouchers.iterator().next();
-		Voucher actual = business.validateVoucher(voucher.getCode());
-		assertNotNull(actual);
-		assertEquals(Status.EXPIRED, actual.getStatus());
-	}
-
-	@Test
-	public void testValidate2() throws EpickurException {
+	public void testValidateVoucherNotFound() throws EpickurException {
 		thrown.expect(EpickurException.class);
 		UUID uuid = UUID.randomUUID();
 		thrown.expectMessage("Voucher '" + uuid.toString() + "' not found");
-		business.validateVoucher(uuid.toString());
+		
+		when(voucherDAO.read(uuid.toString())).thenReturn(null);
+		
+		voucherBusiness.validateVoucher(uuid.toString());
 	}
 
 	@Test
-	public void testValidate3() throws EpickurException {
-		thrown.expect(EpickurException.class);
-		DateTime date = new DateTime();
-		date = date.minusWeeks(1);
-		Set<Voucher> vouchers = business.generate(1, DiscountType.AMOUNT, 5, ExpirationType.UNTIL, date);
-		assertNotNull(vouchers);
-		assertEquals(1, vouchers.size());
-		Voucher voucher = vouchers.iterator().next();
-		business.clean();
-		Voucher actual = business.read(voucher.getCode());
-		assertNotNull(actual);
-		assertEquals(Status.EXPIRED, actual.getStatus());
-
-		thrown.expectMessage("Voucher '" + actual.getCode() + "' expired");
-		business.validateVoucher(actual.getCode());
-	}
-
-	@Test
-	public void testValidate4() throws EpickurException {
-		DateTime date = new DateTime();
-		date = date.plusWeeks(1);
-		Set<Voucher> vouchers = business.generate(1, DiscountType.AMOUNT, 5, ExpirationType.UNTIL, date);
-		assertNotNull(vouchers);
-		assertEquals(1, vouchers.size());
-		Voucher voucher = vouchers.iterator().next();
-		Voucher actual = business.validateVoucher(voucher.getCode());
-		assertNotNull(actual);
-		assertEquals(Status.VALID, actual.getStatus());
-		assertEquals(1, actual.getUsedCount().intValue());
-	}
-
-	@Test
-	public void testValidate5() throws EpickurException {
-		DateTime date = new DateTime();
-		date = date.plusWeeks(1);
-		Set<Voucher> vouchers = business.generate(1, DiscountType.AMOUNT, 5, ExpirationType.UNTIL, date);
-		assertNotNull(vouchers);
-		assertEquals(1, vouchers.size());
-		Voucher voucher = vouchers.iterator().next();
-		Voucher actual = business.validateVoucher(voucher.getCode());
-		assertNotNull(actual);
-		assertEquals(Status.VALID, actual.getStatus());
-		assertEquals(1, actual.getUsedCount().intValue());
-
-		Voucher actual2 = business.validateVoucher(voucher.getCode());
-		assertNotNull(actual2);
-		assertEquals(Status.VALID, actual2.getStatus());
-		assertEquals(2, actual2.getUsedCount().intValue());
-	}
-	
-	@Test
-	public void testRevert1() throws EpickurException {
+	public void testValidateVoucherExpired() throws EpickurException {
 		thrown.expect(EpickurException.class);
 		UUID uuid = UUID.randomUUID();
-		thrown.expectMessage("Voucher '" + uuid + "' not found");
-		business.revertVoucher(uuid.toString());
+		thrown.expectMessage("Voucher '" + uuid.toString() + "' expired");
+		
+		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucherAfter = TestUtils.mockVoucherAfterCreate(voucher);
+		voucherAfter.setStatus(Status.EXPIRED);
+		
+		when(voucherDAO.read(uuid.toString())).thenReturn(voucherAfter);
+		
+		Voucher actual = voucherBusiness.validateVoucher(uuid.toString());
+		assertNotNull(actual);
+		assertEquals(Status.EXPIRED, actual.getStatus());
 	}
-	
+
 	@Test
-	public void testRevert2() throws EpickurException {
-		DateTime date = new DateTime();
-		date = date.plusWeeks(1);
-		Set<Voucher> vouchers = business.generate(1, DiscountType.AMOUNT, 5, ExpirationType.UNTIL, date);
-		assertNotNull(vouchers);
-		assertEquals(1, vouchers.size());
-		Voucher voucher = vouchers.iterator().next();
-		Voucher actual = business.validateVoucher(voucher.getCode());
+	public void testValidateUntil() throws EpickurException {
+		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucherAfterRead = TestUtils.mockVoucherAfterCreate(voucher);
+		voucherAfterRead.setStatus(Status.VALID);
+		voucherAfterRead.setExpirationType(ExpirationType.UNTIL);
+		voucherAfterRead.setDiscountType(DiscountType.AMOUNT);
+		Voucher voucherAfterUpdate = TestUtils.mockVoucherAfterCreate(voucher);
+		voucherAfterUpdate.setStatus(Status.VALID);
+		voucherAfterUpdate.setUsedCount(1);
+		DateTime now = new DateTime();
+		voucherAfterUpdate.setCreatedAt(now);
+		voucherAfterUpdate.setUpdatedAt(now);
+		
+		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfterRead);
+		when(voucherDAO.update((Voucher) anyObject())).thenReturn(voucherAfterUpdate);
+		
+		Voucher actual = voucherBusiness.validateVoucher(voucher.getCode());
 		assertNotNull(actual);
 		assertEquals(Status.VALID, actual.getStatus());
 		assertEquals(1, actual.getUsedCount().intValue());
-		
-		Voucher actual2 = business.revertVoucher(voucher.getCode());
-		assertNotNull(actual2);
-		assertEquals(Status.VALID, actual2.getStatus());
-		assertEquals(0, actual2.getUsedCount().intValue());
+		assertNotNull(actual.getCreatedAt());
+		assertNotNull(actual.getUpdatedAt());
 	}
 	
 	@Test
-	public void testRevert3() throws EpickurException {
-		Set<Voucher> vouchers = business.generate(1, DiscountType.AMOUNT, 5, ExpirationType.ONETIME, null);
-		assertNotNull(vouchers);
-		assertEquals(1, vouchers.size());
-		Voucher voucher = vouchers.iterator().next();
-		Voucher actual = business.validateVoucher(voucher.getCode());
-		assertNotNull(actual);
-		assertEquals(Status.EXPIRED, actual.getStatus());
+	public void testValidateUntil2() throws EpickurException {
+		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucherAfterCreate = TestUtils.mockVoucherAfterCreate(voucher);
+		voucherAfterCreate.setStatus(Status.VALID);
+		voucherAfterCreate.setExpirationType(ExpirationType.UNTIL);
+		voucherAfterCreate.setDiscountType(DiscountType.AMOUNT);
+		Voucher voucherAfterUpdate = TestUtils.mockVoucherAfterCreate(voucher);
+		voucherAfterUpdate.setStatus(Status.VALID);
+		voucherAfterUpdate.setUsedCount(1);
+		DateTime now = new DateTime();
+		voucherAfterUpdate.setCreatedAt(now);
+		voucherAfterUpdate.setUpdatedAt(now);
+		voucherAfterUpdate.setUsedCount(4);
 		
-		Voucher actual2 = business.revertVoucher(voucher.getCode());
-		assertNotNull(actual2);
-		assertEquals(Status.VALID, actual2.getStatus());
+		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfterCreate);
+		when(voucherDAO.update((Voucher) anyObject())).thenReturn(voucherAfterUpdate);
+		
+		Voucher actual = voucherBusiness.validateVoucher(voucher.getCode());
+		assertNotNull(actual);
+		assertEquals(Status.VALID, actual.getStatus());
+		assertEquals(4, actual.getUsedCount().intValue());
+		assertNotNull(actual.getCreatedAt());
+		assertNotNull(actual.getUpdatedAt());
+	}
+	
+	@Test
+	public void testRevertOneTime() throws EpickurException {
+		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucherAfterRead = TestUtils.mockVoucherAfterCreate(voucher);
+		voucherAfterRead.setExpirationType(ExpirationType.ONETIME);
+		Voucher voucherAfterUpdate = TestUtils.mockVoucherAfterCreate(voucherAfterRead);
+		voucherAfterUpdate.setStatus(Status.VALID);
+		voucherAfterUpdate.setUsedCount(0);
+		
+		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfterRead);
+		when(voucherDAO.update((Voucher) anyObject())).thenReturn(voucherAfterUpdate);
+	
+		Voucher actual = voucherBusiness.revertVoucher(voucher.getCode());
+		assertNotNull(actual);
+		assertEquals(Status.VALID, actual.getStatus());
+		assertEquals(0, actual.getUsedCount().intValue());
+	}
+	
+	@Test
+	public void testRevertUntil() throws EpickurException {
+		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucherAfterRead = TestUtils.mockVoucherAfterCreate(voucher);
+		voucherAfterRead.setExpirationType(ExpirationType.UNTIL);
+		voucherAfterRead.setUsedCount(10);
+		Voucher voucherAfterUpdate = TestUtils.mockVoucherAfterCreate(voucherAfterRead);
+		voucherAfterUpdate.setStatus(Status.VALID);
+		voucherAfterUpdate.setUsedCount(9);
+		
+		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfterRead);
+		when(voucherDAO.update((Voucher) anyObject())).thenReturn(voucherAfterUpdate);
+	
+		Voucher actual = voucherBusiness.revertVoucher(voucher.getCode());
+		assertNotNull(actual);
+		assertEquals(Status.VALID, actual.getStatus());
+		assertEquals(9, actual.getUsedCount().intValue());
 	}
 }

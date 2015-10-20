@@ -14,17 +14,17 @@ import com.epickur.api.dao.mongo.UserDAOImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Operation;
-import com.epickur.api.enumeration.Role;
+import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurDuplicateKeyException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.PasswordManager;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * User business layer. Accesses User DAO layer and executes logic.
@@ -42,6 +42,8 @@ public final class UserBusiness {
 	private KeyBusiness keyBusiness;
 	/** User validator */
 	private UserValidator validator;
+	/** User Email utils */
+	private EmailUtils emailUtils;
 
 	/**
 	 * The constructor
@@ -50,6 +52,22 @@ public final class UserBusiness {
 		this.userDAO = new UserDAOImpl();
 		this.keyBusiness = new KeyBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
+		this.emailUtils = new EmailUtils();
+	}
+
+	/**
+	 * Construct a UserBusiness. Mainly used by test to inject mocking.
+	 * 
+	 * @param userDAO
+	 *            The UserDAO
+	 * @param keyBusiness
+	 *            The KeyBusiness
+	 */
+	public UserBusiness(final UserDAOImpl userDAO, final KeyBusiness keyBusiness, final EmailUtils emailUtils) {
+		this.userDAO = userDAO;
+		this.keyBusiness = keyBusiness;
+		this.validator = (UserValidator) FactoryValidator.getValidator("user");
+		this.emailUtils = emailUtils;
 	}
 
 	/**
@@ -66,32 +84,36 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User create(final User user, final boolean sendEmail, final boolean autoValidate) throws EpickurException {
-		if (userDAO.exists(user.getName(), user.getEmail())) {
-			throw new EpickurDuplicateKeyException("The user already exists");
-		}
+		checkIfUserExists(user);
 		if (autoValidate) {
 			user.setAllow(1);
 		} else {
 			user.setAllow(0);
 		}
-		
-		String passwordHashed = Security.encodeToSha256(user.getPassword());
-		String saltHashed = Security.generateSalt();
-		String encryptedPasswordSalt = Security.encodeToSha256(passwordHashed + saltHashed);
-		String code = Security.createUserCode(user.getName(), saltHashed, encryptedPasswordSalt, user.getEmail());
-		user.setPassword(saltHashed + encryptedPasswordSalt);
-		user.setRole(Role.USER);
+		PasswordManager passwordManager = PasswordManager.createPasswordManager(user.getPassword());
+		String dbPassword = passwordManager.createDBPassword();
+		String code = passwordManager.getCode(user.getName(), user.getEmail());
+
+		user.setPassword(dbPassword);
+
 		user.prepareForInsertionIntoDB();
-		User res = userDAO.create(user);
+
+		User userCreated = this.userDAO.create(user);
 
 		if (sendEmail) {
-			EmailUtils.emailNewRegistration(user.getName(), user.getFirst(), code, user.getEmail());
+			this.emailUtils.emailNewRegistration(user.getName(), user.getFirst(), code, user.getEmail());
 		}
 		// We do not send back the password
-		res.setPassword(null);
-		res.setRole(null);
-		res.setCode(code);
-		return res;
+		userCreated.setPassword(null);
+		userCreated.setRole(null);
+		userCreated.setCode(code);
+		return userCreated;
+	}
+
+	private void checkIfUserExists(final User user) throws EpickurDBException {
+		if (this.userDAO.exists(user.getName(), user.getEmail())) {
+			throw new EpickurDuplicateKeyException("The user already exists");
+		}
 	}
 
 	/**
@@ -104,13 +126,13 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User read(final String id, final Key key) throws EpickurException {
-		User res = userDAO.read(id);
-		if (res != null) {
-			validator.checkUserRightsAfter(key.getRole(), key.getUserId(), res, Operation.READ);
-			res.setPassword(null);
-			res.setRole(null);
+		User user = this.userDAO.read(id);
+		if (user != null) {
+			this.validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.READ);
+			user.setPassword(null);
+			user.setRole(null);
 		}
-		return res;
+		return user;
 	}
 
 	/**
@@ -123,20 +145,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User readWithEmail(final String email) throws EpickurException {
-		return userDAO.readWithEmail(email);
-	}
-
-	/**
-	 * Read a User with its name
-	 * 
-	 * @param name
-	 *            The name of the User
-	 * @return The User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
-	 */
-	public User readWithName(final String name) throws EpickurException {
-		return userDAO.readWithName(name);
+		return this.userDAO.readWithEmail(email);
 	}
 
 	/**
@@ -147,7 +156,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public List<User> readAll() throws EpickurException {
-		List<User> users = userDAO.readAll();
+		List<User> users = this.userDAO.readAll();
 		for (User user : users) {
 			// We do not send back the password or the role
 			user.setPassword(null);
@@ -166,10 +175,10 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User update(final User user, final Key key) throws EpickurException {
-		User read = userDAO.read(user.getId().toHexString());
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
+		User read = this.userDAO.read(user.getId().toHexString());
+		this.validator.checkUserRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
 		user.prepareForUpdateIntoDB();
-		User res = userDAO.update(user);
+		User res = this.userDAO.update(user);
 		if (res != null) {
 			// We do not send back the password or the role
 			res.setPassword(null);
@@ -188,7 +197,7 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
-		return userDAO.delete(id);
+		return this.userDAO.delete(id);
 	}
 
 	/**
@@ -203,32 +212,32 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User login(final String email, final String password) throws EpickurException {
-		User found = this.readWithEmail(email);
-		if (found != null) {
-			if (!Utils.isPasswordCorrect(password, found)) {
+		User userFound = this.readWithEmail(email);
+		if (userFound != null) {
+			if (!Utils.isPasswordCorrect(password, userFound)) {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
-			} else if (found.getAllow() == 1) {
+			} else if (userFound.getAllow() == 1) {
 				String tempKey = Security.generateRandomMd5();
-				found.setKey(tempKey);
-				Key currentKey = this.keyBusiness.readWithName(found.getName());
+				userFound.setKey(tempKey);
+				Key currentKey = this.keyBusiness.readWithName(userFound.getName());
 				if (currentKey != null) {
 					this.keyBusiness.delete(currentKey.getId().toHexString());
 				}
 				Key key = new Key();
 				key.setCreatedAt(new DateTime());
-				key.setUserId(found.getId());
-				key.setKey(found.getKey());
-				key.setRole(found.getRole());
+				key.setUserId(userFound.getId());
+				key.setKey(userFound.getKey());
+				key.setRole(userFound.getRole());
 				this.keyBusiness.create(key);
-				found.setPassword(null);
-				found.setRole(null);
+				userFound.setPassword(null);
+				userFound.setRole(null);
 			} else {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 			}
 		} else {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 		}
-		return found;
+		return userFound;
 	}
 
 	/**
@@ -241,14 +250,14 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User injectNewPassword(final User user) throws EpickurException {
-		User found = this.readWithEmail(user.getEmail());
-		if (found == null) {
+		User userFound = this.readWithEmail(user.getEmail());
+		if (userFound == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getEmail());
 		} else {
-			if (!Utils.isPasswordCorrect(user.getPassword(), found)) {
+			if (!Utils.isPasswordCorrect(user.getPassword(), userFound)) {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getEmail());
 			} else {
-				String newEnryptedPassword = Utils.getEncryptedPassword(user.getNewPassword());
+				String newEnryptedPassword = PasswordManager.createPasswordManager(user.getNewPassword()).createDBPassword();
 				user.setPassword(newEnryptedPassword);
 			}
 		}
@@ -267,22 +276,22 @@ public final class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public User checkCode(final String email, final String code) throws EpickurException {
-		User dbUser = this.readWithEmail(email);
-		if (dbUser != null) {
-			String codeFound = Security.getUserCode(dbUser);
+		User userFound = this.readWithEmail(email);
+		if (userFound != null) {
+			String codeFound = Security.getUserCode(userFound);
 			if (!codeFound.equals(code)) {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 			} else {
-				dbUser.setAllow(1);
-				dbUser.prepareForUpdateIntoDB();
-				dbUser = userDAO.update(dbUser);
+				userFound.setAllow(1);
+				userFound.prepareForUpdateIntoDB();
+				userFound = userDAO.update(userFound);
 			}
 		} else {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 		}
-		dbUser.setPassword(null);
-		dbUser.setRole(null);
-		return dbUser;
+		userFound.setPassword(null);
+		userFound.setRole(null);
+		return userFound;
 	}
 
 	/**
@@ -295,10 +304,9 @@ public final class UserBusiness {
 		User user = this.readWithEmail(email);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
-		} else {
-			String resetCode = Security.createResetCode(user.getId(), email);
-			EmailUtils.resetPassword(email, user.getId().toHexString(), resetCode);
 		}
+		String resetCode = Security.createResetCode(user.getId(), email);
+		this.emailUtils.resetPassword(email, user.getId().toHexString(), resetCode);
 	}
 
 	/**
@@ -312,26 +320,24 @@ public final class UserBusiness {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public User resetPasswordSecondStep(final String id, final ObjectNode node, final String resetCode) throws EpickurException {
-		User user = userDAO.read(id);
+	public User resetPasswordSecondStep(final String id, final String newPassword, final String resetCode) throws EpickurException {
+		User user = this.userDAO.read(id);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
-		} else {
-			String resetCodeDB = Security.createResetCode(user.getId(), user.getEmail());
-			if (!resetCodeDB.equals(resetCode)) {
-				// throw intentionaly user not found.
-				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
-			} else {
-				String newPassword = node.get("password").asText();
-				String newEnryptedPassword = Utils.getEncryptedPassword(newPassword);
-				user.setPassword(newEnryptedPassword);
-				user.prepareForUpdateIntoDB();
-				User res = userDAO.update(user);
-				res.setPassword(null);
-				res.setRole(null);
-				return res;
-			}
 		}
+		String resetCodeDB = Security.createResetCode(user.getId(), user.getEmail());
+		if (!resetCodeDB.equals(resetCode)) {
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
+		} else {
+			String newEncryptedPassword = PasswordManager.createPasswordManager(newPassword).createDBPassword();
+			user.setPassword(newEncryptedPassword);
+			user.prepareForUpdateIntoDB();
+			User res = this.userDAO.update(user);
+			res.setPassword(null);
+			res.setRole(null);
+			return res;
+		}
+
 	}
 
 	/**
@@ -341,6 +347,11 @@ public final class UserBusiness {
 	 *            The user.
 	 */
 	public void suscribeToNewsletter(final User user) {
+		String url = buildNewsletterUrl(user);
+		suscribeUserToNewsletter(url, user.getEmail());
+	}
+	
+	protected String buildNewsletterUrl(final User user){
 		String url = "https://bemychef.us10.list-manage.com/subscribe/post-json"
 				+ "?u=b0fe27a209ea8ffa59b813767"
 				+ "&id=10d0ff2b3b"
@@ -364,11 +375,15 @@ public final class UserBusiness {
 		url = url.replaceFirst("@@COUNTRY@@", user.getCountry());
 		url = url.replaceFirst("@@STATE@@", user.getState());
 		url = url.replaceFirst("@@ZIP@@", user.getZipcode());
-		HttpPost request = new HttpPost(url);
+		return url;
+	}
+	
+	protected void suscribeUserToNewsletter(final String url, final String email){
 		try {
+			HttpPost request = new HttpPost(url);
 			HttpClientBuilder.create().build().execute(request);
 		} catch (IOException ioe) {
-			LOG.error("Could not suscribe " + user.getEmail() + " to our newsletter", ioe);
+			LOG.error("Could not suscribe " + email + " to our newsletter", ioe);
 		}
 	}
 }

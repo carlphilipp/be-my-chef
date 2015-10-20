@@ -237,7 +237,8 @@ public final class NoKeyService {
 			@QueryParam("token") final String resetCode,
 			final ObjectNode node) throws EpickurException {
 		validator.checkResetPasswordData(id, node, resetCode);
-		User user = userBusiness.resetPasswordSecondStep(id, node, resetCode);
+		String newPassword = node.get("password").asText();
+		User user = userBusiness.resetPasswordSecondStep(id, newPassword, resetCode);
 		return Response.ok().entity(user).build();
 	}
 }

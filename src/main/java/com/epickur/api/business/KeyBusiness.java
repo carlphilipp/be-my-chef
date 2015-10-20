@@ -12,7 +12,7 @@ import com.epickur.api.exception.EpickurException;
  * @author cph
  * @version 1.0
  */
-public final class KeyBusiness {
+public class KeyBusiness {
 
 	/** Key dao */
 	private KeyDAOImpl keyDao;
@@ -22,6 +22,10 @@ public final class KeyBusiness {
 	 */
 	public KeyBusiness() {
 		this.keyDao = new KeyDAOImpl();
+	}
+	
+	public KeyBusiness(final KeyDAOImpl keyDAO) {
+		this.keyDao = keyDAO;
 	}
 
 	/**
@@ -59,12 +63,12 @@ public final class KeyBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public void delete(final String id) throws EpickurException {
-		this.keyDao.delete(id);
+	public boolean delete(final String id) throws EpickurException {
+		return this.keyDao.delete(id);
 	}
 	
-	public void deleteWithKey(final String key) throws EpickurException{
-		this.keyDao.deleteWithKey(key);
+	public boolean deleteWithKey(final String key) throws EpickurException{
+		return this.keyDao.deleteWithKey(key);
 	}
 
 	/**

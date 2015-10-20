@@ -90,22 +90,6 @@ public final class Utils {
 	}
 
 	/**
-	 * @param password
-	 *            The password
-	 * @return The encrypted password
-	 * @throws EpickurException
-	 *             If someting went bad
-	 */
-	public static String getEncryptedPassword(final String password) throws EpickurException {
-		String saltHashed = null;
-		String cryptedPasswordSalt = null;
-		String passwordHashed = Security.encodeToSha256(password);
-		saltHashed = Security.generateSalt();
-		cryptedPasswordSalt = Security.encodeToSha256(passwordHashed + saltHashed);
-		return saltHashed + cryptedPasswordSalt;
-	}
-
-	/**
 	 * Get properties from a property file
 	 * 
 	 * @return A properties file

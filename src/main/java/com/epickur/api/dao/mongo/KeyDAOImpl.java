@@ -21,7 +21,7 @@ import com.mongodb.client.MongoCursor;
  * @author cph
  * @version 1.0
  */
-public final class KeyDAOImpl extends CrudDAO<Key> {
+public class KeyDAOImpl extends CrudDAO<Key> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(KeyDAOImpl.class.getSimpleName());

@@ -49,7 +49,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	public abstract T update(final T obj) throws EpickurException;
 
 	@Override
-	public final boolean delete(final String id) throws EpickurException {
+	public boolean delete(final String id) throws EpickurException {
 		LOG.debug("Delete with id: " + id);
 		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
 		return deleteDocument(filter);

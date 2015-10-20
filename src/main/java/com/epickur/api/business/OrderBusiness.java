@@ -33,7 +33,7 @@ import com.stripe.model.Charge;
  * @author cph
  * @version 1.0
  */
-public final class OrderBusiness {
+public class OrderBusiness {
 
 	/** Order dao */
 	private OrderDAOImpl orderDAO;
@@ -45,6 +45,8 @@ public final class OrderBusiness {
 	private VoucherBusiness voucherBusiness;
 	/** User validator */
 	private UserValidator validator;
+	/** User Email utils */
+	private EmailUtils emailUtils;
 
 	/** The constructor */
 	public OrderBusiness() {
@@ -53,6 +55,17 @@ public final class OrderBusiness {
 		this.seqDAO = new SequenceDAOImpl();
 		this.voucherBusiness = new VoucherBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
+		this.emailUtils = new EmailUtils();
+	}
+
+	public OrderBusiness(final OrderDAOImpl orderDAO, final UserDAOImpl userDAO, final SequenceDAOImpl seqDAO,
+			final VoucherBusiness voucherBusiness, final EmailUtils emailUtils) {
+		this.orderDAO = orderDAO;
+		this.userDAO = userDAO;
+		this.seqDAO = seqDAO;
+		this.voucherBusiness = voucherBusiness;
+		this.validator = (UserValidator) FactoryValidator.getValidator("user");
+		this.emailUtils = emailUtils;
 	}
 
 	/**
@@ -73,25 +86,24 @@ public final class OrderBusiness {
 		User user = this.userDAO.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
-		} else {
-			Voucher current = order.getVoucher();
-			if (current != null) {
-				Voucher updated = this.voucherBusiness.validateVoucher(current.getCode());
-				order.setVoucher(updated);
-			}
-			order.setCreatedBy(new ObjectId(userId));
-			order.setStatus(OrderStatus.PENDING);
-			String sequence = seqDAO.getNextId();
-			order.setReadableId(sequence);
-			order.prepareForInsertionIntoDB();
-			Order res = this.orderDAO.create(order);
-			String orderCode = Security.createOrderCode(res.getId(), order.getCardToken());
-			if (sendEmail) {
-				EmailUtils.emailNewOrder(user, res, orderCode);
-			}
-			Jobs.getInstance().addTemporaryOrderJob(user, res);
-			return res;
 		}
+		Voucher current = order.getVoucher();
+		if (current != null) {
+			Voucher updated = this.voucherBusiness.validateVoucher(current.getCode());
+			order.setVoucher(updated);
+		}
+		order.setCreatedBy(new ObjectId(userId));
+		order.setStatus(OrderStatus.PENDING);
+		String sequence = this.seqDAO.getNextId();
+		order.setReadableId(sequence);
+		order.prepareForInsertionIntoDB();
+		Order res = this.orderDAO.create(order);
+		String orderCode = Security.createOrderCode(res.getId(), order.getCardToken());
+		if (sendEmail) {
+			this.emailUtils.emailNewOrder(user, res, orderCode);
+		}
+		Jobs.getInstance().addTemporaryOrderJob(user, res);
+		return res;
 	}
 
 	/**
@@ -195,53 +207,51 @@ public final class OrderBusiness {
 		User user = this.userDAO.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
-		} else {
-			Order order = this.orderDAO.read(orderId);
-			if (order != null) {
-				if (!orderCode.equals(Security.createOrderCode(new ObjectId(orderId), order.getCardToken()))) {
-					throw new EpickurForbiddenException();
-				}
-				if (confirm) {
-					if (shouldCharge) {
-						StripePayment stripe = new StripePayment();
-						try {
-							Charge charge = stripe.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
-							if (charge == null || !charge.getPaid()) {
-								orderFailed(order, user, sendEmail);
-							} else {
-								order.setChargeId(charge.getId());
-								order.setPaid(charge.getPaid());
-								order.setStatus(OrderStatus.SUCCESSFUL);
-								// Send email to User, Caterer and admins - Order success
-								if (sendEmail) {
-									EmailUtils.emailSuccessOrder(user, order);
-								}
-							}
-						} catch (StripeException e) {
-							orderFailed(order, user, sendEmail);
-						} finally {
-							order.prepareForUpdateIntoDB();
-							order = orderDAO.update(order);
+		}
+		Order order = this.orderDAO.read(orderId);
+		if (order == null) {
+			throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, orderId);
+		}
+		if (!orderCode.equals(Security.createOrderCode(new ObjectId(orderId), order.getCardToken()))) {
+			throw new EpickurForbiddenException();
+		}
+		if (confirm) {
+			if (shouldCharge) {
+				StripePayment stripe = new StripePayment();
+				try {
+					Charge charge = stripe.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
+					if (charge == null || !charge.getPaid()) {
+						orderFailed(order, user, sendEmail);
+					} else {
+						order.setChargeId(charge.getId());
+						order.setPaid(charge.getPaid());
+						order.setStatus(OrderStatus.SUCCESSFUL);
+						// Send email to User, Caterer and admins - Order success
+						if (sendEmail) {
+							this.emailUtils.emailSuccessOrder(user, order);
 						}
 					}
-				} else {
-					// Send email to USER and ADMINS - Order decline
-					if (sendEmail) {
-						EmailUtils.emailDeclineOrder(user, order);
-					}
-					if (order.getVoucher() != null) {
-						Voucher voucher = this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
-						order.setVoucher(voucher);
-					}
-					order.setStatus(OrderStatus.DECLINED);
-					order = this.orderDAO.update(order);
+				} catch (StripeException e) {
+					orderFailed(order, user, sendEmail);
+				} finally {
+					order.prepareForUpdateIntoDB();
+					order = orderDAO.update(order);
 				}
-				Jobs.getInstance().removeTemporaryOrderJob(orderId);
-				return order;
-			} else {
-				throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, orderId);
 			}
+		} else {
+			// Send email to USER and ADMINS - Order decline
+			if (sendEmail) {
+				this.emailUtils.emailDeclineOrder(user, order);
+			}
+			if (order.getVoucher() != null) {
+				Voucher voucher = this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+				order.setVoucher(voucher);
+			}
+			order.setStatus(OrderStatus.DECLINED);
+			order = this.orderDAO.update(order);
 		}
+		Jobs.getInstance().removeTemporaryOrderJob(orderId);
+		return order;
 	}
 
 	/**
@@ -259,7 +269,7 @@ public final class OrderBusiness {
 		order.setStatus(OrderStatus.FAILED);
 		// Send email to User, Caterer and admins - Order failed
 		if (sendEmail) {
-			EmailUtils.emailFailOrder(user, order);
+			this.emailUtils.emailFailOrder(user, order);
 		}
 		if (order.getVoucher() != null) {
 			Voucher voucher = this.voucherBusiness.revertVoucher(order.getVoucher().getCode());

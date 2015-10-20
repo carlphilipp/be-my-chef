@@ -2,139 +2,160 @@ package com.epickur.api.business;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
+import com.epickur.api.TestUtils;
+import com.epickur.api.dao.mongo.DishDAOImpl;
 import com.epickur.api.entity.Dish;
+import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
+import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.geocoder.here.GeocoderHereImpl;
 
+@PowerMockIgnore("javax.management.*")
+@RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
+@PrepareForTest(DishBusiness.class)
 public class DishBusinessTest {
 
-	private static DishBusiness business;
-	private static List<ObjectId> idsToDelete;
-	private static final String name = "Dish Name";
-	private static final String description = "description";
-	private static Key key;
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
-	@BeforeClass
-	public static void beforeClass() {
-		business = new DishBusiness();
-		idsToDelete = new ArrayList<ObjectId>();
-		key = new Key();
+	private DishBusiness dishBusiness;
+	@Mock
+	private DishDAOImpl dishDAOMock;
+	@Mock
+	private GeocoderHereImpl geoCoder;
+	@Mock
+	private Geo geo;
+
+	private Key key;
+
+	@Before
+	public void setUp() {
+		reset(dishDAOMock);
+		this.key = new Key();
 		key.setRole(Role.ADMIN);
-	}
-
-	@AfterClass
-	public static void afterClass() throws EpickurException {
-		for (ObjectId id : idsToDelete) {
-			business.delete(id.toHexString(), key);
-		}
+		key.setUserId(new ObjectId());
+		this.dishBusiness = new DishBusiness(dishDAOMock);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
-		// Create a new Dish
-		Dish dish = new Dish();
-		dish.setName(name);
+		Dish dish = TestUtils.generateRandomDish();
+		Dish dishAfterCreate = TestUtils.mockDishAfterCreate(dish);
 
-		Dish result = business.create(dish);
-		assertNotNull("Caterer is null", result);
-		assertNotNull("Id not generated", result.getId());
-		idsToDelete.add(result.getId());
-		assertNotNull("CreatedAt is null", result.getCreatedAt());
-		assertNotNull("UpdatedAt is null", result.getUpdatedAt());
-		assertEquals(name, result.getName());
+		when(dishDAOMock.create((Dish) anyObject())).thenReturn(dishAfterCreate);
+
+		Dish actual = dishBusiness.create(dish);
+		assertNotNull("Dish is null", actual);
+		assertNotNull("Id not generated", actual.getId());
+		assertNotNull("CreatedAt is null", actual.getCreatedAt());
+		assertNotNull("UpdatedAt is null", actual.getUpdatedAt());
+		assertEquals(dish.getName(), actual.getName());
 	}
 
 	@Test
 	public void testRead() throws EpickurException {
-		// Create a new Dish
-		Dish dish = new Dish();
-		dish.setName(name + "2");
+		Dish dish = TestUtils.generateRandomDishWithId();
+		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
 
-		Dish result = business.create(dish);
-		assertNotNull("Dish is null", result);
-		assertNotNull("Id not generated", result.getId());
-		idsToDelete.add(result.getId());
-		assertNotNull("CreatedAt is null", result.getCreatedAt());
-		assertNotNull("UpdatedAt is null", result.getUpdatedAt());
-		assertEquals(name + "2", result.getName());
+		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
 
-		Dish result2 = business.read(result.getId().toHexString());
-		assertNotNull("Dish is null", result2);
-		assertEquals(result, result2);
+		Dish actual = dishBusiness.read(dish.getId().toHexString());
+		assertNotNull("Dish is null", actual);
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
-		// Create a new Dish
-		Dish dish = new Dish();
-		dish.setName(name + "5");
+		Dish dish = TestUtils.generateRandomDishWithId();
+		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
+		List<Dish> listDishes = new ArrayList<Dish>();
+		listDishes.add(dishAfterRead);
 
-		Dish result = business.create(dish);
-		assertNotNull("Dish is null", result);
-		assertNotNull("Id not generated", result.getId());
-		idsToDelete.add(result.getId());
-		assertNotNull("CreatedAt is null", result.getCreatedAt());
-		assertNotNull("UpdatedAt is null", result.getUpdatedAt());
-		assertEquals(name + "5", result.getName());
+		when(dishDAOMock.readAll()).thenReturn(listDishes);
 
-		List<Dish> result2 = business.readAll();
-		assertNotNull("Caterer is null", result2);
-		for (Dish di : result2) {
-			if (di.getId().equals(result.getId())) {
-				assertEquals(result, di);
-			}
-		}
+		List<Dish> listActual = dishBusiness.readAll();
+		Dish actual = listActual.get(0);
+		assertNotNull("Dish is null", actual);
 	}
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		// Create a new Dish
-		Dish dish = new Dish();
-		dish.setName(name + "3");
-		dish.setDescription(description);
+		Dish dish = TestUtils.generateRandomDishWithId();
+		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
+		Dish dishAfterUpdate = TestUtils.mockDishAfterCreate(dish);
+		dishAfterUpdate.setName("new name");
 
-		Dish result = business.create(dish);
-		assertNotNull("Dish is null", result);
-		assertNotNull("Id not generated", result.getId());
-		idsToDelete.add(result.getId());
-		assertNotNull("CreatedAt is null", result.getCreatedAt());
-		assertNotNull("UpdatedAt is null", result.getUpdatedAt());
-		assertEquals(name + "3", result.getName());
+		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
+		when(dishDAOMock.update((Dish) anyObject())).thenReturn(dishAfterUpdate);
 
-		result.setDescription(description + "3");
-		Dish result2 = business.update(result, key);
-		assertNotNull("Dish is null", result2);
-		result.setCreatedAt(result2.getCreatedAt());
-		assertEquals(result, result2);
+		Dish actual = dishBusiness.update(dish, key);
+		assertNotNull("Dish is null", actual);
+		assertEquals("new name", actual.getName());
 	}
 
 	@Test
 	public void testDelete() throws EpickurException {
-		// Create a new Dish
-		Dish dish = new Dish();
-		dish.setName(name + "4");
+		Dish dish = TestUtils.generateRandomDishWithId();
+		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
 
-		Dish result = business.create(dish);
-		assertNotNull("Dish is null", result);
-		assertNotNull("Id not generated", result.getId());
-		idsToDelete.add(result.getId());
+		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
+		when(dishDAOMock.delete(dish.getId().toHexString())).thenReturn(true);
 
-		boolean deleted = business.delete(result.getId().toHexString(), key);
-		assertTrue(deleted);
+		boolean actual = dishBusiness.delete(dish.getId().toHexString(), key);
+		assertTrue(actual);
+	}
 
-		Dish result2 = business.read(result.getId().toHexString());
-		assertNull(result2);
+	@Test
+	public void testSearchDishesForOneCaterer() throws EpickurException {
+		Dish dish = TestUtils.generateRandomDishWithId();
+		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
+		List<Dish> listDishes = new ArrayList<Dish>();
+		listDishes.add(dishAfterRead);
+
+		when(dishDAOMock.searchWithCatererId(anyString())).thenReturn(listDishes);
+
+		List<Dish> listActual = dishBusiness.searchDishesForOneCaterer(anyString());
+		Dish actual = listActual.get(0);
+		assertNotNull("Dish is null", actual);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testSearch() throws Exception {
+		Dish dish = TestUtils.generateRandomDishWithId();
+		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
+		List<Dish> listDishes = new ArrayList<Dish>();
+		listDishes.add(dishAfterRead);
+
+		when(dishDAOMock.search(anyString(), anyInt(), (List<DishType>) anyObject(), anyInt(), (Geo) anyObject(), anyInt()))
+				.thenReturn(listDishes);
+		whenNew(GeocoderHereImpl.class).withNoArguments().thenReturn(geoCoder);
+		when(geoCoder.getPosition(anyString())).thenReturn(geo);
+
+		List<Dish> listActual = dishBusiness.search("", 0, (List<DishType>)new ArrayList<DishType>(), 0, new Geo(),"", 0);
+		Dish actual = listActual.get(0);
+		assertNotNull("Dish is null", actual);
 	}
 }

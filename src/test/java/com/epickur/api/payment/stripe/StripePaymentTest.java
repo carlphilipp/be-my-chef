@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.epickur.api.enumeration.Currency;
-import com.epickur.api.integration.UserIntegrationTest;
+import com.epickur.api.integration.UserIT;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
@@ -26,7 +26,7 @@ public class StripePaymentTest {
 	public static void beforeClass() {
 		InputStreamReader in = null;
 		try {
-			in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
 			in.close();

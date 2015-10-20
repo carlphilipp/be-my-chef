@@ -31,7 +31,7 @@ import com.mongodb.client.MongoCursor;
  * @version 1.0
  *
  */
-public final class VoucherDAOImpl extends CrudDAO<Voucher> {
+public class VoucherDAOImpl extends CrudDAO<Voucher> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(VoucherDAOImpl.class.getSimpleName());

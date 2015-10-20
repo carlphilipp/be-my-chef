@@ -29,7 +29,7 @@ import com.mongodb.client.MongoCursor;
  * @author cph
  * @version 1.0
  */
-public final class DishDAOImpl extends CrudDAO<Dish> {
+public class DishDAOImpl extends CrudDAO<Dish> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(DishDAOImpl.class.getSimpleName());

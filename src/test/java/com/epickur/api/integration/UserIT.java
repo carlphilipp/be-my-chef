@@ -52,7 +52,7 @@ import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Token;
 
-public class UserIntegrationTest {
+public class UserIT {
 
 	private static String URL;
 	private static String URL_NO_KEY;
@@ -71,7 +71,7 @@ public class UserIntegrationTest {
 	public static void beforeClass() {
 		try {
 			mapper = new ObjectMapper();
-			InputStreamReader in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+			InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
 			String address = prop.getProperty("address");

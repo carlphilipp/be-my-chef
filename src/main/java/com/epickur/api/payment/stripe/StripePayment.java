@@ -23,7 +23,7 @@ import com.stripe.model.Charge;
  * @author cph
  * @version 1.0
  */
-public final class StripePayment {
+public class StripePayment {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(StripePayment.class.getSimpleName());

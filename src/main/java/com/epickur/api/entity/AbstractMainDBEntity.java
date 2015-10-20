@@ -19,17 +19,17 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public abstract class AbstractMainDBEntity extends AbstractEntity{
-	
+public abstract class AbstractMainDBEntity extends AbstractEntity {
+
 	/** Id */
 	private ObjectId id;
 	/** Created at */
 	private DateTime createdAt;
 	/** Updated at */
 	private DateTime updatedAt;
-	
+
 	/**
 	 * @return An ObjectId
 	 */
@@ -37,6 +37,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity{
 	public final ObjectId getId() {
 		return id;
 	}
+
 	/**
 	 * @param id
 	 *            An ObjectId
@@ -45,7 +46,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity{
 	public final void setId(final ObjectId id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * @return The creation date
 	 */
@@ -79,9 +80,9 @@ public abstract class AbstractMainDBEntity extends AbstractEntity{
 	public final void setUpdatedAt(final DateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	
+
 	/**
-	 * Prepare the entity to be inserted into DB. 
+	 * Prepare the entity to be inserted into DB.
 	 */
 	public void prepareForInsertionIntoDB() {
 		DateTime time = new DateTime();
@@ -92,7 +93,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity{
 	}
 
 	/**
-	 * Prepare the entity to be updated into DB. 
+	 * Prepare the entity to be updated into DB.
 	 */
 	public void prepareForUpdateIntoDB() {
 		DateTime time = new DateTime();

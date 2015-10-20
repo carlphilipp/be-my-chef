@@ -48,13 +48,13 @@ import com.epickur.api.filter.KeyRequestFilterTest;
 import com.epickur.api.filter.LogRequestFilterTest;
 import com.epickur.api.geocoder.here.GeocoderHereImplTest;
 import com.epickur.api.geocoder.here.HereTest;
-import com.epickur.api.integration.AccessRightsCatererIntegrationTest;
-import com.epickur.api.integration.AccessRightsDishIntegrationTest;
-import com.epickur.api.integration.AccessRightsOrderIntegrationTest;
-import com.epickur.api.integration.AccessRightsUserIntegrationTest;
-import com.epickur.api.integration.CatererIntegrationTest;
-import com.epickur.api.integration.DishIntegrationTest;
-import com.epickur.api.integration.UserIntegrationTest;
+import com.epickur.api.integration.AccessRightsCatererIT;
+import com.epickur.api.integration.AccessRightsDishIT;
+import com.epickur.api.integration.AccessRightsOrderIT;
+import com.epickur.api.integration.AccessRightsUserIT;
+import com.epickur.api.integration.CatererIT;
+import com.epickur.api.integration.DishIT;
+import com.epickur.api.integration.UserIT;
 import com.epickur.api.payment.stripe.StripePaymentTest;
 import com.epickur.api.service.CatererServiceTest;
 import com.epickur.api.service.DishServiceTest;
@@ -123,13 +123,13 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		GeocoderHereImplTest.class,
 		HereTest.class,
 
-		AccessRightsUserIntegrationTest.class,
-		AccessRightsCatererIntegrationTest.class,
-		AccessRightsDishIntegrationTest.class,
-		AccessRightsOrderIntegrationTest.class,
-		CatererIntegrationTest.class,
-		DishIntegrationTest.class,
-		UserIntegrationTest.class,
+		AccessRightsUserIT.class,
+		AccessRightsCatererIT.class,
+		AccessRightsDishIT.class,
+		AccessRightsOrderIT.class,
+		CatererIT.class,
+		DishIT.class,
+		UserIT.class,
 
 		StripePaymentTest.class,
 

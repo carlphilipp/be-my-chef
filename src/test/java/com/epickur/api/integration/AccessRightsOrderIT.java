@@ -37,7 +37,7 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 
-public class AccessRightsOrderIntegrationTest {
+public class AccessRightsOrderIT {
 	private static String END_POINT;
 	private static String URL;
 	private static String URL_NO_KEY;
@@ -49,7 +49,7 @@ public class AccessRightsOrderIntegrationTest {
 
 	@BeforeClass
 	public static void beforeClass() throws IOException, EpickurException {
-		InputStreamReader in = new InputStreamReader(CatererIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+		InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 		in.close();
@@ -57,7 +57,7 @@ public class AccessRightsOrderIntegrationTest {
 		String path = prop.getProperty("api.path");
 		STRIPE_TEST_KEY = prop.getProperty("stripe.key");
 		END_POINT = address + path;
-		in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
+		in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/api.key"));
 		BufferedReader br = new BufferedReader(in);
 		API_KEY = br.readLine();
 		in.close();

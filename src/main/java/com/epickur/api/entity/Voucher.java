@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
@@ -49,10 +51,12 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public final class Voucher extends AbstractMainDBEntity {
 
+	/** Logger */
+	private static final Logger LOG = LogManager.getLogger(Voucher.class.getSimpleName());
 	/** Code */
 	private String code;
 	/** Discount */
@@ -186,5 +190,15 @@ public final class Voucher extends AbstractMainDBEntity {
 			}
 		}
 		return result;
+	}
+	
+	@Override
+	public Voucher clone() {
+		try {
+			return (Voucher) super.clone();
+		} catch (CloneNotSupportedException e) {
+			LOG.error("Error while cloning: " + e.getMessage(), e);
+			throw new RuntimeException();
+		}
 	}
 }

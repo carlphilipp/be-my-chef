@@ -2,14 +2,12 @@ package com.epickur.api.business;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
-
 import com.epickur.api.dao.mongo.CatererDAOImpl;
 import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.OrderStatus;
-import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.validator.CatererValidator;
 import com.epickur.api.validator.FactoryValidator;
@@ -32,6 +30,11 @@ public class CatererBusiness {
 	 */
 	public CatererBusiness() {
 		this.dao = new CatererDAOImpl();
+		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
+	}
+	
+	public CatererBusiness(final CatererDAOImpl catererDAO) {
+		this.dao = catererDAO;
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
 
@@ -84,10 +87,10 @@ public class CatererBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final Caterer update(final Caterer caterer, final Role role, final ObjectId userId) throws EpickurException {
+	public final Caterer update(final Caterer caterer, final Key key) throws EpickurException {
 		Caterer read = dao.read(caterer.getId().toHexString());
 		if (read != null) {
-			validator.checkRightsAfter(role, userId, read, Operation.UPDATE);
+			validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
 			caterer.prepareForUpdateIntoDB();
 			return dao.update(caterer);
 		}

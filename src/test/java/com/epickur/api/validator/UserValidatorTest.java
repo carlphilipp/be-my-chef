@@ -19,7 +19,7 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
-import com.epickur.api.integration.UserIntegrationTest;
+import com.epickur.api.integration.UserIT;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -33,7 +33,7 @@ public class UserValidatorTest {
 	public static void beforeClass() {
 		InputStreamReader in = null;
 		try {
-			in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
 			in.close();

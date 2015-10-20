@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class CatererIntegrationTest {
+public class CatererIT {
 
 	private static String URL;
 	private static String URL_NO_KEY;
@@ -48,7 +48,7 @@ public class CatererIntegrationTest {
 
 	@BeforeClass
 	public static void beforeClass() throws IOException, EpickurException {
-		InputStreamReader in = new InputStreamReader(CatererIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+		InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 		String address = prop.getProperty("address");

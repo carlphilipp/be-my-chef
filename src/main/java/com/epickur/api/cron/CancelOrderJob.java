@@ -32,6 +32,8 @@ public final class CancelOrderJob implements Job {
 	private UserDAOImpl userDAO;
 	/** Voucher Business */
 	private VoucherBusiness voucherBusiness;
+	
+	private EmailUtils emailUtils;
 
 	/**
 	 * Constructs a Cancel Order Job
@@ -39,6 +41,7 @@ public final class CancelOrderJob implements Job {
 	public CancelOrderJob() {
 		this.orderDAO = new OrderDAOImpl();
 		this.userDAO = new UserDAOImpl();
+		this.emailUtils = new EmailUtils();
 	}
 
 	@Override
@@ -56,7 +59,7 @@ public final class CancelOrderJob implements Job {
 				if (order.getVoucher() != null) {
 					this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
 				}
-				EmailUtils.emailCancelOrder(user, order);
+				emailUtils.emailCancelOrder(user, order);
 			}
 		} catch (EpickurException e) {
 			LOG.error(e.getLocalizedMessage(), e);

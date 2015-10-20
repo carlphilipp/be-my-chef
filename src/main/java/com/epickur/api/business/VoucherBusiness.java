@@ -23,7 +23,7 @@ import com.epickur.api.exception.EpickurException;
  * @version 1.0
  *
  */
-public final class VoucherBusiness {
+public class VoucherBusiness {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(VoucherBusiness.class.getSimpleName());
@@ -35,6 +35,10 @@ public final class VoucherBusiness {
 	 */
 	public VoucherBusiness() {
 		this.voucherDAO = new VoucherDAOImpl();
+	}
+
+	public VoucherBusiness(final VoucherDAOImpl voucherDAO) {
+		this.voucherDAO = voucherDAO;
 	}
 
 	/**
@@ -49,7 +53,7 @@ public final class VoucherBusiness {
 	}
 
 	/**
-	 * Generae vouchers.
+	 * Generate vouchers. We use a Set to store data, and we need to check in the database if the voucher code has not been generated already.
 	 * 
 	 * @param count
 	 *            The number of vouchers
@@ -94,9 +98,10 @@ public final class VoucherBusiness {
 	}
 
 	/**
-	 * @throws EpickurException If an EpickurException occurred
+	 * @throws EpickurException
+	 *             If an EpickurException occurred
 	 */
-	public void clean() throws EpickurException {
+	public List<Voucher> clean() throws EpickurException {
 		List<Voucher> vouchers = this.voucherDAO.readToClean();
 		for (Voucher voucher : vouchers) {
 			LOG.info("Expire voucher " + voucher.getCode() + " " + voucher.getExpiration());
@@ -104,6 +109,7 @@ public final class VoucherBusiness {
 			voucher.prepareForUpdateIntoDB();
 			this.voucherDAO.update(voucher);
 		}
+		return vouchers;
 	}
 
 	/**
@@ -114,10 +120,7 @@ public final class VoucherBusiness {
 	 *             If an EpickurException occurred
 	 */
 	public Voucher validateVoucher(final String code) throws EpickurException {
-		Voucher found = this.voucherDAO.read(code);
-		if (found == null) {
-			throw new EpickurException("Voucher '" + code + "' not found");
-		}
+		Voucher found = this.readAndThrowException(code);
 		if (found.getStatus() == Status.EXPIRED) {
 			throw new EpickurException("Voucher '" + code + "' expired");
 		}
@@ -131,8 +134,7 @@ public final class VoucherBusiness {
 			}
 		}
 		found.prepareForUpdateIntoDB();
-		Voucher updated = this.voucherDAO.update(found);
-		return updated;
+		return this.voucherDAO.update(found);
 	}
 
 	/**
@@ -143,18 +145,22 @@ public final class VoucherBusiness {
 	 *             If an EpickurException occurred
 	 */
 	public Voucher revertVoucher(final String code) throws EpickurException {
-		Voucher found = this.voucherDAO.read(code);
-		if (found == null) {
-			throw new EpickurException("Voucher '" + code + "' not found");
-		}
+		Voucher found = this.readAndThrowException(code);
 		if (found.getExpirationType() == ExpirationType.ONETIME) {
 			found.setStatus(Status.VALID);
 		} else if (found.getExpirationType() == ExpirationType.UNTIL) {
 			found.setUsedCount(found.getUsedCount() - 1);
 		}
 		found.prepareForUpdateIntoDB();
-		Voucher updated = this.voucherDAO.update(found);
-		return updated;
+		return this.voucherDAO.update(found);
+	}
+	
+	protected Voucher readAndThrowException(final String code) throws EpickurException{
+		Voucher found = this.voucherDAO.read(code);
+		if (found == null) {
+			throw new EpickurException("Voucher '" + code + "' not found");
+		}
+		return found;
 	}
 
 	/**

@@ -10,7 +10,7 @@ import com.epickur.api.geocoder.IGeocoder;
  * @author cph
  * @version 1.0
  */
-public final class GeocoderHereImpl implements IGeocoder {
+public class GeocoderHereImpl implements IGeocoder {
 
 	@Override
 	public Geo getPosition(final String text) throws GeoLocationException {

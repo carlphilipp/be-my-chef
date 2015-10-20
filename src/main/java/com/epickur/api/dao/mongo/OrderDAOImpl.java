@@ -42,7 +42,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 	}
 
 	@Override
-	public final Order create(final Order order) throws EpickurException {
+	public Order create(final Order order) throws EpickurException {
 		LOG.debug("Create order: " + order);
 		Document doc = order.getDocumentDBView();
 		insertDocument(doc);
@@ -50,7 +50,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 	}
 
 	@Override
-	public final Order read(final String id) throws EpickurException {
+	public Order read(final String id) throws EpickurException {
 		LOG.debug("Read order with id: " + id);
 		Document query = convertAttributeToDocument("_id", new ObjectId(id));
 		Document find = findDocument(query);
@@ -58,7 +58,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 	}
 
 	@Override
-	public final Order update(final Order order) throws EpickurException {
+	public Order update(final Order order) throws EpickurException {
 		LOG.debug("Update order: " + order);
 		Document filter = convertAttributeToDocument("_id", order.getId());
 		Document update = order.getOrderUpdateQuery();
@@ -75,7 +75,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 	}
 
 	@Override
-	public final List<Order> readAll() throws EpickurException {
+	public List<Order> readAll() throws EpickurException {
 		throw new NotImplementedException();
 	}
 
@@ -88,7 +88,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public final List<Order> readAllWithUserId(final String userId) throws EpickurException {
+	public List<Order> readAllWithUserId(final String userId) throws EpickurException {
 		List<Order> orders = new ArrayList<Order>();
 		Document query = new Document().append("createdBy", userId);
 		MongoCursor<Document> cursor = null;
@@ -119,7 +119,7 @@ public class OrderDAOImpl extends CrudDAO<Order> {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public final List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
+	public List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
 		List<Order> orders = new ArrayList<Order>();
 		Document query = new Document().append("dish.caterer._id", catererId);
 		Document filter = new Document();

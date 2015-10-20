@@ -49,7 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class DishIntegrationTest {
+public class DishIT {
 	private static String URL;
 	private static String URL_NO_KEY;
 	private static String API_KEY;
@@ -60,7 +60,7 @@ public class DishIntegrationTest {
 	@BeforeClass
 	public static void beforeClass() throws IOException, EpickurException {
 		TestUtils.setupDB();
-		InputStreamReader in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+		InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 		in.close();

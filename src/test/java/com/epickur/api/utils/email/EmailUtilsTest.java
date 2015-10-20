@@ -18,10 +18,12 @@ public class EmailUtilsTest {
 	private static final String EMAIL_TEST = "cp.harmant@gmail.com";
 	
 	private SequenceDAOImpl dao = new SequenceDAOImpl();
+	
+	private EmailUtils emailUtils = new EmailUtils();
 
 	@Test
 	public void emailNewRegistrationTest() {
-		EmailUtils.emailNewRegistration("carl", "Carl-Philipp", "codeeddd", EMAIL_TEST);
+		emailUtils.emailNewRegistration("carl", "Carl-Philipp", "codeeddd", EMAIL_TEST);
 	}
 
 	@Test
@@ -42,7 +44,7 @@ public class EmailUtilsTest {
 		dish.setCaterer(caterer);
 		order.setDish(dish);
 		String orderCode = Security.createOrderCode(new ObjectId(), TestUtils.generateRandomString());
-		EmailUtils.emailNewOrder(user, order, orderCode);
+		emailUtils.emailNewOrder(user, order, orderCode);
 	}
 
 	@Test
@@ -61,7 +63,7 @@ public class EmailUtilsTest {
 		caterer.setName("Kebab");
 		dish.setCaterer(caterer);
 		order.setDish(dish);
-		EmailUtils.emailDeclineOrder(user, order);
+		emailUtils.emailDeclineOrder(user, order);
 	}
 
 	@Test
@@ -80,7 +82,7 @@ public class EmailUtilsTest {
 		caterer.setName("Kebab");
 		dish.setCaterer(caterer);
 		order.setDish(dish);
-		EmailUtils.emailSuccessOrder(user, order);
+		emailUtils.emailSuccessOrder(user, order);
 	}
 
 	@Test
@@ -99,7 +101,7 @@ public class EmailUtilsTest {
 		caterer.setName("Kebab");
 		dish.setCaterer(caterer);
 		order.setDish(dish);
-		EmailUtils.emailFailOrder(user, order);
+		emailUtils.emailFailOrder(user, order);
 	}
 	
 	@Test
@@ -118,11 +120,11 @@ public class EmailUtilsTest {
 		caterer.setName("Kebab");
 		dish.setCaterer(caterer);
 		order.setDish(dish);
-		EmailUtils.emailCancelOrder(user, order);
+		emailUtils.emailCancelOrder(user, order);
 	}
 	
 	@Test
 	public void emailResetPassword() throws EpickurException{
-		EmailUtils.resetPassword("cp.harmant@gmail.com", new ObjectId().toHexString(), Security.generateRandomMd5());
+		emailUtils.resetPassword("cp.harmant@gmail.com", new ObjectId().toHexString(), Security.generateRandomMd5());
 	}
 }

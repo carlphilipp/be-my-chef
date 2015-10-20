@@ -44,9 +44,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public final class User extends AbstractMainDBEntity {
+public class User extends AbstractMainDBEntity {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(User.class.getSimpleName());

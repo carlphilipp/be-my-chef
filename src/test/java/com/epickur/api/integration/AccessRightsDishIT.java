@@ -32,7 +32,7 @@ import com.epickur.api.exception.EpickurException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AccessRightsDishIntegrationTest {
+public class AccessRightsDishIT {
 	private static String END_POINT;
 	private static String URL;
 	private static String URL_NO_KEY;
@@ -41,7 +41,7 @@ public class AccessRightsDishIntegrationTest {
 
 	@BeforeClass
 	public static void beforeClass() throws IOException {
-		InputStreamReader in = new InputStreamReader(CatererIntegrationTest.class.getClass().getResourceAsStream("/test.properties"));
+		InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 		in.close();

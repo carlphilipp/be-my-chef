@@ -25,9 +25,9 @@ import lombok.ToString;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "type", "coordinates" })
-@ToString
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public final class Geo extends AbstractEntity {
+public class Geo extends AbstractEntity {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Geo.class.getSimpleName());

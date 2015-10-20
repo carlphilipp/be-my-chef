@@ -39,9 +39,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public final class Key extends AbstractMainDBEntity {
+public class Key extends AbstractMainDBEntity {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Key.class.getSimpleName());
