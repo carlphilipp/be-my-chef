@@ -27,6 +27,10 @@ public final class LogoutService {
 	public LogoutService() {
 		this.keyBusiness = new KeyBusiness();
 	}
+	
+	public LogoutService(final KeyBusiness keyBusiness) {
+		this.keyBusiness = keyBusiness;
+	}
 
 	// @formatter:off
 	/** 

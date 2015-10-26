@@ -32,6 +32,11 @@ public final class LoginService {
 		this.userBusiness = new UserBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
+	
+	public LoginService(final UserBusiness userBusiness) {
+		this.userBusiness = userBusiness;
+		this.validator = (UserValidator) FactoryValidator.getValidator("user");
+	}
 
 	// @formatter:off
 	/** 

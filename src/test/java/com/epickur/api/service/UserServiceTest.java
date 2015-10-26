@@ -2,38 +2,45 @@ package com.epickur.api.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
-import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.epickur.api.TestUtils;
+import com.epickur.api.business.OrderBusiness;
+import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.entity.message.ErrorMessage;
-import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.integration.UserIT;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -41,21 +48,19 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
-
-	private static UserService service;
-	private static List<ObjectId> idsToDeleteUser;
-	private static Map<String, ObjectId> idsToDeleteOrder;
-	private static ContainerRequestContext context;
-
+	
+	private UserService service;
+	@Mock
+	private UserBusiness userBusiness;
+	@Mock
+	private OrderBusiness orderBusiness;
+	@Mock
+	private ContainerRequestContext context;
+	
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		context = mock(ContainerRequestContext.class);
-		Key key = TestUtils.generateRandomAdminKey();
-		Mockito.when(context.getProperty("key")).thenReturn(key);
-		service = new UserService();
-		idsToDeleteUser = new ArrayList<ObjectId>();
-		idsToDeleteOrder = new HashMap<String, ObjectId>();
 		InputStreamReader in = null;
 		try {
 			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
@@ -73,808 +78,301 @@ public class UserServiceTest {
 			}
 		}
 	}
-
-	@AfterClass
-	public static void afterClass() throws EpickurException {
-		for (ObjectId id : idsToDeleteUser) {
-			service.delete(id.toHexString(), context);
-		}
-		for (Entry<String, ObjectId> entry : idsToDeleteOrder.entrySet()) {
-			service.deleteOneOrder(entry.getKey(), entry.getValue().toHexString(), context);
-		}
+	
+	@Before
+	public void setUp(){
+		reset(userBusiness);
+		reset(orderBusiness);
+		this.service = new UserService(userBusiness, orderBusiness);
+		Key key = TestUtils.generateRandomAdminKey();
+		Mockito.when(context.getProperty("key")).thenReturn(key);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test
-	public void testCreate2() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, true, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test
-	public void testCreate3() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testCreateFail() throws EpickurException {
-		service.create(false, false, null, context);
+		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		
+		when(userBusiness.create((User)anyObject(), anyBoolean(), anyBoolean())).thenReturn(userAfterCreate);
+		
+		Response actual = service.create(false, true, user, context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		User actualUser = (User) actual.getEntity();
+		assertNotNull(actualUser.getId());
 	}
 
 	@Test
 	public void testRead() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-			// Remove code to be able to compare
-			userResult.setCode(null);
-
-			Response result2 = service.read(userResult.getId().toHexString(), context);
-			if (result2.getEntity() != null) {
-				User userResult2 = (User) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				assertEquals(userResult, userResult2);
-			} else {
-				fail("User returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		User user = TestUtils.generateRandomUserWithId();
+		User userAfterRead = TestUtils.mockUserAfterCreate(user);
+		
+		when(userBusiness.read(anyString(), (Key) anyObject())).thenReturn(userAfterRead);
+		
+		Response actual = service.read(user.getId().toHexString(), context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		User actualUser = (User) actual.getEntity();
+		assertNotNull(actualUser.getId());
 	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testReadFail() throws EpickurException {
-		service.read(null, context);
-	}
-
+	
 	@Test
-	public void testReadFail2() throws EpickurException {
-		Response result = service.read(new ObjectId().toHexString(), context);
-		if (result.getEntity() != null) {
-			ErrorMessage errorMessage = (ErrorMessage) result.getEntity();
-			assertEquals(404, errorMessage.getError().intValue());
-		} else {
-			fail("User returned is null");
-		}
+	public void testReadUserNotFound() throws EpickurException {
+		User user = TestUtils.generateRandomUserWithId();
+		
+		when(userBusiness.read(anyString(), (Key) anyObject())).thenReturn(null);
+		
+		Response actual = service.read(user.getId().toHexString(), context);
+		assertNotNull(actual);
+		assertEquals(404, actual.getStatus());
+		ErrorMessage error = (ErrorMessage) actual.getEntity();
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			User dishResultModified = userResult.clone();
-			String newEmail = TestUtils.generateRandomString();
-			dishResultModified.setEmail(newEmail);
-			User dishResultModifiedCopy = dishResultModified.clone();
-
-			Response result2 = service.update(dishResultModified.getId().toHexString(), dishResultModified, context);
-			if (result2.getEntity() != null) {
-				User userResult2 = (User) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				assertEquals(dishResultModifiedCopy.getCreatedAt(), userResult2.getCreatedAt());
-				assertEquals(newEmail, userResult2.getEmail());
-			} else {
-				fail(" returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		User user = TestUtils.generateRandomUserWithId();
+		User userAfterUpdate = TestUtils.mockUserAfterCreate(user);
+		
+		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterUpdate);
+		
+		Response actual = service.update(user.getId().toHexString(), user, context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		User actualUser = (User) actual.getEntity();
+		assertNotNull(actualUser.getId());
 	}
-
+	
 	@Test
-	public void testUpdate2() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		String password = user.getPassword();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			User dishResultModified = userResult.clone();
-			dishResultModified.setNewPassword("new password");
-			dishResultModified.setPassword(password);
-			User dishResultModifiedCopy = dishResultModified.clone();
-
-			Response result2 = service.update(dishResultModified.getId().toHexString(), dishResultModified, context);
-			if (result2.getEntity() != null) {
-				User userResult2 = (User) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				assertEquals(dishResultModifiedCopy.getCreatedAt(), userResult2.getCreatedAt());
-			} else {
-				fail(" returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+	public void testUpdateUserNotFound() throws EpickurException {
+		User user = TestUtils.generateRandomUserWithId();
+		
+		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(null);
+		
+		Response actual = service.update(user.getId().toHexString(), user, context);
+		assertNotNull(actual);
+		assertEquals(404, actual.getStatus());
+		ErrorMessage error = (ErrorMessage) actual.getEntity();
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
-
+	
 	@Test
-	public void testUpdate3() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			User dishResultModified = userResult.clone();
-			String newEmail = TestUtils.generateRandomString();
-			dishResultModified.setEmail(newEmail);
-			User dishResultModifiedCopy = dishResultModified.clone();
-
-			Response result2 = service.update(dishResultModified.getId().toHexString(), dishResultModified, context);
-			if (result2.getEntity() != null) {
-				User userResult2 = (User) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				assertEquals(dishResultModifiedCopy.getCreatedAt(), userResult2.getCreatedAt());
-				assertEquals(newEmail, userResult2.getEmail());
-			} else {
-				fail(" returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+	public void testUpdatePassword() throws EpickurException {
+		User user = TestUtils.generateRandomUserWithId();
+		user.setNewPassword("newpassword");
+		user.setPassword("oldpassword");
+		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		userAfterCreate.setNewPassword(null);
+		
+		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
+		
+		Response actual = service.update(user.getId().toHexString(), user, context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		User actualUser = (User) actual.getEntity();
+		assertNotNull(actualUser.getId());
+		assertNull(actualUser.getNewPassword());
 	}
-
+	
 	@Test
-	public void testUpdateFail() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		user.setId(new ObjectId());
-		user.setAllow(null);
-		Response result = service.update(user.getId().toHexString(), user, context);
-		if (result.getEntity() != null) {
-			ErrorMessage errorMessage = (ErrorMessage) result.getEntity();
-			assertEquals(404, errorMessage.getError().intValue());
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateFail2() throws EpickurException {
-		service.update(null, null, context);
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateFail3() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			User dishResultModified = userResult.clone();
-			dishResultModified.setNewPassword("new password");
-
-			service.update(dishResultModified.getId().toHexString(), dishResultModified, context);
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateFail4() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		user.setId(new ObjectId());
-		service.update(null, user, context);
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateFail5() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		user.setId(new ObjectId());
-		service.update(user.getId().toHexString(), null, context);
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateFail6() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		user.setId(new ObjectId());
-		service.update("", user, context);
+	public void testUpdatePasswordFail() throws EpickurException {
+		User user = TestUtils.generateRandomUserWithId();
+		user.setPassword("oldpassword");
+		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		userAfterCreate.setNewPassword(null);
+		
+		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
+		
+		Response actual = service.update(user.getId().toHexString(), user, context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		User actualUser = (User) actual.getEntity();
+		assertNotNull(actualUser.getId());
+		assertNull(actualUser.getNewPassword());
 	}
 
 	@Test
 	public void testDelete() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
+		User user = TestUtils.generateRandomUserWithId();
 
-			Response result2 = service.delete(userResult.getId().toHexString(), context);
-			if (result2.getEntity() != null) {
-				DeletedMessage userResult2 = (DeletedMessage) result2.getEntity();
-				assertTrue(userResult2.getDeleted());
-			} else {
-				fail("Answer is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testDeleteFail() throws EpickurException {
-		service.delete(null, context);
+		when(userBusiness.delete(anyString())).thenReturn(true);
+		
+		Response actual = service.delete(user.getId().toHexString(), context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
+		assertNotNull(actualDeletedMessage.getId());
+		assertNotNull(actualDeletedMessage.getDeleted());
+		assertTrue(actualDeletedMessage.getDeleted());
 	}
 
 	@Test
-	public void testDeleteFail2() throws EpickurException {
-		Response result = service.delete(new ObjectId().toHexString(), context);
-		if (result.getEntity() != null) {
-			ErrorMessage errorMessage = (ErrorMessage) result.getEntity();
-			assertEquals(404, errorMessage.getError().intValue());
-		} else {
-			fail("User returned is null");
-		}
+	public void testDeleteUserNotFound() throws EpickurException {
+		User user = TestUtils.generateRandomUserWithId();
+
+		when(userBusiness.delete(anyString())).thenReturn(false);
+		
+		Response actual = service.delete(user.getId().toHexString(), context);
+		assertNotNull(actual);
+		assertEquals(404, actual.getStatus());
+		ErrorMessage error = (ErrorMessage) actual.getEntity();
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadAll() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-			// To pass the test
-			userResult.setCode(null);
-
-			Response result2 = service.readAll(context);
-			if (result2.getEntity() != null) {
-				List<User> userResult2 = (List<User>) result2.getEntity();
-				for (User us : userResult2) {
-					if (us.getId().equals(userResult.getId())) {
-						assertEquals(userResult, us);
-					}
-				}
-			} else {
-				fail("User list returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		User user = TestUtils.generateRandomUserWithId();
+		List<User> usersAfterReadAll = new ArrayList<User>();
+		usersAfterReadAll.add(user);
+		
+		when(userBusiness.readAll()).thenReturn(usersAfterReadAll);
+		
+		Response actual = service.readAll(context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		List<User> actualUsers = (List<User>) actual.getEntity();
+		assertEquals(1, actualUsers.size());
 	}
 
 	@Test
 	public void testAddOneOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-			} else {
-				fail("User returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		Order order = TestUtils.generateRandomOrder();
+		Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order);
+		
+		when(orderBusiness.create(anyString(), (Order) anyObject(), anyBoolean())).thenReturn(orderAfterCreate);
+		
+		Response actual = service.createOneOrder(orderAfterCreate.getId().toHexString(), true, order, context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		Order actualUser = (Order) actual.getEntity();
+		assertNotNull(actualUser.getId());
 	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testAddOneOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			service.createOneOrder(null, false, order, context);
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testAddOneOrderFail2() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			service.createOneOrder("", false, null, context);
-		} else {
-			fail("User returned is null");
-		}
-	}
-
+	
 	@Test
 	public void testReadOneOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order orderResult = (Order) result2.getEntity();
-				assertNotNull(orderResult.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), orderResult.getId());
-
-				Response result3 = service.readOneOrder(userResult.getId().toHexString(), orderResult.getId().toHexString(), context);
-				if (result3.getEntity() != null) {
-					Order userResult3 = (Order) result3.getEntity();
-					assertNotNull(userResult3.getId());
-					assertEquals(orderResult, userResult3);
-				} else {
-					fail("Order returned is null");
-				}
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		Order order = TestUtils.generateRandomOrder();
+		Order orderAfterRead = TestUtils.mockOrderAfterCreate(order);
+		
+		when(orderBusiness.read(anyString(), (Key) anyObject())).thenReturn(orderAfterRead);
+		
+		Response actual = service.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString(), context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		Order actualUser = (Order) actual.getEntity();
+		assertNotNull(actualUser.getId());
+	}
+	
+	@Test
+	public void testReadOneOrderNotFound() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
+			APIException {
+		when(orderBusiness.read(anyString(), (Key) anyObject())).thenReturn(null);
+		
+		Response actual = service.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString(), context);
+		assertNotNull(actual);
+		assertEquals(404, actual.getStatus());
+		ErrorMessage error = (ErrorMessage) actual.getEntity();
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadAllOrderAdmin() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				Response result3 = service.readAllOrders(userResult.getId().toHexString(), context);
-				if (result3.getEntity() != null) {
-					List<Order> userResult3 = (List<Order>) result3.getEntity();
-					for (Order or : userResult3) {
-						if (or.getId().toHexString().equals(userResult2.getId().toHexString())) {
-							assertNotNull(or.getId());
-							assertEquals(userResult2, or);
-						}
-					}
-				} else {
-					fail("List Order returned is null");
-				}
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testReadAllOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				service.readAllOrders(null, context);
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testReadAllOrderUser() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
-		User user = TestUtils.generateRandomUser();
+		Order order = TestUtils.generateRandomOrder();
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(order);
 		
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				ContainerRequestContext context = mock(ContainerRequestContext.class);
-				Key key = TestUtils.generateRandomAdminKey();
-				key.setRole(Role.USER);
-				Mockito.when(context.getProperty("key")).thenReturn(key);
-				
-				Response result3 = service.readAllOrders(userResult.getId().toHexString(), context);
-				if (result3.getEntity() != null) {
-					List<Order> userResult3 = (List<Order>) result3.getEntity();
-					for (Order or : userResult3) {
-						if (or.getId().toHexString().equals(userResult2.getId().toHexString())) {
-							assertNotNull(or.getId());
-							assertEquals(userResult2, or);
-						}
-					}
-				} else {
-					fail("List Order returned is null");
-				}
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testReadOneOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				service.readOneOrder(null, userResult2.getId().toHexString(), context);
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testReadOneOrderFail2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				service.readOneOrder(userResult.getId().toHexString(), null, context);
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test
-	public void testReadOneOrderFail3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				Response result3 = service.readOneOrder(userResult.getId().toHexString(), new ObjectId().toHexString(), context);
-				if (result3.getEntity() != null) {
-					ErrorMessage errorMessage = (ErrorMessage) result3.getEntity();
-					assertEquals(404, errorMessage.getError().intValue());
-				} else {
-					fail("Order returned is null");
-				}
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		when(orderBusiness.readAllWithUserId(anyString())).thenReturn(orders);
+		
+		Response actual = service.readAllOrders(new ObjectId().toHexString(), context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		List<Order> actualUsers = (List<Order>) actual.getEntity();
+		assertNotNull(actualUsers);
+		assertEquals(1, actualUsers.size());
 	}
 
 	@Test
 	public void testUpdateOneOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				userResult2.setDescription("new description");
-				Response result3 = service.updateOneOrder(userResult.getId().toHexString(), userResult2.getId().toHexString(), userResult2, context);
-				if (result3.getEntity() != null) {
-					Order userResult3 = (Order) result3.getEntity();
-					assertNotNull(userResult3.getId());
-					assertEquals("new description", userResult3.getDescription());
-				} else {
-					fail("order returned is null");
-				}
-			} else {
-				fail("order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateOneOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				userResult2.setDescription("new description");
-				service.updateOneOrder(null, userResult2.getId().toHexString(), userResult2, context);
-			} else {
-				fail("order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateOneOrderFail2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				userResult2.setDescription("new description");
-				service.updateOneOrder(userResult.getId().toHexString(), null, userResult2, context);
-			} else {
-				fail("order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
-	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testUpdateOneOrderFail3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-
-				userResult2.setDescription("new description");
-				service.updateOneOrder(userResult.getId().toHexString(), userResult2.getId().toHexString(), null, context);
-			} else {
-				fail("order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		Order order = TestUtils.generateRandomOrderWithId();
+		order.setId(new ObjectId());
+		Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order);
+		
+		when(orderBusiness.update((Order) anyObject(), (Key) anyObject())).thenReturn(orderAfterCreate);
+		
+		Response actual = service.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order, context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		Order actualUser = (Order) actual.getEntity();
+		assertNotNull(actualUser.getId());		
 	}
 
 	@Test
-	public void testUpdateOneOrderFail4() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+	public void testUpdateOneOrderNotFound() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			order.setId(new ObjectId());
-			Response result3 = service.updateOneOrder(userResult.getId().toHexString(), order.getId().toHexString(), order, context);
-			if (result3.getEntity() != null) {
-				ErrorMessage errorMessage = (ErrorMessage) result3.getEntity();
-				assertEquals(404, errorMessage.getError().intValue());
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		Order order = TestUtils.generateRandomOrderWithId();
+		order.setId(new ObjectId());
+		
+		when(orderBusiness.update((Order) anyObject(), (Key) anyObject())).thenReturn(null);
+		
+		Response actual = service.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order, context);
+		assertNotNull(actual);
+		assertEquals(404, actual.getStatus());
+		ErrorMessage error = (ErrorMessage) actual.getEntity();
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@Test
 	public void testdeleteOneOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
+		Order order = TestUtils.generateRandomOrderWithId();
 
-			Order order = TestUtils.generateRandomOrder();
-			order.setId(null);
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-				Response result3 = service.deleteOneOrder(userResult.getId().toHexString(), userResult2.getId().toHexString(), context);
-				if (result3.getEntity() != null) {
-					DeletedMessage res = (DeletedMessage) result3.getEntity();
-					assertNotNull(res.getDeleted());
-					assertTrue(res.getDeleted());
-				} else {
-					fail("Order returned is null");
-				}
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		when(orderBusiness.delete(anyString())).thenReturn(true);
+		
+		Response actual = service.deleteOneOrder(new ObjectId().toHexString() ,order.getId().toHexString(), context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
+		assertNotNull(actualDeletedMessage.getId());
+		assertNotNull(actualDeletedMessage.getDeleted());
+		assertTrue(actualDeletedMessage.getDeleted());
 	}
 
-	@Test(expected = EpickurIllegalArgument.class)
+	@Test
 	public void testdeleteOneOrderFail() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
+		Order order = TestUtils.generateRandomOrderWithId();
 
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-				service.deleteOneOrder(null, userResult2.getId().toHexString(), context);
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		when(orderBusiness.delete(anyString())).thenReturn(false);
+		
+		Response actual = service.deleteOneOrder(new ObjectId().toHexString() ,order.getId().toHexString(), context);
+		assertNotNull(actual);
+		assertEquals(404, actual.getStatus());
+		ErrorMessage error = (ErrorMessage) actual.getEntity();
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
-
-	@Test(expected = EpickurIllegalArgument.class)
-	public void testdeleteOneOrderFail2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
-		User user = TestUtils.generateRandomUser();
-		Response result = service.create(false, false, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
-
-			Order order = TestUtils.generateRandomOrder();
-			Response result2 = service.createOneOrder(userResult.getId().toHexString(), false, order, context);
-			if (result2.getEntity() != null) {
-				Order userResult2 = (Order) result2.getEntity();
-				assertNotNull(userResult2.getId());
-				idsToDeleteOrder.put(userResult.getId().toHexString(), userResult2.getId());
-				service.deleteOneOrder(userResult.getId().toHexString(), null, context);
-			} else {
-				fail("Order returned is null");
-			}
-		} else {
-			fail("User returned is null");
-		}
+	
+	@Test
+	public void testResetPasswordFirstStep() throws EpickurException{
+		ObjectNode node = JsonNodeFactory.instance.objectNode();
+		TextNode emailNode = JsonNodeFactory.instance.textNode("name@example.com");
+		node.set("email", emailNode);
+		
+		Response actual = service.resetPasswordFirstStep(node, context);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		ObjectNode actualNode = (ObjectNode) actual.getEntity();
+		assertNotNull(actualNode.get("status"));
+		assertEquals("email sent", actualNode.get("status").textValue());
 	}
 }

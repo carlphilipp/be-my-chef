@@ -58,6 +58,12 @@ public final class DishService {
 		this.catererBusiness = new CatererBusiness();
 		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
 	}
+	
+	public DishService(final DishBusiness dishBusiness, final CatererBusiness catererBusiness) {
+		this.dishBusiness = dishBusiness;
+		this.catererBusiness = catererBusiness;
+		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
+	}
 
 	// @formatter:off
 	/**

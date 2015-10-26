@@ -14,11 +14,18 @@ import com.epickur.api.utils.Info;
  *
  */
 public class EmailUtils {
-
+	
+	private Email email;
+	
 	/**
 	 * Constructor
 	 */
 	public EmailUtils() {
+		this.email = new Email();
+	}
+	
+	public EmailUtils(final Email email){
+		this.email = email;
 	}
 
 	// Registration
@@ -51,7 +58,7 @@ public class EmailUtils {
 		// Convert data to use email template
 		Map<String, String> emailData = EmailTemplate.convertToDataNewRegistrationUser(name, first, email, code);
 		// Send an email to the user
-		Email.sendMail(EmailType.REGISTRATION_USER, emailData, new String[] { email });
+		this.email.sendMail(EmailType.REGISTRATION_USER, emailData, new String[] { email });
 	}
 
 	/**
@@ -64,7 +71,7 @@ public class EmailUtils {
 		// Convert data to use email template
 		Map<String, String> emailDataAdmin = EmailTemplate.convertToDataNewRegistrationAdmins(name, email);
 		// Send an email to admins
-		Email.sendMail(EmailType.REGISTRATION_ADMIN, emailDataAdmin, Info.admins.toArray(new String[Info.admins.size()]));
+		this.email.sendMail(EmailType.REGISTRATION_ADMIN, emailDataAdmin, Info.admins.toArray(new String[Info.admins.size()]));
 	}
 
 	// ORDER: case 1 - New order
@@ -90,7 +97,7 @@ public class EmailUtils {
 	 */
 	private void emailNewOrderUser(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderUser(user, order);
-		Email.sendMail(EmailType.ORDER_USER_NEW, emailData, new String[] { user.getEmail() });
+		this.email.sendMail(EmailType.ORDER_USER_NEW, emailData, new String[] { user.getEmail() });
 	}
 
 	/**
@@ -103,7 +110,7 @@ public class EmailUtils {
 	 */
 	private void emailNewOrderCaterer(final User user, final Order order, final String orderCode) {
 		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderCaterer(user, order, orderCode);
-		Email.sendMail(EmailType.ORDER_CATERER_NEW, emailData, new String[] { order.getDish().getCaterer().getEmail() });
+		this.email.sendMail(EmailType.ORDER_CATERER_NEW, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
 
 	/**
@@ -114,7 +121,7 @@ public class EmailUtils {
 	 */
 	private void emailNewOrderAdmin(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataNewOrderAdmins(user, order);
-		Email.sendMail(EmailType.ORDER_ADMINS_NEW, emailData, Info.admins.toArray(new String[Info.admins.size()]));
+		this.email.sendMail(EmailType.ORDER_ADMINS_NEW, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 	}
 
 	// ORDER: case 2 - Caterer declined the order
@@ -137,7 +144,7 @@ public class EmailUtils {
 	 */
 	private void emailDeclineOrderUser(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataDeclineOrderUser(user, order);
-		Email.sendMail(EmailType.ORDER_USER_DECLINED, emailData, new String[] { user.getEmail() });
+		this.email.sendMail(EmailType.ORDER_USER_DECLINED, emailData, new String[] { user.getEmail() });
 	}
 
 	/**
@@ -148,7 +155,7 @@ public class EmailUtils {
 	 */
 	private void emailDeclineOrderAdmins(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataDeclineOrderAdmins(user, order);
-		Email.sendMail(EmailType.ORDER_ADMINS_DECLINED, emailData, Info.admins.toArray(new String[Info.admins.size()]));
+		this.email.sendMail(EmailType.ORDER_ADMINS_DECLINED, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 	}
 
 	// ORDER: case 3 - The order is a success
@@ -172,7 +179,7 @@ public class EmailUtils {
 	 */
 	private void emailSuccessOrderUser(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataSuccessOrderUser(user, order);
-		Email.sendMail(EmailType.ORDER_USER_SUCCESS, emailData, new String[] { user.getEmail() });
+		this.email.sendMail(EmailType.ORDER_USER_SUCCESS, emailData, new String[] { user.getEmail() });
 	}
 
 	/**
@@ -183,7 +190,7 @@ public class EmailUtils {
 	 */
 	private void emailSuccessOrderCaterer(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataSuccessOrderCaterer(user, order);
-		Email.sendMail(EmailType.ORDER_CATERER_SUCCESS, emailData, new String[] { order.getDish().getCaterer().getEmail() });
+		this.email.sendMail(EmailType.ORDER_CATERER_SUCCESS, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
 
 	/**
@@ -194,7 +201,7 @@ public class EmailUtils {
 	 */
 	private void emailSuccessOrderAdmins(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataSuccessOrderAdmins(user, order);
-		Email.sendMail(EmailType.ORDER_ADMINS_SUCCESS, emailData, Info.admins.toArray(new String[Info.admins.size()]));
+		this.email.sendMail(EmailType.ORDER_ADMINS_SUCCESS, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 	}
 
 	// ORDER: case 4 - The order has been accepted but the payment failed
@@ -218,7 +225,7 @@ public class EmailUtils {
 	 */
 	private void emailFailOrderUser(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataDeclineOrderUser(user, order);
-		Email.sendMail(EmailType.ORDER_USER_FAIL, emailData, new String[] { user.getEmail() });
+		this.email.sendMail(EmailType.ORDER_USER_FAIL, emailData, new String[] { user.getEmail() });
 	}
 
 	/**
@@ -229,7 +236,7 @@ public class EmailUtils {
 	 */
 	private void emailFailOrderCaterer(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataFailOrderCaterer(user, order);
-		Email.sendMail(EmailType.ORDER_CATERER_FAIL, emailData, new String[] { order.getDish().getCaterer().getEmail() });
+		this.email.sendMail(EmailType.ORDER_CATERER_FAIL, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
 
 	/**
@@ -240,7 +247,7 @@ public class EmailUtils {
 	 */
 	private void emailFailOrderAdmins(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataFailOrderAdmins(user, order);
-		Email.sendMail(EmailType.ORDER_ADMINS_FAIL, emailData, Info.admins.toArray(new String[Info.admins.size()]));
+		this.email.sendMail(EmailType.ORDER_ADMINS_FAIL, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 	}
 
 	// ORDER: case 5 - The order has been received by the Caterer, but he did not answer it on time.
@@ -264,7 +271,7 @@ public class EmailUtils {
 	 */
 	private void emailCancelOrderUser(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataCancelOrderCaterer(user, order);
-		Email.sendMail(EmailType.ORDER_USER_CANCEL, emailData, new String[] { user.getEmail() });
+		this.email.sendMail(EmailType.ORDER_USER_CANCEL, emailData, new String[] { user.getEmail() });
 	}
 
 	/**
@@ -275,7 +282,7 @@ public class EmailUtils {
 	 */
 	private void emailCancelOrderCaterer(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataCancelOrderCaterer(user, order);
-		Email.sendMail(EmailType.ORDER_CATERER_CANCEL, emailData, new String[] { order.getDish().getCaterer().getEmail() });
+		this.email.sendMail(EmailType.ORDER_CATERER_CANCEL, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
 
 	/**
@@ -286,7 +293,7 @@ public class EmailUtils {
 	 */
 	private void emailCancelOrderAdmins(final User user, final Order order) {
 		Map<String, String> emailData = EmailTemplate.convertToDataCancelOrderAdmins(user, order);
-		Email.sendMail(EmailType.ORDER_ADMINS_CANCEL, emailData, Info.admins.toArray(new String[Info.admins.size()]));
+		this.email.sendMail(EmailType.ORDER_ADMINS_CANCEL, emailData, Info.admins.toArray(new String[Info.admins.size()]));
 	}
 
 	/**
@@ -299,6 +306,6 @@ public class EmailUtils {
 	 */
 	public void resetPassword(final String email, final String userId, final String resetCode) {
 		Map<String, String> emailData = EmailTemplate.convertToDataResetUserPassword(email, userId, resetCode);
-		Email.sendMail(EmailType.RESET_USER_PASSWORD, emailData, new String[] { email });
+		this.email.sendMail(EmailType.RESET_USER_PASSWORD, emailData, new String[] { email });
 	}
 }

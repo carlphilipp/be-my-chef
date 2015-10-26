@@ -1,8 +1,13 @@
 package com.epickur.api.utils.email;
 
 import org.bson.types.ObjectId;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import com.cribbstechnologies.clients.mandrill.request.MandrillMessagesRequest;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.SequenceDAOImpl;
 import com.epickur.api.entity.Caterer;
@@ -13,13 +18,22 @@ import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.Security;
 
+@RunWith(MockitoJUnitRunner.class)
 public class EmailUtilsTest {
 
 	private static final String EMAIL_TEST = "cp.harmant@gmail.com";
-	
+
 	private SequenceDAOImpl dao = new SequenceDAOImpl();
-	
-	private EmailUtils emailUtils = new EmailUtils();
+
+	private EmailUtils emailUtils;
+	@Mock
+	private MandrillMessagesRequest messagesRequest;
+
+	@Before
+	public void setUp() {
+		Email email = new Email(messagesRequest);
+		this.emailUtils = new EmailUtils(email);
+	}
 
 	@Test
 	public void emailNewRegistrationTest() {
@@ -103,9 +117,9 @@ public class EmailUtilsTest {
 		order.setDish(dish);
 		emailUtils.emailFailOrder(user, order);
 	}
-	
+
 	@Test
-	public void emailCancelOrder() throws EpickurDBException{
+	public void emailCancelOrder() throws EpickurDBException {
 		User user = new User();
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
@@ -122,9 +136,9 @@ public class EmailUtilsTest {
 		order.setDish(dish);
 		emailUtils.emailCancelOrder(user, order);
 	}
-	
+
 	@Test
-	public void emailResetPassword() throws EpickurException{
+	public void emailResetPassword() throws EpickurException {
 		emailUtils.resetPassword("cp.harmant@gmail.com", new ObjectId().toHexString(), Security.generateRandomMd5());
 	}
 }

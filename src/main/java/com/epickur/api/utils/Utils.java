@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -334,5 +335,43 @@ public final class Utils {
 			IOUtils.closeQuietly(out);
 			IOUtils.closeQuietly(origin);
 		}
+	}
+	
+
+	/**
+	 * @return A random voucher code.
+	 */
+	public static String generateRandomCode() {
+		StringBuilder stb = new StringBuilder();
+		stb.append(getRandomConsonants(3));
+		stb.append(getRandomNumber());
+		stb.append(getRandomConsonants(3));
+		stb.append(getRandomNumber());
+		return stb.toString();
+	}
+
+	/**
+	 * @return A random number between 2 and 9
+	 */
+	private static int getRandomNumber() {
+		RandomDataGenerator randomData = new RandomDataGenerator();
+		// Removed 0 and 1
+		return randomData.nextInt(2, 9);
+	}
+
+	/**
+	 * @param size
+	 *            Max size
+	 * @return A Random consonants string
+	 */
+	private static String getRandomConsonants(final int size) {
+		// Removed l
+		String[] consonants = { "q", "w", "r", "t", "p", "s", "d", "f", "g", "h", "j", "k", "z", "x", "c", "v", "b", "n", "m" };
+		StringBuilder res = new StringBuilder();
+		RandomDataGenerator randomData = new RandomDataGenerator();
+		for (int i = 0; i < size; i++) {
+			res.append(consonants[randomData.nextInt(0, consonants.length - 1)]);
+		}
+		return res.toString().toUpperCase();
 	}
 }

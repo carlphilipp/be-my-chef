@@ -61,6 +61,14 @@ public final class Email {
 	private String message;
 	/** The list of sender */
 	private String[] sendTo;
+	
+	public Email(){
+		this.messagesRequest = new MandrillMessagesRequest();
+	}
+	
+	public Email(final MandrillMessagesRequest messagesRequest){
+		this.messagesRequest = messagesRequest;
+	}
 
 	/**
 	 * @param emailSubjectTxt
@@ -70,7 +78,7 @@ public final class Email {
 	 * @param sendTo
 	 *            The list of email to send to
 	 */
-	private Email(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
+	private void configure(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
 		this.subject = emailSubjectTxt;
 		this.message = emailMsgTxt;
 		this.sendTo = sendTo;
@@ -78,7 +86,6 @@ public final class Email {
 		this.fromEmail = props.getProperty("email.mandrill.from");
 		this.fromName = props.getProperty("email.mandrill.from.username");
 		this.request = new MandrillRESTRequest();
-		this.messagesRequest = new MandrillMessagesRequest();
 		ObjectMapper mapper = new ObjectMapper();
 		MandrillConfiguration config = new MandrillConfiguration();
 		config.setApiKey(props.getProperty("email.mandrill.key"));
@@ -120,20 +127,6 @@ public final class Email {
 	}
 
 	/**
-	 * Static access to send a mail
-	 * 
-	 * @param emailSubjectTxt
-	 *            the email subject
-	 * @param emailMsgTxt
-	 *            the email content
-	 * @param sendTo
-	 *            the recipients
-	 */
-	protected static void sendMail(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
-		new Email(emailSubjectTxt, emailMsgTxt, sendTo).send();
-	}
-
-	/**
 	 * Send emails
 	 * 
 	 * @param emailType
@@ -143,7 +136,7 @@ public final class Email {
 	 * @param sendTo
 	 *            An array of email
 	 */
-	protected static void sendMail(final EmailType emailType, final Map<String, String> data, final String[] sendTo) {
+	protected void sendMail(final EmailType emailType, final Map<String, String> data, final String[] sendTo) {
 		EmailTemplate emailTemplate = EmailTemplate.getInstance();
 		Map<String, String> template = emailTemplate.getTemplate(emailType);
 		if (!template.isEmpty()) {
@@ -153,14 +146,10 @@ public final class Email {
 				subject = StringUtils.replace(subject, entry.getKey(), entry.getValue());
 				content = StringUtils.replace(content, entry.getKey(), entry.getValue());
 			}
-			sendMail(subject, content, sendTo);
+			configure(subject, content, sendTo);
+			send();
 		} else {
 			LOG.error("Error while trying to access the email templates for: " + emailType);
 		}
 	}
-
-/*	public static void main(String[] args) throws IOException {
-		Map<String, String> emailData = EmailTemplate.convertToDataRegistration("carl","SJDSJAHDOIHWOHDLKJLKDWJLK");
-		Email.sendMail(EmailType.REGISTRATION_USER, emailData, new String[] { "cp.harmant@gmail.com" });
-	}*/
 }

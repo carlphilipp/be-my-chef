@@ -47,7 +47,7 @@ public class CatererBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final Caterer create(final Caterer caterer) throws EpickurException {
+	public Caterer create(final Caterer caterer) throws EpickurException {
 		caterer.prepareForInsertionIntoDB();
 		return dao.create(caterer);
 	}
@@ -61,7 +61,7 @@ public class CatererBusiness {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public final Caterer read(final String id) throws EpickurException {
+	public Caterer read(final String id) throws EpickurException {
 		return dao.read(id);
 	}
 
@@ -72,7 +72,7 @@ public class CatererBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final List<Caterer> readAll() throws EpickurException {
+	public List<Caterer> readAll() throws EpickurException {
 		return dao.readAll();
 	}
 
@@ -87,7 +87,7 @@ public class CatererBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final Caterer update(final Caterer caterer, final Key key) throws EpickurException {
+	public Caterer update(final Caterer caterer, final Key key) throws EpickurException {
 		Caterer read = dao.read(caterer.getId().toHexString());
 		if (read != null) {
 			validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
@@ -106,7 +106,7 @@ public class CatererBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final boolean delete(final String id) throws EpickurException {
+	public boolean delete(final String id) throws EpickurException {
 		return dao.delete(id);
 	}
 
@@ -115,7 +115,7 @@ public class CatererBusiness {
 	 *            The orders
 	 * @return The addition of all orders amount
 	 */
-	public final Integer getTotalAmountSuccessful(final List<Order> orders) {
+	public Integer getTotalAmountSuccessful(final List<Order> orders) {
 		Integer amount = Integer.valueOf(0);
 		for (Order order : orders) {
 			if (order.getStatus() == OrderStatus.SUCCESSFUL) {

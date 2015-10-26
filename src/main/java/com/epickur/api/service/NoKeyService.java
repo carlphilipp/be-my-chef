@@ -44,6 +44,12 @@ public final class NoKeyService {
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
 
+	public NoKeyService(final UserBusiness userBusiness, final OrderBusiness orderBusiness) {
+		this.userBusiness = userBusiness;
+		this.orderBusiness = orderBusiness;
+		this.validator = (UserValidator) FactoryValidator.getValidator("user");
+	}
+
 	// @formatter:off
 	/** 
 	 * 
