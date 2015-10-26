@@ -56,6 +56,12 @@ public final class UserService {
 		this.orderBusiness = new OrderBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
+	
+	public UserService(final UserBusiness userBusiness, final OrderBusiness orderBusiness){
+		this.userBusiness = userBusiness;
+		this.orderBusiness = orderBusiness;
+		this.validator = (UserValidator) FactoryValidator.getValidator("user");
+	}
 
 	// @formatter:off
 	/**

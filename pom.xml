@@ -409,13 +409,6 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>2.18.1</version>
 						<configuration>
-							<!-- includes> <include>**/com/epickur/api/WebApplicationTest.java</include> 
-								<include>**/com/epickur/api/business/*Test.java</include> <include>**/com/epickur/api/entity/*Test.java</include> 
-								<include>**/com/epickur/api/entity/databind/*Test.java</include> <include>**/com/epickur/api/enumeration/*Test.java</include> 
-								<include>**/com/epickur/api/exception/mapper/*Test.java</include> <include>**/com/epickur/api/filter/*Test.java</include> 
-								<include>**/com/epickur/api/geocoder/here/*Test.java</include> <include>**/com/epickur/api/payment/stripe/*Test.java</include> 
-								<include>**/com/epickur/api/service/*Test.java</include> <include>**/com/epickur/api/validator/*Test.java</include> 
-								</includes -->
 							<excludes>
 								<exclude>**/*IT.java</exclude>
 							</excludes>
@@ -434,11 +427,6 @@
 								</goals>
 							</execution>
 						</executions>
-						<configuration>
-							<includes>
-								<include>**/*IT.java</include>
-							</includes>
-						</configuration>
 					</plugin>
 
 

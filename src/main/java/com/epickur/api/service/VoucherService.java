@@ -51,6 +51,11 @@ public final class VoucherService {
 		this.voucherBusiness = new VoucherBusiness();
 		this.validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
 	}
+	
+	public VoucherService(final VoucherBusiness voucherBusiness) {
+		this.voucherBusiness = voucherBusiness;
+		this.validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
+	}
 
 	// @formatter:off
 	/**

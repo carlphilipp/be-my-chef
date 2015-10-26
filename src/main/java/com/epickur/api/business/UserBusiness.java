@@ -32,7 +32,7 @@ import com.epickur.api.validator.UserValidator;
  * @author cph
  * @version 1.0
  */
-public final class UserBusiness {
+public class UserBusiness {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(UserBusiness.class.getSimpleName());

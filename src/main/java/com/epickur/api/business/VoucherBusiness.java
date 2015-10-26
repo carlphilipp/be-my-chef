@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -15,6 +14,7 @@ import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.utils.Utils;
 
 /**
  * Voucher business layer. Access voucher DAO layer and executes logic.
@@ -74,7 +74,7 @@ public class VoucherBusiness {
 		Set<Voucher> result = new HashSet<Voucher>();
 		do {
 			Voucher voucher = new Voucher();
-			voucher.setCode(generateRandomCode());
+			voucher.setCode(Utils.generateRandomCode());
 			voucher.setDiscount(discount);
 			voucher.setDiscountType(discountType);
 			voucher.setExpirationType(expirationType);
@@ -161,42 +161,5 @@ public class VoucherBusiness {
 			throw new EpickurException("Voucher '" + code + "' not found");
 		}
 		return found;
-	}
-
-	/**
-	 * @return A random voucher code.
-	 */
-	private String generateRandomCode() {
-		StringBuilder stb = new StringBuilder();
-		stb.append(getRandomConsonants(3));
-		stb.append(getRandomNumber());
-		stb.append(getRandomConsonants(3));
-		stb.append(getRandomNumber());
-		return stb.toString();
-	}
-
-	/**
-	 * @return A random number between 2 and 9
-	 */
-	private int getRandomNumber() {
-		RandomDataGenerator randomData = new RandomDataGenerator();
-		// Removed 0 and 1
-		return randomData.nextInt(2, 9);
-	}
-
-	/**
-	 * @param size
-	 *            Max size
-	 * @return A Random consonants string
-	 */
-	private String getRandomConsonants(final int size) {
-		// Removed l
-		String[] consonants = { "q", "w", "r", "t", "p", "s", "d", "f", "g", "h", "j", "k", "z", "x", "c", "v", "b", "n", "m" };
-		StringBuilder res = new StringBuilder();
-		RandomDataGenerator randomData = new RandomDataGenerator();
-		for (int i = 0; i < size; i++) {
-			res.append(consonants[randomData.nextInt(0, consonants.length - 1)]);
-		}
-		return res.toString().toUpperCase();
 	}
 }

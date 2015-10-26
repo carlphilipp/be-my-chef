@@ -524,6 +524,12 @@ public class TestUtils {
 		order.setId(new ObjectId());
 		return order;
 	}
+	
+	public static Order mockOrderAfterCreate(final Order order){
+		Order orderMock = order.clone();
+		orderMock.setId(new ObjectId());
+		return orderMock;
+	}
 
 	public static Token generateRandomToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {

@@ -49,7 +49,7 @@ public class DishBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final Dish create(final Dish dish) throws EpickurException {
+	public Dish create(final Dish dish) throws EpickurException {
 		dish.prepareForInsertionIntoDB();
 		return dao.create(dish);
 	}
@@ -63,7 +63,7 @@ public class DishBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final Dish read(final String id) throws EpickurException {
+	public Dish read(final String id) throws EpickurException {
 		return dao.read(id);
 	}
 
@@ -89,7 +89,7 @@ public class DishBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final Dish update(final Dish dish, final Key key) throws EpickurException {
+	public Dish update(final Dish dish, final Key key) throws EpickurException {
 		Dish read = dao.read(dish.getId().toHexString());
 		validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
 		dish.prepareForUpdateIntoDB();
@@ -107,7 +107,7 @@ public class DishBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final boolean delete(final String id, final Key key) throws EpickurException {
+	public boolean delete(final String id, final Key key) throws EpickurException {
 		Dish read = dao.read(id);
 		validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.DELETE);
 		return dao.delete(id);
@@ -122,7 +122,7 @@ public class DishBusiness {
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
-	public final List<Dish> searchDishesForOneCaterer(final String catererId) throws EpickurException {
+	public List<Dish> searchDishesForOneCaterer(final String catererId) throws EpickurException {
 		return dao.searchWithCatererId(catererId);
 	}
 
@@ -147,7 +147,7 @@ public class DishBusiness {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public final List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
+	public List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
 			final String searchtext, final int distance) throws EpickurException {
 		if (geo == null) {
 			IGeocoder geocoder = new GeocoderHereImpl();

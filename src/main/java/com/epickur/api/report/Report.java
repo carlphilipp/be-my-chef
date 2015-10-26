@@ -42,7 +42,7 @@ public class Report {
 	 * @param object
 	 *            the object
 	 */
-	public final void addParam(final String param, final Object object) {
+	public void addParam(final String param, final Object object) {
 		this.parameters.put(param, object);
 	}
 
@@ -53,7 +53,7 @@ public class Report {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public final byte[] getReport() throws EpickurException {
+	public byte[] getReport() throws EpickurException {
 		InputStream inputStream = null;
 		try {
 			inputStream = Report.class.getClassLoader().getResourceAsStream("report.jrxml");

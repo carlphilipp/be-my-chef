@@ -37,7 +37,6 @@ public class CatererBusinessTest {
 
 	@Before
 	public void setUp() {
-		//this.catererDAOMock = Mockito.mock(CatererDAOImpl.class);
 		this.catererBusiness = new CatererBusiness(catererDAOMock);
 	}
 
