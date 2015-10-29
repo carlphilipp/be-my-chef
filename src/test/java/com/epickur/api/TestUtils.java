@@ -52,6 +52,7 @@ import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -95,6 +96,26 @@ public class TestUtils {
 
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
 		TestUtils.runShellCommand(cmd);
+	}
+	
+	public static void setupStripe(){
+		InputStreamReader in = null;
+		try {
+			in = new InputStreamReader(TestUtils.class.getClass().getResourceAsStream("/test.properties"));
+			Properties prop = new Properties();
+			prop.load(in);
+			in.close();
+			Stripe.apiKey = prop.getProperty("stripe.key");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+				}
+			}
+		}
 	}
 
 	public static Caterer getCaererObject(final String json) throws EpickurException {
@@ -666,5 +687,16 @@ public class TestUtils {
 		OrderDAOImpl dao = new OrderDAOImpl();
 		order.prepareForUpdateIntoDB();
 		return dao.update(order);
+	}
+	
+	public static Map<String, Object> getTokenParam(){
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		Map<String, Object> cardParams = new HashMap<String, Object>();
+		cardParams.put("number", "4242424242424242");
+		cardParams.put("exp_month", 2);
+		cardParams.put("exp_year", 2016);
+		cardParams.put("cvc", "314");
+		tokenParams.put("card", cardParams);
+		return tokenParams;
 	}
 }

@@ -9,10 +9,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
@@ -21,9 +19,7 @@ import javax.ws.rs.core.Response;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -41,17 +37,12 @@ import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.integration.UserIT;
 import com.epickur.api.report.Report;
-import com.stripe.Stripe;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
 @PrepareForTest(CatererService.class)
 public class CatererServiceTest {
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 
 	private CatererService service;
 	@Mock
@@ -67,16 +58,7 @@ public class CatererServiceTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		try {
-			InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
-			Properties prop = new Properties();
-			prop.load(in);
-			in.close();
-			String STRIPE_TEST_KEY = prop.getProperty("stripe.key");
-			Stripe.apiKey = STRIPE_TEST_KEY;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		TestUtils.setupStripe();
 	}
 
 	@Before

@@ -2,13 +2,10 @@ package com.epickur.api.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
-
-import java.io.InputStreamReader;
-import java.util.Properties;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
@@ -28,10 +25,8 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.integration.UserIT;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -51,16 +46,7 @@ public class NoKeyServiceTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		try {
-			InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
-			Properties prop = new Properties();
-			prop.load(in);
-			in.close();
-			String STRIPE_TEST_KEY = prop.getProperty("stripe.key");
-			Stripe.apiKey = STRIPE_TEST_KEY;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		TestUtils.setupStripe();
 	}
 
 	@Before

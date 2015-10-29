@@ -10,11 +10,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
@@ -37,11 +34,9 @@ import com.epickur.api.entity.User;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.integration.UserIT;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -61,22 +56,7 @@ public class UserServiceTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		InputStreamReader in = null;
-		try {
-			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
-			Properties prop = new Properties();
-			prop.load(in);
-			Stripe.apiKey = prop.getProperty("stripe.key");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
-		}
+		TestUtils.setupStripe();
 	}
 	
 	@Before

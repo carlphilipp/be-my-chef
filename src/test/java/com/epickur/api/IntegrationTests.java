@@ -15,6 +15,7 @@ import com.epickur.api.integration.AccessRightsOrderIT;
 import com.epickur.api.integration.AccessRightsUserIT;
 import com.epickur.api.integration.CatererIT;
 import com.epickur.api.integration.DishIT;
+import com.epickur.api.integration.StripePaymentIT;
 import com.epickur.api.integration.UserIT;
 
 @RunWith(Suite.class)
@@ -25,6 +26,7 @@ import com.epickur.api.integration.UserIT;
 		AccessRightsOrderIT.class,
 		CatererIT.class,
 		DishIT.class,
+		StripePaymentIT.class,
 		UserIT.class,
 })
 public class IntegrationTests {

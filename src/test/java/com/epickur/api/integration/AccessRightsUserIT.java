@@ -48,10 +48,6 @@ public class AccessRightsUserIT {
 		String address = prop.getProperty("address");
 		String path = prop.getProperty("api.path");
 		END_POINT = address + path;
-		// in = new InputStreamReader(UserIntegrationTest.class.getClass().getResourceAsStream("/api.key"));
-		// BufferedReader br = new BufferedReader(in);
-		// API_KEY = br.readLine();
-		// User user = TestUtils.createSuperUser();
 
 		in.close();
 		jsonMimeType = "application/json";

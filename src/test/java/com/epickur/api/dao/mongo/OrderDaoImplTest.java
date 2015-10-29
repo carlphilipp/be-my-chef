@@ -5,13 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import javax.ws.rs.container.ContainerRequestContext;
 
@@ -27,9 +25,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.integration.UserIT;
 import com.epickur.api.service.UserService;
-import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -45,10 +41,7 @@ public class OrderDaoImplTest {
 
 	@BeforeClass
 	public static void beforeClass() throws IOException {
-		InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
-		prop.load(in);
-		Stripe.apiKey = prop.getProperty("stripe.key");
+		TestUtils.setupStripe();
 
 		userService = new UserService();
 		context = mock(ContainerRequestContext.class);

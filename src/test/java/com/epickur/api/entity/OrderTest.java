@@ -3,16 +3,10 @@ package com.epickur.api.entity;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Properties;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.epickur.api.TestUtils;
-import com.epickur.api.integration.UserIT;
-import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -23,23 +17,7 @@ public class OrderTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		InputStreamReader in = null;
-		try {
-			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
-			Properties prop = new Properties();
-			prop.load(in);
-			in.close();
-			Stripe.apiKey = prop.getProperty("stripe.key");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
-		}
+		TestUtils.setupStripe();
 	}
 
 	@Test
