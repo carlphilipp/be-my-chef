@@ -15,6 +15,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.OrderStatus;
+import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurNotFoundException;
@@ -58,6 +59,15 @@ public class OrderBusiness {
 		this.emailUtils = new EmailUtils();
 	}
 
+	/**
+	 * Constructor with parameter.
+	 * 
+	 * @param orderDAO
+	 * @param userDAO
+	 * @param seqDAO
+	 * @param voucherBusiness
+	 * @param emailUtils
+	 */
 	public OrderBusiness(final OrderDAOImpl orderDAO, final UserDAOImpl userDAO, final SequenceDAOImpl seqDAO,
 			final VoucherBusiness voucherBusiness, final EmailUtils emailUtils) {
 		this.orderDAO = orderDAO;
@@ -83,27 +93,49 @@ public class OrderBusiness {
 	 */
 	public Order create(final String userId, final Order order, final boolean sendEmail)
 			throws EpickurException {
-		User user = this.userDAO.read(userId);
+		User user = readUser(userId);
+		handleVoucher(order);
+		prepareOrder(order, userId);
+
+		Order orderCreated = orderDAO.create(order);
+
+		postCreation(orderCreated, user, sendEmail);
+		return orderCreated;
+	}
+
+	protected void handleVoucher(final Order order) throws EpickurException {
+		Voucher voucher = order.getVoucher();
+		if (voucher != null) {
+			Voucher updated = voucherBusiness.validateVoucher(voucher.getCode());
+			order.setVoucher(updated);
+		}
+	}
+
+	protected void prepareOrder(final Order order, final String userId) throws EpickurDBException {
+		addSequenceIdToOrder(order);
+		order.setCreatedBy(new ObjectId(userId));
+		order.prepareForInsertionIntoDB();
+	}
+
+	protected void postCreation(final Order order, final User user, final boolean sendEmail) throws EpickurException {
+		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
+		if (sendEmail) {
+			emailUtils.emailNewOrder(user, order, orderCode);
+		}
+		Jobs.getInstance().addTemporaryOrderJob(user, order);
+	}
+
+	protected void addSequenceIdToOrder(final Order order) throws EpickurDBException {
+		String sequence = seqDAO.getNextId();
+		order.setReadableId(sequence);
+	}
+
+	protected User readUser(final String userId) throws EpickurException {
+		User user = userDAO.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
 		}
-		Voucher current = order.getVoucher();
-		if (current != null) {
-			Voucher updated = this.voucherBusiness.validateVoucher(current.getCode());
-			order.setVoucher(updated);
-		}
-		order.setCreatedBy(new ObjectId(userId));
-		order.setStatus(OrderStatus.PENDING);
-		String sequence = this.seqDAO.getNextId();
-		order.setReadableId(sequence);
-		order.prepareForInsertionIntoDB();
-		Order res = this.orderDAO.create(order);
-		String orderCode = Security.createOrderCode(res.getId(), order.getCardToken());
-		if (sendEmail) {
-			this.emailUtils.emailNewOrder(user, res, orderCode);
-		}
-		Jobs.getInstance().addTemporaryOrderJob(user, res);
-		return res;
+		return user;
 	}
 
 	/**
@@ -116,9 +148,9 @@ public class OrderBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public Order read(final String id, final Key key) throws EpickurException {
-		Order order = this.orderDAO.read(id);
+		Order order = orderDAO.read(id);
 		if (order != null) {
-			this.validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Operation.READ);
+			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Operation.READ);
 			return order;
 		}
 		return null;
@@ -132,7 +164,7 @@ public class OrderBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public List<Order> readAllWithUserId(final String userId) throws EpickurException {
-		return this.orderDAO.readAllWithUserId(userId);
+		return orderDAO.readAllWithUserId(userId);
 	}
 
 	/**
@@ -147,7 +179,7 @@ public class OrderBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
-		return this.orderDAO.readAllWithCatererId(catererId, start, end);
+		return orderDAO.readAllWithCatererId(catererId, start, end);
 	}
 
 	/**
@@ -160,14 +192,12 @@ public class OrderBusiness {
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public Order update(final Order order, final Key key) throws EpickurException {
-		Order read = this.orderDAO.read(order.getId().toHexString());
+		Order read = orderDAO.read(order.getId().toHexString());
 		if (read != null) {
-			this.validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
-			if (read.getStatus() != OrderStatus.PENDING) {
-				throw new EpickurException("It's not allowed to modify an order that has a " + order.getStatus() + " status");
-			}
+			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
+			validator.checkOrderStatus(read);
 			order.prepareForUpdateIntoDB();
-			return this.orderDAO.update(order);
+			return orderDAO.update(order);
 		}
 		return null;
 	}
@@ -180,7 +210,7 @@ public class OrderBusiness {
 	 *             If an EpickurException occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
-		return this.orderDAO.delete(id);
+		return orderDAO.delete(id);
 	}
 
 	/**
@@ -204,54 +234,70 @@ public class OrderBusiness {
 	 */
 	public Order executeOrder(final String userId, final String orderId, final boolean confirm, final boolean sendEmail,
 			final boolean shouldCharge, final String orderCode) throws EpickurException {
-		User user = this.userDAO.read(userId);
-		if (user == null) {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
-		}
-		Order order = this.orderDAO.read(orderId);
-		if (order == null) {
-			throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, orderId);
-		}
-		if (!orderCode.equals(Security.createOrderCode(new ObjectId(orderId), order.getCardToken()))) {
-			throw new EpickurForbiddenException();
-		}
+		User user = readUser(userId);
+		Order order = read(orderId);
+		checkAutorization(orderCode, order);
 		if (confirm) {
 			if (shouldCharge) {
-				StripePayment stripe = new StripePayment();
-				try {
-					Charge charge = stripe.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
-					if (charge == null || !charge.getPaid()) {
-						orderFailed(order, user, sendEmail);
-					} else {
-						order.setChargeId(charge.getId());
-						order.setPaid(charge.getPaid());
-						order.setStatus(OrderStatus.SUCCESSFUL);
-						// Send email to User, Caterer and admins - Order success
-						if (sendEmail) {
-							this.emailUtils.emailSuccessOrder(user, order);
-						}
-					}
-				} catch (StripeException e) {
-					orderFailed(order, user, sendEmail);
-				} finally {
-					order.prepareForUpdateIntoDB();
-					order = orderDAO.update(order);
-				}
+				order = chargeUser(order, user, sendEmail);
 			}
 		} else {
 			// Send email to USER and ADMINS - Order decline
 			if (sendEmail) {
-				this.emailUtils.emailDeclineOrder(user, order);
+				emailUtils.emailDeclineOrder(user, order);
 			}
 			if (order.getVoucher() != null) {
-				Voucher voucher = this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+				Voucher voucher = voucherBusiness.revertVoucher(order.getVoucher().getCode());
 				order.setVoucher(voucher);
 			}
 			order.setStatus(OrderStatus.DECLINED);
-			order = this.orderDAO.update(order);
+			order = orderDAO.update(order);
 		}
 		Jobs.getInstance().removeTemporaryOrderJob(orderId);
 		return order;
+	}
+
+	protected Order chargeUser(Order order, final User user, final boolean sendEmail) throws EpickurException {
+		try {
+			StripePayment stripe = new StripePayment();
+			Charge charge = stripe.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
+			if (charge == null || !charge.getPaid()) {
+				handleOrderFail(order, user, sendEmail);
+			} else {
+				order.setChargeId(charge.getId());
+				order.setPaid(charge.getPaid());
+				order.setStatus(OrderStatus.SUCCESSFUL);
+				// Send email to User, Caterer and admins - Order success
+				if (sendEmail) {
+					emailUtils.emailSuccessOrder(user, order);
+				}
+			}
+		} catch (StripeException e) {
+			handleOrderFail(order, user, sendEmail);
+		} finally {
+			order = updateOrderInDB(order);
+		}
+		return order;
+	}
+
+	protected Order updateOrderInDB(Order order) throws EpickurException {
+		order.prepareForUpdateIntoDB();
+		order = orderDAO.update(order);
+		return order;
+	}
+
+	protected Order read(final String orderId) throws EpickurException {
+		Order order = orderDAO.read(orderId);
+		if (order == null) {
+			throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, orderId);
+		}
+		return order;
+	}
+
+	protected void checkAutorization(final String orderCode, final Order order) throws EpickurException {
+		if (!orderCode.equals(Security.createOrderCode(order.getId(), order.getCardToken()))) {
+			throw new EpickurForbiddenException();
+		}
 	}
 
 	/**
@@ -264,15 +310,15 @@ public class OrderBusiness {
 	 * @throws EpickurException
 	 *             If an EpickurException occurred
 	 */
-	protected void orderFailed(final Order order, final User user, final boolean sendEmail) throws EpickurException {
+	protected void handleOrderFail(final Order order, final User user, final boolean sendEmail) throws EpickurException {
 		order.setPaid(false);
 		order.setStatus(OrderStatus.FAILED);
 		// Send email to User, Caterer and admins - Order failed
 		if (sendEmail) {
-			this.emailUtils.emailFailOrder(user, order);
+			emailUtils.emailFailOrder(user, order);
 		}
 		if (order.getVoucher() != null) {
-			Voucher voucher = this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+			Voucher voucher = voucherBusiness.revertVoucher(order.getVoucher().getCode());
 			order.setVoucher(voucher);
 		}
 	}

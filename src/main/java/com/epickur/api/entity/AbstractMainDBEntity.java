@@ -86,10 +86,10 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	 */
 	public void prepareForInsertionIntoDB() {
 		DateTime time = new DateTime();
-		this.setCreatedAt(time);
-		this.setUpdatedAt(time);
+		setCreatedAt(time);
+		setUpdatedAt(time);
 
-		this.setId(null);
+		setId(null);
 	}
 
 	/**

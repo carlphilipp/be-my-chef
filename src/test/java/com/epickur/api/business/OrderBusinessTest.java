@@ -199,6 +199,7 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrderWithId();
 		order.setCardToken(token.getId());
 		Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+		orderAfterCreate.setId(order.getId());
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 		
 		when(userDAOMock.read(anyString())).thenReturn(user);
@@ -221,6 +222,7 @@ public class OrderBusinessTest {
 		order.setAmount(-15);
 		order.setCardToken(token.getId());
 		Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+		orderAfterCreate.setId(order.getId());
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 		
 		when(userDAOMock.read(anyString())).thenReturn(user);
@@ -280,6 +282,7 @@ public class OrderBusinessTest {
 		voucher.setCode(TestUtils.generateRandomString());
 		order.setVoucher(voucher);
 		Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+		orderAfterCreate.setId(order.getId());
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 		
 		when(userDAOMock.read(anyString())).thenReturn(user);
@@ -322,6 +325,7 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrderWithId();
 		order.setCardToken(token.getId());
 		Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+		orderAfterCreate.setId(order.getId());
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 		
 		when(userDAOMock.read(anyString())).thenReturn(user);
@@ -339,6 +343,7 @@ public class OrderBusinessTest {
 		Order order = TestUtils.generateRandomOrderWithId();
 		order.setCardToken(token.getId());
 		Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+		orderAfterCreate.setId(order.getId());
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 		
 		when(userDAOMock.read(anyString())).thenReturn(user);
@@ -361,7 +366,7 @@ public class OrderBusinessTest {
 		voucher.setCode(TestUtils.generateRandomString());
 		order.setVoucher(voucher);
 		
-		orderBusiness.orderFailed(order, user, false);
+		orderBusiness.handleOrderFail(order, user, false);
 		
 		assertNotNull(order);
 		assertFalse(order.getPaid());

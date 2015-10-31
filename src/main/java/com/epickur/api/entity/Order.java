@@ -115,6 +115,12 @@ public final class Order extends AbstractMainDBEntity {
 	public void setCreatedBy(final ObjectId createdBy) {
 		this.createdBy = createdBy;
 	}
+	
+	@Override
+	public void prepareForInsertionIntoDB() {
+		super.prepareForInsertionIntoDB();
+		setStatus(OrderStatus.PENDING);
+	}
 
 	@Override
 	public void prepareForUpdateIntoDB() {

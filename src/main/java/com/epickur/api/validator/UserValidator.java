@@ -12,6 +12,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.Operation;
+import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
@@ -297,6 +298,12 @@ public final class UserValidator extends Validator {
 					throw new EpickurForbiddenException();
 				}
 			}
+		}
+	}
+	
+	public void checkOrderStatus(final Order order) throws EpickurException{
+		if (order.getStatus() != OrderStatus.PENDING) {
+			throw new EpickurException("It's not allowed to modify an order that has a " + order.getStatus() + " status");
 		}
 	}
 
