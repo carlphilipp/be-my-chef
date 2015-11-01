@@ -166,11 +166,9 @@ public final class NoKeyService {
 	 *            If the caterer confirmed the order
 	 * @param orderCode
 	 *            The Order code
-	 * @param sendEmail
-	 *            If we want to send the emails
 	 * @param shouldCharge
 	 *            If we charge the user
-	 * @return The reponse
+	 * @return The response
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
@@ -182,9 +180,8 @@ public final class NoKeyService {
 			@PathParam("orderId") final String orderId,
 			@QueryParam("confirm") final boolean confirm,
 			@QueryParam("ordercode") final String orderCode,
-			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
 			@DefaultValue("true") @HeaderParam("charge-agent") final boolean shouldCharge) throws EpickurException {
-		Order result = orderBusiness.executeOrder(userId, orderId, confirm, sendEmail, shouldCharge, orderCode);
+		Order result = orderBusiness.executeOrder(userId, orderId, confirm, shouldCharge, orderCode);
 		return Response.ok().entity(result).build();
 	}
 

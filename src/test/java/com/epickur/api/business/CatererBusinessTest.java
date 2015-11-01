@@ -14,10 +14,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.CatererDAOImpl;
 import com.epickur.api.entity.Caterer;
@@ -25,8 +24,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CatererBusinessTest {
+public class CatererBusinessTest extends InitMocks {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();

@@ -85,13 +85,11 @@ public class OrderBusiness {
 	 *            The user id
 	 * @param order
 	 *            The order
-	 * @param sendEmail
-	 *            True if you want send all emails
 	 * @return an Order
 	 * @throws EpickurException
 	 *             If an EpickurException occurred
 	 */
-	public Order create(final String userId, final Order order, final boolean sendEmail)
+	public Order create(final String userId, final Order order)
 			throws EpickurException {
 		User user = readUser(userId);
 		handleVoucher(order);
@@ -99,7 +97,7 @@ public class OrderBusiness {
 
 		Order orderCreated = orderDAO.create(order);
 
-		postCreation(orderCreated, user, sendEmail);
+		postCreation(orderCreated, user);
 		return orderCreated;
 	}
 
@@ -117,11 +115,9 @@ public class OrderBusiness {
 		order.prepareForInsertionIntoDB();
 	}
 
-	protected void postCreation(final Order order, final User user, final boolean sendEmail) throws EpickurException {
+	protected void postCreation(final Order order, final User user) throws EpickurException {
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
-		if (sendEmail) {
-			emailUtils.emailNewOrder(user, order, orderCode);
-		}
+		emailUtils.emailNewOrder(user, order, orderCode);
 		Jobs.getInstance().addTemporaryOrderJob(user, order);
 	}
 
@@ -222,8 +218,6 @@ public class OrderBusiness {
 	 *            The Order id
 	 * @param confirm
 	 *            If the caterer confirmed the order
-	 * @param sendEmail
-	 *            If we want to send the emails
 	 * @param shouldCharge
 	 *            If we charge the user
 	 * @param orderCode
@@ -232,20 +226,18 @@ public class OrderBusiness {
 	 * @throws EpickurException
 	 *             If an EpickurException occurred
 	 */
-	public Order executeOrder(final String userId, final String orderId, final boolean confirm, final boolean sendEmail,
+	public Order executeOrder(final String userId, final String orderId, final boolean confirm,
 			final boolean shouldCharge, final String orderCode) throws EpickurException {
 		User user = readUser(userId);
 		Order order = read(orderId);
 		checkAutorization(orderCode, order);
 		if (confirm) {
 			if (shouldCharge) {
-				order = chargeUser(order, user, sendEmail);
+				order = chargeUser(order, user);
 			}
 		} else {
 			// Send email to USER and ADMINS - Order decline
-			if (sendEmail) {
-				emailUtils.emailDeclineOrder(user, order);
-			}
+			emailUtils.emailDeclineOrder(user, order);
 			if (order.getVoucher() != null) {
 				Voucher voucher = voucherBusiness.revertVoucher(order.getVoucher().getCode());
 				order.setVoucher(voucher);
@@ -257,23 +249,21 @@ public class OrderBusiness {
 		return order;
 	}
 
-	protected Order chargeUser(Order order, final User user, final boolean sendEmail) throws EpickurException {
+	protected Order chargeUser(Order order, final User user) throws EpickurException {
 		try {
 			StripePayment stripe = new StripePayment();
 			Charge charge = stripe.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
 			if (charge == null || !charge.getPaid()) {
-				handleOrderFail(order, user, sendEmail);
+				handleOrderFail(order, user);
 			} else {
 				order.setChargeId(charge.getId());
 				order.setPaid(charge.getPaid());
 				order.setStatus(OrderStatus.SUCCESSFUL);
 				// Send email to User, Caterer and admins - Order success
-				if (sendEmail) {
-					emailUtils.emailSuccessOrder(user, order);
-				}
+				emailUtils.emailSuccessOrder(user, order);
 			}
 		} catch (StripeException e) {
-			handleOrderFail(order, user, sendEmail);
+			handleOrderFail(order, user);
 		} finally {
 			order = updateOrderInDB(order);
 		}
@@ -305,18 +295,14 @@ public class OrderBusiness {
 	 *            The Order
 	 * @param user
 	 *            The User
-	 * @param sendEmail
-	 *            If we send an email
 	 * @throws EpickurException
 	 *             If an EpickurException occurred
 	 */
-	protected void handleOrderFail(final Order order, final User user, final boolean sendEmail) throws EpickurException {
+	protected void handleOrderFail(final Order order, final User user) throws EpickurException {
 		order.setPaid(false);
 		order.setStatus(OrderStatus.FAILED);
 		// Send email to User, Caterer and admins - Order failed
-		if (sendEmail) {
-			emailUtils.emailFailOrder(user, order);
-		}
+		emailUtils.emailFailOrder(user, order);
 		if (order.getVoucher() != null) {
 			Voucher voucher = voucherBusiness.revertVoucher(order.getVoucher().getCode());
 			order.setVoucher(voucher);

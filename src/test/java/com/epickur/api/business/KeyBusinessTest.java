@@ -15,18 +15,16 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.KeyDAOImpl;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class KeyBusinessTest {
-	
+public class KeyBusinessTest extends InitMocks {
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -39,7 +37,7 @@ public class KeyBusinessTest {
 		reset(keyDAOMock);
 		keyBusiness = new KeyBusiness(keyDAOMock);
 	}
-	
+
 	@Test
 	public void testCreate() throws EpickurException {
 		Key key = TestUtils.generateRandomAdminKey();
@@ -54,30 +52,30 @@ public class KeyBusinessTest {
 		assertNotNull(actual.getUpdatedAt());
 		assertNotNull(actual.getKey());
 	}
-	
+
 	@Test
-	public void testReadWithName() throws EpickurException{
+	public void testReadWithName() throws EpickurException {
 		Key key = TestUtils.generateRandomAdminKey();
 		Key keyAfterRead = TestUtils.mockKeyAfterCreate(key);
-		
+
 		when(keyDAOMock.readWithName(anyString())).thenReturn(keyAfterRead);
-		
+
 		Key actual = keyBusiness.readWithName(TestUtils.generateRandomString());
 		assertNotNull(actual);
 	}
-	
+
 	@Test
-	public void testDelete() throws EpickurException{
+	public void testDelete() throws EpickurException {
 		when(keyDAOMock.delete(anyString())).thenReturn(true);
-		
+
 		boolean actual = keyBusiness.delete(TestUtils.generateRandomString());
 		assertTrue(actual);
 	}
-	
+
 	@Test
-	public void testDeleteWithKey() throws EpickurException{
+	public void testDeleteWithKey() throws EpickurException {
 		when(keyDAOMock.deleteWithKey(anyString())).thenReturn(true);
-		
+
 		boolean actual = keyBusiness.deleteWithKey(TestUtils.generateRandomString());
 		assertTrue(actual);
 	}
@@ -88,9 +86,9 @@ public class KeyBusinessTest {
 		Key keyAfterRead = TestUtils.mockKeyAfterCreate(key);
 		List<Key> keyList = new ArrayList<Key>();
 		keyList.add(keyAfterRead);
-		
+
 		when(keyDAOMock.readAll()).thenReturn(keyList);
-		
+
 		List<Key> actual = keyBusiness.readAll();
 		assertNotNull(actual);
 		assertEquals(1, actual.size());

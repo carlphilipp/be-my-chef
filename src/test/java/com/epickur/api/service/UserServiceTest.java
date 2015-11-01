@@ -20,11 +20,10 @@ import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
@@ -43,8 +42,7 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UserServiceTest {
+public class UserServiceTest extends InitMocks {
 	
 	private UserService service;
 	@Mock
@@ -73,9 +71,9 @@ public class UserServiceTest {
 		User user = TestUtils.generateRandomUser();
 		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
 		
-		when(userBusiness.create((User)anyObject(), anyBoolean(), anyBoolean())).thenReturn(userAfterCreate);
+		when(userBusiness.create((User)anyObject(), anyBoolean())).thenReturn(userAfterCreate);
 		
-		Response actual = service.create(false, true, user, context);
+		Response actual = service.create(false, user, context);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		User actualUser = (User) actual.getEntity();
@@ -224,9 +222,9 @@ public class UserServiceTest {
 		Order order = TestUtils.generateRandomOrder();
 		Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order);
 		
-		when(orderBusiness.create(anyString(), (Order) anyObject(), anyBoolean())).thenReturn(orderAfterCreate);
+		when(orderBusiness.create(anyString(), (Order) anyObject())).thenReturn(orderAfterCreate);
 		
-		Response actual = service.createOneOrder(orderAfterCreate.getId().toHexString(), true, order, context);
+		Response actual = service.createOneOrder(orderAfterCreate.getId().toHexString(), order, context);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Order actualUser = (Order) actual.getEntity();

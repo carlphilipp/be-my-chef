@@ -1,13 +1,5 @@
 package com.epickur.api.filter;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -15,151 +7,180 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.bson.types.ObjectId;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 
-import com.epickur.api.TestUtils;
-import com.epickur.api.business.KeyBusiness;
+import java.io.IOException;
+
+import static org.mockito.Mockito.never;
+
+import com.epickur.api.InitMocks;
+import com.epickur.api.dao.mongo.KeyDAOImpl;
 import com.epickur.api.entity.Key;
-import com.epickur.api.entity.User;
+import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.service.LoginService;
-import com.epickur.api.service.UserService;
+import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.Utils;
 
-public class KeyRequestFilterTest {
+public class KeyRequestFilterTest extends InitMocks {
 
-	private static UserService service;
-	private static LoginService loginService;
-	private static List<ObjectId> idsToDeleteUser;
-	private static KeyBusiness keyBusiness;
-	private static List<String> keysToDelete;
-	private static ContainerRequestContext context;
+	private static final String KEY_PROPERTY = "key";
 
-	@BeforeClass
-	public static void beforeClass() {
-		service = new UserService();
-		loginService = new LoginService();
-		idsToDeleteUser = new ArrayList<ObjectId>();
-		keyBusiness = new KeyBusiness();
-		keysToDelete = new ArrayList<String>();
-		context = mock(ContainerRequestContext.class);
-		Key key = TestUtils.generateRandomAdminKey();
-		Mockito.when(context.getProperty("key")).thenReturn(key);
-	}
+	private static final String KEY_VALUE = "keyValue";
 
-	@AfterClass
-	public static void afterClass() throws EpickurException {
-		for (ObjectId id : idsToDeleteUser) {
-			service.delete(id.toHexString(), context);
-		}
+	private KeyRequestFilter filter;
+	@Mock
+	private KeyDAOImpl dao;
+	@Mock
+	private ContainerRequestContext context;
+	@Mock
+	private UriInfo uriInfo;
 
-		for (String id : keysToDelete) {
-			keyBusiness.deleteWithKey(id);
-		}
+	private Key validKey;
 
-	}
+	private Key notValidKey;
 
-	@Test
-	public void testCreate() throws IOException, EpickurException {
-		User user = TestUtils.generateRandomUser();
-		user.setPassword("password");
-		Response result = service.create(false, true, user, context);
-		if (result.getEntity() != null) {
-			User userResult = (User) result.getEntity();
-			assertNotNull(userResult.getId());
-			idsToDeleteUser.add(userResult.getId());
+	private MultivaluedMap<String, String> params;
 
-			Response response2 = loginService.login(user.getEmail(), "password");
-			if (result.getEntity() != null) {
-				User userResult2 = (User) response2.getEntity();
-				assertNotNull(userResult2.getId());
-				assertNotNull(userResult2.getKey());
-				String key = userResult2.getKey();
-				keysToDelete.add(key);
-				ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
+	@Before
+	public void setUp() {
+		filter = new KeyRequestFilter(dao);
 
-				UriInfo uriInfo = mock(UriInfo.class);
+		validKey = new Key();
+		DateTime now = new DateTime();
+		validKey.setCreatedAt(now);
+		validKey.setUpdatedAt(now);
+		validKey.setId(new ObjectId());
+		validKey.setRole(Role.EPICKUR_WEB);
+		validKey.setUserId(new ObjectId());
 
-				Mockito.when(requestContext.getUriInfo()).thenReturn(uriInfo);
-				MultivaluedMap<String, String> map = new MultivaluedHashMap<String, String>();
-				Mockito.when(requestContext.getUriInfo().getQueryParameters()).thenReturn(map);
-				requestContext.getUriInfo().getQueryParameters().add("key", key);
-				Mockito.when(requestContext.getUriInfo().getPath()).thenReturn("path");
+		notValidKey = new Key();
+		now = new DateTime();
+		now = now.minusDays(1 + Utils.SESSION_TIMEOUT);
+		notValidKey.setCreatedAt(now);
+		notValidKey.setUpdatedAt(now);
+		notValidKey.setId(new ObjectId());
+		notValidKey.setRole(Role.EPICKUR_WEB);
+		notValidKey.setUserId(new ObjectId());
 
-				KeyRequestFilter filter = new KeyRequestFilter();
-				filter.filter(requestContext);
-
-			} else {
-				fail("Can not loggin");
-			}
-		} else {
-			fail("User returned is null");
-		}
+		params = new MultivaluedHashMap<String, String>();
+		params.add(KEY_PROPERTY, KEY_VALUE);
 	}
 
 	@Test
-	public void testCreateFail() throws IOException {
-		ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
-
-		UriInfo uriInfo = mock(UriInfo.class);
-
-		Mockito.when(requestContext.getUriInfo()).thenReturn(uriInfo);
-		MultivaluedMap<String, String> map = new MultivaluedHashMap<String, String>();
-		Mockito.when(requestContext.getUriInfo().getQueryParameters()).thenReturn(map);
-		requestContext.getUriInfo().getQueryParameters().add("key", "unic_key");
-		Mockito.when(requestContext.getUriInfo().getPath()).thenReturn("path");
-
-		KeyRequestFilter filter = new KeyRequestFilter();
-		filter.filter(requestContext);
+	public void testFilter() throws IOException, EpickurException {
+		when(context.getUriInfo()).thenReturn(uriInfo);
+		when(uriInfo.getPath()).thenReturn("my/path");
+		when(uriInfo.getQueryParameters()).thenReturn(params);
+		when(dao.read(KEY_VALUE)).thenReturn(validKey);
+		
+		filter.filter(context);
+		
+		verify(context, times(1)).setProperty(KEY_PROPERTY, validKey);
 	}
 	
 	@Test
-	public void testCreateFail2() throws IOException {
-		ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
+	public void testFilterKeyNull() throws IOException, EpickurException {
+		params.clear();
+		when(context.getUriInfo()).thenReturn(uriInfo);
+		when(uriInfo.getPath()).thenReturn("my/path");
+		when(uriInfo.getQueryParameters()).thenReturn(params);
+		
+		filter.filter(context);
+		
+		verify(context, never()).setProperty(anyString(), anyObject());
+	}
 
-		UriInfo uriInfo = mock(UriInfo.class);
+	@Test
+	public void testAbortRequest() {
+		filter.abortRequest(context, Response.Status.INTERNAL_SERVER_ERROR, ErrorUtils.INTERNAL_SERVER_ERROR);
 
-		Mockito.when(requestContext.getUriInfo()).thenReturn(uriInfo);
-		MultivaluedMap<String, String> map = new MultivaluedHashMap<String, String>();
-		Mockito.when(requestContext.getUriInfo().getQueryParameters()).thenReturn(map);
-		requestContext.getUriInfo().getQueryParameters().add("key", "unic_key");
-		Mockito.when(requestContext.getUriInfo().getPath()).thenReturn("check");
-
-		KeyRequestFilter filter = new KeyRequestFilter();
-		filter.filter(requestContext);
+		verify(context, times(1)).abortWith((Response) anyObject());
 	}
 	
 	@Test
-	public void testCreateFail3() throws IOException {
-		ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
+	public void testProcessKey() throws IOException, EpickurException {
+		when(dao.read(KEY_VALUE)).thenReturn(validKey);
 
-		UriInfo uriInfo = mock(UriInfo.class);
+		filter.processKey(context, KEY_VALUE);
 
-		Mockito.when(requestContext.getUriInfo()).thenReturn(uriInfo);
-		MultivaluedMap<String, String> map = new MultivaluedHashMap<String, String>();
-		Mockito.when(requestContext.getUriInfo().getQueryParameters()).thenReturn(map);
-		requestContext.getUriInfo().getQueryParameters().add("key", "unic_key");
-		Mockito.when(requestContext.getUriInfo().getPath()).thenReturn(null);
-
-		KeyRequestFilter filter = new KeyRequestFilter();
-		filter.filter(requestContext);
+		verify(context, times(1)).setProperty(KEY_PROPERTY, validKey);
 	}
-	
+
 	@Test
-	public void testCreateFail4() throws IOException {
-		ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
+	public void testProcessKeyException() throws IOException, EpickurException {
+		when(dao.read(KEY_VALUE)).thenThrow(new EpickurException());
 
-		UriInfo uriInfo = mock(UriInfo.class);
+		filter.processKey(context, KEY_VALUE);
 
-		Mockito.when(requestContext.getUriInfo()).thenReturn(uriInfo);
-		MultivaluedMap<String, String> map = new MultivaluedHashMap<String, String>();
-		Mockito.when(requestContext.getUriInfo().getQueryParameters()).thenReturn(map);
-		requestContext.getUriInfo().getQueryParameters().add("key", null);
-		Mockito.when(requestContext.getUriInfo().getPath()).thenReturn("path");
+		verify(context, never()).setProperty(anyString(), anyObject());
+	}
 
-		KeyRequestFilter filter = new KeyRequestFilter();
-		filter.filter(requestContext);
+	@Test
+	public void testHandleKeyWithAPIKey() throws EpickurException, IOException {
+		when(context.getProperty(KEY_PROPERTY)).thenReturn(validKey);
+
+		String apiKey = Utils.getAPIKey();
+		filter.handleKey(context, apiKey);
+
+		assertEquals(Role.EPICKUR_WEB, ((Key) context.getProperty(KEY_PROPERTY)).getRole());
+	}
+
+	@Test
+	public void testHandleKeyWithPrivateKey() throws EpickurException, IOException {
+		filter.handleKey(context, KEY_VALUE);
+
+		verify(dao, times(1)).read(KEY_VALUE);
+	}
+
+	@Test
+	public void testHandleAPIKey() {
+		Key key = new Key();
+		key.setRole(Role.EPICKUR_WEB);
+
+		when(context.getProperty(KEY_PROPERTY)).thenReturn(key);
+
+		filter.handleAPIKey(context);
+
+		verify(context, times(1)).setProperty(KEY_PROPERTY, key);
+		assertEquals(key, context.getProperty(KEY_PROPERTY));
+	}
+
+	@Test
+	public void testHandlePrivateKeyValid() throws EpickurException {
+		when(dao.read(KEY_VALUE)).thenReturn(validKey);
+
+		filter.handlePrivateKey(context, KEY_VALUE);
+
+		verify(dao, times(1)).read(KEY_VALUE);
+		verify(context, times(1)).setProperty(KEY_PROPERTY, validKey);
+	}
+
+	@Test
+	public void testHandlePrivateKeyNotValid() throws EpickurException {
+		when(dao.read(KEY_VALUE)).thenReturn(notValidKey);
+
+		filter.handlePrivateKey(context, KEY_VALUE);
+
+		verify(dao, times(1)).read(KEY_VALUE);
+		verify(context, never()).setProperty(KEY_PROPERTY, notValidKey);
+	}
+
+	@Test
+	public void testHandlePrivateKeyNull() throws EpickurException {
+		when(dao.read(KEY_VALUE)).thenReturn(null);
+
+		filter.handlePrivateKey(context, KEY_VALUE);
+
+		verify(dao, times(1)).read(KEY_VALUE);
+		verify(context, never()).setProperty(KEY_PROPERTY, null);
 	}
 }

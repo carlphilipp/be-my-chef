@@ -70,6 +70,8 @@ public class OrderDaoImplTest {
 		// Setup DB before test
 		User user = TestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
+		
+		
 		Order order = TestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
 		ObjectId catererId = order.getDish().getCaterer().getId();

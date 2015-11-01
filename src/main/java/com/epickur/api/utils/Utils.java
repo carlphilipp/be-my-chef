@@ -53,7 +53,7 @@ public final class Utils {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Utils.class.getSimpleName());
 	/** Session timeout */
-	private static Integer sessionTimeout;
+	public static final Integer SESSION_TIMEOUT;
 
 	/**
 	 * Private Constructor
@@ -63,7 +63,7 @@ public final class Utils {
 
 	static {
 		Properties prop = Utils.getEpickurProperties();
-		sessionTimeout = Integer.valueOf(prop.getProperty("session.timeout"));
+		SESSION_TIMEOUT = Integer.valueOf(prop.getProperty("session.timeout"));
 	}
 
 	/**
@@ -205,7 +205,7 @@ public final class Utils {
 			return false;
 		} else {
 			DateTime currentTime = new DateTime();
-			if (Days.daysBetween(key.getCreatedAt(), currentTime).getDays() > sessionTimeout) {
+			if (Days.daysBetween(key.getCreatedAt(), currentTime).getDays() > SESSION_TIMEOUT) {
 				return false;
 			}
 		}

@@ -14,10 +14,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.UserDAOImpl;
 import com.epickur.api.entity.Key;
@@ -28,8 +27,7 @@ import com.epickur.api.utils.PasswordManager;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.email.EmailUtils;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UserBusinessTest {
+public class UserBusinessTest extends InitMocks {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -57,7 +55,7 @@ public class UserBusinessTest {
 
 		when(userDAOMock.create((User) anyObject())).thenReturn(userAfterCreate);
 
-		User actual = userBusiness.create(user, true, false);
+		User actual = userBusiness.create(user, false);
 		assertNotNull(actual.getId());
 		assertNull(actual.getPassword());
 		assertNull(actual.getRole());
@@ -76,7 +74,7 @@ public class UserBusinessTest {
 
 		when(userDAOMock.exists(anyString(), anyString())).thenReturn(true);
 
-		userBusiness.create(user, false, true);
+		userBusiness.create(user, true);
 	}
 
 	@Test

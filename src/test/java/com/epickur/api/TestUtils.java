@@ -97,8 +97,8 @@ public class TestUtils {
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
 		TestUtils.runShellCommand(cmd);
 	}
-	
-	public static void setupStripe(){
+
+	public static void setupStripe() {
 		InputStreamReader in = null;
 		try {
 			in = new InputStreamReader(TestUtils.class.getClass().getResourceAsStream("/test.properties"));
@@ -282,8 +282,8 @@ public class TestUtils {
 		geo.setLongitude(-87.650276);
 		return geo;
 	}
-	
-	public static Voucher generateVoucher(){
+
+	public static Voucher generateVoucher() {
 		Voucher voucher = new Voucher();
 		voucher.setDiscountType(DiscountType.AMOUNT);
 		voucher.setDiscount(5);
@@ -292,8 +292,8 @@ public class TestUtils {
 		voucher.setStatus(Status.VALID);
 		return voucher;
 	}
-	
-	public static Voucher mockVoucherAfterCreate(final Voucher voucher){
+
+	public static Voucher mockVoucherAfterCreate(final Voucher voucher) {
 		Voucher mockVoucher = voucher.clone();
 		DateTime now = new DateTime();
 		mockVoucher.setCreatedAt(now);
@@ -319,8 +319,8 @@ public class TestUtils {
 		dish.setCreatedBy(new ObjectId());
 		return dish;
 	}
-	
-	public static Dish generateRandomDishWithId(){
+
+	public static Dish generateRandomDishWithId() {
 		Dish dish = generateRandomDish();
 		dish.setId(new ObjectId());
 		return dish;
@@ -448,7 +448,7 @@ public class TestUtils {
 		userMock.setCode(generateRandomString());
 		return userMock;
 	}
-	
+
 	public static Dish mockDishAfterCreate(final Dish dish) {
 		Dish dishMock = dish.clone();
 		dishMock.setId(new ObjectId());
@@ -545,8 +545,8 @@ public class TestUtils {
 		order.setId(new ObjectId());
 		return order;
 	}
-	
-	public static Order mockOrderAfterCreate(final Order order){
+
+	public static Order mockOrderAfterCreate(final Order order) {
 		Order orderMock = order.clone();
 		orderMock.setId(new ObjectId());
 		return orderMock;
@@ -573,8 +573,8 @@ public class TestUtils {
 		key.setRole(Role.ADMIN);
 		return key;
 	}
-	
-	public static Key mockKeyAfterCreate(final Key key){
+
+	public static Key mockKeyAfterCreate(final Key key) {
 		Key keyMock = key.clone();
 		keyMock.setId(new ObjectId());
 		DateTime now = new DateTime();
@@ -609,14 +609,14 @@ public class TestUtils {
 	public static User createUser() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		UserBusiness business = new UserBusiness();
-		return business.create(user, false, true);
+		return business.create(user, true);
 	}
 
 	public static User createUserAndLogin() throws EpickurException {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
 		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, false, true);
+		User newUser = business.create(user, true);
 		newUser.setRole(Role.USER);
 		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.ADMIN);
@@ -629,7 +629,7 @@ public class TestUtils {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
 		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, false, true);
+		User newUser = business.create(user, true);
 		newUser.setRole(Role.SUPER_USER);
 		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.ADMIN);
@@ -642,7 +642,7 @@ public class TestUtils {
 		User user = TestUtils.generateRandomUser();
 		String password = new String(user.getPassword());
 		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, false, true);
+		User newUser = business.create(user, true);
 		newUser.setRole(Role.ADMIN);
 		Key key = TestUtils.generateRandomAdminKey();
 		key.setRole(Role.ADMIN);
@@ -668,7 +668,7 @@ public class TestUtils {
 			CardException, APIException {
 		Order order = TestUtils.generateRandomOrder();
 		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId.toHexString(), order, false);
+		Order orderRes = business.create(userId.toHexString(), order);
 		return orderRes;
 	}
 
@@ -678,7 +678,7 @@ public class TestUtils {
 		Order order = TestUtils.generateRandomOrder();
 		order.getDish().getCaterer().setId(catererId);
 		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId.toHexString(), order, false);
+		Order orderRes = business.create(userId.toHexString(), order);
 		return orderRes;
 	}
 
@@ -688,8 +688,8 @@ public class TestUtils {
 		order.prepareForUpdateIntoDB();
 		return dao.update(order);
 	}
-	
-	public static Map<String, Object> getTokenParam(){
+
+	public static Map<String, Object> getTokenParam() {
 		Map<String, Object> tokenParams = new HashMap<String, Object>();
 		Map<String, Object> cardParams = new HashMap<String, Object>();
 		cardParams.put("number", "4242424242424242");

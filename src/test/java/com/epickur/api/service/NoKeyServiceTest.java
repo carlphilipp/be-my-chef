@@ -14,10 +14,9 @@ import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
@@ -33,8 +32,7 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class NoKeyServiceTest {
+public class NoKeyServiceTest extends InitMocks {
 
 	private NoKeyService service;
 	@Mock
@@ -78,9 +76,9 @@ public class NoKeyServiceTest {
 		User user = TestUtils.generateRandomUserWithId();
 		Order order = TestUtils.generateRandomOrderWithId();
 
-		when(orderBusiness.executeOrder(anyString(), anyString(), anyBoolean(), anyBoolean(), anyBoolean(), anyString())).thenReturn(order);
+		when(orderBusiness.executeOrder(anyString(), anyString(), anyBoolean(), anyBoolean(), anyString())).thenReturn(order);
 
-		Response actual = service.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true, true); 
+		Response actual = service.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true); 
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Order actualOrder = (Order) actual.getEntity();

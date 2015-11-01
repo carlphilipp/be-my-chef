@@ -10,18 +10,16 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class LoginServiceTest {
+public class LoginServiceTest extends InitMocks {
 
 	private LoginService loginService;
 	@Mock

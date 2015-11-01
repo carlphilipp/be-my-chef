@@ -97,7 +97,7 @@ public class OrderBusinessTest {
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
 		
-		Order actual = orderBusiness.create(user.getId().toHexString(), order, true);
+		Order actual = orderBusiness.create(user.getId().toHexString(), order);
 		assertNotNull(actual);
 		assertEquals(token.getId(), actual.getCardToken());
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
@@ -120,7 +120,7 @@ public class OrderBusinessTest {
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
 		when(voucherBusinessMock.validateVoucher(anyString())).thenReturn(voucher);
 		
-		Order actual = orderBusiness.create(user.getId().toHexString(), order, true);
+		Order actual = orderBusiness.create(user.getId().toHexString(), order);
 		assertNotNull(actual);
 		assertEquals(token.getId(), actual.getCardToken());
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
@@ -134,7 +134,7 @@ public class OrderBusinessTest {
 		thrown.expectMessage("User not found");
 		
 		Order order = TestUtils.generateRandomOrder();
-		orderBusiness.create(new ObjectId().toHexString(), order, true);
+		orderBusiness.create(new ObjectId().toHexString(), order);
 	}
 	
 	@Test
@@ -154,7 +154,7 @@ public class OrderBusinessTest {
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
 		
-		Order actual = orderBusiness.create(user.getId().toHexString(), order, true);
+		Order actual = orderBusiness.create(user.getId().toHexString(), order);
 		assertNotNull(actual);
 		assertEquals(token.getId(), actual.getCardToken());
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
@@ -209,7 +209,7 @@ public class OrderBusinessTest {
 		when(stripePayementMock.chargeCard(orderAfterCreate.getCardToken(), order.calculateTotalAmount(), order.getCurrency())).thenReturn(chargeMock);
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 		
-		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, true, orderCode);
+		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertTrue(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.SUCCESSFUL, orderAfterCharge.getStatus());
 	}
@@ -231,7 +231,7 @@ public class OrderBusinessTest {
 		when(chargeMock.getPaid()).thenReturn(false);
 		when(stripePayementMock.chargeCard(orderAfterCreate.getCardToken(), order.calculateTotalAmount(), order.getCurrency())).thenReturn(chargeMock);
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
-		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, true, orderCode);
+		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.FAILED, orderAfterCharge.getStatus());
 	}
@@ -250,7 +250,7 @@ public class OrderBusinessTest {
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.read(anyString())).thenReturn(null);
 		
-		orderBusiness.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, true, true, orderCode);
+		orderBusiness.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, true, orderCode);
 	}
 	
 	@Test
@@ -266,7 +266,7 @@ public class OrderBusinessTest {
 		
 		when(userDAOMock.read(anyString())).thenReturn(null);
 		
-		orderBusiness.executeOrder(new ObjectId().toHexString(), order.getId().toHexString(), true, true, true, orderCode);
+		orderBusiness.executeOrder(new ObjectId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 	}
 
 	@Test
@@ -293,7 +293,7 @@ public class OrderBusinessTest {
 		when(voucherBusinessMock.revertVoucher(anyString())).thenReturn(voucher);
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 		
-		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, true, true, orderCode);
+		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, true, orderCode);
 		assertNull(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.DECLINED, orderAfterCharge.getStatus());
 		assertNotNull(orderAfterCharge.getVoucher());
@@ -315,7 +315,7 @@ public class OrderBusinessTest {
 		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
 		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
 		
-		orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, true, orderCode);
+		orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 	}
 
 	@Test
@@ -332,7 +332,7 @@ public class OrderBusinessTest {
 		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
 		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
 		
-		Order actual = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, true, false, orderCode);
+		Order actual = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, false, orderCode);
 		assertEquals(OrderStatus.DECLINED, actual.getStatus());
 	}
 
@@ -353,7 +353,7 @@ public class OrderBusinessTest {
 		when(stripePayementMock.chargeCard(orderAfterCreate.getCardToken(), order.calculateTotalAmount(), order.getCurrency())).thenThrow(new APIConnectionException(""));
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 		
-		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, true, orderCode);
+		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.FAILED, orderAfterCharge.getStatus());
 	}
@@ -366,7 +366,7 @@ public class OrderBusinessTest {
 		voucher.setCode(TestUtils.generateRandomString());
 		order.setVoucher(voucher);
 		
-		orderBusiness.handleOrderFail(order, user, false);
+		orderBusiness.handleOrderFail(order, user);
 		
 		assertNotNull(order);
 		assertFalse(order.getPaid());

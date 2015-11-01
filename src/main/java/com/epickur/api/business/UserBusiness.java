@@ -75,15 +75,13 @@ public class UserBusiness {
 	 * 
 	 * @param user
 	 *            The User
-	 * @param sendEmail
-	 *            True if you want to trigger an email
 	 * @param autoValidate
 	 *            True if you want to auto validate the User
 	 * @return The User created
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	public User create(final User user, final boolean sendEmail, final boolean autoValidate) throws EpickurException {
+	public User create(final User user, final boolean autoValidate) throws EpickurException {
 		checkIfUserExists(user);
 		if (autoValidate) {
 			user.setAllow(1);
@@ -100,9 +98,8 @@ public class UserBusiness {
 
 		User userCreated = this.userDAO.create(user);
 
-		if (sendEmail) {
-			this.emailUtils.emailNewRegistration(user.getName(), user.getFirst(), code, user.getEmail());
-		}
+		emailUtils.emailNewRegistration(user.getName(), user.getFirst(), code, user.getEmail());
+		
 		// We do not send back the password
 		userCreated.setPassword(null);
 		userCreated.setRole(null);

@@ -17,10 +17,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.VoucherDAOImpl;
 import com.epickur.api.entity.Voucher;
@@ -29,8 +28,7 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class VoucherBusinessTest {
+public class VoucherBusinessTest extends InitMocks {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();

@@ -3,11 +3,10 @@ package com.epickur.api.utils.email;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import com.cribbstechnologies.clients.mandrill.request.MandrillMessagesRequest;
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.SequenceDAOImpl;
 import com.epickur.api.entity.Caterer;
@@ -18,8 +17,7 @@ import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.Security;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EmailUtilsTest {
+public class EmailUtilsTest extends InitMocks {
 
 	private static final String EMAIL_TEST = "cp.harmant@gmail.com";
 
@@ -31,7 +29,7 @@ public class EmailUtilsTest {
 
 	@Before
 	public void setUp() {
-		Email email = new Email(messagesRequest);
+		Email email = new Email(messagesRequest, false);
 		this.emailUtils = new EmailUtils(email);
 	}
 

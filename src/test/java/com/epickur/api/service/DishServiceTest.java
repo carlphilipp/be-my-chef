@@ -18,11 +18,10 @@ import javax.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
@@ -35,8 +34,7 @@ import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DishServiceTest {
+public class DishServiceTest extends InitMocks {
 
 	private DishService dishService;
 	@Mock

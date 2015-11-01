@@ -56,8 +56,8 @@ public final class UserService {
 		this.orderBusiness = new OrderBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
-	
-	public UserService(final UserBusiness userBusiness, final OrderBusiness orderBusiness){
+
+	public UserService(final UserBusiness userBusiness, final OrderBusiness orderBusiness) {
 		this.userBusiness = userBusiness;
 		this.orderBusiness = orderBusiness;
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
@@ -102,8 +102,8 @@ public final class UserService {
 	 */
 	// @formatter:on
 	/**
-	 * @param sendEmail
-	 *            The email agent. Can only be true or false
+	 * Create a User
+	 * 
 	 * @param autoValidate
 	 *            The valide agent. Can onlybe true or false
 	 * @param user
@@ -118,14 +118,13 @@ public final class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create(
-			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
 			@DefaultValue("false") @HeaderParam("validate-agent") final boolean autoValidate,
 			final User user,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.USER);
 		validator.checkCreateUser(user);
-		User result = userBusiness.create(user, sendEmail, autoValidate);
+		User result = userBusiness.create(user, autoValidate);
 		// We add to the header the check code. Can be useful for tests or developers.
 		return Response.ok().entity(result).header("check", result.getCode()).build();
 	}
@@ -578,8 +577,6 @@ public final class UserService {
 	/**
 	 * @param userId
 	 *            The User id
-	 * @param sendEmail
-	 *            The email agent. Can only be true or false
 	 * @param order
 	 *            The Order
 	 * @param context
@@ -594,13 +591,12 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createOneOrder(
 			@PathParam("id") final String userId,
-			@DefaultValue("true") @HeaderParam("email-agent") final boolean sendEmail,
 			final Order order,
 			@Context final ContainerRequestContext context) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.ORDER);
 		validator.checkCreateOneOrder(userId, order);
-		Order result = orderBusiness.create(userId, order, sendEmail);
+		Order result = orderBusiness.create(userId, order);
 		return Response.ok().entity(result).build();
 	}
 

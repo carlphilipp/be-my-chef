@@ -47,6 +47,8 @@ public final class Email {
 
 	/** The logger */
 	private static final Logger LOG = LogManager.getLogger(Email.class.getSimpleName());
+
+	private final boolean send;
 	/** The request */
 	private MandrillRESTRequest request;
 	/** The message request */
@@ -61,13 +63,15 @@ public final class Email {
 	private String message;
 	/** The list of sender */
 	private String[] sendTo;
-	
-	public Email(){
+
+	public Email() {
 		this.messagesRequest = new MandrillMessagesRequest();
+		this.send = Boolean.valueOf(Utils.getEpickurProperties().getProperty("email.send"));
 	}
-	
-	public Email(final MandrillMessagesRequest messagesRequest){
+
+	public Email(final MandrillMessagesRequest messagesRequest, final boolean send) {
 		this.messagesRequest = messagesRequest;
+		this.send = send;
 	}
 
 	/**
@@ -119,10 +123,12 @@ public final class Email {
 		String[] tags = new String[] { "bmc", "bemychef", "be my chef" };
 		mess.setTags(tags);
 		mmr.setMessage(mess);
-		try {
-			messagesRequest.sendMessage(mmr);
-		} catch (RequestFailedException e) {
-			LOG.error(e.getLocalizedMessage(), e);
+		if (send) {
+			try {
+				messagesRequest.sendMessage(mmr);
+			} catch (RequestFailedException e) {
+				LOG.error(e.getLocalizedMessage(), e);
+			}
 		}
 	}
 
