@@ -37,6 +37,12 @@ public class VoucherBusiness {
 		this.voucherDAO = new VoucherDAOImpl();
 	}
 
+	/**
+	 * Constructor with parameters.
+	 * 
+	 * @param voucherDAO
+	 *            The voucher dao
+	 */
 	public VoucherBusiness(final VoucherDAOImpl voucherDAO) {
 		this.voucherDAO = voucherDAO;
 	}
@@ -98,8 +104,9 @@ public class VoucherBusiness {
 	}
 
 	/**
+	 * @return A list of voucher
 	 * @throws EpickurException
-	 *             If an EpickurException occurred
+	 *             If an EpickurException occurred.
 	 */
 	public List<Voucher> clean() throws EpickurException {
 		List<Voucher> vouchers = this.voucherDAO.readToClean();
@@ -154,8 +161,8 @@ public class VoucherBusiness {
 		found.prepareForUpdateIntoDB();
 		return this.voucherDAO.update(found);
 	}
-	
-	protected Voucher readAndThrowException(final String code) throws EpickurException{
+
+	protected Voucher readAndThrowException(final String code) throws EpickurException {
 		Voucher found = this.voucherDAO.read(code);
 		if (found == null) {
 			throw new EpickurException("Voucher '" + code + "' not found");

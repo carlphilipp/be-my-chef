@@ -128,6 +128,9 @@ public final class Order extends AbstractMainDBEntity {
 		this.setReadableId(null);
 	}
 
+	/**
+	 * @return An integer.
+	 */
 	public Integer calculateTotalAmount() {
 		Integer totalAmout = Integer.valueOf(0);
 		if (this.getVoucher() != null) {

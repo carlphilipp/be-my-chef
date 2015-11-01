@@ -63,10 +63,15 @@ public class OrderBusiness {
 	 * Constructor with parameter.
 	 * 
 	 * @param orderDAO
+	 *            The order dao.
 	 * @param userDAO
+	 *            The user dao.
 	 * @param seqDAO
+	 *            The sequence dao.
 	 * @param voucherBusiness
+	 *            The voucher business.
 	 * @param emailUtils
+	 *            The email utils.
 	 */
 	public OrderBusiness(final OrderDAOImpl orderDAO, final UserDAOImpl userDAO, final SequenceDAOImpl seqDAO,
 			final VoucherBusiness voucherBusiness, final EmailUtils emailUtils) {

@@ -32,9 +32,15 @@ public class CatererBusiness {
 		this.dao = new CatererDAOImpl();
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
-	
-	public CatererBusiness(final CatererDAOImpl catererDAO) {
-		this.dao = catererDAO;
+
+	/**
+	 * Constructor with parameters.
+	 * 
+	 * @param dao
+	 *            the dao.
+	 */
+	public CatererBusiness(final CatererDAOImpl dao) {
+		this.dao = dao;
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
 

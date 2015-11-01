@@ -54,7 +54,13 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
 		return deleteDocument(filter);
 	}
-	
+
+	/**
+	 * @param document
+	 *            The document
+	 * @throws EpickurDBException
+	 *             If an EpickurDBException occurred.
+	 */
 	protected final void insertDocument(final Document document) throws EpickurDBException {
 		try {
 			getColl().insertOne(document);
@@ -62,7 +68,14 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 			throw new EpickurDBException("create", e.getMessage(), document, e);
 		}
 	}
-	
+
+	/**
+	 * @param query
+	 *            The document query.
+	 * @return The document.
+	 * @throws EpickurDBException
+	 *             If an EpickurDBException occurred.
+	 */
 	protected final Document findDocument(final Document query) throws EpickurDBException {
 		try {
 			return getColl().find(query).first();
@@ -70,7 +83,16 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 			throw new EpickurDBException("read", e.getMessage(), query, e);
 		}
 	}
-	
+
+	/**
+	 * @param filter
+	 *            The filter document.
+	 * @param update
+	 *            The update document.
+	 * @return The document.
+	 * @throws EpickurDBException
+	 *             If an EpickurDBException occurred.
+	 */
 	protected final Document updateDocument(final Document filter, final Document update) throws EpickurDBException {
 		try {
 			return getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
@@ -78,7 +100,14 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
 		}
 	}
-	
+
+	/**
+	 * @param filter
+	 *            The document filter
+	 * @return A boolean
+	 * @throws EpickurDBException
+	 *             If an EpickurException occurred.
+	 */
 	protected final boolean deleteDocument(final Document filter) throws EpickurDBException {
 		try {
 			return this.isDeleted(getColl().deleteOne(filter));
@@ -86,7 +115,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 			throw new EpickurDBException("delete", e.getMessage(), filter, e);
 		}
 	}
-	
+
 	/**
 	 * Check if the query is a success
 	 * 
@@ -99,7 +128,14 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	private final boolean isDeleted(final DeleteResult deleteResult) {
 		return deleteResult.getDeletedCount() == 1;
 	}
-	
+
+	/**
+	 * @param attributeName
+	 *            The attribute name
+	 * @param attributeValue
+	 *            The attribute value
+	 * @return A document
+	 */
 	protected final Document convertAttributeToDocument(final String attributeName, final Object attributeValue) {
 		return new Document().append(attributeName, attributeValue);
 	}

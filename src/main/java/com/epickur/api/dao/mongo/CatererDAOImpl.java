@@ -64,6 +64,13 @@ public class CatererDAOImpl extends CrudDAO<Caterer> {
 		return processAfterQuery(updated);
 	}
 
+	/**
+	 * @param caterer
+	 *            The caterer.
+	 * @return A Caterer
+	 * @throws EpickurParsingException
+	 *             If an EpickurException occurred.
+	 */
 	private Caterer processAfterQuery(final Document caterer) throws EpickurParsingException {
 		if (caterer != null) {
 			return Caterer.getDocumentAsCatererDBView(caterer);

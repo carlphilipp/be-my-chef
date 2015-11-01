@@ -76,6 +76,13 @@ public class KeyDAOImpl extends CrudDAO<Key> {
 		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
 	}
 
+	/**
+	 * @param key
+	 *            The document key.
+	 * @return The key.
+	 * @throws EpickurParsingException
+	 *             If an EpickurParsingException occurred.
+	 */
 	private Key processAfterQuery(final Document key) throws EpickurParsingException {
 		if (key != null) {
 			return Key.getDocumentAsKey(key);
@@ -84,6 +91,13 @@ public class KeyDAOImpl extends CrudDAO<Key> {
 		}
 	}
 
+	/**
+	 * @param key
+	 *            The key.
+	 * @return A boolean
+	 * @throws EpickurException
+	 *             If an EpickurException occurred.
+	 */
 	public boolean deleteWithKey(final String key) throws EpickurException {
 		LOG.debug("Delete key: " + key);
 		Document filter = convertAttributeToDocument("key", key);

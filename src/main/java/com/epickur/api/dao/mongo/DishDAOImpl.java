@@ -72,6 +72,13 @@ public class DishDAOImpl extends CrudDAO<Dish> {
 		return processAfterQuery(updated);
 	}
 
+	/**
+	 * @param document
+	 *            The document.
+	 * @return The dish.
+	 * @throws EpickurParsingException
+	 *             If an EpickurException occurred.
+	 */
 	private Dish processAfterQuery(final Document document) throws EpickurParsingException {
 		if (document != null) {
 			return Dish.getDocumentAsDish(document);

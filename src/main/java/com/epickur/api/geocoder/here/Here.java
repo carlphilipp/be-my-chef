@@ -168,8 +168,8 @@ public class Here {
 										if (location.containsKey("displayPosition")) {
 											Map<String,Object> displayPosition = (Map<String,Object>) location.get("displayPosition");
 											geo = new Geo();
-											geo.setLatitude((double) displayPosition.get("latitude"));
-											geo.setLongitude((double) displayPosition.get("longitude"));
+											geo.setLatitude((Double) displayPosition.get("latitude"));
+											geo.setLongitude((Double) displayPosition.get("longitude"));
 										}
 									}
 								} else {

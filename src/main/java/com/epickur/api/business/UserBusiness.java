@@ -62,6 +62,8 @@ public class UserBusiness {
 	 *            The UserDAO
 	 * @param keyBusiness
 	 *            The KeyBusiness
+	 * @param emailUtils
+	 *            The email utils
 	 */
 	public UserBusiness(final UserDAOImpl userDAO, final KeyBusiness keyBusiness, final EmailUtils emailUtils) {
 		this.userDAO = userDAO;
@@ -99,7 +101,7 @@ public class UserBusiness {
 		User userCreated = this.userDAO.create(user);
 
 		emailUtils.emailNewRegistration(user.getName(), user.getFirst(), code, user.getEmail());
-		
+
 		// We do not send back the password
 		userCreated.setPassword(null);
 		userCreated.setRole(null);
@@ -347,8 +349,8 @@ public class UserBusiness {
 		String url = buildNewsletterUrl(user);
 		suscribeUserToNewsletter(url, user.getEmail());
 	}
-	
-	protected String buildNewsletterUrl(final User user){
+
+	protected String buildNewsletterUrl(final User user) {
 		String url = "https://bemychef.us10.list-manage.com/subscribe/post-json"
 				+ "?u=b0fe27a209ea8ffa59b813767"
 				+ "&id=10d0ff2b3b"
@@ -358,12 +360,12 @@ public class UserBusiness {
 				+ "&ZCODE=@@ZIP@@"
 				+ "&STATE=@@STATE@@"
 				+ "&COUNTRY=@@COUNTRY@@";
-		if (StringUtils.isBlank((user.getFirst()))) {
+		if (StringUtils.isBlank(user.getFirst())) {
 			url = url.replaceFirst("@@FIRST@@", "-");
 		} else {
 			url = url.replaceFirst("@@FIRST@@", user.getFirst());
 		}
-		if (StringUtils.isBlank((user.getLast()))) {
+		if (StringUtils.isBlank(user.getLast())) {
 			url = url.replaceFirst("@@LAST@@", "-");
 		} else {
 			url = url.replaceFirst("@@LAST@@", user.getLast());
@@ -374,8 +376,8 @@ public class UserBusiness {
 		url = url.replaceFirst("@@ZIP@@", user.getZipcode());
 		return url;
 	}
-	
-	protected void suscribeUserToNewsletter(final String url, final String email){
+
+	protected void suscribeUserToNewsletter(final String url, final String email) {
 		try {
 			HttpPost request = new HttpPost(url);
 			HttpClientBuilder.create().build().execute(request);

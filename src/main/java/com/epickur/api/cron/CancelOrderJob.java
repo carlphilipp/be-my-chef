@@ -32,7 +32,7 @@ public final class CancelOrderJob implements Job {
 	private UserDAOImpl userDAO;
 	/** Voucher Business */
 	private VoucherBusiness voucherBusiness;
-	
+	/** Email utils */
 	private EmailUtils emailUtils;
 
 	/**

@@ -23,7 +23,7 @@ public class KeyBusiness {
 	public KeyBusiness() {
 		this.keyDao = new KeyDAOImpl();
 	}
-	
+
 	public KeyBusiness(final KeyDAOImpl keyDAO) {
 		this.keyDao = keyDAO;
 	}
@@ -60,14 +60,15 @@ public class KeyBusiness {
 	 * 
 	 * @param id
 	 *            the id of the Key
+	 * @return a boolean
 	 * @throws EpickurException
 	 *             If an ${@link EpickurException} occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
 		return this.keyDao.delete(id);
 	}
-	
-	public boolean deleteWithKey(final String key) throws EpickurException{
+
+	public boolean deleteWithKey(final String key) throws EpickurException {
 		return this.keyDao.deleteWithKey(key);
 	}
 
