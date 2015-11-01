@@ -24,13 +24,13 @@ import com.mongodb.client.MongoCursor;
  * @author cph
  * @version 1.0
  */
-public class UserDAOImpl extends CrudDAO<User> {
+public class UserDAO extends CrudDAO<User> {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(UserDAOImpl.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(UserDAO.class.getSimpleName());
 
 	/** Constructor */
-	public UserDAOImpl() {
+	public UserDAO() {
 		init();
 	}
 

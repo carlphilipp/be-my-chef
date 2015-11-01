@@ -31,13 +31,13 @@ import com.mongodb.client.MongoCursor;
  * @version 1.0
  *
  */
-public class VoucherDAOImpl extends CrudDAO<Voucher> {
+public class VoucherDAO extends CrudDAO<Voucher> {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(VoucherDAOImpl.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(VoucherDAO.class.getSimpleName());
 
 	/** Constructor */
-	public VoucherDAOImpl() {
+	public VoucherDAO() {
 		init();
 	}
 

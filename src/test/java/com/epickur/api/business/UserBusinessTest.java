@@ -18,7 +18,7 @@ import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
-import com.epickur.api.dao.mongo.UserDAOImpl;
+import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
@@ -34,7 +34,7 @@ public class UserBusinessTest extends InitMocks {
 
 	private UserBusiness userBusiness;
 	@Mock
-	private UserDAOImpl userDAOMock;
+	private UserDAO userDAOMock;
 	@Mock
 	private KeyBusiness keyBusinessMock;
 	@Mock

@@ -17,15 +17,15 @@ import com.mongodb.client.MongoDatabase;
  * @version 1.0
  *
  */
-public class SequenceDAOImpl {
+public class SequenceDAO {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(SequenceDAOImpl.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(SequenceDAO.class.getSimpleName());
 	/** Database collection */
 	private MongoCollection<Document> coll;
 
 	/** Construct a Order sequence DAO */
-	public SequenceDAOImpl() {
+	public SequenceDAO() {
 		init();
 	}
 

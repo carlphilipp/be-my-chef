@@ -1,5 +1,7 @@
 package com.epickur.api.utils.email;
 
+import static org.mockito.Mockito.when;
+
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +10,7 @@ import org.mockito.Mock;
 import com.cribbstechnologies.clients.mandrill.request.MandrillMessagesRequest;
 import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
-import com.epickur.api.dao.mongo.SequenceDAOImpl;
+import com.epickur.api.dao.mongo.SequenceDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Order;
@@ -21,16 +23,17 @@ public class EmailUtilsTest extends InitMocks {
 
 	private static final String EMAIL_TEST = "example@example.com";
 
-	private SequenceDAOImpl dao = new SequenceDAOImpl();
-
 	private EmailUtils emailUtils;
 	@Mock
 	private MandrillMessagesRequest messagesRequest;
+	@Mock
+	private SequenceDAO dao;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws EpickurDBException {
 		Email email = new Email(messagesRequest, false);
 		this.emailUtils = new EmailUtils(email);
+		when(dao.getNextId()).thenReturn("20");
 	}
 
 	@Test

@@ -21,13 +21,13 @@ import com.mongodb.client.MongoCursor;
  * @author cph
  * @version 1.0
  */
-public class KeyDAOImpl extends CrudDAO<Key> {
+public class KeyDAO extends CrudDAO<Key> {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(KeyDAOImpl.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(KeyDAO.class.getSimpleName());
 
 	/** Constructor */
-	public KeyDAOImpl() {
+	public KeyDAO() {
 		init();
 	}
 

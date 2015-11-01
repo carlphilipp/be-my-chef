@@ -125,7 +125,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 *            The type of the query
 	 * @return True if the query is a success
 	 */
-	private final boolean isDeleted(final DeleteResult deleteResult) {
+	private boolean isDeleted(final DeleteResult deleteResult) {
 		return deleteResult.getDeletedCount() == 1;
 	}
 

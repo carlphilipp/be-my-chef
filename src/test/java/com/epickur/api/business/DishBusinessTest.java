@@ -24,7 +24,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import com.epickur.api.TestUtils;
-import com.epickur.api.dao.mongo.DishDAOImpl;
+import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
@@ -43,7 +43,7 @@ public class DishBusinessTest {
 
 	private DishBusiness dishBusiness;
 	@Mock
-	private DishDAOImpl dishDAOMock;
+	private DishDAO dishDAOMock;
 	@Mock
 	private GeocoderHereImpl geoCoder;
 	@Mock

@@ -6,9 +6,9 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
 import com.epickur.api.cron.Jobs;
-import com.epickur.api.dao.mongo.OrderDAOImpl;
-import com.epickur.api.dao.mongo.SequenceDAOImpl;
-import com.epickur.api.dao.mongo.UserDAOImpl;
+import com.epickur.api.dao.mongo.OrderDAO;
+import com.epickur.api.dao.mongo.SequenceDAO;
+import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
@@ -37,11 +37,11 @@ import com.stripe.model.Charge;
 public class OrderBusiness {
 
 	/** Order dao */
-	private OrderDAOImpl orderDAO;
+	private OrderDAO orderDAO;
 	/** User dao */
-	private UserDAOImpl userDAO;
+	private UserDAO userDAO;
 	/** Sequence Order dao */
-	private SequenceDAOImpl seqDAO;
+	private SequenceDAO seqDAO;
 	/** Voucher dao */
 	private VoucherBusiness voucherBusiness;
 	/** User validator */
@@ -51,9 +51,9 @@ public class OrderBusiness {
 
 	/** The constructor */
 	public OrderBusiness() {
-		this.orderDAO = new OrderDAOImpl();
-		this.userDAO = new UserDAOImpl();
-		this.seqDAO = new SequenceDAOImpl();
+		this.orderDAO = new OrderDAO();
+		this.userDAO = new UserDAO();
+		this.seqDAO = new SequenceDAO();
 		this.voucherBusiness = new VoucherBusiness();
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 		this.emailUtils = new EmailUtils();
@@ -73,7 +73,7 @@ public class OrderBusiness {
 	 * @param emailUtils
 	 *            The email utils.
 	 */
-	public OrderBusiness(final OrderDAOImpl orderDAO, final UserDAOImpl userDAO, final SequenceDAOImpl seqDAO,
+	public OrderBusiness(final OrderDAO orderDAO, final UserDAO userDAO, final SequenceDAO seqDAO,
 			final VoucherBusiness voucherBusiness, final EmailUtils emailUtils) {
 		this.orderDAO = orderDAO;
 		this.userDAO = userDAO;

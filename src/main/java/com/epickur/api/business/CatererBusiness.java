@@ -2,7 +2,7 @@ package com.epickur.api.business;
 
 import java.util.List;
 
-import com.epickur.api.dao.mongo.CatererDAOImpl;
+import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
@@ -13,15 +13,15 @@ import com.epickur.api.validator.CatererValidator;
 import com.epickur.api.validator.FactoryValidator;
 
 /**
- * {@link Caterer} business layer. Execute logic and access {@link CatererDAOImpl} layer to update the database.
+ * {@link Caterer} business layer. Execute logic and access {@link CatererDAO} layer to update the database.
  * 
  * @author cph
  * @version 1.0
  */
 public class CatererBusiness {
 
-	/** The DAO {@link CatererDAOImpl} */
-	private CatererDAOImpl dao;
+	/** The DAO {@link CatererDAO} */
+	private CatererDAO dao;
 	/** The validator {@link CatererValidator} */
 	private CatererValidator validator;
 
@@ -29,7 +29,7 @@ public class CatererBusiness {
 	 * Construct a Caterer Business
 	 */
 	public CatererBusiness() {
-		this.dao = new CatererDAOImpl();
+		this.dao = new CatererDAO();
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
 
@@ -39,7 +39,7 @@ public class CatererBusiness {
 	 * @param dao
 	 *            the dao.
 	 */
-	public CatererBusiness(final CatererDAOImpl dao) {
+	public CatererBusiness(final CatererDAO dao) {
 		this.dao = dao;
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}

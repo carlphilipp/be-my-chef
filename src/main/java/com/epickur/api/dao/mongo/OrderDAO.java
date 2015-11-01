@@ -23,13 +23,13 @@ import com.mongodb.client.MongoCursor;
  * @author cph
  * @version 1.0
  */
-public class OrderDAOImpl extends CrudDAO<Order> {
+public class OrderDAO extends CrudDAO<Order> {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(OrderDAOImpl.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(OrderDAO.class.getSimpleName());
 
 	/** Constructor */
-	public OrderDAOImpl() {
+	public OrderDAO() {
 		init();
 	}
 

@@ -57,7 +57,7 @@ public class DishServiceTest extends InitMocks {
 	public void testCreate() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = TestUtils.mockDishAfterCreate(dish);
 
@@ -75,9 +75,9 @@ public class DishServiceTest extends InitMocks {
 	public void testCreateCatererNotFound() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
-
+		
 		when(catererBusiness.read(anyString())).thenReturn(null);
 
 		Response actual = dishService.create(dish);
@@ -92,7 +92,7 @@ public class DishServiceTest extends InitMocks {
 	public void testRead() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = TestUtils.mockDishAfterCreate(dish);
 
@@ -109,7 +109,7 @@ public class DishServiceTest extends InitMocks {
 	public void testReadDishNotFound() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
 		when(dishBusiness.read(anyString())).thenReturn(null);
@@ -126,7 +126,7 @@ public class DishServiceTest extends InitMocks {
 	public void testUpdate() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDishWithId();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = TestUtils.mockDishAfterCreate(dish);
 		dishAfterCreate.setDescription("desc");
@@ -145,7 +145,7 @@ public class DishServiceTest extends InitMocks {
 	public void testUpdateDishNotFound() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDishWithId();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = TestUtils.mockDishAfterCreate(dish);
 		dishAfterCreate.setDescription("desc");
@@ -164,7 +164,7 @@ public class DishServiceTest extends InitMocks {
 	public void testDelete() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDishWithId();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
 		when(dishBusiness.delete(anyString(), (Key) anyObject())).thenReturn(true);
@@ -182,7 +182,7 @@ public class DishServiceTest extends InitMocks {
 	public void testDeleteFail() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDishWithId();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
 		when(dishBusiness.delete(anyString(), (Key) anyObject())).thenReturn(false);
@@ -201,7 +201,7 @@ public class DishServiceTest extends InitMocks {
 	public void testSearch() throws EpickurException {
 		Dish dish = TestUtils.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer caterer = TestUtils.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = TestUtils.mockDishAfterCreate(dish);
 		List<Dish> dishes = new ArrayList<Dish>();

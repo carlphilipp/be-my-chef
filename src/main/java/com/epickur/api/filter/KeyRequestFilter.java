@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.epickur.api.dao.mongo.KeyDAOImpl;
+import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
@@ -33,15 +33,15 @@ public final class KeyRequestFilter implements ContainerRequestFilter {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(KeyRequestFilter.class.getSimpleName());
 	/** Key dao */
-	private KeyDAOImpl keyDAO;
+	private KeyDAO keyDAO;
 
 	/** Constructor */
 	public KeyRequestFilter() {
 		super();
-		this.keyDAO = new KeyDAOImpl();
+		this.keyDAO = new KeyDAO();
 	}
 
-	public KeyRequestFilter(final KeyDAOImpl keyDao) {
+	public KeyRequestFilter(final KeyDAO keyDao) {
 		this.keyDAO = keyDao;
 	}
 

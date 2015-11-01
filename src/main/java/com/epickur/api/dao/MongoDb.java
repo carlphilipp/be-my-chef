@@ -76,7 +76,7 @@ public final class MongoDb {
 				CodecRegistries.fromCodecs(statusCodec)
 				);
 
-		MongoClientOptions options = MongoClientOptions.builder().codecRegistry(codecRegistry).build();
+		MongoClientOptions options = MongoClientOptions.builder().serverSelectionTimeout(8000).codecRegistry(codecRegistry).build();
 
 		if (!StringUtils.isBlank(userName) && !StringUtils.isBlank(password)) {
 			MongoCredential credential = MongoCredential.createCredential(userName, dbName, password.toCharArray());

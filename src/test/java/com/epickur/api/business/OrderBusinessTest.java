@@ -22,9 +22,9 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import com.epickur.api.TestUtils;
-import com.epickur.api.dao.mongo.OrderDAOImpl;
-import com.epickur.api.dao.mongo.SequenceDAOImpl;
-import com.epickur.api.dao.mongo.UserDAOImpl;
+import com.epickur.api.dao.mongo.OrderDAO;
+import com.epickur.api.dao.mongo.SequenceDAO;
+import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
@@ -60,11 +60,11 @@ public class OrderBusinessTest {
 	@Mock
 	private KeyBusiness keyBusinessMock;
 	@Mock
-	private UserDAOImpl userDAOMock;
+	private UserDAO userDAOMock;
 	@Mock
-	private OrderDAOImpl orderDAOMock;
+	private OrderDAO orderDAOMock;
 	@Mock
-	private SequenceDAOImpl seqDAOMock;
+	private SequenceDAO seqDAOMock;
 	@Mock
 	private StripePayment stripePayementMock;
 	@Mock

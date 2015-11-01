@@ -23,7 +23,7 @@ import java.io.IOException;
 import static org.mockito.Mockito.never;
 
 import com.epickur.api.InitMocks;
-import com.epickur.api.dao.mongo.KeyDAOImpl;
+import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
@@ -38,7 +38,7 @@ public class KeyRequestFilterTest extends InitMocks {
 
 	private KeyRequestFilter filter;
 	@Mock
-	private KeyDAOImpl dao;
+	private KeyDAO dao;
 	@Mock
 	private ContainerRequestContext context;
 	@Mock

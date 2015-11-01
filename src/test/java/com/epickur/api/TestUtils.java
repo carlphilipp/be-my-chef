@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +25,7 @@ import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
-import com.epickur.api.dao.mongo.OrderDAOImpl;
+import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
@@ -104,17 +105,11 @@ public class TestUtils {
 			in = new InputStreamReader(TestUtils.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
-			in.close();
 			Stripe.apiKey = prop.getProperty("stripe.key");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
+			IOUtils.closeQuietly(in);
 		}
 	}
 
@@ -684,7 +679,7 @@ public class TestUtils {
 
 	public static Order updateOrderStatusToSuccess(final Order order) throws EpickurException {
 		order.setStatus(OrderStatus.SUCCESSFUL);
-		OrderDAOImpl dao = new OrderDAOImpl();
+		OrderDAO dao = new OrderDAO();
 		order.prepareForUpdateIntoDB();
 		return dao.update(order);
 	}

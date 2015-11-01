@@ -7,8 +7,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.epickur.api.business.VoucherBusiness;
-import com.epickur.api.dao.mongo.OrderDAOImpl;
-import com.epickur.api.dao.mongo.UserDAOImpl;
+import com.epickur.api.dao.mongo.OrderDAO;
+import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.OrderStatus;
@@ -27,9 +27,9 @@ public final class CancelOrderJob implements Job {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CancelOrderJob.class.getSimpleName());
 	/** Order dao */
-	private OrderDAOImpl orderDAO;
+	private OrderDAO orderDAO;
 	/** User dao */
-	private UserDAOImpl userDAO;
+	private UserDAO userDAO;
 	/** Voucher Business */
 	private VoucherBusiness voucherBusiness;
 	/** Email utils */
@@ -39,8 +39,8 @@ public final class CancelOrderJob implements Job {
 	 * Constructs a Cancel Order Job
 	 */
 	public CancelOrderJob() {
-		this.orderDAO = new OrderDAOImpl();
-		this.userDAO = new UserDAOImpl();
+		this.orderDAO = new OrderDAO();
+		this.userDAO = new UserDAO();
 		this.emailUtils = new EmailUtils();
 	}
 

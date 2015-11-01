@@ -30,7 +30,6 @@ import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -43,7 +42,6 @@ public class AccessRightsOrderIT {
 	private static String URL_NO_KEY;
 	private static String API_KEY;
 	private static String jsonMimeType;
-	private static String STRIPE_TEST_KEY;
 	private static ObjectMapper mapper;
 	private static User user;
 
@@ -52,15 +50,15 @@ public class AccessRightsOrderIT {
 		InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
-		in.close();
+		IOUtils.closeQuietly(in);
 		String address = prop.getProperty("address");
 		String path = prop.getProperty("api.path");
-		STRIPE_TEST_KEY = prop.getProperty("stripe.key");
+		TestUtils.setupStripe();
 		END_POINT = address + path;
 		in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/api.key"));
 		BufferedReader br = new BufferedReader(in);
 		API_KEY = br.readLine();
-		in.close();
+		IOUtils.closeQuietly(in);
 		jsonMimeType = "application/json";
 		mapper = new ObjectMapper();
 		user = TestUtils.createUserAndLogin();
@@ -76,9 +74,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderCreate() throws ClientProtocolException, IOException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException, EpickurException {
-		// Create Stripe card token
-		Stripe.apiKey = STRIPE_TEST_KEY;
-		
 		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
@@ -108,9 +103,8 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		Order order = TestUtils.createOrder(user.getId());
-		
+
 		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
@@ -133,9 +127,7 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		// Create Stripe card token
-		Stripe.apiKey = STRIPE_TEST_KEY;
-		
+
 		User admin = TestUtils.createAdminAndLogin();
 
 		String id = new ObjectId().toHexString();
@@ -157,9 +149,8 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		Order order = TestUtils.createOrder(user.getId());
-		
+
 		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
@@ -185,11 +176,10 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		ObjectId id = new ObjectId();
 		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
-		
+
 		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
@@ -212,9 +202,8 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		Order order = TestUtils.createOrder(user.getId());
-		
+
 		User admin = TestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
@@ -235,9 +224,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderCreate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		// Create Stripe card token
-		Stripe.apiKey = STRIPE_TEST_KEY;
-
 		user = TestUtils.createSuperUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
@@ -266,8 +252,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
-
 		user = TestUtils.createSuperUserAndLogin();
 
 		Order order = TestUtils.createOrder(user.getId());
@@ -294,9 +278,6 @@ public class AccessRightsOrderIT {
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = TestUtils.createSuperUserAndLogin();
 
-		// Create Stripe card token
-		Stripe.apiKey = STRIPE_TEST_KEY;
-
 		String id = new ObjectId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + id;
@@ -316,8 +297,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead3() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
-
 		user = TestUtils.createSuperUserAndLogin();
 
 		User otherUser = TestUtils.createUserAndLogin();
@@ -341,7 +320,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		user = TestUtils.createSuperUserAndLogin();
 		Order order = TestUtils.createOrder(user.getId());
 
@@ -369,12 +347,11 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		user = TestUtils.createSuperUserAndLogin();
 		ObjectId id = new ObjectId();
 		Order updatedOrder = TestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
-		
+
 		User sUser = TestUtils.createSuperUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
@@ -397,7 +374,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		user = TestUtils.createSuperUserAndLogin();
 		Order order = TestUtils.createOrder(user.getId());
 
@@ -419,9 +395,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderCreate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		// Create Stripe card token
-		Stripe.apiKey = STRIPE_TEST_KEY;
-
 		user = TestUtils.createUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
@@ -450,8 +423,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
-
 		user = TestUtils.createUserAndLogin();
 
 		Order order = TestUtils.createOrder(user.getId());
@@ -476,10 +447,6 @@ public class AccessRightsOrderIT {
 	public void testUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
 		user = TestUtils.createUserAndLogin();
-
-		// Create Stripe card token
-		Stripe.apiKey = STRIPE_TEST_KEY;
-
 		String id = new ObjectId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + id;
@@ -499,8 +466,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead3() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
-
 		user = TestUtils.createUserAndLogin();
 
 		User otherUser = TestUtils.createUserAndLogin();
@@ -523,7 +488,6 @@ public class AccessRightsOrderIT {
 
 	public void testUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		user = TestUtils.createUserAndLogin();
 		Order order = TestUtils.createOrder(user.getId());
 
@@ -550,7 +514,6 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		user = TestUtils.createUserAndLogin();
 		ObjectId id = new ObjectId();
 		Order updatedOrder = TestUtils.createOrder(user.getId());
@@ -575,7 +538,6 @@ public class AccessRightsOrderIT {
 
 	public void testUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Stripe.apiKey = STRIPE_TEST_KEY;
 		user = TestUtils.createUserAndLogin();
 		Order order = TestUtils.createOrder(user.getId());
 

@@ -21,7 +21,7 @@ import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
-import com.epickur.api.dao.mongo.VoucherDAOImpl;
+import com.epickur.api.dao.mongo.VoucherDAO;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
@@ -35,7 +35,7 @@ public class VoucherBusinessTest extends InitMocks {
 
 	private VoucherBusiness voucherBusiness;
 	@Mock
-	private VoucherDAOImpl voucherDAO;
+	private VoucherDAO voucherDAO;
 
 	@Before
 	public void before() {

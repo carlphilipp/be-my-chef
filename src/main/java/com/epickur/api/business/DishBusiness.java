@@ -2,7 +2,7 @@ package com.epickur.api.business;
 
 import java.util.List;
 
-import com.epickur.api.dao.mongo.DishDAOImpl;
+import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
@@ -15,15 +15,15 @@ import com.epickur.api.validator.DishValidator;
 import com.epickur.api.validator.FactoryValidator;
 
 /**
- * {@link Dish} business layer. Execute logic and access {@link DishDAOImpl} layer to update the database.
+ * {@link Dish} business layer. Execute logic and access {@link DishDAO} layer to update the database.
  * 
  * @author cph
  * @version 1.0
  */
 public class DishBusiness {
 
-	/** The DAO {@link DishDAOImpl}. */
-	private DishDAOImpl dao;
+	/** The DAO {@link DishDAO}. */
+	private DishDAO dao;
 	/** The validator {@link DishValidator}. */
 	private DishValidator validator;
 
@@ -31,11 +31,11 @@ public class DishBusiness {
 	 * Construct a Dish Business.
 	 */
 	public DishBusiness() {
-		this.dao = new DishDAOImpl();
+		this.dao = new DishDAO();
 		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
 	}
 	
-	public DishBusiness(final DishDAOImpl dishDAO) {
+	public DishBusiness(final DishDAO dishDAO) {
 		this.dao = dishDAO;
 		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
 	}

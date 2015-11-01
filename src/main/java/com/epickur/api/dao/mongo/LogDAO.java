@@ -17,13 +17,13 @@ import com.epickur.api.exception.EpickurException;
  * @version 1.0
  *
  */
-public final class LogDAOImpl extends CrudDAO<Log> {
+public final class LogDAO extends CrudDAO<Log> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Log.class.getSimpleName());
 
 	/** Constructor */
-	public LogDAOImpl() {
+	public LogDAO() {
 		init();
 	}
 

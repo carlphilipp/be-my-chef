@@ -16,7 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
-import com.epickur.api.dao.mongo.LogDAOImpl;
+import com.epickur.api.dao.mongo.LogDAO;
 import com.epickur.api.entity.Log;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.EpickurPriorities;
@@ -57,7 +57,7 @@ public final class LogRequestFilter implements ContainerRequestFilter {
 		}
 		log.setRemoteAddr(ipAddress);
 		log.setUserAgent(requestContext.getHeaderString("User-Agent"));
-		LogDAOImpl dao = new LogDAOImpl();
+		LogDAO dao = new LogDAO();
 		try {
 			dao.create(log);
 		} catch (EpickurException e) {

@@ -18,7 +18,7 @@ import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
-import com.epickur.api.dao.mongo.CatererDAOImpl;
+import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
@@ -31,7 +31,7 @@ public class CatererBusinessTest extends InitMocks {
 
 	private CatererBusiness catererBusiness;
 	@Mock
-	private CatererDAOImpl catererDAOMock;
+	private CatererDAO catererDAOMock;
 
 	@Before
 	public void setUp() {

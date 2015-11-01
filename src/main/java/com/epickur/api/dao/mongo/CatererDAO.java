@@ -21,13 +21,13 @@ import com.mongodb.client.MongoCursor;
  * @author cph
  * @version 1.0
  */
-public class CatererDAOImpl extends CrudDAO<Caterer> {
+public class CatererDAO extends CrudDAO<Caterer> {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(CatererDAOImpl.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(CatererDAO.class.getSimpleName());
 
 	/** Constructor */
-	public CatererDAOImpl() {
+	public CatererDAO() {
 		init();
 	}
 

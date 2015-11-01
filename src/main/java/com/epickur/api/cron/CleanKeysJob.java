@@ -8,7 +8,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.epickur.api.dao.mongo.KeyDAOImpl;
+import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.Utils;
@@ -24,11 +24,11 @@ public final class CleanKeysJob implements Job {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CleanKeysJob.class.getSimpleName());
 	/** Key dao */
-	private KeyDAOImpl keyDao;
+	private KeyDAO keyDao;
 
 	/** Constructor */
 	public CleanKeysJob() {
-		this.keyDao = new KeyDAOImpl();
+		this.keyDao = new KeyDAO();
 	}
 
 	/* (non-Javadoc)

@@ -19,7 +19,7 @@ import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
-import com.epickur.api.dao.mongo.KeyDAOImpl;
+import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 
@@ -30,7 +30,7 @@ public class KeyBusinessTest extends InitMocks {
 
 	private KeyBusiness keyBusiness;
 	@Mock
-	private KeyDAOImpl keyDAOMock;
+	private KeyDAO keyDAOMock;
 
 	@Before
 	public void setUp() {

@@ -2,7 +2,7 @@ package com.epickur.api.business;
 
 import java.util.List;
 
-import com.epickur.api.dao.mongo.KeyDAOImpl;
+import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 
@@ -15,16 +15,16 @@ import com.epickur.api.exception.EpickurException;
 public class KeyBusiness {
 
 	/** Key dao */
-	private KeyDAOImpl keyDao;
+	private KeyDAO keyDao;
 
 	/**
 	 * The constructor
 	 */
 	public KeyBusiness() {
-		this.keyDao = new KeyDAOImpl();
+		this.keyDao = new KeyDAO();
 	}
 
-	public KeyBusiness(final KeyDAOImpl keyDAO) {
+	public KeyBusiness(final KeyDAO keyDAO) {
 		this.keyDao = keyDAO;
 	}
 

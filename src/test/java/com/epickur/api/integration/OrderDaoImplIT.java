@@ -1,8 +1,8 @@
-package com.epickur.api.dao.mongo;
+package com.epickur.api.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,13 +16,16 @@ import javax.ws.rs.container.ContainerRequestContext;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 
+import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
+import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
@@ -34,20 +37,17 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 
-public class OrderDaoImplTest {
+public class OrderDaoImplIT extends InitMocks {
 
 	private static List<ObjectId> idsToDeleteUser;
 	private static Map<String, List<ObjectId>> idsToDeleteOrder;
 	private static UserService userService;
-	private static ContainerRequestContext context;
+	@Mock
+	private ContainerRequestContext context;
 
 	@BeforeClass
 	public static void beforeClass() throws IOException {
 		TestUtils.setupStripe();
-		context = mock(ContainerRequestContext.class);
-		userService = new UserService(new UserBusiness(), new OrderBusiness(), context);
-		Key key = TestUtils.generateRandomAdminKey();
-		Mockito.when(context.getProperty("key")).thenReturn(key);
 		idsToDeleteUser = new ArrayList<ObjectId>();
 		idsToDeleteOrder = new HashMap<String, List<ObjectId>>();
 	}
@@ -59,10 +59,17 @@ public class OrderDaoImplTest {
 		}
 		for (Entry<String, List<ObjectId>> entry : idsToDeleteOrder.entrySet()) {
 			List<ObjectId> list = entry.getValue();
-			for(ObjectId id : list){
+			for (ObjectId id : list) {
 				userService.deleteOneOrder(entry.getKey(), id.toHexString());
 			}
 		}
+	}
+
+	@Before
+	public void setUp() {
+		Key key = TestUtils.generateRandomAdminKey();
+		when(context.getProperty("key")).thenReturn(key);
+		userService = new UserService(new UserBusiness(), new OrderBusiness(), context);
 	}
 
 	@Test
@@ -71,20 +78,19 @@ public class OrderDaoImplTest {
 		// Setup DB before test
 		User user = TestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		
-		
+
 		Order order = TestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
 		ObjectId catererId = order.getDish().getCaterer().getId();
 		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
-		OrderDAOImpl dao = new OrderDAOImpl();
+		OrderDAO dao = new OrderDAO();
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), null, null);
 		assertNotNull(orders);
 		assertEquals(2, orders.size());
 	}
-	
+
 	@Test
 	public void readAllWithCatererIdTestWithDates() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
@@ -97,14 +103,15 @@ public class OrderDaoImplTest {
 		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
-		OrderDAOImpl dao = new OrderDAOImpl();
+		OrderDAO dao = new OrderDAO();
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt(), order2.getCreatedAt());
 		assertNotNull(orders);
 		assertEquals(2, orders.size());
 	}
-	
+
 	@Test
-	public void readAllWithCatererIdTestWithDates2() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+	public void readAllWithCatererIdTestWithDates2()
+			throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		// Setup DB before test
 		User user = TestUtils.createUserAndLogin();
@@ -115,16 +122,17 @@ public class OrderDaoImplTest {
 		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
-		OrderDAOImpl dao = new OrderDAOImpl();
+		OrderDAO dao = new OrderDAO();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt().plus(1), order2.getCreatedAt());
 		assertNotNull(orders);
 		assertEquals(1, orders.size());
 	}
-	
+
 	@Test
-	public void readAllWithCatererIdTestWithDates3() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+	public void readAllWithCatererIdTestWithDates3()
+			throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		// Setup DB before test
 		User user = TestUtils.createUserAndLogin();
@@ -135,16 +143,17 @@ public class OrderDaoImplTest {
 		Order order2 = TestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
-		OrderDAOImpl dao = new OrderDAOImpl();
+		OrderDAO dao = new OrderDAO();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt(), order2.getCreatedAt().minus(1));
 		assertNotNull(orders);
 		assertEquals(1, orders.size());
 	}
-	
+
 	@Test
-	public void readAllWithCatererIdTestWithDates4() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
+	public void readAllWithCatererIdTestWithDates4()
+			throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		// Setup DB before test
 		User user = TestUtils.createUserAndLogin();
@@ -156,7 +165,7 @@ public class OrderDaoImplTest {
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		// Test
-		OrderDAOImpl dao = new OrderDAOImpl();
+		OrderDAO dao = new OrderDAO();
 		DateTime start = new DateTime();
 		start = start.minusSeconds(15);
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt().plus(1), order2.getCreatedAt().minus(1));
