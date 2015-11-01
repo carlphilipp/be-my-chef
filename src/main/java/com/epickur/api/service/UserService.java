@@ -43,6 +43,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Path("/users")
 public final class UserService {
 
+	/** Context */
+	@Context
+	private ContainerRequestContext context;
 	/** User Business */
 	private UserBusiness userBusiness;
 	/** Order Business */
@@ -57,9 +60,20 @@ public final class UserService {
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
 
-	public UserService(final UserBusiness userBusiness, final OrderBusiness orderBusiness) {
+	/**
+	 * Constructor with parameters.
+	 * 
+	 * @param userBusiness
+	 *            The user business.
+	 * @param orderBusiness
+	 *            The order business.
+	 * @param context
+	 *            The context.
+	 */
+	public UserService(final UserBusiness userBusiness, final OrderBusiness orderBusiness, final ContainerRequestContext context) {
 		this.userBusiness = userBusiness;
 		this.orderBusiness = orderBusiness;
+		this.context = context;
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
 
@@ -108,8 +122,6 @@ public final class UserService {
 	 *            The valide agent. Can onlybe true or false
 	 * @param user
 	 *            The User
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -119,8 +131,7 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create(
 			@DefaultValue("false") @HeaderParam("validate-agent") final boolean autoValidate,
-			final User user,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			final User user) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.USER);
 		validator.checkCreateUser(user);
@@ -166,8 +177,6 @@ public final class UserService {
 	/**
 	 * @param id
 	 *            The User id
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -175,7 +184,7 @@ public final class UserService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") final String id, @Context final ContainerRequestContext context) throws EpickurException {
+	public Response read(@PathParam("id") final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.USER);
 		validator.checkId(id);
@@ -229,8 +238,6 @@ public final class UserService {
 	 *            The User id
 	 * @param user
 	 *            The User
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -241,8 +248,7 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(
 			@PathParam("id") final String id,
-			final User user,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			final User user) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.USER);
 		validator.checkUpdateUser(id, user);
@@ -288,8 +294,6 @@ public final class UserService {
 	/**
 	 * @param id
 	 *            The User id
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -297,7 +301,7 @@ public final class UserService {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") final String id, @Context final ContainerRequestContext context) throws EpickurException {
+	public Response delete(@PathParam("id") final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.USER);
 		validator.checkId(id);
@@ -345,15 +349,15 @@ public final class UserService {
 	 */
 	// @formatter:on
 	/**
-	 * @param context
-	 *            The container context that contains the Key
+	 * Read All users.
+	 * 
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
-	 * @return A list of User
+	 *             If an epickur exception occurred.
+	 * @return A list of User.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response readAll(@Context final ContainerRequestContext context) throws EpickurException {
+	public Response readAll() throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.USER);
 		List<User> users = userBusiness.readAll();
@@ -411,8 +415,6 @@ public final class UserService {
 	 *            The User id
 	 * @param orderId
 	 *            The Orderid
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -422,8 +424,7 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readOneOrder(
 			@PathParam("id") final String id,
-			@PathParam("orderId") final String orderId,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			@PathParam("orderId") final String orderId) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.ORDER);
 		validator.checkReadOneOrder(id, orderId);
@@ -498,20 +499,19 @@ public final class UserService {
 	 */
 	// @formatter:on
 	/**
+	 * Read all orders.
+	 * 
 	 * @param id
-	 *            The User id
-	 * @param context
-	 *            The container context that contains the Key
+	 *            The User id.
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
-	 * @return The list of Order for this User
+	 *             If an epickur exception occurred.
+	 * @return The list of Order for this User.
 	 */
 	@GET
 	@Path("/{id}/orders")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readAllOrders(
-			@PathParam("id") final String id,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			@PathParam("id") final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.ORDER);
 		validator.checkReadAllOrder(id, key);
@@ -579,8 +579,6 @@ public final class UserService {
 	 *            The User id
 	 * @param order
 	 *            The Order
-	 * @param context
-	 *            The context
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -591,8 +589,7 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createOneOrder(
 			@PathParam("id") final String userId,
-			final Order order,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			final Order order) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.ORDER);
 		validator.checkCreateOneOrder(userId, order);
@@ -656,8 +653,6 @@ public final class UserService {
 	 *            The Order id
 	 * @param order
 	 *            The Order
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -669,8 +664,7 @@ public final class UserService {
 	public Response updateOneOrder(
 			@PathParam("id") final String id,
 			@PathParam("orderId") final String orderId,
-			final Order order,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			final Order order) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.ORDER);
 		validator.checkUpdateOneOrder(id, orderId, order);
@@ -713,8 +707,6 @@ public final class UserService {
 	 *            The User id
 	 * @param orderId
 	 *            The Order id
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -724,8 +716,7 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteOneOrder(
 			@PathParam("id") final String id,
-			@PathParam("orderId") final String orderId,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			@PathParam("orderId") final String orderId) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.ORDER);
 		validator.checkDeleteOneOrder(id, orderId);
@@ -764,8 +755,6 @@ public final class UserService {
 	/**
 	 * @param node
 	 *            The node containing the user email that needs to be reset
-	 * @param context
-	 *            The container context that contains the Key
 	 * @return The reponse
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -774,8 +763,7 @@ public final class UserService {
 	@Path("/reset")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response resetPasswordFirstStep(
-			final ObjectNode node,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			final ObjectNode node) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.RESET_PASSWORD, EndpointType.USER);
 		validator.checkResetPasswordData(node);

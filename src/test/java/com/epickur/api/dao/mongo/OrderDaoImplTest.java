@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.epickur.api.TestUtils;
+import com.epickur.api.business.OrderBusiness;
+import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
@@ -42,9 +44,8 @@ public class OrderDaoImplTest {
 	@BeforeClass
 	public static void beforeClass() throws IOException {
 		TestUtils.setupStripe();
-
-		userService = new UserService();
 		context = mock(ContainerRequestContext.class);
+		userService = new UserService(new UserBusiness(), new OrderBusiness(), context);
 		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 		idsToDeleteUser = new ArrayList<ObjectId>();
@@ -54,12 +55,12 @@ public class OrderDaoImplTest {
 	@AfterClass
 	public static void afterClass() throws EpickurException {
 		for (ObjectId id : idsToDeleteUser) {
-			userService.delete(id.toHexString(), context);
+			userService.delete(id.toHexString());
 		}
 		for (Entry<String, List<ObjectId>> entry : idsToDeleteOrder.entrySet()) {
 			List<ObjectId> list = entry.getValue();
 			for(ObjectId id : list){
-				userService.deleteOneOrder(entry.getKey(), id.toHexString(), context);
+				userService.deleteOneOrder(entry.getKey(), id.toHexString());
 			}
 		}
 	}

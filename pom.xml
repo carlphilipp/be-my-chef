@@ -163,7 +163,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Usefull for web site generated -->
+		<!-- Useful for web site generated -->
 		<dependency>
 			<groupId>org.kohsuke</groupId>
 			<artifactId>doxia-module-markdown</artifactId>
@@ -325,7 +325,6 @@
 			<version>3.1.4</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>

@@ -48,7 +48,7 @@ public class DishServiceTest extends InitMocks {
 	public void setUp() {
 		reset(dishBusiness);
 		reset(catererBusiness);
-		this.dishService = new DishService(dishBusiness, catererBusiness);
+		this.dishService = new DishService(dishBusiness, catererBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 	}
@@ -64,7 +64,7 @@ public class DishServiceTest extends InitMocks {
 		when(catererBusiness.read(anyString())).thenReturn(caterer);
 		when(dishBusiness.create((Dish) anyObject())).thenReturn(dishAfterCreate);
 
-		Response actual = dishService.create(dish, context);
+		Response actual = dishService.create(dish);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Dish actualDish = (Dish) actual.getEntity();
@@ -80,7 +80,7 @@ public class DishServiceTest extends InitMocks {
 
 		when(catererBusiness.read(anyString())).thenReturn(null);
 
-		Response actual = dishService.create(dish, context);
+		Response actual = dishService.create(dish);
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -98,7 +98,7 @@ public class DishServiceTest extends InitMocks {
 
 		when(dishBusiness.read(anyString())).thenReturn(dishAfterCreate);
 
-		Response actual = dishService.read(new ObjectId().toHexString(), context);
+		Response actual = dishService.read(new ObjectId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Dish actualDish = (Dish) actual.getEntity();
@@ -114,7 +114,7 @@ public class DishServiceTest extends InitMocks {
 
 		when(dishBusiness.read(anyString())).thenReturn(null);
 
-		Response actual = dishService.read(new ObjectId().toHexString(), context);
+		Response actual = dishService.read(new ObjectId().toHexString());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -133,7 +133,7 @@ public class DishServiceTest extends InitMocks {
 
 		when(dishBusiness.update((Dish) anyObject(), (Key) anyObject())).thenReturn(dishAfterCreate);
 
-		Response actual = dishService.update(dish.getId().toHexString(), dish, context);
+		Response actual = dishService.update(dish.getId().toHexString(), dish);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Dish actualDish = (Dish) actual.getEntity();
@@ -152,7 +152,7 @@ public class DishServiceTest extends InitMocks {
 
 		when(dishBusiness.update((Dish) anyObject(), (Key) anyObject())).thenReturn(null);
 
-		Response actual = dishService.update(dish.getId().toHexString(), dish, context);
+		Response actual = dishService.update(dish.getId().toHexString(), dish);
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -169,7 +169,7 @@ public class DishServiceTest extends InitMocks {
 
 		when(dishBusiness.delete(anyString(), (Key) anyObject())).thenReturn(true);
 
-		Response actual = dishService.delete(dish.getId().toHexString(), context);
+		Response actual = dishService.delete(dish.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
@@ -187,7 +187,7 @@ public class DishServiceTest extends InitMocks {
 
 		when(dishBusiness.delete(anyString(), (Key) anyObject())).thenReturn(false);
 
-		Response actual = dishService.delete(dish.getId().toHexString(), context);
+		Response actual = dishService.delete(dish.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -211,7 +211,7 @@ public class DishServiceTest extends InitMocks {
 				.thenReturn(dishes);
 
 		Response actual = dishService.search(TestUtils.generateRandomPickupDate(), TestUtils.generateRandomDishType().toString(), 1, "1,1",
-				TestUtils.generateRandomString(), 5, context);
+				TestUtils.generateRandomString(), 5);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		assertNotNull(actual.getEntity());

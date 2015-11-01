@@ -48,6 +48,9 @@ import com.epickur.api.validator.FactoryValidator;
 @Path("/caterers")
 public final class CatererService {
 
+	/** Context */
+	@Context
+	private ContainerRequestContext context;
 	/** Caterer Business */
 	private CatererBusiness catererBusiness;
 	/** Order Business */
@@ -64,11 +67,25 @@ public final class CatererService {
 		this.dishBusiness = new DishBusiness();
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
-	
-	public CatererService(final CatererBusiness catererBusiness, final OrderBusiness orderBusiness, final DishBusiness dishBusiness){
+
+	/**
+	 * Constructor with parameters.
+	 * 
+	 * @param catererBusiness
+	 *            The caterer business.
+	 * @param orderBusiness
+	 *            The order business.
+	 * @param dishBusiness
+	 *            The dish business.
+	 * @param context
+	 *            The context.
+	 */
+	public CatererService(final CatererBusiness catererBusiness, final OrderBusiness orderBusiness, final DishBusiness dishBusiness,
+			final ContainerRequestContext context) {
 		this.catererBusiness = catererBusiness;
 		this.orderBusiness = orderBusiness;
 		this.dishBusiness = dishBusiness;
+		this.context = context;
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
 
@@ -136,8 +153,6 @@ public final class CatererService {
 	/**
 	 * @param caterer
 	 *            The Caterer
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The response
@@ -145,7 +160,7 @@ public final class CatererService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(final Caterer caterer, @Context final ContainerRequestContext context) throws EpickurException {
+	public Response create(final Caterer caterer) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.CATERER);
 		validator.checkCreateCaterer(caterer);
@@ -213,14 +228,12 @@ public final class CatererService {
 	 *            The Caterer id
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
-	 * @param context
-	 *            The context
 	 * @return The response
 	 */
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") final String id, @Context final ContainerRequestContext context) throws EpickurException {
+	public Response read(@PathParam("id") final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.CATERER);
 		validator.checkId(id);
@@ -299,8 +312,6 @@ public final class CatererService {
 	 *            The Caterer id
 	 * @param caterer
 	 *            The Caterer
-	 * @param context
-	 *            The container context that contains the Key
 	 * @return The response
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -311,8 +322,7 @@ public final class CatererService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(
 			@PathParam("id") final String id,
-			final Caterer caterer,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			final Caterer caterer) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.CATERER);
 		validator.checkUpdateCaterer(id, caterer);
@@ -353,8 +363,6 @@ public final class CatererService {
 	/**
 	 * @param id
 	 *            The Caterer id
-	 * @param context
-	 *            The container context that contains the Key
 	 * @return The response
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
@@ -363,8 +371,7 @@ public final class CatererService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(
-			@PathParam("id") final String id,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			@PathParam("id") final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.CATERER);
 		validator.checkId(id);
@@ -432,15 +439,15 @@ public final class CatererService {
 	 */
 	// @formatter:on
 	/**
-	 * @param context
-	 *            The container context that contains the Key
-	 * @return The reponse
+	 * Read all caterers.
+	 * 
+	 * @return The response.
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an epickur exception occurred.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response readAll(@Context final ContainerRequestContext context) throws EpickurException {
+	public Response readAll() throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.CATERER);
 		List<Caterer> caterers = catererBusiness.readAll();
@@ -552,19 +559,18 @@ public final class CatererService {
 	// @formatter:on
 	/**
 	 * @param catererId
-	 *            The {@link Caterer} id
+	 *            The {@link Caterer} id.
 	 * @param context
-	 *            The container context that contains the Key
-	 * @return The response
+	 *            The container context that contains the Key.
+	 * @return The response.
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *             If an Epickur exception occurred.
 	 */
 	@GET
 	@Path("/{id}/dishes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readDishes(
-			@PathParam("id") final String catererId,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			@PathParam("id") final String catererId) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ_DISHES, EndpointType.CATERER);
 		validator.checkId(catererId);
@@ -608,8 +614,6 @@ public final class CatererService {
 	 *            The end date to filter on
 	 * @param format
 	 *            The date format
-	 * @param context
-	 *            The context
 	 * @return A Response
 	 * @throws EpickurException
 	 *             If an EpickurException occured
@@ -622,8 +626,7 @@ public final class CatererService {
 			@PathParam("id") final String id,
 			@QueryParam("startDate") final String start,
 			@QueryParam("endDate") final String end,
-			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.PAYEMENT_INFO, EndpointType.CATERER);
 		DateTime startDate = null;

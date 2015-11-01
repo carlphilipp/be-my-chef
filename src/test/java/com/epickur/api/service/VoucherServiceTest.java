@@ -45,7 +45,7 @@ public class VoucherServiceTest extends InitMocks {
 
 	@Before
 	public void setUp() {
-		this.voucherService = new VoucherService(voucherBusiness);
+		this.voucherService = new VoucherService(voucherBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
@@ -62,7 +62,7 @@ public class VoucherServiceTest extends InitMocks {
 		when(voucherBusiness.generate(anyInt(), (DiscountType) anyObject(), anyInt(), (ExpirationType) anyObject(), (DateTime) anyObject()))
 				.thenReturn(vouchers);
 
-		Response actual = voucherService.generate(1, DiscountType.AMOUNT, 1, ExpirationType.ONETIME, "05/05/2020", "MM/dd/yyyy", context);
+		Response actual = voucherService.generate(1, DiscountType.AMOUNT, 1, ExpirationType.ONETIME, "05/05/2020", "MM/dd/yyyy");
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Set<Voucher> actualVoucher = (Set<Voucher>) actual.getEntity();
@@ -77,7 +77,7 @@ public class VoucherServiceTest extends InitMocks {
 
 		when(voucherBusiness.read(anyString())).thenReturn(voucherAfterCreate);
 
-		Response actual = voucherService.read(Utils.generateRandomCode(), context);
+		Response actual = voucherService.read(Utils.generateRandomCode());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Voucher actualVoucher = (Voucher) actual.getEntity();
@@ -89,7 +89,7 @@ public class VoucherServiceTest extends InitMocks {
 	public void testReadVoucherNotFound() throws EpickurException {
 		when(voucherBusiness.read(anyString())).thenReturn(null);
 
-		Response actual = voucherService.read(Utils.generateRandomCode(), context);
+		Response actual = voucherService.read(Utils.generateRandomCode());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();

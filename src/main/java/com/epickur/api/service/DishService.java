@@ -45,6 +45,9 @@ import com.epickur.api.validator.FactoryValidator;
 @Path("/dishes")
 public final class DishService {
 
+	/** Context */
+	@Context
+	private ContainerRequestContext context;
 	/** Dish Business */
 	private DishBusiness dishBusiness;
 	/** Dish Business */
@@ -58,10 +61,21 @@ public final class DishService {
 		this.catererBusiness = new CatererBusiness();
 		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
 	}
-	
-	public DishService(final DishBusiness dishBusiness, final CatererBusiness catererBusiness) {
+
+	/**
+	 * Constructor with parameters.
+	 * 
+	 * @param dishBusiness
+	 *            The dish business.
+	 * @param catererBusiness
+	 *            The caterer business.
+	 * @param context
+	 *            The context.
+	 */
+	public DishService(final DishBusiness dishBusiness, final CatererBusiness catererBusiness, final ContainerRequestContext context) {
 		this.dishBusiness = dishBusiness;
 		this.catererBusiness = catererBusiness;
+		this.context = context;
 		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
 	}
 
@@ -154,8 +168,6 @@ public final class DishService {
 	/**
 	 * @param dish
 	 *            The Dish
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The response
@@ -163,7 +175,7 @@ public final class DishService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(final Dish dish, @Context final ContainerRequestContext context) throws EpickurException {
+	public Response create(final Dish dish) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		validator.checkCreateData(dish);
 		Caterer caterer = catererBusiness.read(dish.getCaterer().getId().toHexString());
@@ -267,14 +279,12 @@ public final class DishService {
 	 *            The Dish id
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
-	 * @param context
-	 *            The context
 	 * @return The response
 	 */
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") final String id, @Context final ContainerRequestContext context) throws EpickurException {
+	public Response read(@PathParam("id") final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.DISH);
 		validator.checkId(id);
@@ -389,8 +399,6 @@ public final class DishService {
 	 *            The Dish id
 	 * @param dish
 	 *            The Dish
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -399,7 +407,7 @@ public final class DishService {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(@PathParam("id") final String id, final Dish dish, @Context final ContainerRequestContext context) throws EpickurException {
+	public Response update(@PathParam("id") final String id, final Dish dish) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.DISH);
 		validator.checkUpdateData(id, dish);
@@ -436,8 +444,6 @@ public final class DishService {
 	/**
 	 * @param id
 	 *            The Dish id
-	 * @param context
-	 *            The container context that contains the Key
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 * @return The reponse
@@ -445,7 +451,7 @@ public final class DishService {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") final String id, @Context final ContainerRequestContext context) throws EpickurException {
+	public Response delete(@PathParam("id") final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.DISH);
 		validator.checkId(id);
@@ -555,22 +561,20 @@ public final class DishService {
 	// @formatter:on
 	/**
 	 * @param pickupdate
-	 *            The pickup date
+	 *            The pickup date.
 	 * @param types
-	 *            The list of Dish type
+	 *            The list of Dish type.
 	 * @param limit
-	 *            The limit ammount of result
+	 *            The limit amount of result.
 	 * @param searchtext
-	 *            The address
+	 *            The address.
 	 * @param at
-	 *            A geo localisation coordinate. lat,long
+	 *            A geo localisation coordinate. lat,long.
 	 * @param distance
-	 *            The distance
-	 * @param context
-	 *            The context
+	 *            The distance.
 	 * @throws EpickurException
-	 *             If an epickur exception occurred
-	 * @return The reponse
+	 *             If an epickur exception occurred.
+	 * @return The response.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -580,8 +584,7 @@ public final class DishService {
 			@DefaultValue("50") @QueryParam("limit") final Integer limit,
 			@QueryParam("at") final String at,
 			@QueryParam("searchtext") final String searchtext,
-			@DefaultValue("500") @QueryParam("distance") final Integer distance,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			@DefaultValue("500") @QueryParam("distance") final Integer distance) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.SEARCH_DISH, EndpointType.DISH);
 		validator.checkSearch(pickupdate, types, at, searchtext);

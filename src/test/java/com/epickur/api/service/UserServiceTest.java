@@ -61,7 +61,7 @@ public class UserServiceTest extends InitMocks {
 	public void setUp(){
 		reset(userBusiness);
 		reset(orderBusiness);
-		this.service = new UserService(userBusiness, orderBusiness);
+		this.service = new UserService(userBusiness, orderBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 	}
@@ -73,7 +73,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(userBusiness.create((User)anyObject(), anyBoolean())).thenReturn(userAfterCreate);
 		
-		Response actual = service.create(false, user, context);
+		Response actual = service.create(false, user);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		User actualUser = (User) actual.getEntity();
@@ -87,7 +87,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(userBusiness.read(anyString(), (Key) anyObject())).thenReturn(userAfterRead);
 		
-		Response actual = service.read(user.getId().toHexString(), context);
+		Response actual = service.read(user.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		User actualUser = (User) actual.getEntity();
@@ -100,7 +100,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(userBusiness.read(anyString(), (Key) anyObject())).thenReturn(null);
 		
-		Response actual = service.read(user.getId().toHexString(), context);
+		Response actual = service.read(user.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -115,7 +115,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterUpdate);
 		
-		Response actual = service.update(user.getId().toHexString(), user, context);
+		Response actual = service.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		User actualUser = (User) actual.getEntity();
@@ -128,7 +128,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(null);
 		
-		Response actual = service.update(user.getId().toHexString(), user, context);
+		Response actual = service.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -146,7 +146,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
 		
-		Response actual = service.update(user.getId().toHexString(), user, context);
+		Response actual = service.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		User actualUser = (User) actual.getEntity();
@@ -163,7 +163,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
 		
-		Response actual = service.update(user.getId().toHexString(), user, context);
+		Response actual = service.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		User actualUser = (User) actual.getEntity();
@@ -177,7 +177,7 @@ public class UserServiceTest extends InitMocks {
 
 		when(userBusiness.delete(anyString())).thenReturn(true);
 		
-		Response actual = service.delete(user.getId().toHexString(), context);
+		Response actual = service.delete(user.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
@@ -192,7 +192,7 @@ public class UserServiceTest extends InitMocks {
 
 		when(userBusiness.delete(anyString())).thenReturn(false);
 		
-		Response actual = service.delete(user.getId().toHexString(), context);
+		Response actual = service.delete(user.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -209,7 +209,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(userBusiness.readAll()).thenReturn(usersAfterReadAll);
 		
-		Response actual = service.readAll(context);
+		Response actual = service.readAll();
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		List<User> actualUsers = (List<User>) actual.getEntity();
@@ -224,7 +224,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(orderBusiness.create(anyString(), (Order) anyObject())).thenReturn(orderAfterCreate);
 		
-		Response actual = service.createOneOrder(orderAfterCreate.getId().toHexString(), order, context);
+		Response actual = service.createOneOrder(orderAfterCreate.getId().toHexString(), order);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Order actualUser = (Order) actual.getEntity();
@@ -239,7 +239,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(orderBusiness.read(anyString(), (Key) anyObject())).thenReturn(orderAfterRead);
 		
-		Response actual = service.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString(), context);
+		Response actual = service.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Order actualUser = (Order) actual.getEntity();
@@ -251,7 +251,7 @@ public class UserServiceTest extends InitMocks {
 			APIException {
 		when(orderBusiness.read(anyString(), (Key) anyObject())).thenReturn(null);
 		
-		Response actual = service.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString(), context);
+		Response actual = service.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -269,7 +269,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(orderBusiness.readAllWithUserId(anyString())).thenReturn(orders);
 		
-		Response actual = service.readAllOrders(new ObjectId().toHexString(), context);
+		Response actual = service.readAllOrders(new ObjectId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		List<Order> actualUsers = (List<Order>) actual.getEntity();
@@ -286,7 +286,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(orderBusiness.update((Order) anyObject(), (Key) anyObject())).thenReturn(orderAfterCreate);
 		
-		Response actual = service.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order, context);
+		Response actual = service.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Order actualUser = (Order) actual.getEntity();
@@ -301,7 +301,7 @@ public class UserServiceTest extends InitMocks {
 		
 		when(orderBusiness.update((Order) anyObject(), (Key) anyObject())).thenReturn(null);
 		
-		Response actual = service.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order, context);
+		Response actual = service.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -316,7 +316,7 @@ public class UserServiceTest extends InitMocks {
 
 		when(orderBusiness.delete(anyString())).thenReturn(true);
 		
-		Response actual = service.deleteOneOrder(new ObjectId().toHexString() ,order.getId().toHexString(), context);
+		Response actual = service.deleteOneOrder(new ObjectId().toHexString() ,order.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
@@ -332,7 +332,7 @@ public class UserServiceTest extends InitMocks {
 
 		when(orderBusiness.delete(anyString())).thenReturn(false);
 		
-		Response actual = service.deleteOneOrder(new ObjectId().toHexString() ,order.getId().toHexString(), context);
+		Response actual = service.deleteOneOrder(new ObjectId().toHexString() ,order.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -346,7 +346,7 @@ public class UserServiceTest extends InitMocks {
 		TextNode emailNode = JsonNodeFactory.instance.textNode("name@example.com");
 		node.set("email", emailNode);
 		
-		Response actual = service.resetPasswordFirstStep(node, context);
+		Response actual = service.resetPasswordFirstStep(node);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		ObjectNode actualNode = (ObjectNode) actual.getEntity();

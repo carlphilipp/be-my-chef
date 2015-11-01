@@ -68,7 +68,7 @@ public class CatererServiceTest {
 		reset(dishBusiness);
 		reset(context);
 		reset(report);
-		service = new CatererService(catererBusiness, orderBusiness, dishBusiness);
+		service = new CatererService(catererBusiness, orderBusiness, dishBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
@@ -81,7 +81,7 @@ public class CatererServiceTest {
 
 		when(catererBusiness.create((Caterer) anyObject())).thenReturn(catererAfterCreate);
 
-		Response actual = service.create(caterer, context);
+		Response actual = service.create(caterer);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Caterer actualUser = (Caterer) actual.getEntity();
@@ -95,7 +95,7 @@ public class CatererServiceTest {
 
 		when(catererBusiness.read(anyString())).thenReturn(catererAfterCreate);
 
-		Response actual = service.read(catererAfterCreate.getId().toHexString(), context);
+		Response actual = service.read(catererAfterCreate.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Caterer actualCaterer = (Caterer) actual.getEntity();
@@ -109,7 +109,7 @@ public class CatererServiceTest {
 
 		when(catererBusiness.read(anyString())).thenReturn(null);
 
-		Response actual = service.read(catererAfterCreate.getId().toHexString(), context);
+		Response actual = service.read(catererAfterCreate.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -127,7 +127,7 @@ public class CatererServiceTest {
 
 		when(catererBusiness.readAll()).thenReturn(caterers);
 
-		Response actual = service.readAll(context);
+		Response actual = service.readAll();
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		List<Caterer> actuals = (List<Caterer>) actual.getEntity();
@@ -145,7 +145,7 @@ public class CatererServiceTest {
 
 		when(dishBusiness.searchDishesForOneCaterer(anyString())).thenReturn(dishes);
 
-		Response actual = service.readDishes(caterer.getId().toHexString(), context);
+		Response actual = service.readDishes(caterer.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		List<Dish> actuals = (List<Dish>) actual.getEntity();
@@ -161,7 +161,7 @@ public class CatererServiceTest {
 
 		when(catererBusiness.update((Caterer) anyObject(), (Key) anyObject())).thenReturn(catererAfterCreate);
 
-		Response actual = service.update(caterer.getId().toHexString(), caterer, context);
+		Response actual = service.update(caterer.getId().toHexString(), caterer);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		Caterer actualCaterer = (Caterer) actual.getEntity();
@@ -178,7 +178,7 @@ public class CatererServiceTest {
 
 		when(catererBusiness.update((Caterer) anyObject(), (Key) anyObject())).thenReturn(null);
 
-		Response actual = service.update(caterer.getId().toHexString(), caterer, context);
+		Response actual = service.update(caterer.getId().toHexString(), caterer);
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -192,7 +192,7 @@ public class CatererServiceTest {
 
 		when(catererBusiness.delete(anyString())).thenReturn(true);
 
-		Response actual = service.delete(caterer.getId().toHexString(), context);
+		Response actual = service.delete(caterer.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
@@ -207,7 +207,7 @@ public class CatererServiceTest {
 
 		when(catererBusiness.delete(anyString())).thenReturn(false);
 
-		Response actual = service.delete(caterer.getId().toHexString(), context);
+		Response actual = service.delete(caterer.getId().toHexString());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();
@@ -233,7 +233,7 @@ public class CatererServiceTest {
 		when(report.getReport()).thenReturn(new byte[10]);
 		whenNew(Report.class).withNoArguments().thenReturn(report);
 
-		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), null, null, null, context);
+		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), null, null, null);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		assertEquals("attachment; filename =" + catererAfterCreate.getId().toHexString() + ".pdf", actual.getHeaderString("content-disposition"));
@@ -258,7 +258,7 @@ public class CatererServiceTest {
 		when(report.getReport()).thenReturn(new byte[10]);
 		whenNew(Report.class).withNoArguments().thenReturn(report);
 
-		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy", context);
+		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		assertEquals("application/json", actual.getMediaType().toString());
@@ -282,7 +282,7 @@ public class CatererServiceTest {
 
 		when(catererBusiness.read(anyString())).thenReturn(null);
 
-		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy", context);
+		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatus());
 		ErrorMessage error = (ErrorMessage) actual.getEntity();

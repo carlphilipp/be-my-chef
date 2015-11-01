@@ -39,6 +39,9 @@ import com.epickur.api.validator.VoucherValidator;
 @Path("/vouchers")
 public final class VoucherService {
 
+	/** Context */
+	@Context
+	private ContainerRequestContext context;
 	/** User Business */
 	private VoucherBusiness voucherBusiness;
 	/** User validator */
@@ -51,9 +54,18 @@ public final class VoucherService {
 		this.voucherBusiness = new VoucherBusiness();
 		this.validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
 	}
-	
-	public VoucherService(final VoucherBusiness voucherBusiness) {
+
+	/**
+	 * Constructor with parameters.
+	 * 
+	 * @param voucherBusiness
+	 *            The voucher business.
+	 * @param context
+	 *            The context.
+	 */
+	public VoucherService(final VoucherBusiness voucherBusiness, final ContainerRequestContext context) {
 		this.voucherBusiness = voucherBusiness;
+		this.context = context;
 		this.validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
 	}
 
@@ -90,8 +102,6 @@ public final class VoucherService {
 	/**
 	 * @param code
 	 *            The voucher code
-	 * @param context
-	 *            The container context
 	 * @return A response
 	 * @throws EpickurException
 	 *             If an EpickurException occured
@@ -99,7 +109,7 @@ public final class VoucherService {
 	@GET
 	@Path("/{code}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("code") final String code, @Context final ContainerRequestContext context) throws EpickurException {
+	public Response read(@PathParam("code") final String code) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.VOUCHER);
 		validator.checkVoucherCode(code);
@@ -170,8 +180,6 @@ public final class VoucherService {
 	 *            The expiration date. Only relevant if expiration type is until
 	 * @param format
 	 *            The expiration date format. If not provided MM/dd/yyyy
-	 * @param context
-	 *            The container context
 	 * @return The response
 	 * @throws EpickurException
 	 *             If an EpickurException occured
@@ -185,8 +193,7 @@ public final class VoucherService {
 			@QueryParam("discount") final Integer discount,
 			@QueryParam("expirationType") final ExpirationType expirationType,
 			@QueryParam("expiration") final String expiration,
-			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format,
-			@Context final ContainerRequestContext context) throws EpickurException {
+			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.GENERATE_VOUCHER, EndpointType.VOUCHER);
 		validator.checkVoucherGenerate(count, discountType, discount, expirationType, expiration, format);
