@@ -82,7 +82,7 @@ public final class Email {
 	 * @param sendTo
 	 *            The list of email to send to
 	 */
-	private void configure(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
+	protected void configure(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
 		this.subject = emailSubjectTxt;
 		this.message = emailMsgTxt;
 		this.sendTo = sendTo;
@@ -103,7 +103,7 @@ public final class Email {
 	/**
 	 * Actual send the email
 	 */
-	private void send() {
+	protected void send() {
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		request.setHttpClient(httpClient);
 		MandrillMessageRequest mmr = new MandrillMessageRequest();

@@ -19,7 +19,7 @@ import com.epickur.api.utils.Security;
 
 public class EmailUtilsTest extends InitMocks {
 
-	private static final String EMAIL_TEST = "cp.harmant@gmail.com";
+	private static final String EMAIL_TEST = "example@example.com";
 
 	private SequenceDAOImpl dao = new SequenceDAOImpl();
 
