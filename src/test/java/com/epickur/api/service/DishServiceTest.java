@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -16,10 +15,10 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
@@ -46,11 +45,14 @@ public class DishServiceTest extends InitMocks {
 
 	@Before
 	public void setUp() {
-		reset(dishBusiness);
-		reset(catererBusiness);
-		this.dishService = new DishService(dishBusiness, catererBusiness, context);
+		dishService = new DishService(dishBusiness, catererBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
-		Mockito.when(context.getProperty("key")).thenReturn(key);
+		when(context.getProperty("key")).thenReturn(key);
+	}
+	
+	@After
+	public void tearDown() {
+		dishService = null;
 	}
 
 	@Test

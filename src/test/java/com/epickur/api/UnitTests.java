@@ -15,6 +15,7 @@ import com.epickur.api.business.KeyBusinessTest;
 import com.epickur.api.business.OrderBusinessTest;
 import com.epickur.api.business.UserBusinessTest;
 import com.epickur.api.business.VoucherBusinessTest;
+import com.epickur.api.dao.mongo.OrderDAOTest;
 import com.epickur.api.entity.AddressTest;
 import com.epickur.api.entity.CatererTest;
 import com.epickur.api.entity.DishTest;
@@ -123,6 +124,8 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		LoginServiceTest.class,
 		LogoutServiceTest.class,
 		UserServiceTest.class,
+		
+		OrderDAOTest.class,
 
 		// .utils
 		UtilsTest.class,
@@ -147,7 +150,7 @@ import com.epickur.api.validator.VoucherValidatorTest;
 public class UnitTests {
 
 	@BeforeClass
-	public static void beforeClass() throws IOException {
+	public static void setUpBeforeClass() throws IOException {
 		InputStreamReader in = new InputStreamReader(AllTests.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);

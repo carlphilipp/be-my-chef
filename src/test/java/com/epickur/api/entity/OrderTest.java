@@ -3,6 +3,7 @@ package com.epickur.api.entity;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -16,8 +17,13 @@ import com.stripe.exception.InvalidRequestException;
 public class OrderTest {
 	
 	@BeforeClass
-	public static void beforeClass() {
+	public static void setUpBeforeClass() {
 		TestUtils.setupStripe();
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		TestUtils.resetStripe();
 	}
 
 	@Test

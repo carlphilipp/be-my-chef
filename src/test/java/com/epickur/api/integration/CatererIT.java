@@ -47,7 +47,7 @@ public class CatererIT {
 	private static String name;
 
 	@BeforeClass
-	public static void beforeClass() throws IOException, EpickurException {
+	public static void setUpBeforeClass() throws IOException, EpickurException {
 		InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);

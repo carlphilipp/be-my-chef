@@ -34,9 +34,31 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	/** Database collection */
 	private MongoCollection<Document> coll;
 
-	/** Init function */
-	protected final void initDB() {
+	/**
+	 * Constructor.
+	 */
+	public CrudDAO() {
 		this.db = MongoDb.getInstance();
+	}
+
+	/**
+	 * Constructor with parameters.
+	 * 
+	 * @param db
+	 *            The database to inject.
+	 */
+	public CrudDAO(final MongoDatabase db) {
+		this.db = db;
+	}
+
+	/**
+	 * Initialize the collection.
+	 * 
+	 * @param collection
+	 *            The collection.
+	 */
+	protected void initCollection(final String collection) {
+		this.coll = getDb().getCollection(collection);
 	}
 
 	@Override
@@ -156,15 +178,5 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 */
 	protected final MongoCollection<Document> getColl() {
 		return coll;
-	}
-
-	/**
-	 * Setter
-	 * 
-	 * @param coll
-	 *            The DBCollection to set
-	 */
-	protected final void setColl(final MongoCollection<Document> coll) {
-		this.coll = coll;
 	}
 }

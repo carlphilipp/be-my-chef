@@ -40,7 +40,7 @@ public class AccessRightsDishIT {
 	private static ObjectMapper mapper;
 
 	@BeforeClass
-	public static void beforeClass() throws IOException {
+	public static void setUpBeforeClass() throws IOException {
 		InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);

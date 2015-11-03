@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,7 +36,12 @@ public class CatererBusinessTest extends InitMocks {
 
 	@Before
 	public void setUp() {
-		this.catererBusiness = new CatererBusiness(catererDAOMock);
+		catererBusiness = new CatererBusiness(catererDAOMock);
+	}
+	
+	@After
+	public void tearDown() {
+		catererBusiness = null;
 	}
 
 	@Test

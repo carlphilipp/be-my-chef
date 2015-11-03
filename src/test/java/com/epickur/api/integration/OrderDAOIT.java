@@ -37,7 +37,7 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 
-public class OrderDaoImplIT extends InitMocks {
+public class OrderDAOIT extends InitMocks {
 
 	private static List<ObjectId> idsToDeleteUser;
 	private static Map<String, List<ObjectId>> idsToDeleteOrder;
@@ -46,14 +46,15 @@ public class OrderDaoImplIT extends InitMocks {
 	private ContainerRequestContext context;
 
 	@BeforeClass
-	public static void beforeClass() throws IOException {
+	public static void setUpBeforeClass() throws IOException {
 		TestUtils.setupStripe();
 		idsToDeleteUser = new ArrayList<ObjectId>();
 		idsToDeleteOrder = new HashMap<String, List<ObjectId>>();
 	}
-
+	
 	@AfterClass
-	public static void afterClass() throws EpickurException {
+	public static void tearDownAfterClass() throws Exception {
+		TestUtils.resetStripe();
 		for (ObjectId id : idsToDeleteUser) {
 			userService.delete(id.toHexString());
 		}

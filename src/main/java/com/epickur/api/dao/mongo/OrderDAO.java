@@ -1,5 +1,7 @@
 package com.epickur.api.dao.mongo;
 
+import static com.epickur.api.utils.Info.ORDER_COLL;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 
 /**
  * Order DAO access with CRUD operations.
@@ -30,15 +33,19 @@ public class OrderDAO extends CrudDAO<Order> {
 
 	/** Constructor */
 	public OrderDAO() {
-		init();
+		super();
+		initCollection(ORDER_COLL);
 	}
 
 	/**
-	 * Init function
+	 * Constructor with parameters.
+	 * 
+	 * @param db
+	 *            The database to inject.
 	 */
-	private void init() {
-		super.initDB();
-		setColl(getDb().getCollection("orders"));
+	public OrderDAO(final MongoDatabase db) {
+		super(db);
+		initCollection(ORDER_COLL);
 	}
 
 	@Override

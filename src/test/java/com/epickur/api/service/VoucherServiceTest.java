@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,10 +46,15 @@ public class VoucherServiceTest extends InitMocks {
 
 	@Before
 	public void setUp() {
-		this.voucherService = new VoucherService(voucherBusiness, context);
+		voucherService = new VoucherService(voucherBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
+	}
+	
+	@After
+	public void tearDown() {
+		voucherService = null;
 	}
 
 	@SuppressWarnings("unchecked")

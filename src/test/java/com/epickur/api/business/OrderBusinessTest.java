@@ -7,11 +7,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import org.bson.types.ObjectId;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -73,15 +73,13 @@ public class OrderBusinessTest {
 	private EmailUtils emailUtilsMock;
 
 	@Before
-	public void setUp() throws EpickurException {
-		reset(voucherBusinessMock);
-		reset(userDAOMock);
-		reset(orderDAOMock);
-		reset(seqDAOMock);
-		reset(stripePayementMock);
-		reset(chargeMock);
-		reset(emailUtilsMock);
-		this.orderBusiness = new OrderBusiness(orderDAOMock, userDAOMock, seqDAOMock, voucherBusinessMock, emailUtilsMock);
+	public void setUp() {
+		orderBusiness = new OrderBusiness(orderDAOMock, userDAOMock, seqDAOMock, voucherBusinessMock, emailUtilsMock);
+	}
+	
+	@After
+	public void tearDown() {
+		orderBusiness = null;
 	}
 	
 	@Test

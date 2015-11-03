@@ -36,15 +36,8 @@ public class DishDAO extends CrudDAO<Dish> {
 
 	/** Constructor */
 	public DishDAO() {
-		init();
-	}
-
-	/**
-	 * Init function
-	 */
-	private void init() {
-		super.initDB();
-		setColl(getDb().getCollection("dishes"));
+		super();
+		initCollection("dishes");
 	}
 
 	@Override

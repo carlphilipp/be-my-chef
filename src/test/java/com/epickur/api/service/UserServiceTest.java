@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -17,6 +16,8 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,17 +54,25 @@ public class UserServiceTest extends InitMocks {
 	private ContainerRequestContext context;
 	
 	@BeforeClass
-	public static void beforeClass() throws Exception {
+	public static void setUpBeforeClass() throws Exception {
 		TestUtils.setupStripe();
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		TestUtils.resetStripe();
 	}
 	
 	@Before
 	public void setUp(){
-		reset(userBusiness);
-		reset(orderBusiness);
-		this.service = new UserService(userBusiness, orderBusiness, context);
+		service = new UserService(userBusiness, orderBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
+	}
+	
+	@After
+	public void tearDown() {
+		service = null;
 	}
 
 	@Test

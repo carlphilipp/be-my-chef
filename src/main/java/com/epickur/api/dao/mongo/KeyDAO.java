@@ -28,15 +28,8 @@ public class KeyDAO extends CrudDAO<Key> {
 
 	/** Constructor */
 	public KeyDAO() {
-		init();
-	}
-
-	/**
-	 * Init function
-	 */
-	private void init() {
-		super.initDB();
-		setColl(getDb().getCollection("keys"));
+		super();
+		initCollection("keys");
 	}
 
 	@Override

@@ -68,7 +68,7 @@ public class UserIT {
 	private static ObjectMapper mapper;
 
 	@BeforeClass
-	public static void beforeClass() {
+	public static void setUpBeforeClass() {
 		try {
 			mapper = new ObjectMapper();
 			InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));

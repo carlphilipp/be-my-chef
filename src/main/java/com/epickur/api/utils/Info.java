@@ -51,7 +51,9 @@ public final class Info {
 	public static final String FOLDER;
 	/** Web address */
 	public static final String WEB_ADDRESS;
-	/** Admins */
+	/** Administrators */
 	public static List<String> admins;
+	
+	public static String ORDER_COLL = "orders";
 
 }

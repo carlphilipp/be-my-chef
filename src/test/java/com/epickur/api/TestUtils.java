@@ -112,6 +112,10 @@ public class TestUtils {
 			IOUtils.closeQuietly(in);
 		}
 	}
+	
+	public static void resetStripe(){
+		Stripe.apiKey = null;
+	}
 
 	public static Caterer getCaererObject(final String json) throws EpickurException {
 		Caterer caterer = null;

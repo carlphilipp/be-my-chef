@@ -28,15 +28,8 @@ public class CatererDAO extends CrudDAO<Caterer> {
 
 	/** Constructor */
 	public CatererDAO() {
-		init();
-	}
-
-	/**
-	 * Init function
-	 */
-	private void init() {
-		super.initDB();
-		setColl(getDb().getCollection("caterers"));
+		super();
+		initCollection("caterers");
 	}
 
 	@Override

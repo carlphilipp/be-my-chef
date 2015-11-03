@@ -46,7 +46,7 @@ public class AccessRightsOrderIT {
 	private static User user;
 
 	@BeforeClass
-	public static void beforeClass() throws IOException, EpickurException {
+	public static void setUpBeforeClass() throws IOException, EpickurException {
 		InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
@@ -64,9 +64,10 @@ public class AccessRightsOrderIT {
 		user = TestUtils.createUserAndLogin();
 		TestUtils.setupDB();
 	}
-
+	
 	@AfterClass
-	public static void afterClass() throws IOException {
+	public static void tearDownAfterClass() throws Exception {
+		TestUtils.resetStripe();
 		TestUtils.cleanDB();
 	}
 

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -17,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,21 +58,26 @@ public class CatererServiceTest {
 	private Report report;
 
 	@BeforeClass
-	public static void beforeClass() {
+	public static void setUpBeforeClass() {
 		TestUtils.setupStripe();
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		TestUtils.resetStripe();
 	}
 
 	@Before
 	public void setUp() {
-		reset(catererBusiness);
-		reset(orderBusiness);
-		reset(dishBusiness);
-		reset(context);
-		reset(report);
 		service = new CatererService(catererBusiness, orderBusiness, dishBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
+	}
+	
+	@After
+	public void tearDown() {
+		service = null;
 	}
 
 	@Test

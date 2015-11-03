@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -14,10 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -38,9 +36,6 @@ import com.epickur.api.geocoder.here.GeocoderHereImpl;
 @PrepareForTest(DishBusiness.class)
 public class DishBusinessTest {
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
 	private DishBusiness dishBusiness;
 	@Mock
 	private DishDAO dishDAOMock;
@@ -53,11 +48,16 @@ public class DishBusinessTest {
 
 	@Before
 	public void setUp() {
-		reset(dishDAOMock);
-		this.key = new Key();
+		key = new Key();
 		key.setRole(Role.ADMIN);
 		key.setUserId(new ObjectId());
-		this.dishBusiness = new DishBusiness(dishDAOMock);
+		dishBusiness = new DishBusiness(dishDAOMock);
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		dishBusiness = null;
+		key = null;
 	}
 
 	@Test

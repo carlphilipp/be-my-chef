@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,9 +38,13 @@ public class VoucherBusinessTest extends InitMocks {
 	private VoucherDAO voucherDAO;
 
 	@Before
-	public void before() {
-		reset(voucherDAO);
-		this.voucherBusiness = new VoucherBusiness(voucherDAO);
+	public void setUp() {
+		voucherBusiness = new VoucherBusiness(voucherDAO);
+	}
+	
+	@After
+	public void tearDown() {
+		voucherBusiness = null;
 	}
 	
 	@Test

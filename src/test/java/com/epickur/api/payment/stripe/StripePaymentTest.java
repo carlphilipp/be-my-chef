@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -52,9 +53,14 @@ public class StripePaymentTest {
 	
 	
 	@BeforeClass
-	public static void beforeClass() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
+	public static void setUpBeforeClass() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		TestUtils.setupStripe();
 		TOKEN = Token.create(TestUtils.getTokenParam());
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		TestUtils.resetStripe();
 	}
 	
 	@SuppressWarnings("unchecked")

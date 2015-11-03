@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -28,9 +29,14 @@ public class LogoutServiceTest extends InitMocks {
 	
 	@Before
 	public void setUp(){
-		this.logoutService = new LogoutService(keyBusiness);
+		logoutService = new LogoutService(keyBusiness);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
+	}
+	
+	@After
+	public void tearDown() {
+		logoutService = null;
 	}
 
 	@Test

@@ -24,15 +24,8 @@ public final class LogDAO extends CrudDAO<Log> {
 
 	/** Constructor */
 	public LogDAO() {
-		init();
-	}
-
-	/**
-	 * Init function
-	 */
-	private void init() {
-		super.initDB();
-		setColl(getDb().getCollection("logs"));
+		super();
+		initCollection("logs");
 	}
 
 	@Override

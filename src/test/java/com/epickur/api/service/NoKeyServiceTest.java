@@ -4,13 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,18 +44,25 @@ public class NoKeyServiceTest extends InitMocks {
 	private ContainerRequestContext context;
 	
 	@BeforeClass
-	public static void beforeClass() {
+	public static void setUpBeforeClass() {
 		TestUtils.setupStripe();
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		TestUtils.resetStripe();
 	}
 
 	@Before
 	public void setUp() {
-		reset(userBusiness);
-		reset(orderBusiness);
-		reset(context);
-		this.service = new NoKeyService(userBusiness, orderBusiness);
+		service = new NoKeyService(userBusiness, orderBusiness);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
+	}
+	
+	@After
+	public void tearDown() {
+		service = null;
 	}
 
 	@Test

@@ -6,10 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import org.bson.types.ObjectId;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,10 +42,12 @@ public class UserBusinessTest extends InitMocks {
 
 	@Before
 	public void setUp() {
-		reset(userDAOMock);
-		reset(keyBusinessMock);
-		reset(emailUtilsMock);
-		this.userBusiness = new UserBusiness(userDAOMock, keyBusinessMock, emailUtilsMock);
+		userBusiness = new UserBusiness(userDAOMock, keyBusinessMock, emailUtilsMock);
+	}
+	
+	@After
+	public void tearDown() {
+		userBusiness = null;
 	}
 
 	@Test

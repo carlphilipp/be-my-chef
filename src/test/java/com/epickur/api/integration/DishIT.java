@@ -58,7 +58,7 @@ public class DishIT {
 	private static String jsonMimeType = "application/json";
 
 	@BeforeClass
-	public static void beforeClass() throws IOException, EpickurException {
+	public static void setUpBeforeClass() throws IOException, EpickurException {
 		TestUtils.setupDB();
 		InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();

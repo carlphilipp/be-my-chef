@@ -31,15 +31,8 @@ public class UserDAO extends CrudDAO<User> {
 
 	/** Constructor */
 	public UserDAO() {
-		init();
-	}
-
-	/**
-	 * Init function
-	 */
-	private void init() {
-		super.initDB();
-		setColl(getDb().getCollection("users"));
+		super();
+		initCollection("users");
 	}
 
 	@Override

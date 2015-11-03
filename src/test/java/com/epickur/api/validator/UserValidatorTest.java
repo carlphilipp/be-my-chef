@@ -1,6 +1,7 @@
 package com.epickur.api.validator;
 
 import org.bson.types.ObjectId;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,8 +25,13 @@ import com.stripe.exception.InvalidRequestException;
 public class UserValidatorTest {
 
 	@BeforeClass
-	public static void beforeClass() {
+	public static void setUpBeforeClass() {
 		TestUtils.setupStripe();
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		TestUtils.resetStripe();
 	}
 
 	@Rule

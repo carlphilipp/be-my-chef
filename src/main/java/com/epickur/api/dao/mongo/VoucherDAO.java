@@ -38,15 +38,8 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 
 	/** Constructor */
 	public VoucherDAO() {
-		init();
-	}
-
-	/**
-	 * Init function
-	 */
-	private void init() {
-		super.initDB();
-		setColl(getDb().getCollection("vouchers"));
+		super();
+		initCollection("vouchers");
 	}
 
 	@Override

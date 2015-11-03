@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,8 +19,13 @@ import com.stripe.model.Token;
 public class StripePaymentIT {
 	
 	@BeforeClass
-	public static void beforeClass() {
+	public static void setUpBeforeClass() {
 		TestUtils.setupStripe();
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		TestUtils.resetStripe();
 	}
 
 	@Test

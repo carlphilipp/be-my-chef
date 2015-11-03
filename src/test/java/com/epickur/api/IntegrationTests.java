@@ -13,7 +13,7 @@ import com.epickur.api.integration.AccessRightsOrderIT;
 import com.epickur.api.integration.AccessRightsUserIT;
 import com.epickur.api.integration.CatererIT;
 import com.epickur.api.integration.DishIT;
-import com.epickur.api.integration.OrderDaoImplIT;
+import com.epickur.api.integration.OrderDAOIT;
 import com.epickur.api.integration.StripePaymentIT;
 import com.epickur.api.integration.UserIT;
 
@@ -27,12 +27,12 @@ import com.epickur.api.integration.UserIT;
 		DishIT.class,
 		StripePaymentIT.class,
 		UserIT.class,
-		OrderDaoImplIT.class,
+		OrderDAOIT.class
 })
 public class IntegrationTests {
 	
 	@BeforeClass
-	public static void beforeClass() throws IOException {
+	public static void setUpBeforeClass() throws IOException {
 		TestUtils.cleanDB();
 	}
 }
