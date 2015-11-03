@@ -80,6 +80,11 @@ public class OrderDAO extends CrudDAO<Order> {
 			return null;
 		}
 	}
+	
+	@Override
+	public boolean delete(final String id) throws EpickurException {
+		throw new NotImplementedException();
+	}
 
 	@Override
 	public List<Order> readAll() throws EpickurException {

@@ -28,6 +28,7 @@ import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Order;
 import com.epickur.api.exception.EpickurDBException;
+import com.epickur.api.exception.EpickurException;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -39,7 +40,7 @@ public class OrderDAOTest extends InitMocks {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
+
 	private OrderDAO dao;
 	@Mock
 	private MongoDatabase dbMock;
@@ -118,6 +119,18 @@ public class OrderDAOTest extends InitMocks {
 		assertNotNull(actual);
 		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 		verify(collMock, times(1)).find(query);
+	}
+
+	@Test
+	public void testReadMongoException() throws Exception {
+		thrown.expect(EpickurDBException.class);
+
+		String orderId = new ObjectId().toHexString();
+		Document query = new Document().append("_id", new ObjectId(orderId));
+
+		when(collMock.find(query)).thenThrow(new MongoException(""));
+
+		dao.read(orderId);
 	}
 
 	@Test
@@ -241,5 +254,13 @@ public class OrderDAOTest extends InitMocks {
 		DateTime start = new DateTime().minusDays(5);
 		DateTime end = new DateTime().plusDays(5);
 		dao.readAllWithCatererId(catererId, start, end);
+	}
+
+	@Test
+	public void testDelete() throws EpickurException {
+		thrown.expect(NotImplementedException.class);
+
+		String orderId = new ObjectId().toHexString();
+		dao.delete(orderId);
 	}
 }
