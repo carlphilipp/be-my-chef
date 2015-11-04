@@ -188,7 +188,7 @@ public final class EmailTemplate {
 	public static Map<String, String> convertToDataNewOrderUser(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@NAME@@", user.getName());
+		data.put("@@FIRST@@", user.getFirst());
 		data.put("@@READABLE_ORDER_ID@@", order.getReadableId());
 		data.put("@@ORDER_ID@@", order.getId().toHexString());
 		data.put("@@DISH_NAME@@", order.getDish().getName());

@@ -10,7 +10,7 @@
 		"file":"registration_admin.html"
 	},
 	"order_user_new": {
-		"subject":"BE MY CHEF - We have received your order!",
+		"subject":"BE MY CHEF - We have received your order #@@READABLE_ORDER_ID@@!",
 		"folder":"order/new",
 		"file":"order_user_new.html"
 	},
@@ -25,7 +25,7 @@
 		"file":"order_caterer_new.html"
 	},
 	"order_user_declined": {
-		"subject":"BE MY CHEF - Order declined #@@READABLE_ORDER_ID@@",
+		"subject":"BE MY CHEF - Your order #@@READABLE_ORDER_ID@@ has been declined",
 		"folder":"order/decline",
 		"file":"order_user_declined.html"
 	},
@@ -35,7 +35,7 @@
 		"file":"order_admins_declined.html"
 	},
 	"order_user_success": {
-		"subject":"BE MY CHEF - Your order has been accepted!",
+		"subject":"BE MY CHEF - Your order #@@READABLE_ORDER_ID@@ has been accepted!",
 		"folder":"order/accept/success",
 		"file":"order_user_success.html"
 	},
