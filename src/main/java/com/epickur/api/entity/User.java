@@ -118,6 +118,7 @@ public class User extends AbstractMainDBEntity {
 	public void prepareForInsertionIntoDB() {
 		super.prepareForInsertionIntoDB();
 		this.setKey(null);
+		this.setRole(Role.USER);
 	}
 
 	@Override

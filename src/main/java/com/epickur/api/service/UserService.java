@@ -139,7 +139,7 @@ public final class UserService {
 		// We add to the header the check code. Can be useful for tests or developers.
 		return Response.ok().entity(result).header("check", result.getCode()).build();
 	}
-
+ 
 	// @formatter:off
 	/** 
 	 * 
