@@ -304,8 +304,8 @@ public class EmailUtils {
 	 * @param resetCode
 	 *            The reset code
 	 */
-	public void resetPassword(final String email, final String userId, final String resetCode) {
-		Map<String, String> emailData = EmailTemplate.convertToDataResetUserPassword(email, userId, resetCode);
-		this.email.sendMail(EmailType.RESET_USER_PASSWORD, emailData, new String[] { email });
+	public void resetPassword(final User user, final String resetCode) {
+		Map<String, String> emailData = EmailTemplate.convertToDataResetUserPassword(user, resetCode);
+		this.email.sendMail(EmailType.RESET_USER_PASSWORD, emailData, new String[] { user.getEmail() });
 	}
 }

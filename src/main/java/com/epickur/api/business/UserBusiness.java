@@ -305,7 +305,7 @@ public class UserBusiness {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 		}
 		String resetCode = Security.createResetCode(user.getId(), email);
-		this.emailUtils.resetPassword(email, user.getId().toHexString(), resetCode);
+		this.emailUtils.resetPassword(user, resetCode);
 	}
 
 	/**

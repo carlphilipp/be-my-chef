@@ -441,12 +441,13 @@ public final class EmailTemplate {
 	 *            The reset code
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataResetUserPassword(final String email, final String userId, final String resetCode) {
+	public static Map<String, String> convertToDataResetUserPassword(final User user, final String resetCode) {
 		Map<String, String> data = new HashMap<String, String>();
+		data.put("@@FIRST@@", user.getFirst());
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@USER_EMAIL@@", email);
+		data.put("@@USER_EMAIL@@", user.getEmail());
 		data.put("@@RESET_CODE@@", resetCode);
-		data.put("@@USER_ID@@", userId);
+		data.put("@@USER_ID@@", user.getId().toHexString());
 		data.put("@@WEB_ADDRESS@@", Info.WEB_ADDRESS);
 		return data;
 	}

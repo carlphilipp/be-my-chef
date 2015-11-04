@@ -140,6 +140,11 @@ public class EmailUtilsTest extends InitMocks {
 
 	@Test
 	public void emailResetPassword() throws EpickurException {
-		emailUtils.resetPassword("cp.harmant@gmail.com", new ObjectId().toHexString(), Security.generateRandomMd5());
+		User user = new User();
+		user.setName("carl");
+		user.setEmail(EMAIL_TEST);
+		user.setId(new ObjectId());
+		
+		emailUtils.resetPassword(user, Security.generateRandomMd5());
 	}
 }
