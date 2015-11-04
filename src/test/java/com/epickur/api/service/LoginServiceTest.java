@@ -8,9 +8,9 @@ import static org.mockito.Mockito.when;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
@@ -22,22 +22,17 @@ import com.epickur.api.exception.EpickurException;
 
 public class LoginServiceTest extends InitMocks {
 
-	private LoginService loginService;
 	@Mock
 	private UserBusiness userBusiness;
 	@Mock
 	private ContainerRequestContext context;
+	@InjectMocks
+	private LoginService loginService;
 	
 	@Before
 	public void setUp(){
-		loginService = new LoginService(userBusiness);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
-	}
-	
-	@After
-	public void tearDown() {
-		loginService = null;
 	}
 
 	@Test

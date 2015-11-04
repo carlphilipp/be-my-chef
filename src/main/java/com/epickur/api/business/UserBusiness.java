@@ -56,23 +56,6 @@ public class UserBusiness {
 	}
 
 	/**
-	 * Construct a UserBusiness. Mainly used by test to inject mocking.
-	 * 
-	 * @param userDAO
-	 *            The UserDAO
-	 * @param keyBusiness
-	 *            The KeyBusiness
-	 * @param emailUtils
-	 *            The email utils
-	 */
-	public UserBusiness(final UserDAO userDAO, final KeyBusiness keyBusiness, final EmailUtils emailUtils) {
-		this.userDAO = userDAO;
-		this.keyBusiness = keyBusiness;
-		this.validator = (UserValidator) FactoryValidator.getValidator("user");
-		this.emailUtils = emailUtils;
-	}
-
-	/**
 	 * Create a User
 	 * 
 	 * @param user

@@ -67,28 +67,7 @@ public final class CatererService {
 		this.dishBusiness = new DishBusiness();
 		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
 	}
-
-	/**
-	 * Constructor with parameters.
-	 * 
-	 * @param catererBusiness
-	 *            The caterer business.
-	 * @param orderBusiness
-	 *            The order business.
-	 * @param dishBusiness
-	 *            The dish business.
-	 * @param context
-	 *            The context.
-	 */
-	public CatererService(final CatererBusiness catererBusiness, final OrderBusiness orderBusiness, final DishBusiness dishBusiness,
-			final ContainerRequestContext context) {
-		this.catererBusiness = catererBusiness;
-		this.orderBusiness = orderBusiness;
-		this.dishBusiness = dishBusiness;
-		this.context = context;
-		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
-	}
-
+	
 	// @formatter:off
 	/**
 	 * @api {post} /caterers Create a new Caterer

@@ -103,7 +103,6 @@ public class UserIT {
 			HttpPost request = new HttpPost(URL);
 			StringEntity requestEntity = new StringEntity(json.toString());
 			request.addHeader("content-type", jsonMimeType);
-			request.addHeader("email-agent", "false");
 			request.setEntity(requestEntity);
 
 			// Create request
@@ -168,7 +167,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -216,7 +214,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -250,7 +247,6 @@ public class UserIT {
 		request = new HttpPost(URL);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -294,7 +290,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -351,7 +346,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -408,7 +402,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -477,7 +470,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -500,7 +492,6 @@ public class UserIT {
 
 		HttpPut putRequest = new HttpPut(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
 		putRequest.addHeader("content-type", jsonMimeType);
-		putRequest.addHeader("email-agent", "false");
 		putRequest.setEntity(requestEntity);
 
 		// Put request
@@ -544,7 +535,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -600,7 +590,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -642,7 +631,6 @@ public class UserIT {
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create Order request
@@ -698,7 +686,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -767,7 +754,6 @@ public class UserIT {
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "true");
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create Order request
@@ -828,7 +814,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -884,7 +869,6 @@ public class UserIT {
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
 		request.addHeader("charge-agent", "false");
-		request.addHeader("email-agent", "false");
 
 		// Create Order request
 		httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -956,7 +940,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -1013,7 +996,6 @@ public class UserIT {
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
 		request.addHeader("charge-agent", "false");
-		request.addHeader("email-agent", "false");
 
 		// Create Order request
 		httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -1102,7 +1084,6 @@ public class UserIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -1144,7 +1125,6 @@ public class UserIT {
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create Order request
@@ -1176,7 +1156,6 @@ public class UserIT {
 		HttpGet httpGet = new HttpGet(URL_EXECUTE_ORDER + "/users/" + id + "/orders/" + orderId + "?confirm=" + confirm + "&ordercode=" + orderCode);
 		httpGet.addHeader("content-type", jsonMimeType);
 		httpGet.addHeader("charge-agent", "false");
-		httpGet.addHeader("email-agent", "false");
 		httpResponse = HttpClientBuilder.create().build().execute(httpGet);
 		in = new InputStreamReader(httpResponse.getEntity().getContent());
 		br = new BufferedReader(in);

@@ -34,17 +34,6 @@ public class CatererBusiness {
 	}
 
 	/**
-	 * Constructor with parameters.
-	 * 
-	 * @param dao
-	 *            the dao.
-	 */
-	public CatererBusiness(final CatererDAO dao) {
-		this.dao = dao;
-		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
-	}
-
-	/**
 	 * Create a {@link Caterer}
 	 * 
 	 * @param caterer

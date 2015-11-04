@@ -28,16 +28,6 @@ public final class LogoutService {
 		this.keyBusiness = new KeyBusiness();
 	}
 
-	/**
-	 * Constructor with paremeters.
-	 * 
-	 * @param keyBusiness
-	 *            The key business.
-	 */
-	public LogoutService(final KeyBusiness keyBusiness) {
-		this.keyBusiness = keyBusiness;
-	}
-
 	// @formatter:off
 	/** 
 	 * 

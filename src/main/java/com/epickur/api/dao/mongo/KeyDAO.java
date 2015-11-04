@@ -1,5 +1,6 @@
 package com.epickur.api.dao.mongo;
 
+import static com.epickur.api.utils.Info.KEY_COLL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class KeyDAO extends CrudDAO<Key> {
 	/** Constructor */
 	public KeyDAO() {
 		super();
-		initCollection("keys");
+		initCollection(KEY_COLL);
 	}
 
 	@Override

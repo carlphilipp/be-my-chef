@@ -9,11 +9,10 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import org.bson.types.ObjectId;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
@@ -31,24 +30,15 @@ public class UserBusinessTest extends InitMocks {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-
-	private UserBusiness userBusiness;
+	
 	@Mock
 	private UserDAO userDAOMock;
 	@Mock
 	private KeyBusiness keyBusinessMock;
 	@Mock
 	private EmailUtils emailUtilsMock;
-
-	@Before
-	public void setUp() {
-		userBusiness = new UserBusiness(userDAOMock, keyBusinessMock, emailUtilsMock);
-	}
-	
-	@After
-	public void tearDown() {
-		userBusiness = null;
-	}
+	@InjectMocks
+	private UserBusiness userBusiness;
 
 	@Test
 	public void testCreate() throws EpickurException {

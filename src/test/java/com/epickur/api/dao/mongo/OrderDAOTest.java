@@ -1,6 +1,12 @@
 package com.epickur.api.dao.mongo;
 
 import static com.epickur.api.utils.Info.ORDER_COLL;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,20 +17,16 @@ import org.apache.commons.lang.NotImplementedException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Order;
 import com.epickur.api.exception.EpickurDBException;
@@ -35,12 +37,11 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 
-public class OrderDAOTest extends InitMocks {
+public class OrderDAOTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
-	private OrderDAO dao;
+
 	@Mock
 	private MongoDatabase dbMock;
 	@Mock
@@ -49,6 +50,8 @@ public class OrderDAOTest extends InitMocks {
 	private FindIterable<Document> findIteratble;
 	@Mock
 	private MongoCursor<Document> cursor;
+	@InjectMocks
+	private OrderDAO dao;
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
@@ -62,18 +65,8 @@ public class OrderDAOTest extends InitMocks {
 
 	@Before
 	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
 		when(dbMock.getCollection(ORDER_COLL)).thenReturn(collMock);
-		dao = new OrderDAO(dbMock);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		dao = null;
-	}
-
-	@Test
-	public void testDBParameters() {
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 	}
 
 	@Test
@@ -84,7 +77,6 @@ public class OrderDAOTest extends InitMocks {
 		Order actual = dao.create(order);
 
 		assertNotNull(actual);
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 		verify(collMock, times(1)).insertOne(document);
 	}
 
@@ -95,7 +87,7 @@ public class OrderDAOTest extends InitMocks {
 		Order order = TestUtils.generateRandomOrder();
 		Document document = order.getDocumentDBView();
 
-		Mockito.doThrow(new MongoException("")).when(collMock).insertOne(document);
+		doThrow(new MongoException("")).when(collMock).insertOne(document);
 
 		Order actual = dao.create(order);
 
@@ -116,8 +108,19 @@ public class OrderDAOTest extends InitMocks {
 		Order actual = dao.read(orderId);
 
 		assertNotNull(actual);
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 		verify(collMock, times(1)).find(query);
+	}
+
+	@Test
+	public void testReadMongoException() throws Exception {
+		thrown.expect(EpickurDBException.class);
+
+		String orderId = new ObjectId().toHexString();
+		Document query = new Document().append("_id", new ObjectId(orderId));
+
+		when(collMock.find(query)).thenThrow(new MongoException(""));
+
+		dao.read(orderId);
 	}
 
 	@Test
@@ -127,7 +130,6 @@ public class OrderDAOTest extends InitMocks {
 		String orderId = "myId";
 
 		dao.read(orderId);
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 	}
 
 	@Test
@@ -140,7 +142,6 @@ public class OrderDAOTest extends InitMocks {
 		Order actual = dao.update(order);
 
 		assertNotNull(actual);
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 		verify(collMock, times(1)).findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject());
 	}
 
@@ -153,7 +154,6 @@ public class OrderDAOTest extends InitMocks {
 		Order actual = dao.update(order);
 
 		assertNull(actual);
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 		verify(collMock, times(1)).findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject());
 	}
 
@@ -192,7 +192,6 @@ public class OrderDAOTest extends InitMocks {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 		verify(collMock, times(1)).find(query);
 		verify(cursor, times(1)).close();
 	}
@@ -214,7 +213,7 @@ public class OrderDAOTest extends InitMocks {
 		String catererId = new ObjectId().toHexString();
 		Document found = TestUtils.generateRandomOrder().getDocumentDBView();
 
-		when(collMock.find((Document) anyObject())).thenReturn(findIteratble);
+		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
@@ -225,7 +224,6 @@ public class OrderDAOTest extends InitMocks {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 		verify(collMock, times(1)).find((Document) anyObject());
 		verify(cursor, times(1)).close();
 	}

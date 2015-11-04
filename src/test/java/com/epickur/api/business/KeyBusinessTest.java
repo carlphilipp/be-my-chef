@@ -10,11 +10,8 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
@@ -24,23 +21,11 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 
 public class KeyBusinessTest extends InitMocks {
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
-	private KeyBusiness keyBusiness;
+	
 	@Mock
 	private KeyDAO keyDAOMock;
-
-	@Before
-	public void setUp() {
-		keyBusiness = new KeyBusiness(keyDAOMock);
-	}
-	
-	@After
-	public void tearDown() {
-		keyBusiness = null;
-	}
+	@InjectMocks
+	private KeyBusiness keyBusiness;
 
 	@Test
 	public void testCreate() throws EpickurException {

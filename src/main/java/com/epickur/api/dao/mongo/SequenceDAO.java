@@ -54,7 +54,7 @@ public class SequenceDAO {
 		Document change = new Document(sequenceField, new BsonInt32(1));
 		Document update = new Document("$inc", change);
 		try {
-			Document res = (Document) this.coll.findOneAndUpdate(query, update);
+			Document res = (Document) coll.findOneAndUpdate(query, update);
 			LOG.debug("Read next Order id");
 			if (res != null) {
 				return Integer.toHexString(Integer.parseInt(res.get(sequenceField).toString()));

@@ -26,10 +26,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -41,9 +39,7 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "role", "phoneNumber", "zipcode", "state", "country", "allow",
 		"key", "allow", "createdAt", "updatedAt" })
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class User extends AbstractMainDBEntity {
@@ -140,10 +136,10 @@ public class User extends AbstractMainDBEntity {
 
 	/**
 	 * @param json
-	 *            The json strng
+	 *            The json string
 	 * @return The User
 	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 *             If an Epickur exception occurred
 	 */
 	private static User getJsonStringAsUser(final String json) throws EpickurParsingException {
 		try {

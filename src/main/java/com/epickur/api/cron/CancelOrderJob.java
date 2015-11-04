@@ -39,9 +39,9 @@ public final class CancelOrderJob implements Job {
 	 * Constructs a Cancel Order Job
 	 */
 	public CancelOrderJob() {
-		this.orderDAO = new OrderDAO();
-		this.userDAO = new UserDAO();
-		this.emailUtils = new EmailUtils();
+		orderDAO = new OrderDAO();
+		userDAO = new UserDAO();
+		emailUtils = new EmailUtils();
 	}
 
 	@Override

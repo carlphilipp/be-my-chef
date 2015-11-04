@@ -55,5 +55,18 @@ public final class Info {
 	public static List<String> admins;
 	
 	public static String ORDER_COLL = "orders";
-
+	
+	public static String USER_COLL = "users";
+	
+	public static String DISH_COLL = "dishes";
+	
+	public static String CATERER_COLL = "caterers";
+	
+	public static String VOUCHER_COLL = "vouchers";
+	
+	public static String KEY_COLL = "keys";
+	
+	public static String LOG_COLL = "logs";
+	
+	public static String SEQUENCE_COLL = "seq";
 }

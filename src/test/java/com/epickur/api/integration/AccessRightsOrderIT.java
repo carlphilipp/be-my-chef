@@ -86,7 +86,6 @@ public class AccessRightsOrderIT {
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("charge-agent", "true");
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -235,7 +234,6 @@ public class AccessRightsOrderIT {
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("charge-agent", "true");
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -406,7 +404,6 @@ public class AccessRightsOrderIT {
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("charge-agent", "true");
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);

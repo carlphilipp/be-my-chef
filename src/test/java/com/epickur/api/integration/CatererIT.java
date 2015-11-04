@@ -97,7 +97,6 @@ public class CatererIT {
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(caterer.toString());
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -115,7 +114,7 @@ public class CatererIT {
 	}
 
 	@AfterClass
-	public static void afterClass() throws ClientProtocolException, IOException {
+	public static void tearDownAfterClass() throws ClientProtocolException, IOException {
 		if (id != null) {
 			String jsonMimeType = "application/json";
 			// Delete

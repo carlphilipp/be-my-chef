@@ -79,7 +79,7 @@ public class DishIT {
 	}
 
 	@AfterClass
-	public static void afterClass() throws EpickurException, IOException {
+	public static void tearDownAfterClass() throws EpickurException, IOException {
 		TestUtils.cleanDB();
 	}
 

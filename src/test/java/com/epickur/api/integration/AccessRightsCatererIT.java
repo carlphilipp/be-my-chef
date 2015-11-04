@@ -52,7 +52,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@AfterClass
-	public static void afterClass() throws IOException {
+	public static void tearDownAfterClass() throws IOException {
 		TestUtils.cleanDB();
 	}
 

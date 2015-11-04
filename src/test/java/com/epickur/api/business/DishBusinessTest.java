@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -36,13 +37,14 @@ import com.epickur.api.geocoder.here.GeocoderHereImpl;
 @PrepareForTest(DishBusiness.class)
 public class DishBusinessTest {
 
-	private DishBusiness dishBusiness;
 	@Mock
 	private DishDAO dishDAOMock;
 	@Mock
 	private GeocoderHereImpl geoCoder;
 	@Mock
 	private Geo geo;
+	@InjectMocks
+	private DishBusiness dishBusiness;
 
 	private Key key;
 
@@ -51,12 +53,10 @@ public class DishBusinessTest {
 		key = new Key();
 		key.setRole(Role.ADMIN);
 		key.setUserId(new ObjectId());
-		dishBusiness = new DishBusiness(dishDAOMock);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		dishBusiness = null;
 		key = null;
 	}
 

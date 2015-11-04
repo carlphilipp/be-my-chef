@@ -38,16 +38,6 @@ public class VoucherBusiness {
 	}
 
 	/**
-	 * Constructor with parameters.
-	 * 
-	 * @param voucherDAO
-	 *            The voucher dao
-	 */
-	public VoucherBusiness(final VoucherDAO voucherDAO) {
-		this.voucherDAO = voucherDAO;
-	}
-
-	/**
 	 * @param code
 	 *            The Voucher code
 	 * @return A Voucher

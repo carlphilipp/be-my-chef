@@ -56,7 +56,7 @@ public class AccessRightsUserIT {
 	}
 
 	@AfterClass
-	public static void afterClass() throws IOException {
+	public static void tearDownAfterClass() throws IOException {
 		TestUtils.cleanDB();
 	}
 
@@ -73,7 +73,6 @@ public class AccessRightsUserIT {
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
 
@@ -166,7 +165,6 @@ public class AccessRightsUserIT {
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
 
@@ -320,7 +318,6 @@ public class AccessRightsUserIT {
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
-		request.addHeader("email-agent", "false");
 		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
 

@@ -62,23 +62,6 @@ public final class DishService {
 		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
 	}
 
-	/**
-	 * Constructor with parameters.
-	 * 
-	 * @param dishBusiness
-	 *            The dish business.
-	 * @param catererBusiness
-	 *            The caterer business.
-	 * @param context
-	 *            The context.
-	 */
-	public DishService(final DishBusiness dishBusiness, final CatererBusiness catererBusiness, final ContainerRequestContext context) {
-		this.dishBusiness = dishBusiness;
-		this.catererBusiness = catererBusiness;
-		this.context = context;
-		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
-	}
-
 	// @formatter:off
 	/**
 	 * @api {post} /dishes Create a new Dish

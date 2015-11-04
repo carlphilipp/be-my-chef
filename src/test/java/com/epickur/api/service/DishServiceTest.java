@@ -15,9 +15,9 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
@@ -35,24 +35,19 @@ import com.epickur.api.exception.EpickurException;
 
 public class DishServiceTest extends InitMocks {
 
-	private DishService dishService;
 	@Mock
 	private DishBusiness dishBusiness;
 	@Mock
 	private CatererBusiness catererBusiness;
 	@Mock
-	private ContainerRequestContext context;	
+	private ContainerRequestContext context;
+	@InjectMocks
+	private DishService dishService;
 
 	@Before
 	public void setUp() {
-		dishService = new DishService(dishBusiness, catererBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
-	}
-	
-	@After
-	public void tearDown() {
-		dishService = null;
 	}
 
 	@Test

@@ -1,5 +1,6 @@
 package com.epickur.api.dao.mongo;
 
+import static com.epickur.api.utils.Info.VOUCHER_COLL;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.lt;
@@ -39,7 +40,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 	/** Constructor */
 	public VoucherDAO() {
 		super();
-		initCollection("vouchers");
+		initCollection(VOUCHER_COLL);
 	}
 
 	@Override
