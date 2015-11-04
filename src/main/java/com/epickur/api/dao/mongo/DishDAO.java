@@ -1,5 +1,7 @@
 package com.epickur.api.dao.mongo;
 
+import static com.epickur.api.utils.Info.DISH_COLL;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class DishDAO extends CrudDAO<Dish> {
 	/** Constructor */
 	public DishDAO() {
 		super();
-		initCollection("dishes");
+		initCollection(DISH_COLL);
 	}
 
 	@Override

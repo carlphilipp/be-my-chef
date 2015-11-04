@@ -28,12 +28,9 @@ public final class CleanKeysJob implements Job {
 
 	/** Constructor */
 	public CleanKeysJob() {
-		this.keyDao = new KeyDAO();
+		keyDao = new KeyDAO();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
-	 */
 	@Override
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
 		LOG.info("Clean keys job starting...");

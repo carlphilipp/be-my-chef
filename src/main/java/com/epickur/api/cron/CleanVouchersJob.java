@@ -25,7 +25,7 @@ public final class CleanVouchersJob implements Job {
 
 	/** Constructor */
 	public CleanVouchersJob() {
-		this.voucherBusiness = new VoucherBusiness();
+		voucherBusiness = new VoucherBusiness();
 	}
 
 	@Override

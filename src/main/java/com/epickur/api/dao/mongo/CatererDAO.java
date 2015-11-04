@@ -1,5 +1,7 @@
 package com.epickur.api.dao.mongo;
 
+import static com.epickur.api.utils.Info.CATERER_COLL;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	/** Constructor */
 	public CatererDAO() {
 		super();
-		initCollection("caterers");
+		initCollection(CATERER_COLL);
 	}
 
 	@Override

@@ -15,11 +15,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
@@ -35,26 +33,18 @@ import com.epickur.api.utils.Utils;
 
 public class VoucherServiceTest extends InitMocks {
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
-	private VoucherService voucherService;
 	@Mock
 	private VoucherBusiness voucherBusiness;
 	@Mock
 	private ContainerRequestContext context;
+	@InjectMocks
+	private VoucherService voucherService;
 
 	@Before
 	public void setUp() {
-		voucherService = new VoucherService(voucherBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
-	}
-	
-	@After
-	public void tearDown() {
-		voucherService = null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -90,7 +80,7 @@ public class VoucherServiceTest extends InitMocks {
 		assertNotNull(actualVoucher);
 		assertNotNull(actualVoucher.getCode());
 	}
-	
+
 	@Test
 	public void testReadVoucherNotFound() throws EpickurException {
 		when(voucherBusiness.read(anyString())).thenReturn(null);

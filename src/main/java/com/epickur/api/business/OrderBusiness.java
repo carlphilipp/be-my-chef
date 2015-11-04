@@ -60,30 +60,6 @@ public class OrderBusiness {
 	}
 
 	/**
-	 * Constructor with parameter.
-	 * 
-	 * @param orderDAO
-	 *            The order dao.
-	 * @param userDAO
-	 *            The user dao.
-	 * @param seqDAO
-	 *            The sequence dao.
-	 * @param voucherBusiness
-	 *            The voucher business.
-	 * @param emailUtils
-	 *            The email utils.
-	 */
-	public OrderBusiness(final OrderDAO orderDAO, final UserDAO userDAO, final SequenceDAO seqDAO,
-			final VoucherBusiness voucherBusiness, final EmailUtils emailUtils) {
-		this.orderDAO = orderDAO;
-		this.userDAO = userDAO;
-		this.seqDAO = seqDAO;
-		this.voucherBusiness = voucherBusiness;
-		this.validator = (UserValidator) FactoryValidator.getValidator("user");
-		this.emailUtils = emailUtils;
-	}
-
-	/**
 	 * Create an Order
 	 * 
 	 * @param userId

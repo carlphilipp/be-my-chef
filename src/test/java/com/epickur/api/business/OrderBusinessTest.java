@@ -11,12 +11,11 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import org.bson.types.ObjectId;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -54,7 +53,6 @@ public class OrderBusinessTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	private OrderBusiness orderBusiness;
 	@Mock 
 	private VoucherBusiness voucherBusinessMock;
 	@Mock
@@ -71,16 +69,8 @@ public class OrderBusinessTest {
 	private Charge chargeMock;
 	@Mock
 	private EmailUtils emailUtilsMock;
-
-	@Before
-	public void setUp() {
-		orderBusiness = new OrderBusiness(orderDAOMock, userDAOMock, seqDAOMock, voucherBusinessMock, emailUtilsMock);
-	}
-	
-	@After
-	public void tearDown() {
-		orderBusiness = null;
-	}
+	@InjectMocks
+	private OrderBusiness orderBusiness;
 	
 	@Test
 	public void testCreate() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,

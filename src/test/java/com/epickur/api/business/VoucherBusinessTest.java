@@ -12,11 +12,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
@@ -32,20 +31,11 @@ public class VoucherBusinessTest extends InitMocks {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-
-	private VoucherBusiness voucherBusiness;
+	
 	@Mock
 	private VoucherDAO voucherDAO;
-
-	@Before
-	public void setUp() {
-		voucherBusiness = new VoucherBusiness(voucherDAO);
-	}
-	
-	@After
-	public void tearDown() {
-		voucherBusiness = null;
-	}
+	@InjectMocks
+	private VoucherBusiness voucherBusiness;
 	
 	@Test
 	public void testRead() throws EpickurException{

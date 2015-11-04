@@ -29,10 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -44,9 +42,7 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "readableId", "userId", "description", "quantity", "amount", "status", "currency", "pickupdate", "cardToken", "chargeId",
 		"paid", "dish", "voucher", "createdBy", "createdAt", "updatedAt" })
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public final class Order extends AbstractMainDBEntity {

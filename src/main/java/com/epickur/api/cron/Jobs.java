@@ -40,15 +40,15 @@ public final class Jobs {
 	private int orderMaxTime;
 
 	/**
-	 * Concstruct a Jobs
+	 * Construct a Jobs
 	 * 
 	 * @throws SchedulerException
 	 *             If a SchedulerException occured
 	 */
 	private Jobs() throws SchedulerException {
-		this.prop = Utils.getEpickurProperties();
-		this.scheduler = new StdSchedulerFactory().getScheduler();
-		this.orderMaxTime = Integer.parseInt(prop.getProperty("cron.order.timelimit"));
+		prop = Utils.getEpickurProperties();
+		scheduler = new StdSchedulerFactory().getScheduler();
+		orderMaxTime = Integer.parseInt(prop.getProperty("cron.order.timelimit"));
 	}
 
 	/**

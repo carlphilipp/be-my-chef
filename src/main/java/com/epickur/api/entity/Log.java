@@ -12,10 +12,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -27,9 +25,7 @@ import lombok.ToString;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "time", "url", "args", "method", "protocol", "remoteAddr", "userAgent" })
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public final class Log extends AbstractMainDBEntity {

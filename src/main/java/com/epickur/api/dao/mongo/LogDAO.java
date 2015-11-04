@@ -50,4 +50,9 @@ public final class LogDAO extends CrudDAO<Log> {
 	public Log update(final Log obj) throws EpickurException {
 		throw new NotImplementedException();
 	}
+	
+	@Override
+	public boolean delete(final String id){
+		throw new NotImplementedException();
+	}
 }

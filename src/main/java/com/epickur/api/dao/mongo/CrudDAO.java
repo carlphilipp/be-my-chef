@@ -42,16 +42,6 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	}
 
 	/**
-	 * Constructor with parameters.
-	 * 
-	 * @param db
-	 *            The database to inject.
-	 */
-	public CrudDAO(final MongoDatabase db) {
-		this.db = db;
-	}
-
-	/**
 	 * Initialize the collection.
 	 * 
 	 * @param collection
@@ -132,7 +122,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 */
 	protected final boolean deleteDocument(final Document filter) throws EpickurDBException {
 		try {
-			return this.isDeleted(getColl().deleteOne(filter));
+			return isDeleted(getColl().deleteOne(filter));
 		} catch (MongoException e) {
 			throw new EpickurDBException("delete", e.getMessage(), filter, e);
 		}

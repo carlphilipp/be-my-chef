@@ -16,12 +16,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -45,7 +45,6 @@ import com.epickur.api.report.Report;
 @PrepareForTest(CatererService.class)
 public class CatererServiceTest {
 
-	private CatererService service;
 	@Mock
 	private CatererBusiness catererBusiness;
 	@Mock
@@ -56,6 +55,8 @@ public class CatererServiceTest {
 	private ContainerRequestContext context;
 	@Mock
 	private Report report;
+	@InjectMocks
+	private CatererService service;
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
@@ -69,15 +70,9 @@ public class CatererServiceTest {
 
 	@Before
 	public void setUp() {
-		service = new CatererService(catererBusiness, orderBusiness, dishBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
-	}
-	
-	@After
-	public void tearDown() {
-		service = null;
 	}
 
 	@Test

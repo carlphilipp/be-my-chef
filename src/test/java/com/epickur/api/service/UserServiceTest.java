@@ -16,11 +16,11 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -45,13 +45,14 @@ import com.stripe.exception.InvalidRequestException;
 
 public class UserServiceTest extends InitMocks {
 	
-	private UserService service;
 	@Mock
 	private UserBusiness userBusiness;
 	@Mock
 	private OrderBusiness orderBusiness;
 	@Mock
 	private ContainerRequestContext context;
+	@InjectMocks
+	private UserService service;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -65,14 +66,8 @@ public class UserServiceTest extends InitMocks {
 	
 	@Before
 	public void setUp(){
-		service = new UserService(userBusiness, orderBusiness, context);
 		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
-	}
-	
-	@After
-	public void tearDown() {
-		service = null;
 	}
 
 	@Test

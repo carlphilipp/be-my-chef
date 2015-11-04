@@ -1,5 +1,7 @@
 package com.epickur.api.dao.mongo;
 
+import static com.epickur.api.utils.Info.USER_COLL;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class UserDAO extends CrudDAO<User> {
 	/** Constructor */
 	public UserDAO() {
 		super();
-		initCollection("users");
+		initCollection(USER_COLL);
 	}
 
 	@Override

@@ -10,11 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
@@ -27,22 +24,10 @@ import com.epickur.api.exception.EpickurException;
 
 public class CatererBusinessTest extends InitMocks {
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
-	private CatererBusiness catererBusiness;
 	@Mock
 	private CatererDAO catererDAOMock;
-
-	@Before
-	public void setUp() {
-		catererBusiness = new CatererBusiness(catererDAOMock);
-	}
-	
-	@After
-	public void tearDown() {
-		catererBusiness = null;
-	}
+	@InjectMocks
+	private CatererBusiness catererBusiness;
 
 	@Test
 	public void testCreate() throws EpickurException {

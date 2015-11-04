@@ -42,9 +42,9 @@ public final class AmazonWebServices {
 		Properties prop = Utils.getEpickurProperties();
 		String accessKeyId = prop.getProperty("aws.access.KeyId");
 		String secretKey = prop.getProperty("aws.secretKey");
-		this.bucketName = prop.getProperty("aws.bucket");
+		bucketName = prop.getProperty("aws.bucket");
 		BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKeyId, secretKey);
-		this.s3client = new AmazonS3Client(awsCreds);
+		s3client = new AmazonS3Client(awsCreds);
 	}
 
 	/**

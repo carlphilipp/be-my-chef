@@ -55,20 +55,6 @@ public final class VoucherService {
 		this.validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
 	}
 
-	/**
-	 * Constructor with parameters.
-	 * 
-	 * @param voucherBusiness
-	 *            The voucher business.
-	 * @param context
-	 *            The context.
-	 */
-	public VoucherService(final VoucherBusiness voucherBusiness, final ContainerRequestContext context) {
-		this.voucherBusiness = voucherBusiness;
-		this.context = context;
-		this.validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
-	}
-
 	// @formatter:off
 	/**
 	 * @api {get} /vouchers/:code Get a voucher

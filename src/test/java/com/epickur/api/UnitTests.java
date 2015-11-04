@@ -15,7 +15,14 @@ import com.epickur.api.business.KeyBusinessTest;
 import com.epickur.api.business.OrderBusinessTest;
 import com.epickur.api.business.UserBusinessTest;
 import com.epickur.api.business.VoucherBusinessTest;
+import com.epickur.api.dao.mongo.CatererDAOTest;
+import com.epickur.api.dao.mongo.DishDAOTest;
+import com.epickur.api.dao.mongo.KeyDAOTest;
+import com.epickur.api.dao.mongo.LogDAOTest;
 import com.epickur.api.dao.mongo.OrderDAOTest;
+import com.epickur.api.dao.mongo.SequenceDAOTest;
+import com.epickur.api.dao.mongo.UserDAOTest;
+import com.epickur.api.dao.mongo.VoucherDAOTest;
 import com.epickur.api.entity.AddressTest;
 import com.epickur.api.entity.CatererTest;
 import com.epickur.api.entity.DishTest;
@@ -124,8 +131,16 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		LoginServiceTest.class,
 		LogoutServiceTest.class,
 		UserServiceTest.class,
+		LogDAOTest.class,
+		SequenceDAOTest.class,
 		
 		OrderDAOTest.class,
+		UserDAOTest.class,
+		CatererDAOTest.class,
+		DishDAOTest.class,
+		VoucherDAOTest.class,
+		KeyDAOTest.class,
+		LogDAOTest.class,
 
 		// .utils
 		UtilsTest.class,

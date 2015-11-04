@@ -60,23 +60,6 @@ public final class UserService {
 		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
 
-	/**
-	 * Constructor with parameters.
-	 * 
-	 * @param userBusiness
-	 *            The user business.
-	 * @param orderBusiness
-	 *            The order business.
-	 * @param context
-	 *            The context.
-	 */
-	public UserService(final UserBusiness userBusiness, final OrderBusiness orderBusiness, final ContainerRequestContext context) {
-		this.userBusiness = userBusiness;
-		this.orderBusiness = orderBusiness;
-		this.context = context;
-		this.validator = (UserValidator) FactoryValidator.getValidator("user");
-	}
-
 	// @formatter:off
 	/**
 	 * @api {post} /users Create a new User
@@ -85,7 +68,6 @@ public final class UserService {
 	 * @apiGroup Users
 	 * @apiPermission admin only
 	 * 
-	 * @apiParam (Request: Header Parameter) {Boolean} email-agent Set as false if no emails should be sent. For tests only.
 	 * @apiParam (Request: Header Parameter) {Boolean} validate-agent Set as true for the user to be allowed without verification. For tests only.
 	 * 
 	 * @apiParam (Request: JSON Object) {String} name Name of the User.

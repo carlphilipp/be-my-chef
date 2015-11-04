@@ -19,6 +19,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.epickur.api.InitMocks;
@@ -41,9 +42,14 @@ public class OrderDAOIT extends InitMocks {
 
 	private static List<ObjectId> idsToDeleteUser;
 	private static Map<String, List<ObjectId>> idsToDeleteOrder;
-	private static UserService userService;
+	@Mock
+	private OrderBusiness orderBusiness;
+	@Mock
+	private UserBusiness userBusiness;
 	@Mock
 	private ContainerRequestContext context;
+	@InjectMocks
+	private static UserService userService;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
@@ -70,7 +76,6 @@ public class OrderDAOIT extends InitMocks {
 	public void setUp() {
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
-		userService = new UserService(new UserBusiness(), new OrderBusiness(), context);
 	}
 
 	@Test
