@@ -209,7 +209,8 @@ public final class EmailTemplate {
 	public static Map<String, String> convertToDataNewOrderCaterer(final User user, final Order order, final String orderCode) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@USER_NAME@@", user.getName());
+		data.put("@@USER_FIRST@@", user.getFirst());
+		data.put("@@USER_LAST@@", user.getLast());
 		data.put("@@USER_ID@@", user.getId().toHexString());
 		data.put("@@ORDER_ID@@", order.getId().toHexString());
 		data.put("@@READABLE_ORDER_ID@@", order.getReadableId());
@@ -217,6 +218,10 @@ public final class EmailTemplate {
 		data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
 		data.put("@@WEB_ADDRESS@@", Info.WEB_ADDRESS);
 		data.put("@@ORDER_CODE@@", orderCode);
+		data.put("@@ORDER_QUANTITY@@", order.getQuantity().toString());
+		data.put("@@ORDER_AMOUNT@@", String.valueOf((order.getAmount() / 100.0)));
+		data.put("@@ORDER_CURRENCY@@", order.getCurrency().getSymbol());
+		data.put("@@ORDER_PICKUP_DATE@@", order.getPickupdate());
 		return data;
 	}
 
