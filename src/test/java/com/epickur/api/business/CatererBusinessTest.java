@@ -10,11 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
@@ -22,13 +23,18 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 
-public class CatererBusinessTest extends InitMocks {
+public class CatererBusinessTest {
 
 	@Mock
 	private CatererDAO catererDAOMock;
 	@InjectMocks
 	private CatererBusiness catererBusiness;
-
+	
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
+	
 	@Test
 	public void testCreate() throws EpickurException {
 		Caterer caterer = TestUtils.generateRandomCatererWithoutId();

@@ -1,5 +1,15 @@
 package com.epickur.api.filter;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -11,18 +21,8 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import org.mockito.MockitoAnnotations;
 
-import java.io.IOException;
-
-import static org.mockito.Mockito.never;
-
-import com.epickur.api.InitMocks;
 import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
@@ -30,7 +30,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 
-public class KeyRequestFilterTest extends InitMocks {
+public class KeyRequestFilterTest {
 
 	private static final String KEY_PROPERTY = "key";
 
@@ -52,6 +52,8 @@ public class KeyRequestFilterTest extends InitMocks {
 
 	@Before
 	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		
 		filter = new KeyRequestFilter(dao);
 
 		validKey = new Key();

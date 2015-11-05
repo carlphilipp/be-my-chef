@@ -11,15 +11,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.business.KeyBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.SuccessMessage;
 import com.epickur.api.exception.EpickurException;
 
-public class LogoutServiceTest extends InitMocks {
+public class LogoutServiceTest {
 
 	@Mock
 	private KeyBusiness keyBusiness;
@@ -30,6 +30,8 @@ public class LogoutServiceTest extends InitMocks {
 
 	@Before
 	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 	}

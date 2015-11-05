@@ -27,22 +27,22 @@ public final class MongoDBDumpJob implements Job {
 	@Override
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
 		LOG.info("Start DB dump...");
-		MongoDBDump m = new MongoDBDump(Utils.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
-		boolean exported = m.exportMongo();
+		MongoDBDump mongoDBDump = new MongoDBDump(Utils.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
+		boolean exported = mongoDBDump.exportMongo();
 		LOG.info("DB dump done");
 		if (exported) {
 			LOG.info("Creating tar.gz...");
-			List<String> list = m.getListFiles();
-			Utils.createTarGz(list, m.getCurrentFullPathName());
-			LOG.info("tar.gz generated: " + m.getCurrentFullPathName());
+			List<String> list = mongoDBDump.getListFiles();
+			Utils.createTarGz(list, mongoDBDump.getCurrentFullPathName());
+			LOG.info("tar.gz generated: " + mongoDBDump.getCurrentFullPathName());
 
 			AmazonWebServices aws = new AmazonWebServices();
 			aws.deleteOldFile();
-			aws.uploadFile(m.getCurrentFullPathName());
+			aws.uploadFile(mongoDBDump.getCurrentFullPathName());
 
 			// Clean after upload
-			m.cleanDumpDirectory();
-			m.deleteDumpFile();
+			mongoDBDump.cleanDumpDirectory();
+			mongoDBDump.deleteDumpFile();
 		} else {
 			LOG.info("DB dump failed...:(");
 		}

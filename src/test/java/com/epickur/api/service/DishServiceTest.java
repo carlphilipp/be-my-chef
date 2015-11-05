@@ -19,8 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
@@ -33,7 +33,7 @@ import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 
-public class DishServiceTest extends InitMocks {
+public class DishServiceTest {
 
 	@Mock
 	private DishBusiness dishBusiness;
@@ -46,6 +46,8 @@ public class DishServiceTest extends InitMocks {
 
 	@Before
 	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 	}
