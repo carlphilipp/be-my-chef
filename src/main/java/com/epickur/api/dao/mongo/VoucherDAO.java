@@ -68,7 +68,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 	public Voucher update(final Voucher voucher) throws EpickurException {
 		LOG.debug("Update voucher: " + voucher);
 		Document filter = convertAttributeToDocument("_id", voucher.getId());
-		Document update = voucher.getUpdateDocument();
+		Document update = voucher.getUpdateQuery();
 		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}

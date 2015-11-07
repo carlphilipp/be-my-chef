@@ -89,7 +89,7 @@ public class UserDAO extends CrudDAO<User> {
 	public User update(final User user) throws EpickurException {
 		LOG.debug("Update user: " + user);
 		Document filter = convertAttributeToDocument("_id", user.getId());
-		Document update = user.getUserUpdateQuery();
+		Document update = user.getUpdateQuery();
 		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}

@@ -62,7 +62,7 @@ public class DishDAO extends CrudDAO<Dish> {
 	public Dish update(final Dish dish) throws EpickurException {
 		LOG.debug("Update dish: " + dish);
 		Document filter = convertAttributeToDocument("_id", dish.getId());
-		Document update = dish.getUpdateDocument();
+		Document update = dish.getUpdateQuery();
 		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}

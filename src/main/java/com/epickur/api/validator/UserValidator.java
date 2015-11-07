@@ -265,8 +265,8 @@ public final class UserValidator extends Validator {
 	 */
 	public void checkUserRightsAfter(final Role role, final ObjectId userId, final User user, final Operation action) throws EpickurException {
 		if (role != Role.ADMIN) {
-			if ((action == Operation.READ && (role == Role.USER || role == Role.SUPER_USER))
-					|| (action == Operation.UPDATE && (role == Role.USER || role == Role.SUPER_USER))) {
+			if ((action == Operation.READ && (role == Role.USER || role == Role.SUPER_USER))				// NOPMD
+					|| (action == Operation.UPDATE && (role == Role.USER || role == Role.SUPER_USER))) {	// NOPMD
 				if (!userId.equals(user.getId())) {
 					throw new EpickurForbiddenException();
 				}
@@ -292,7 +292,7 @@ public final class UserValidator extends Validator {
 				throw new EpickurForbiddenException();
 			}
 			if (action == Operation.READ || action == Operation.UPDATE) {
-				if (!userId.equals(order.getCreatedBy())) {
+				if (!userId.equals(order.getCreatedBy())) {					// NOPMD
 					throw new EpickurForbiddenException();
 				}
 			}

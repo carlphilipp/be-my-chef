@@ -28,13 +28,13 @@ public final class EpickurIOExceptionMapper implements ExceptionMapper<EpickurIO
 
 	@Override
 	public Response toResponse(final EpickurIOException exception) {
-		ErrorMessage errorMessage = new ErrorMessage();
-		errorMessage.setError(Response.Status.BAD_REQUEST.getStatusCode());
-		errorMessage.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
+		ErrorMessage m = new ErrorMessage();
+		m.setError(Response.Status.BAD_REQUEST.getStatusCode());
+		m.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
 		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
-			errorMessage.setDescription(exception.getMessage());
+			m.setDescription(exception.getMessage());
 		}
 		LOG.error("Error: ", exception);
-		return Response.status(Status.BAD_REQUEST).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
+		return Response.status(Status.BAD_REQUEST).entity(m).type(MediaType.APPLICATION_JSON).build();
 	}
 }

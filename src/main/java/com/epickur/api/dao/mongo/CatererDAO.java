@@ -54,7 +54,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	public Caterer update(final Caterer caterer) throws EpickurException {
 		LOG.debug("Update caterer: " + caterer);
 		Document filter = convertAttributeToDocument("_id", caterer.getId());
-		Document update = caterer.getUpdateDocument();
+		Document update = caterer.getUpdateQuery();
 		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}

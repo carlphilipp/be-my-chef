@@ -29,13 +29,13 @@ public final class EpickurIllegalArgumentMapper implements ExceptionMapper<Epick
 
 	@Override
 	public Response toResponse(final EpickurIllegalArgument exception) {
-		ErrorMessage errorMessage = new ErrorMessage();
-		errorMessage.setError(Response.Status.BAD_REQUEST.getStatusCode());
-		errorMessage.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
+		ErrorMessage message = new ErrorMessage();
+		message.setError(Response.Status.BAD_REQUEST.getStatusCode());
+		message.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
 		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
-			errorMessage.setDescription(exception.getMessage());
+			message.setDescription(exception.getMessage());
 		}
 		LOG.error("Error: ", exception);
-		return Response.status(Status.BAD_REQUEST).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
+		return Response.status(Status.BAD_REQUEST).entity(message).type(MediaType.APPLICATION_JSON).build();
 	}
 }
