@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="tooManyRuleset"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+<description>Suppress checks against Lombok code</description>
+    <rule ref="rulesets/java/braces.xml" >
+        <!-- Lombok; Skip for methods annotated with @java.lang.SuppressWarnings("all") -->
+        <exclude name="IfStmtsMustUseBraces" />
+    </rule>
+    <rule ref="rulesets/java/braces.xml/IfStmtsMustUseBraces">
+        <properties>
+            <property name="violationSuppressXPath" value="//MethodDeclaration[../Annotation/SingleMemberAnnotation[(Name/@Image='java.lang.SuppressWarnings') and (MemberValue/PrimaryExpression/PrimaryPrefix/Literal/@Image='&quot;all&quot;')]]" />
+        </properties>
+    </rule>
+    <!--  
+	<rule ref="rulesets/java/logging-java.xml"/>
+	-->
+</ruleset>

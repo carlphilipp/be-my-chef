@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -48,13 +49,17 @@ public class CatererIT {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException, EpickurException {
-		InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
-		prop.load(in);
-		String address = prop.getProperty("address");
-		String path = prop.getProperty("api.path");
-		URL_NO_KEY = address + path + "/caterers";
-
+		InputStreamReader in = null;
+		try {
+			in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
+			Properties prop = new Properties();
+			prop.load(in);
+			String address = prop.getProperty("address");
+			String path = prop.getProperty("api.path");
+			URL_NO_KEY = address + path + "/caterers";
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
 		User admin = TestUtils.createAdminAndLogin();
 		API_KEY = admin.getKey();
 		URL = URL_NO_KEY + "?key=" + API_KEY;
@@ -100,17 +105,21 @@ public class CatererIT {
 		request.setEntity(requestEntity);
 
 		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		try {
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			BufferedReader br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
-		// Create result
-		id = jsonResult.get("id").asText();
+			// Create result
+			id = jsonResult.get("id").asText();
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
+
 	}
 
 	@AfterClass
@@ -176,45 +185,51 @@ public class CatererIT {
 		request.setEntity(requestEntity);
 
 		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertNotNull(jsonResult.get("createdAt"));
-		assertNotNull(jsonResult.get("updatedAt"));
-		assertNotNull(jsonResult.get("location"));
-		JsonNode locationRes = jsonResult.get("location");
-		assertNotNull(locationRes.get("address"));
-		JsonNode addressRes = locationRes.get("address");
-		assertEquals("carl", addressRes.get("label").asText());
-		assertEquals("832", addressRes.get("houseNumber").asText());
-		assertEquals("Wrightwood", addressRes.get("street").asText());
-		assertEquals("Chicago", addressRes.get("city").asText());
-		assertEquals(new Long(60614).longValue(), addressRes.get("postalCode").longValue());
-		assertEquals("Illinois", addressRes.get("state").asText());
-		assertEquals("USA", addressRes.get("country").asText());
-		assertNotNull(locationRes.get("geo"));
-		JsonNode geoRes = locationRes.get("geo");
-		assertEquals("Point", geoRes.get("type").asText());
-		ArrayNode coordinatesArray = (ArrayNode) geoRes.get("coordinates");
-		assertEquals(new Float(-73.97).doubleValue(), coordinatesArray.get(0).doubleValue(), 0.01);
-		assertEquals(new Float(40.77).doubleValue(), coordinatesArray.get(1).doubleValue(), 0.01);
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertNotNull(jsonResult.get("createdAt"));
+			assertNotNull(jsonResult.get("updatedAt"));
+			assertNotNull(jsonResult.get("location"));
+			JsonNode locationRes = jsonResult.get("location");
+			assertNotNull(locationRes.get("address"));
+			JsonNode addressRes = locationRes.get("address");
+			assertEquals("carl", addressRes.get("label").asText());
+			assertEquals("832", addressRes.get("houseNumber").asText());
+			assertEquals("Wrightwood", addressRes.get("street").asText());
+			assertEquals("Chicago", addressRes.get("city").asText());
+			assertEquals(new Long(60614).longValue(), addressRes.get("postalCode").longValue());
+			assertEquals("Illinois", addressRes.get("state").asText());
+			assertEquals("USA", addressRes.get("country").asText());
+			assertNotNull(locationRes.get("geo"));
+			JsonNode geoRes = locationRes.get("geo");
+			assertEquals("Point", geoRes.get("type").asText());
+			ArrayNode coordinatesArray = (ArrayNode) geoRes.get("coordinates");
+			assertEquals(new Float(-73.97).doubleValue(), coordinatesArray.get(0).doubleValue(), 0.01);
+			assertEquals(new Float(40.77).doubleValue(), coordinatesArray.get(1).doubleValue(), 0.01);
 
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -228,39 +243,44 @@ public class CatererIT {
 
 		// Read result
 		assertEquals(Response.Status.OK.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
 
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
-
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
-
-		assertEquals(name, jsonResult.get("name").asText());
-		assertNotNull(jsonResult.get("createdAt"));
-		assertNotNull(jsonResult.get("updatedAt"));
-		assertNotNull(jsonResult.get("location"));
-		JsonNode locationRes = jsonResult.get("location");
-		assertNotNull(locationRes.get("address"));
-		JsonNode addressRes = locationRes.get("address");
-		assertEquals("carl", addressRes.get("label").asText());
-		assertEquals("832", addressRes.get("houseNumber").asText());
-		assertEquals("Wrightwood", addressRes.get("street").asText());
-		assertEquals("Chicago", addressRes.get("city").asText());
-		assertEquals(new Long(60614).longValue(), addressRes.get("postalCode").longValue());
-		assertEquals("Illinois", addressRes.get("state").asText());
-		assertEquals("USA", addressRes.get("country").asText());
-		assertNotNull(locationRes.get("geo"));
-		JsonNode geoRes = locationRes.get("geo");
-		assertEquals("Point", geoRes.get("type").asText());
-		ArrayNode coordinates = (ArrayNode) geoRes.get("coordinates");
-		assertEquals(new Float(-73.97).doubleValue(), coordinates.get(0).doubleValue(), 0.01);
-		assertEquals(new Float(40.77).doubleValue(), coordinates.get(1).doubleValue(), 0.01);
+			assertEquals(name, jsonResult.get("name").asText());
+			assertNotNull(jsonResult.get("createdAt"));
+			assertNotNull(jsonResult.get("updatedAt"));
+			assertNotNull(jsonResult.get("location"));
+			JsonNode locationRes = jsonResult.get("location");
+			assertNotNull(locationRes.get("address"));
+			JsonNode addressRes = locationRes.get("address");
+			assertEquals("carl", addressRes.get("label").asText());
+			assertEquals("832", addressRes.get("houseNumber").asText());
+			assertEquals("Wrightwood", addressRes.get("street").asText());
+			assertEquals("Chicago", addressRes.get("city").asText());
+			assertEquals(new Long(60614).longValue(), addressRes.get("postalCode").longValue());
+			assertEquals("Illinois", addressRes.get("state").asText());
+			assertEquals("USA", addressRes.get("country").asText());
+			assertNotNull(locationRes.get("geo"));
+			JsonNode geoRes = locationRes.get("geo");
+			assertEquals("Point", geoRes.get("type").asText());
+			ArrayNode coordinates = (ArrayNode) geoRes.get("coordinates");
+			assertEquals(new Float(-73.97).doubleValue(), coordinates.get(0).doubleValue(), 0.01);
+			assertEquals(new Float(40.77).doubleValue(), coordinates.get(1).doubleValue(), 0.01);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 }

@@ -5,6 +5,7 @@ import javax.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
 import org.quartz.SchedulerException;
 
 import com.epickur.api.cron.Jobs;
@@ -22,10 +23,6 @@ public class WebApplication extends ResourceConfig {
 
 	/** Constructor */
 	public WebApplication() {
-		// Register new encoding to be able to serialize enum in MongoDB
-		// TODO probably not needed, commented out, can probably be wiped out with EnumTransformer
-		// BSON.addEncodingHook(DishType.class, new EnumTransformer());
-		// BSON.addEncodingHook(OrderStatus.class, new EnumTransformer());
 	}
 
 	/**

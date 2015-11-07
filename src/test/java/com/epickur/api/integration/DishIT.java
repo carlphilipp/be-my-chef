@@ -16,6 +16,7 @@ import java.util.Properties;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -59,23 +60,27 @@ public class DishIT {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException, EpickurException {
-		TestUtils.setupDB();
-		InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
-		prop.load(in);
-		in.close();
-		String address = prop.getProperty("address");
-		String path = prop.getProperty("api.path");
-		URL_NO_KEY = address + path + "/dishes";
+		InputStreamReader in = null;
+		try {
+			TestUtils.setupDB();
+			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
+			Properties prop = new Properties();
+			prop.load(in);
+			String address = prop.getProperty("address");
+			String path = prop.getProperty("api.path");
+			URL_NO_KEY = address + path + "/dishes";
 
-		User admin = TestUtils.createAdminAndLogin();
-		API_KEY = admin.getKey();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+			User admin = TestUtils.createAdminAndLogin();
+			API_KEY = admin.getKey();
+			URL = URL_NO_KEY + "?key=" + API_KEY;
 
-		idsCatererToDelete = new ArrayList<ObjectId>();
-		context = mock(ContainerRequestContext.class);
-		Key key = TestUtils.generateRandomAdminKey();
-		Mockito.when(context.getProperty("key")).thenReturn(key);
+			idsCatererToDelete = new ArrayList<ObjectId>();
+			context = mock(ContainerRequestContext.class);
+			Key key = TestUtils.generateRandomAdminKey();
+			Mockito.when(context.getProperty("key")).thenReturn(key);
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@AfterClass
@@ -115,49 +120,53 @@ public class DishIT {
 		request.setEntity(requestEntity);
 
 		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		BufferedReader br = null;
+		InputStreamReader in = null;
+		try {
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Create result
-		assertEquals(dish.getName(), jsonResult.get("name").asText());
-		assertEquals(dish.getDescription(), jsonResult.get("description").asText());
-		assertEquals(dish.getType().toString(), jsonResult.get("type").asText());
-		assertEquals(new Long(dish.getPrice()), jsonResult.get("price").asLong(), 0.001);
-		assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
-		assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
-		assertEquals(dish.getVideoUrl(), jsonResult.get("videoUrl").asText());
-		Caterer catererRes = TestUtils.getCaererObject(jsonResult.get("caterer").toString());
-		assertEquals(cat, catererRes);
-		List<NutritionFact> nutritionFactsRes = TestUtils.getListObject(jsonResult.get("nutritionFacts").toString());
-		for (int i = 0; i < nutritionFactsRes.size(); i++) {
-			assertEquals(dish.getNutritionFacts().size(), nutritionFactsRes.size());
-			assertEquals(dish.getNutritionFacts().get(0).getName(), nutritionFactsRes.get(0).getName());
-			assertEquals(dish.getNutritionFacts().get(0).getValue().doubleValue(), nutritionFactsRes.get(0).getValue().doubleValue(), 0.01);
-			assertEquals(dish.getNutritionFacts().get(0).getUnit().getSymbol(), nutritionFactsRes.get(0).getUnit().getSymbol());
+			// Create result
+			assertEquals(dish.getName(), jsonResult.get("name").asText());
+			assertEquals(dish.getDescription(), jsonResult.get("description").asText());
+			assertEquals(dish.getType().toString(), jsonResult.get("type").asText());
+			assertEquals(new Long(dish.getPrice()), jsonResult.get("price").asLong(), 0.001);
+			assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
+			assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
+			assertEquals(dish.getVideoUrl(), jsonResult.get("videoUrl").asText());
+			Caterer catererRes = TestUtils.getCaererObject(jsonResult.get("caterer").toString());
+			assertEquals(cat, catererRes);
+			List<NutritionFact> nutritionFactsRes = TestUtils.getListObject(jsonResult.get("nutritionFacts").toString());
+			for (int i = 0; i < nutritionFactsRes.size(); i++) {
+				assertEquals(dish.getNutritionFacts().size(), nutritionFactsRes.size());
+				assertEquals(dish.getNutritionFacts().get(0).getName(), nutritionFactsRes.get(0).getName());
+				assertEquals(dish.getNutritionFacts().get(0).getValue().doubleValue(), nutritionFactsRes.get(0).getValue().doubleValue(), 0.01);
+				assertEquals(dish.getNutritionFacts().get(0).getUnit().getSymbol(), nutritionFactsRes.get(0).getUnit().getSymbol());
+			}
+
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
+
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
 		}
-
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
-
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
-
 	}
 
 	@Test
 	public void testReadOneDish() throws ClientProtocolException, IOException, EpickurException {
-
 		Dish dish = TestUtils.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer cat = TestUtils.createCaterer(dish.getCaterer(), null);
@@ -171,59 +180,69 @@ public class DishIT {
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
+		BufferedReader br = null;
+		InputStreamReader in = null;
+		String id = null;
+		try {
+			// Create request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		String id = jsonResult.get("id").asText();
-
-		// Read
-		HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-
-		// Read request
-		httpResponse = HttpClientBuilder.create().build().execute(request2);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-
-		// Read result
-		assertEquals(Response.Status.OK.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
-
-		jsonResult = mapper.readTree(obj);
-		in.close();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
-
-		assertEquals(dish.getName(), jsonResult.get("name").asText());
-		assertEquals(dish.getDescription(), jsonResult.get("description").asText());
-		assertEquals(dish.getType().toString(), jsonResult.get("type").asText());
-		assertEquals(new Long(dish.getPrice()), jsonResult.get("price").asLong(), 0.001);
-		assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
-		assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
-		assertEquals(dish.getVideoUrl(), jsonResult.get("videoUrl").asText());
-		Caterer catererRes = TestUtils.getCaererObject(jsonResult.get("caterer").toString());
-		assertEquals(cat, catererRes);
-		List<NutritionFact> nutritionFactsRes = TestUtils.getListObject(jsonResult.get("nutritionFacts").toString());
-		for (int i = 0; i < nutritionFactsRes.size(); i++) {
-			assertEquals(dish.getNutritionFacts().size(), nutritionFactsRes.size());
-			assertEquals(dish.getNutritionFacts().get(0).getName(), nutritionFactsRes.get(0).getName());
-			assertEquals(dish.getNutritionFacts().get(0).getValue().doubleValue(), nutritionFactsRes.get(0).getValue().doubleValue(), 0.01);
-			assertEquals(dish.getNutritionFacts().get(0).getUnit().getSymbol(), nutritionFactsRes.get(0).getUnit().getSymbol());
+			id = jsonResult.get("id").asText();
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
 		}
+		try {
+			// Read
+			HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			// Read request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request2);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+
+			// Read result
+			assertEquals(Response.Status.OK.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+
+			JsonNode jsonResult = mapper.readTree(obj);
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
+
+			assertEquals(dish.getName(), jsonResult.get("name").asText());
+			assertEquals(dish.getDescription(), jsonResult.get("description").asText());
+			assertEquals(dish.getType().toString(), jsonResult.get("type").asText());
+			assertEquals(new Long(dish.getPrice()), jsonResult.get("price").asLong(), 0.001);
+			assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
+			assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
+			assertEquals(dish.getVideoUrl(), jsonResult.get("videoUrl").asText());
+			Caterer catererRes = TestUtils.getCaererObject(jsonResult.get("caterer").toString());
+			assertEquals(cat, catererRes);
+			List<NutritionFact> nutritionFactsRes = TestUtils.getListObject(jsonResult.get("nutritionFacts").toString());
+			for (int i = 0; i < nutritionFactsRes.size(); i++) {
+				assertEquals(dish.getNutritionFacts().size(), nutritionFactsRes.size());
+				assertEquals(dish.getNutritionFacts().get(0).getName(), nutritionFactsRes.get(0).getName());
+				assertEquals(dish.getNutritionFacts().get(0).getValue().doubleValue(), nutritionFactsRes.get(0).getValue().doubleValue(), 0.01);
+				assertEquals(dish.getNutritionFacts().get(0).getUnit().getSymbol(), nutritionFactsRes.get(0).getUnit().getSymbol());
+			}
+
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -243,19 +262,6 @@ public class DishIT {
 		request.setEntity(requestEntity);
 
 		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
-
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
-
-		String id = jsonResult.get("id").asText();
-
 		// Put
 		String namePut = "new name";
 		String descriptionPut = "new descr";
@@ -279,51 +285,77 @@ public class DishIT {
 		geo2.setLongitude(-87.6482463);
 		location2.setGeo(geo2);
 		caterer2.setLocation(location2);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		HttpResponse httpResponse = null;
+		String obj = null;
+		JsonNode jsonResult = null;
+		String id = null;
+		HttpPut putRequest = null;
+		try {
+			httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			jsonResult = mapper.readTree(obj);
 
-		ObjectNode json = mapper.createObjectNode();
-		json.put("id", id);
-		json.put("name", namePut);
-		json.put("description", descriptionPut);
-		json.put("type", type);
-		json.put("price", pricePut);
-		json.put("cookingTime", cookingTimePut);
-		json.put("difficultyLevel", difficultyLevelPut);
-		json.put("videoUrl", videoURLPut);
-		json.set("caterer", mapper.readTree(caterer2.toStringAPIView()));
-		requestEntity = new StringEntity(json.toString());
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		HttpPut putRequest = new HttpPut(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		putRequest.addHeader("content-type", jsonMimeType);
-		putRequest.setEntity(requestEntity);
+			id = jsonResult.get("id").asText();
 
-		// Put request
-		httpResponse = HttpClientBuilder.create().build().execute(putRequest);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		jsonResult = mapper.readTree(obj);
-		in.close();
+			ObjectNode json = mapper.createObjectNode();
+			json.put("id", id);
+			json.put("name", namePut);
+			json.put("description", descriptionPut);
+			json.put("type", type);
+			json.put("price", pricePut);
+			json.put("cookingTime", cookingTimePut);
+			json.put("difficultyLevel", difficultyLevelPut);
+			json.put("videoUrl", videoURLPut);
+			json.set("caterer", mapper.readTree(caterer2.toStringAPIView()));
+			requestEntity = new StringEntity(json.toString());
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			putRequest = new HttpPut(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			putRequest.addHeader("content-type", jsonMimeType);
+			putRequest.setEntity(requestEntity);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
+		try {
+			// Put request
+			httpResponse = HttpClientBuilder.create().build().execute(putRequest);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
+			jsonResult = mapper.readTree(obj);
 
-		assertEquals(id, jsonResult.get("id").asText());
-		assertEquals(descriptionPut, jsonResult.get("description").asText());
-		assertEquals(namePut, jsonResult.get("name").asText());
-		assertEquals(descriptionPut, jsonResult.get("description").asText());
-		assertEquals(type, jsonResult.get("type").asText());
-		assertEquals(new Long(pricePut), jsonResult.get("price").asLong(), 0.001);
-		assertEquals(new Long(cookingTimePut).longValue(), jsonResult.get("cookingTime").asLong(), 0.001);
-		assertEquals(new Long(difficultyLevelPut).longValue(), jsonResult.get("difficultyLevel").asLong(), 0.001);
-		assertEquals(videoURLPut, jsonResult.get("videoUrl").asText());
-		Caterer caterer3 = TestUtils.getCaererObject(jsonResult.get("caterer").toString());
-		assertEquals(cat.getId(), caterer3.getId());
-		assertEquals(caterer2.getName(), caterer3.getName());
-		assertEquals(cat.getLocation().getAddress().getCity(), caterer3.getLocation().getAddress().getCity());
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			assertEquals(id, jsonResult.get("id").asText());
+			assertEquals(descriptionPut, jsonResult.get("description").asText());
+			assertEquals(namePut, jsonResult.get("name").asText());
+			assertEquals(descriptionPut, jsonResult.get("description").asText());
+			assertEquals(type, jsonResult.get("type").asText());
+			assertEquals(new Long(pricePut), jsonResult.get("price").asLong(), 0.001);
+			assertEquals(new Long(cookingTimePut).longValue(), jsonResult.get("cookingTime").asLong(), 0.001);
+			assertEquals(new Long(difficultyLevelPut).longValue(), jsonResult.get("difficultyLevel").asLong(), 0.001);
+			assertEquals(videoURLPut, jsonResult.get("videoUrl").asText());
+			Caterer caterer3 = TestUtils.getCaererObject(jsonResult.get("caterer").toString());
+			assertEquals(cat.getId(), caterer3.getId());
+			assertEquals(caterer2.getName(), caterer3.getName());
+			assertEquals(cat.getLocation().getAddress().getCity(), caterer3.getLocation().getAddress().getCity());
+
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -341,57 +373,63 @@ public class DishIT {
 		request.setEntity(requestEntity);
 
 		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals(Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		String id = jsonResult.get("id").asText();
+			String id = jsonResult.get("id").asText();
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		httpResponse = HttpClientBuilder.create().build().execute(requestDelete);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals(Response.Status.OK.getStatusCode(), statusCode2);
-		jsonResult = mapper.readTree(obj);
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			httpResponse = HttpClientBuilder.create().build().execute(requestDelete);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
+			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals(Response.Status.OK.getStatusCode(), statusCode2);
+			jsonResult = mapper.readTree(obj);
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		assertEquals(jsonMimeType, mimeType);
-		assertEquals(id, jsonResult.get("id").asText());
-		assertEquals(true, Boolean.valueOf(jsonResult.get("deleted").toString()));
+			assertEquals(jsonMimeType, mimeType);
+			assertEquals(id, jsonResult.get("id").asText());
+			assertEquals(true, Boolean.valueOf(jsonResult.get("deleted").toString()));
 
-		// Read
-		HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			// Read
+			HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
 
-		// Read request
-		httpResponse = HttpClientBuilder.create().build().execute(request2);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+			// Read request
+			httpResponse = HttpClientBuilder.create().build().execute(request2);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Read result
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+			// Read result
+			assertEquals(Response.Status.NOT_FOUND.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
 
-		jsonResult = mapper.readTree(obj);
-		in.close();
-		mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), Integer.valueOf(jsonResult.get("error").toString()).intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
+			jsonResult = mapper.readTree(obj);
+			mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
+			assertEquals(Response.Status.NOT_FOUND.getStatusCode(), Integer.valueOf(jsonResult.get("error").toString()).intValue());
+			assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	// Search tests
@@ -409,14 +447,20 @@ public class DishIT {
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
 
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		ObjectMapper mapper = new ObjectMapper();
-		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
-		Assert.assertThat(jsonResult.size(), is(1));
+			ObjectMapper mapper = new ObjectMapper();
+			ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
+			Assert.assertThat(jsonResult.size(), is(1));
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -432,15 +476,20 @@ public class DishIT {
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-
-		ObjectMapper mapper = new ObjectMapper();
-		List<?> jsonResult = mapper.readValue(obj, List.class);
-		Assert.assertEquals(0, jsonResult.size());
+			ObjectMapper mapper = new ObjectMapper();
+			List<?> jsonResult = mapper.readValue(obj, List.class);
+			Assert.assertEquals(0, jsonResult.size());
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -456,14 +505,20 @@ public class DishIT {
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
 
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		ObjectMapper mapper = new ObjectMapper();
-		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
-		Assert.assertThat(jsonResult.size(), is(1));
+			ObjectMapper mapper = new ObjectMapper();
+			ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
+			Assert.assertThat(jsonResult.size(), is(1));
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -479,13 +534,19 @@ public class DishIT {
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
 
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		ObjectMapper mapper = new ObjectMapper();
-		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
-		Assert.assertThat(jsonResult.size(), is(2));
+			ObjectMapper mapper = new ObjectMapper();
+			ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
+			Assert.assertThat(jsonResult.size(), is(2));
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 }
