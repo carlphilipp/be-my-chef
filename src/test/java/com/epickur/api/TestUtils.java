@@ -407,7 +407,7 @@ public class TestUtils {
 	public static User generateRandomUser() {
 		User user = new User();
 		user.setAllow(0);
-		user.setEmail(generateRandomString());
+		user.setEmail(generateRandomString() + "@" + generateRandomString() + ".com");
 		user.setName(generateRandomString());
 		user.setFirst(generateRandomString());
 		user.setLast(generateRandomString());

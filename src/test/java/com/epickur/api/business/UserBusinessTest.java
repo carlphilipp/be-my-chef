@@ -9,13 +9,14 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import org.bson.types.ObjectId;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Key;
@@ -26,7 +27,7 @@ import com.epickur.api.utils.PasswordManager;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.email.EmailUtils;
 
-public class UserBusinessTest extends InitMocks {
+public class UserBusinessTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -39,6 +40,11 @@ public class UserBusinessTest extends InitMocks {
 	private EmailUtils emailUtilsMock;
 	@InjectMocks
 	private UserBusiness userBusiness;
+	
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
 
 	@Test
 	public void testCreate() throws EpickurException {

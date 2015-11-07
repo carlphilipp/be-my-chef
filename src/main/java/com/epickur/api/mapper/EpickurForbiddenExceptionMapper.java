@@ -27,7 +27,7 @@ public final class EpickurForbiddenExceptionMapper implements ExceptionMapper<Ep
 
 	@Override
 	public Response toResponse(final EpickurForbiddenException exception) {
-		LOG.warn("Forbidden exception: " + exception.getLocalizedMessage(), exception);
+		LOG.warn("Forbidden exception: " + exception.getLocalizedMessage());
 		return ErrorUtils.error(Response.Status.FORBIDDEN, ErrorUtils.FORBIDDEN);
 	}
 }

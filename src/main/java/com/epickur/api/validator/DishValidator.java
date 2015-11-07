@@ -171,7 +171,7 @@ public final class DishValidator extends Validator {
 	 */
 	public void checkRightsAfter(final Role role, final ObjectId userId, final Dish dish, final Operation action) {
 		if (role != Role.ADMIN) {
-			if ((action == Operation.UPDATE || action == Operation.DELETE) && !dish.getCreatedBy().equals(userId)) {
+			if ((action == Operation.UPDATE || action == Operation.DELETE) && !dish.getCreatedBy().equals(userId)) { // NOPMD
 				throw new EpickurForbiddenException();
 			}
 		}

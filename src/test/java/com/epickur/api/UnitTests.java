@@ -23,6 +23,8 @@ import com.epickur.api.dao.mongo.OrderDAOTest;
 import com.epickur.api.dao.mongo.SequenceDAOTest;
 import com.epickur.api.dao.mongo.UserDAOTest;
 import com.epickur.api.dao.mongo.VoucherDAOTest;
+import com.epickur.api.dump.AmazonWebServicesTest;
+import com.epickur.api.dump.MongoDBDumpTest;
 import com.epickur.api.entity.AddressTest;
 import com.epickur.api.entity.CatererTest;
 import com.epickur.api.entity.DishTest;
@@ -160,7 +162,11 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		UserValidatorTest.class,
 		VoucherValidatorTest.class,
 
-		WorkingTimesTest.class
+		WorkingTimesTest.class,
+		
+		// .dump
+		AmazonWebServicesTest.class,
+		MongoDBDumpTest.class
 })
 public class UnitTests {
 

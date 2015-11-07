@@ -1,5 +1,10 @@
 package com.epickur.api.entity;
 
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
@@ -7,6 +12,8 @@ import com.epickur.api.entity.deserialize.DateDeserializer;
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.serialize.DateSerializer;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
+import com.epickur.api.exception.EpickurParsingException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -99,5 +106,28 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 		DateTime time = new DateTime();
 		this.setCreatedAt(null);
 		this.setUpdatedAt(time);
+	}
+	
+	/**
+	 * @return a Document
+	 * @throws EpickurParsingException
+	 *             If an epickur exception occurred
+	 */
+	@JsonIgnore
+	public Document getUpdateQuery() throws EpickurParsingException {
+		String apiView = toStringAPIView();
+		Document found = Document.parse(apiView);
+		Document args = new Document();
+		Document result = new Document().append("$set", args);
+		Set<Entry<String, Object>> set = found.entrySet();
+		Iterator<Entry<String, Object>> iterator = set.iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Object> entry = iterator.next();
+			String k = entry.getKey();
+			if (!k.equals("id")) {
+				args.put(k, found.get(k));
+			}
+		}
+		return result;
 	}
 }

@@ -325,6 +325,7 @@
 			<version>3.1.4</version>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -426,6 +427,33 @@
 							<execution>
 								<goals>
 									<goal>integration-test</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- PMD -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-pmd-plugin</artifactId>
+						<version>3.4</version>
+						<configuration>
+							<linkXRef>true</linkXRef>
+							<sourceEncoding>utf-8</sourceEncoding>
+							<minimumTokens>100</minimumTokens>
+							<targetJdk>1.7</targetJdk>
+							<printFailingErrors>true</printFailingErrors>
+							<failOnViolation>true</failOnViolation>
+							<rulesets>
+								<ruleset>${project.build.resources[0].directory}/lombokRuleset.xml</ruleset>
+							</rulesets>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>validate</phase>
+								<goals>
+									<goal>check</goal>
+									<goal>cpd-check</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -706,6 +734,8 @@
 				<configuration>
 					<stylesheetfile>${project.build.resources[0].directory}/stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
+					<!-- Added for issue with Java 1.8 -->
+					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 				<reportSets>
 					<reportSet>
@@ -736,6 +766,15 @@
 				<version>3.5</version>
 				<configuration>
 					<skipEmptyReport>false</skipEmptyReport>
+					<linkXRef>true</linkXRef>
+					<sourceEncoding>utf-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<targetJdk>1.7</targetJdk>
+					<printFailingErrors>true</printFailingErrors>
+					<failOnViolation>true</failOnViolation>
+					<rulesets>
+						<ruleset>${project.build.resources[0].directory}/lombokRuleset.xml</ruleset>
+					</rulesets>
 				</configuration>
 			</plugin>
 			<plugin>

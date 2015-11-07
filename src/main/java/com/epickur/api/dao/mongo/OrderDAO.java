@@ -56,7 +56,7 @@ public class OrderDAO extends CrudDAO<Order> {
 	public Order update(final Order order) throws EpickurException {
 		LOG.debug("Update order: " + order);
 		Document filter = convertAttributeToDocument("_id", order.getId());
-		Document update = order.getOrderUpdateQuery();
+		Document update = order.getUpdateQuery();
 		Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}

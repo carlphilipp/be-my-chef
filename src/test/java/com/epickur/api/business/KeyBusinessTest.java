@@ -10,22 +10,28 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 
-public class KeyBusinessTest extends InitMocks {
+public class KeyBusinessTest {
 	
 	@Mock
 	private KeyDAO keyDAOMock;
 	@InjectMocks
 	private KeyBusiness keyBusiness;
+	
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
 
 	@Test
 	public void testCreate() throws EpickurException {

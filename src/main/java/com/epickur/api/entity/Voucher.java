@@ -1,9 +1,6 @@
 package com.epickur.api.entity;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +22,6 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -163,29 +159,6 @@ public final class Voucher extends AbstractMainDBEntity {
 			throw new EpickurParsingException("Can not convert string to Voucher: " + json, e);
 		}
 		return user;
-	}
-
-	/**
-	 * @return a Document
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
-	 */
-	@JsonIgnore
-	public Document getUpdateDocument() throws EpickurParsingException {
-		String apiView = toStringAPIView();
-		Document found = Document.parse(apiView);
-		Document args = new Document();
-		Document result = new Document().append("$set", args);
-		Set<Entry<String, Object>> set = found.entrySet();
-		Iterator<Entry<String, Object>> iterator = set.iterator();
-		while (iterator.hasNext()) {
-			Entry<String, Object> entry = iterator.next();
-			String k = entry.getKey();
-			if (!k.equals("id")) {
-				args.put(k, found.get(k));
-			}
-		}
-		return result;
 	}
 	
 	@Override

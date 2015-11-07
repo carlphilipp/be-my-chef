@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
@@ -43,7 +43,7 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 
-public class UserServiceTest extends InitMocks {
+public class UserServiceTest {
 	
 	@Mock
 	private UserBusiness userBusiness;
@@ -66,6 +66,8 @@ public class UserServiceTest extends InitMocks {
 	
 	@Before
 	public void setUp(){
+		MockitoAnnotations.initMocks(this);
+		
 		Key key = TestUtils.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 	}

@@ -119,7 +119,8 @@ public final class Dish extends AbstractMainDBEntity {
 	 *             If a parsing exception happened
 	 */
 	@JsonIgnore
-	public Document getUpdateDocument() throws EpickurParsingException {
+	@Override
+	public Document getUpdateQuery() throws EpickurParsingException {
 		String apiView = toStringAPIView();
 		Document found = Document.parse(apiView);
 		Document args = new Document();

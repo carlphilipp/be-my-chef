@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -68,10 +69,12 @@ public class UserIT {
 	private static ObjectMapper mapper;
 
 	@BeforeClass
-	public static void setUpBeforeClass() {
+	public static void setUpBeforeClass() throws IOException, EpickurException {
+		InputStreamReader in = null;
+		BufferedReader br = null;
 		try {
 			mapper = new ObjectMapper();
-			InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
+			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
 			String address = prop.getProperty("address");
@@ -107,18 +110,17 @@ public class UserIT {
 
 			// Create request
 			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			IOUtils.closeQuietly(in);
 			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			BufferedReader br = new BufferedReader(in);
+			br = new BufferedReader(in);
 			String obj = br.readLine();
 			JsonNode jsonResult = mapper.readTree(obj);
-			in.close();
 
 			// Create result
 			id = jsonResult.get("id").asText();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Throwable t) {
-			t.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
 		}
 	}
 
@@ -170,28 +172,35 @@ public class UserIT {
 		request.setEntity(requestEntity);
 
 		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
+
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -217,55 +226,62 @@ public class UserIT {
 		request.setEntity(requestEntity);
 
 		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		// Create the same user
-		json = mapper.createObjectNode();
-		json.put("name", name);
-		json.put("password", password);
-		json.put("email", start + "@" + end + ".com");
-		json.put("country", "USA");
-		json.put("state", "Illinois");
-		json.put("zipcode", "60614");
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		request = new HttpPost(URL);
-		requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
-		request.setEntity(requestEntity);
+			// Create the same user
+			json = mapper.createObjectNode();
+			json.put("name", name);
+			json.put("password", password);
+			json.put("email", start + "@" + end + ".com");
+			json.put("country", "USA");
+			json.put("state", "Illinois");
+			json.put("zipcode", "60614");
 
-		// Create request
-		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.CONFLICT.getStatusCode(), statusCode2);
-		jsonResult = mapper.readTree(obj);
+			request = new HttpPost(URL);
+			requestEntity = new StringEntity(json.toString());
+			request.addHeader("content-type", jsonMimeType);
+			request.setEntity(requestEntity);
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			// Create request
+			httpResponse = HttpClientBuilder.create().build().execute(request);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
+			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.CONFLICT.getStatusCode(), statusCode2);
+			jsonResult = mapper.readTree(obj);
+
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
-	
-	
+
 	@Test
 	public void testCreatePhoneNumber() throws ClientProtocolException, IOException {
 		String jsonMimeType = "application/json";
@@ -291,38 +307,43 @@ public class UserIT {
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			// Create request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+			assertTrue(jsonResult.has("phoneNumber"));
+			JsonNode phoneNumberNode = jsonResult.get("phoneNumber");
+			assertTrue(phoneNumberNode.has("nationalNumber"));
+			assertTrue(phoneNumberNode.has("countryCode"));
+			assertEquals(383400775, phoneNumberNode.get("nationalNumber").asLong());
+			assertEquals(33, phoneNumberNode.get("countryCode").asInt());
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
-		assertTrue(jsonResult.has("phoneNumber"));
-		JsonNode phoneNumberNode = jsonResult.get("phoneNumber");
-		assertTrue(phoneNumberNode.has("nationalNumber"));
-		assertTrue(phoneNumberNode.has("countryCode"));
-		assertEquals(383400775, phoneNumberNode.get("nationalNumber").asLong());
-		assertEquals(33, phoneNumberNode.get("countryCode").asInt());
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
-
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
-	
+
 	@Test
 	public void testCreatePhoneNumber2() throws ClientProtocolException, IOException {
 		String jsonMimeType = "application/json";
@@ -347,38 +368,43 @@ public class UserIT {
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			// Create request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+			assertTrue(jsonResult.has("phoneNumber"));
+			JsonNode phoneNumberNode = jsonResult.get("phoneNumber");
+			assertTrue(phoneNumberNode.has("nationalNumber"));
+			assertTrue(phoneNumberNode.has("countryCode"));
+			assertEquals(383400775, phoneNumberNode.get("nationalNumber").asLong());
+			assertEquals(33, phoneNumberNode.get("countryCode").asInt());
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
-		assertTrue(jsonResult.has("phoneNumber"));
-		JsonNode phoneNumberNode = jsonResult.get("phoneNumber");
-		assertTrue(phoneNumberNode.has("nationalNumber"));
-		assertTrue(phoneNumberNode.has("countryCode"));
-		assertEquals(383400775, phoneNumberNode.get("nationalNumber").asLong());
-		assertEquals(33, phoneNumberNode.get("countryCode").asInt());
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
-
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
-	
+
 	@Test
 	public void testCreatePhoneNumber3Fail() throws ClientProtocolException, IOException {
 		String jsonMimeType = "application/json";
@@ -398,29 +424,33 @@ public class UserIT {
 		json.put("country", "USA");
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			HttpPost request = new HttpPost(URL);
+			StringEntity requestEntity = new StringEntity(json.toString());
+			request.addHeader("content-type", jsonMimeType);
+			request.setEntity(requestEntity);
 
-		HttpPost request = new HttpPost(URL);
-		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
-		request.setEntity(requestEntity);
+			// Create request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.BAD_REQUEST.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.BAD_REQUEST.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
-
-		// Create result
-		assertTrue(jsonResult.has("error"));
-		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), jsonResult.get("error").asInt());
-		assertTrue(jsonResult.has("description"));
-		assertEquals("The field user.phoneNumber is not valid", jsonResult.get("description").asText());
+			// Create result
+			assertTrue(jsonResult.has("error"));
+			assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), jsonResult.get("error").asInt());
+			assertTrue(jsonResult.has("description"));
+			assertEquals("The field user.phoneNumber is not valid", jsonResult.get("description").asText());
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
-
 
 	@Test
 	public void testReadOneUser() throws ClientProtocolException, IOException {
@@ -434,21 +464,27 @@ public class UserIT {
 		// Read result
 		assertEquals(Response.Status.OK.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
 
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 
-		JsonNode jsonResult = mapper.readTree(obj);
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+			JsonNode jsonResult = mapper.readTree(obj);
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong(), 0.01);
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong(), 0.01);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -472,48 +508,55 @@ public class UserIT {
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
-		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			// Create request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		String id = jsonResult.get("id").asText();
+			String id = jsonResult.get("id").asText();
 
-		// Put
-		json = mapper.createObjectNode();
-		json.put("id", id);
-		json.put("email", "epickur_test@epickur_test.com");
-		requestEntity = new StringEntity(json.toString());
+			// Put
+			json = mapper.createObjectNode();
+			json.put("id", id);
+			json.put("email", "epickur_test@epickur_test.com");
+			requestEntity = new StringEntity(json.toString());
 
-		HttpPut putRequest = new HttpPut(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		putRequest.addHeader("content-type", jsonMimeType);
-		putRequest.setEntity(requestEntity);
+			HttpPut putRequest = new HttpPut(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			putRequest.addHeader("content-type", jsonMimeType);
+			putRequest.setEntity(requestEntity);
 
-		// Put request
-		httpResponse = HttpClientBuilder.create().build().execute(putRequest);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
-		jsonResult = mapper.readTree(obj);
+			// Put request
+			httpResponse = HttpClientBuilder.create().build().execute(putRequest);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
+			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			jsonResult = mapper.readTree(obj);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		assertEquals(id, jsonResult.get("id").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals("epickur_test@epickur_test.com", jsonResult.get("email").asText());
+			assertEquals(id, jsonResult.get("id").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals("epickur_test@epickur_test.com", jsonResult.get("email").asText());
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		putRequest.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			// Delete this user
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			putRequest.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -537,37 +580,44 @@ public class UserIT {
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
-		// Create request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		
-		JsonNode jsonResult = mapper.readTree(obj);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			// Create request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
 
-		String id = jsonResult.get("id").asText();
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		// Delete
-		HttpDelete request3 = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request3.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(request3);
+			String id = jsonResult.get("id").asText();
 
-		// Read
-		HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		// Read request
-		httpResponse = HttpClientBuilder.create().build().execute(request2);
+			// Delete
+			HttpDelete request3 = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request3.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(request3);
 
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode2);
+			// Read
+			HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			// Read request
+			httpResponse = HttpClientBuilder.create().build().execute(request2);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
+			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode2);
+
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -592,77 +642,84 @@ public class UserIT {
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
-		// Create User request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
-		
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			// Create User request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Create one Order
-		json = mapper.createObjectNode();
-		Dish dish = TestUtils.generateRandomDish();
-		dish.setId(new ObjectId());
-		json.set("dish", mapper.readTree(dish.toStringAPIView()));
-		json.put("description", "A new order");
-		json.put("quantity", 2);
-		json.put("amount", 500);
-		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
-		json.put("pickupdate", pickupdate);
-		String cardToken = TestUtils.generateRandomString();
-		json.put("cardToken", cardToken);
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		requestEntity = new StringEntity(json.toString());
-		request.addHeader("charge-agent", "false");
-		request.setEntity(requestEntity);
+			// Create one Order
+			json = mapper.createObjectNode();
+			Dish dish = TestUtils.generateRandomDish();
+			dish.setId(new ObjectId());
+			json.set("dish", mapper.readTree(dish.toStringAPIView()));
+			json.put("description", "A new order");
+			json.put("quantity", 2);
+			json.put("amount", 500);
+			json.put("currency", "AUD");
+			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			json.put("pickupdate", pickupdate);
+			String cardToken = TestUtils.generateRandomString();
+			json.put("cardToken", cardToken);
 
-		// Create Order request
-		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
-		jsonResult = mapper.readTree(obj);
+			request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			requestEntity = new StringEntity(json.toString());
+			request.addHeader("charge-agent", "false");
+			request.setEntity(requestEntity);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			// Create Order request
+			httpResponse = HttpClientBuilder.create().build().execute(request);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
+			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			jsonResult = mapper.readTree(obj);
 
-		assertNotNull(jsonResult.get("id"));
-		String orderId = jsonResult.get("id").asText();
-		assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
-		assertEquals("A new order", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("createdBy").asText());
-		assertNotNull(jsonResult.get("createdAt").asText());
-		assertEquals("AUD", jsonResult.get("currency").asText());
-		assertNotNull(jsonResult.get("dish"));
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Delete this order
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			assertNotNull(jsonResult.get("id"));
+			String orderId = jsonResult.get("id").asText();
+			assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
+			assertEquals("A new order", jsonResult.get("description").asText());
+			assertEquals(id, jsonResult.get("createdBy").asText());
+			assertNotNull(jsonResult.get("createdAt").asText());
+			assertEquals("AUD", jsonResult.get("currency").asText());
+			assertNotNull(jsonResult.get("dish"));
 
-		// Delete this user
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			// Delete this order
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+
+			// Delete this user
+			requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -688,110 +745,117 @@ public class UserIT {
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
-		// Create User request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			// Create User request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		// Create one Order
-		json = mapper.createObjectNode();
-		Dish dish = new Dish();
-		dish.setCaterer(TestUtils.generateRandomCatererWithId());
-		dish.setName("Dish name");
-		dish.setDescription("A super cool dish");
-		dish.setType(DishType.MAIN);
-		dish.setPrice(500);
-		dish.setCookingTime(5);
-		dish.setDifficultyLevel(8);
-		List<String> steps = TestUtils.generateRandomListString();
-		dish.setSteps(steps);
-		List<NutritionFact> nutritionFacts = TestUtils.generateRandomListNutritionFact();
-		dish.setNutritionFacts(nutritionFacts);
-		List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
-		dish.setIngredients(ingredients);
-		dish.setVideoUrl("google.com");
-		dish.setImageAfterUrl("url");
-		json.set("dish", mapper.readTree(dish.toStringAPIView()));
-		json.put("description", "A new order");
-		json.put("quantity", 2);
-		json.put("amount", 500);
-		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
-		json.put("pickupdate", pickupdate);
+			// Create one Order
+			json = mapper.createObjectNode();
+			Dish dish = new Dish();
+			dish.setCaterer(TestUtils.generateRandomCatererWithId());
+			dish.setName("Dish name");
+			dish.setDescription("A super cool dish");
+			dish.setType(DishType.MAIN);
+			dish.setPrice(500);
+			dish.setCookingTime(5);
+			dish.setDifficultyLevel(8);
+			List<String> steps = TestUtils.generateRandomListString();
+			dish.setSteps(steps);
+			List<NutritionFact> nutritionFacts = TestUtils.generateRandomListNutritionFact();
+			dish.setNutritionFacts(nutritionFacts);
+			List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
+			dish.setIngredients(ingredients);
+			dish.setVideoUrl("google.com");
+			dish.setImageAfterUrl("url");
+			json.set("dish", mapper.readTree(dish.toStringAPIView()));
+			json.put("description", "A new order");
+			json.put("quantity", 2);
+			json.put("amount", 500);
+			json.put("currency", "AUD");
+			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			json.put("pickupdate", pickupdate);
 
-		// Create Stripe card token
-		Stripe.apiKey = STRIPE_TEST_KEY;
+			// Create Stripe card token
+			Stripe.apiKey = STRIPE_TEST_KEY;
 
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
-		cardParams.put("number", "4242424242424242");
-		cardParams.put("exp_month", 2);
-		cardParams.put("exp_year", 2016);
-		cardParams.put("cvc", "314");
-		tokenParams.put("card", cardParams);
+			Map<String, Object> tokenParams = new HashMap<String, Object>();
+			Map<String, Object> cardParams = new HashMap<String, Object>();
+			cardParams.put("number", "4242424242424242");
+			cardParams.put("exp_month", 2);
+			cardParams.put("exp_year", 2016);
+			cardParams.put("cvc", "314");
+			tokenParams.put("card", cardParams);
 
-		Token token = Token.create(tokenParams);
-		
-		json.put("cardToken", token.getId());
+			Token token = Token.create(tokenParams);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		requestEntity = new StringEntity(json.toString());
-		request.addHeader("charge-agent", "true");
-		request.setEntity(requestEntity);
+			json.put("cardToken", token.getId());
 
-		// Create Order request
-		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
-		jsonResult = mapper.readTree(obj);
+			request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			requestEntity = new StringEntity(json.toString());
+			request.addHeader("charge-agent", "true");
+			request.setEntity(requestEntity);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			// Create Order request
+			httpResponse = HttpClientBuilder.create().build().execute(request);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
 
-		assertNotNull(jsonResult.get("id"));
-		String orderId = jsonResult.get("id").asText();
-		assertNotNull(orderId);
-		assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
-		assertEquals("A new order", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("createdBy").asText());
-		assertNotNull(jsonResult.get("createdAt").asText());
-		assertNotNull(jsonResult.get("updatedAt").asText());
-		assertEquals("AUD", jsonResult.get("currency").asText());
-		assertNotNull(jsonResult.get("dish"));
-		assertNotNull(jsonResult.get("cardToken"));
+			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			jsonResult = mapper.readTree(obj);
 
-		// Delete this order
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			assertNotNull(jsonResult.get("id"));
+			String orderId = jsonResult.get("id").asText();
+			assertNotNull(orderId);
+			assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
+			assertEquals("A new order", jsonResult.get("description").asText());
+			assertEquals(id, jsonResult.get("createdBy").asText());
+			assertNotNull(jsonResult.get("createdAt").asText());
+			assertNotNull(jsonResult.get("updatedAt").asText());
+			assertEquals("AUD", jsonResult.get("currency").asText());
+			assertNotNull(jsonResult.get("dish"));
+			assertNotNull(jsonResult.get("cardToken"));
 
-		// Delete this user
+			// Delete this order
 
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
 
+			// Delete this user
+
+			requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -816,108 +880,118 @@ public class UserIT {
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
-		// Create User request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			// Create User request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Create one Order
-		json = mapper.createObjectNode();
-		Dish dish = new Dish();
-		dish.setName("Dish name");
-		dish.setDescription("A super cool dish");
-		dish.setType(DishType.MAIN);
-		dish.setPrice(500);
-		dish.setCookingTime(5);
-		dish.setDifficultyLevel(8);
-		dish.setImageAfterUrl("url");
-		List<String> steps = TestUtils.generateRandomListString();
-		dish.setSteps(steps);
-		List<NutritionFact> nutritionFacts = TestUtils.generateRandomListNutritionFact();
-		dish.setNutritionFacts(nutritionFacts);
-		List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
-		dish.setIngredients(ingredients);
-		dish.setVideoUrl("google.com");
-		dish.setCaterer(TestUtils.generateRandomCatererWithId());
-		json.set("dish", mapper.readTree(dish.toStringAPIView()));
-		json.put("description", "A new order");
-		json.put("quantity", 2);
-		json.put("amount", 500);
-		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
-		json.put("pickupdate", pickupdate);
-		String cardToken = TestUtils.generateRandomString();
-		json.put("cardToken", cardToken);
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		requestEntity = new StringEntity(json.toString());
-		request.setEntity(requestEntity);
-		request.addHeader("charge-agent", "false");
+			// Create one Order
+			json = mapper.createObjectNode();
+			Dish dish = new Dish();
+			dish.setName("Dish name");
+			dish.setDescription("A super cool dish");
+			dish.setType(DishType.MAIN);
+			dish.setPrice(500);
+			dish.setCookingTime(5);
+			dish.setDifficultyLevel(8);
+			dish.setImageAfterUrl("url");
+			List<String> steps = TestUtils.generateRandomListString();
+			dish.setSteps(steps);
+			List<NutritionFact> nutritionFacts = TestUtils.generateRandomListNutritionFact();
+			dish.setNutritionFacts(nutritionFacts);
+			List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
+			dish.setIngredients(ingredients);
+			dish.setVideoUrl("google.com");
+			dish.setCaterer(TestUtils.generateRandomCatererWithId());
+			json.set("dish", mapper.readTree(dish.toStringAPIView()));
+			json.put("description", "A new order");
+			json.put("quantity", 2);
+			json.put("amount", 500);
+			json.put("currency", "AUD");
+			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			json.put("pickupdate", pickupdate);
+			String cardToken = TestUtils.generateRandomString();
+			json.put("cardToken", cardToken);
 
-		// Create Order request
-		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
-		jsonResult = mapper.readTree(obj);
-		in.close();
+			request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			requestEntity = new StringEntity(json.toString());
+			request.setEntity(requestEntity);
+			request.addHeader("charge-agent", "false");
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			// Create Order request
+			httpResponse = HttpClientBuilder.create().build().execute(request);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
 
-		assertNotNull(jsonResult.get("id"));
-		String orderId = jsonResult.get("id").asText();
-		assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
-		assertEquals("A new order", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("createdBy").asText());
-		assertNotNull(jsonResult.get("createdAt"));
-		assertEquals("AUD", jsonResult.get("currency").asText());
-		assertNotNull(jsonResult.get("dish"));
+			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			jsonResult = mapper.readTree(obj);
 
-		// Delete this order
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Check if order has been deleted
-		HttpGet requestGet = new HttpGet(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
-		requestGet.addHeader("content-type", jsonMimeType);
-		httpResponse = HttpClientBuilder.create().build().execute(requestGet);
+			assertNotNull(jsonResult.get("id"));
+			String orderId = jsonResult.get("id").asText();
+			assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
+			assertEquals("A new order", jsonResult.get("description").asText());
+			assertEquals(id, jsonResult.get("createdBy").asText());
+			assertNotNull(jsonResult.get("createdAt"));
+			assertEquals("AUD", jsonResult.get("currency").asText());
+			assertNotNull(jsonResult.get("dish"));
 
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode3 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode3);
-		jsonResult = mapper.readTree(obj);
+			// Delete this order
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+			requestDelete.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
 
-		assertNotNull(jsonResult.get("error"));
-		assertEquals(new Long(404), jsonResult.get("error").asLong(), 0.01);
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
+			// Check if order has been deleted
+			HttpGet requestGet = new HttpGet(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+			requestGet.addHeader("content-type", jsonMimeType);
+			httpResponse = HttpClientBuilder.create().build().execute(requestGet);
 
-		// Delete this user
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
+
+			int statusCode3 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode3);
+			jsonResult = mapper.readTree(obj);
+
+			assertNotNull(jsonResult.get("error"));
+			assertEquals(new Long(404), jsonResult.get("error").asLong(), 0.01);
+			assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
+
+			// Delete this user
+			requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			requestDelete.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@Test
@@ -941,129 +1015,137 @@ public class UserIT {
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			// Create User request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		// Create User request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		// Create one Order
-		json = mapper.createObjectNode();
-		Dish dish = new Dish();
-		dish.setName("Dish name");
-		dish.setDescription("A super cool dish");
-		dish.setType(DishType.MAIN);
-		dish.setPrice(500);
-		dish.setCookingTime(5);
-		dish.setDifficultyLevel(8);
-		List<String> steps = TestUtils.generateRandomListString();
-		dish.setSteps(steps);
-		List<NutritionFact> nutritionFacts = TestUtils.generateRandomListNutritionFact();
-		dish.setNutritionFacts(nutritionFacts);
-		List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
-		dish.setIngredients(ingredients);
-		dish.setVideoUrl("google.com");
-		dish.setImageAfterUrl("url");
-		dish.setCaterer(TestUtils.generateRandomCatererWithId());
-		json.set("dish", mapper.readTree(dish.toStringAPIView()));
-		json.put("description", "A new order");
-		json.put("quantity", 6);
-		json.put("amount", 500);
-		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
-		json.put("pickupdate", pickupdate);
-		String cardToken = TestUtils.generateRandomString();
-		json.put("cardToken", cardToken);
+			// Create one Order
+			json = mapper.createObjectNode();
+			Dish dish = new Dish();
+			dish.setName("Dish name");
+			dish.setDescription("A super cool dish");
+			dish.setType(DishType.MAIN);
+			dish.setPrice(500);
+			dish.setCookingTime(5);
+			dish.setDifficultyLevel(8);
+			List<String> steps = TestUtils.generateRandomListString();
+			dish.setSteps(steps);
+			List<NutritionFact> nutritionFacts = TestUtils.generateRandomListNutritionFact();
+			dish.setNutritionFacts(nutritionFacts);
+			List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
+			dish.setIngredients(ingredients);
+			dish.setVideoUrl("google.com");
+			dish.setImageAfterUrl("url");
+			dish.setCaterer(TestUtils.generateRandomCatererWithId());
+			json.set("dish", mapper.readTree(dish.toStringAPIView()));
+			json.put("description", "A new order");
+			json.put("quantity", 6);
+			json.put("amount", 500);
+			json.put("currency", "AUD");
+			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			json.put("pickupdate", pickupdate);
+			String cardToken = TestUtils.generateRandomString();
+			json.put("cardToken", cardToken);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		requestEntity = new StringEntity(json.toString());
-		request.setEntity(requestEntity);
-		request.addHeader("charge-agent", "false");
+			request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			requestEntity = new StringEntity(json.toString());
+			request.setEntity(requestEntity);
+			request.addHeader("charge-agent", "false");
 
-		// Create Order request
-		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
-		jsonResult = mapper.readTree(obj);
+			// Create Order request
+			httpResponse = HttpClientBuilder.create().build().execute(request);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			jsonResult = mapper.readTree(obj);
 
-		assertNotNull(jsonResult.get("id"));
-		String orderId = jsonResult.get("id").asText();
-		assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
-		assertEquals("A new order", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("createdBy").asText());
-		assertNotNull(jsonResult.get("createdAt").asText());
-		assertEquals("AUD", jsonResult.get("currency").asText());
-		assertNotNull(jsonResult.get("dish"));
-		assertNotNull(jsonResult.get("status"));
-		assertEquals("PENDING", jsonResult.get("status").asText());
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Update order
-		json = mapper.createObjectNode();
-		json.put("description", "A new order modified");
-		json.put("amount", 600);
-		json.put("currency", "AUD");
-		json.put("id", orderId);
-		json.put("createdBy", id);
+			assertNotNull(jsonResult.get("id"));
+			String orderId = jsonResult.get("id").asText();
+			assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
+			assertEquals("A new order", jsonResult.get("description").asText());
+			assertEquals(id, jsonResult.get("createdBy").asText());
+			assertNotNull(jsonResult.get("createdAt").asText());
+			assertEquals("AUD", jsonResult.get("currency").asText());
+			assertNotNull(jsonResult.get("dish"));
+			assertNotNull(jsonResult.get("status"));
+			assertEquals("PENDING", jsonResult.get("status").asText());
 
-		HttpPut requestUpdate = new HttpPut(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
-		requestUpdate.addHeader("content-type", jsonMimeType);
-		requestEntity = new StringEntity(json.toString());
-		requestUpdate.setEntity(requestEntity);
-		httpResponse = HttpClientBuilder.create().build().execute(requestUpdate);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode3 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode3);
-		jsonResult = mapper.readTree(obj);
+			// Update order
+			json = mapper.createObjectNode();
+			json.put("description", "A new order modified");
+			json.put("amount", 600);
+			json.put("currency", "AUD");
+			json.put("id", orderId);
+			json.put("createdBy", id);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			HttpPut requestUpdate = new HttpPut(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+			requestUpdate.addHeader("content-type", jsonMimeType);
+			requestEntity = new StringEntity(json.toString());
+			requestUpdate.setEntity(requestEntity);
+			httpResponse = HttpClientBuilder.create().build().execute(requestUpdate);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
 
-		assertNotNull(jsonResult.get("id"));
-		assertEquals(new Long(600).longValue(), jsonResult.get("amount").asLong());
-		assertEquals("A new order modified", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("createdBy").asText());
-		assertNotNull(jsonResult.get("createdAt").asText());
-		assertEquals("AUD", jsonResult.get("currency").asText());
-		assertNotNull(jsonResult.get("dish"));
+			int statusCode3 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode3);
+			jsonResult = mapper.readTree(obj);
 
-		// Delete this order
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		// Delete this user
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			assertNotNull(jsonResult.get("id"));
+			assertEquals(new Long(600).longValue(), jsonResult.get("amount").asLong());
+			assertEquals("A new order modified", jsonResult.get("description").asText());
+			assertEquals(id, jsonResult.get("createdBy").asText());
+			assertNotNull(jsonResult.get("createdAt").asText());
+			assertEquals("AUD", jsonResult.get("currency").asText());
+			assertNotNull(jsonResult.get("dish"));
+
+			// Delete this order
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+			requestDelete.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+
+			// Delete this user
+			requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			requestDelete.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
-	
-	
-	
+
 	@Test
 	public void testExecuteOneOrder() throws ClientProtocolException, IOException, EpickurException {
 		String jsonMimeType = "application/json";
@@ -1086,95 +1168,107 @@ public class UserIT {
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
-		// Create User request
-		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		in.close();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
-		JsonNode jsonResult = mapper.readTree(obj);
-		
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+		InputStreamReader in = null;
+		BufferedReader br = null;
+		try {
+			// Create User request
+			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			String obj = br.readLine();
 
-		// Create result
-		assertEquals(name, jsonResult.get("name").asText());
-		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
-		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
-		String id = jsonResult.get("id").asText();
-		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			JsonNode jsonResult = mapper.readTree(obj);
 
-		// Create one Order
-		json = mapper.createObjectNode();
-		Dish dish = TestUtils.generateRandomDish();
-		dish.setId(new ObjectId());
-		json.set("dish", mapper.readTree(dish.toStringAPIView()));
-		json.put("description", "A new order");
-		json.put("quantity", 2);
-		json.put("amount", 500);
-		json.put("currency", "AUD");
-		String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
-		json.put("pickupdate", pickupdate);
-		String cardToken = TestUtils.generateRandomString();
-		json.put("cardToken", cardToken);
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		requestEntity = new StringEntity(json.toString());
-		request.addHeader("charge-agent", "false");
-		request.setEntity(requestEntity);
+			// Create result
+			assertEquals(name, jsonResult.get("name").asText());
+			assertEquals(null, jsonResult.get("password"));
+			assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+			assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
+			String id = jsonResult.get("id").asText();
+			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
+			assertEquals(jsonMimeType, mimeType);
 
-		// Create Order request
-		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
-		jsonResult = mapper.readTree(obj);
+			// Create one Order
+			json = mapper.createObjectNode();
+			Dish dish = TestUtils.generateRandomDish();
+			dish.setId(new ObjectId());
+			json.set("dish", mapper.readTree(dish.toStringAPIView()));
+			json.put("description", "A new order");
+			json.put("quantity", 2);
+			json.put("amount", 500);
+			json.put("currency", "AUD");
+			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			json.put("pickupdate", pickupdate);
+			String cardToken = TestUtils.generateRandomString();
+			json.put("cardToken", cardToken);
 
-		assertFalse("Failed request: " + obj, jsonResult.has("error"));
+			request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+			request.addHeader("content-type", jsonMimeType);
+			requestEntity = new StringEntity(json.toString());
+			request.addHeader("charge-agent", "false");
+			request.setEntity(requestEntity);
 
-		assertNotNull(jsonResult.get("id"));
-		String orderId = jsonResult.get("id").asText();
-		assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
-		assertEquals("A new order", jsonResult.get("description").asText());
-		assertEquals(id, jsonResult.get("createdBy").asText());
-		assertNotNull(jsonResult.get("createdAt").asText());
-		assertEquals("AUD", jsonResult.get("currency").asText());
-		assertNotNull(jsonResult.get("dish"));
-		assertNotNull(jsonResult.get("cardToken"));
-		
-		String orderCode = Security.createOrderCode(new ObjectId(orderId), jsonResult.get("cardToken").asText());
-		
-		// Execute order (Caterer choose yes or no)
-		String confirm = "false";
-		HttpGet httpGet = new HttpGet(URL_EXECUTE_ORDER + "/users/" + id + "/orders/" + orderId + "?confirm=" + confirm + "&ordercode=" + orderCode);
-		httpGet.addHeader("content-type", jsonMimeType);
-		httpGet.addHeader("charge-agent", "false");
-		httpResponse = HttpClientBuilder.create().build().execute(httpGet);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
-		in.close();
-		int statusCode3 = httpResponse.getStatusLine().getStatusCode();
-		assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode3);
-		jsonResult = mapper.readTree(obj);
-		assertNotNull(jsonResult.has("status"));
-		assertEquals(OrderStatus.DECLINED.toString(), jsonResult.get("status").asText());
+			// Create Order request
+			httpResponse = HttpClientBuilder.create().build().execute(request);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
 
-		// Delete this order
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			jsonResult = mapper.readTree(obj);
 
-		// Delete this user
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+			assertFalse("Failed request: " + obj, jsonResult.has("error"));
+
+			assertNotNull(jsonResult.get("id"));
+			String orderId = jsonResult.get("id").asText();
+			assertEquals(new Long(500).longValue(), jsonResult.get("amount").asLong());
+			assertEquals("A new order", jsonResult.get("description").asText());
+			assertEquals(id, jsonResult.get("createdBy").asText());
+			assertNotNull(jsonResult.get("createdAt").asText());
+			assertEquals("AUD", jsonResult.get("currency").asText());
+			assertNotNull(jsonResult.get("dish"));
+			assertNotNull(jsonResult.get("cardToken"));
+
+			String orderCode = Security.createOrderCode(new ObjectId(orderId), jsonResult.get("cardToken").asText());
+
+			// Execute order (Caterer choose yes or no)
+			String confirm = "false";
+			HttpGet httpGet = new HttpGet(
+					URL_EXECUTE_ORDER + "/users/" + id + "/orders/" + orderId + "?confirm=" + confirm + "&ordercode=" + orderCode);
+			httpGet.addHeader("content-type", jsonMimeType);
+			httpGet.addHeader("charge-agent", "false");
+			httpResponse = HttpClientBuilder.create().build().execute(httpGet);
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+			in = new InputStreamReader(httpResponse.getEntity().getContent());
+			br = new BufferedReader(in);
+			obj = br.readLine();
+
+			int statusCode3 = httpResponse.getStatusLine().getStatusCode();
+			assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode3);
+			jsonResult = mapper.readTree(obj);
+			assertNotNull(jsonResult.has("status"));
+			assertEquals(OrderStatus.DECLINED.toString(), jsonResult.get("status").asText());
+
+			// Delete this order
+			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+			requestDelete.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+
+			// Delete this user
+			requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			requestDelete.addHeader("content-type", jsonMimeType);
+			HttpClientBuilder.create().build().execute(requestDelete);
+		} finally {
+			IOUtils.closeQuietly(br);
+			IOUtils.closeQuietly(in);
+		}
 	}
 }

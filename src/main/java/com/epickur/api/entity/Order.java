@@ -151,7 +151,8 @@ public final class Order extends AbstractMainDBEntity {
 	 *             If a parsing exception occured
 	 */
 	@JsonIgnore
-	public Document getOrderUpdateQuery() throws EpickurParsingException {
+	@Override
+	public Document getUpdateQuery() throws EpickurParsingException {
 		String apiView = toStringAPIView();
 		Document found = Document.parse(apiView);
 		Document resultSet = new Document();

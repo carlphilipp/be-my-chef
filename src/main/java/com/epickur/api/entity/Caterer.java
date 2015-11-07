@@ -120,29 +120,6 @@ public class Caterer extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @return a Document
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
-	 */
-	@JsonIgnore
-	public Document getUpdateDocument() throws EpickurParsingException {
-		String apiView = toStringAPIView();
-		Document found = Document.parse(apiView);
-		Document args = new Document();
-		Document result = new Document().append("$set", args);
-		Set<Entry<String, Object>> entrySet = found.entrySet();
-		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
-		while (iterator.hasNext()) {
-			Entry<String, Object> temp = iterator.next();
-			String key = temp.getKey();
-			if (!key.equals("id")) {
-				args.put(key, found.get(key));
-			}
-		}
-		return result;
-	}
-
-	/**
 	 * @param obj
 	 *            The Document
 	 * @param view

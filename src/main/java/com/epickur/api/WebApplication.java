@@ -22,10 +22,6 @@ public class WebApplication extends ResourceConfig {
 
 	/** Constructor */
 	public WebApplication() {
-		// Register new encoding to be able to serialize enum in MongoDB
-		// TODO probably not needed, commented out, can probably be wiped out with EnumTransformer
-		// BSON.addEncodingHook(DishType.class, new EnumTransformer());
-		// BSON.addEncodingHook(OrderStatus.class, new EnumTransformer());
 	}
 
 	/**

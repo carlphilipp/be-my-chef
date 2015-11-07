@@ -6,6 +6,10 @@ import java.util.Map;
 import com.epickur.api.entity.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 /**
  * TimeFrame
  * 
@@ -13,42 +17,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @version 1.0
  *
  */
+@Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public final class TimeFrame extends AbstractEntity {
 
 	/** Open Time value 0 - 1440 */
 	private int open;
 	/** Open Time value 0 - 1440 */
 	private int close;
-
-	/**
-	 * @return The open time
-	 */
-	public int getOpen() {
-		return open;
-	}
-
-	/**
-	 * @param open
-	 *            The open time
-	 */
-	public void setOpen(final int open) {
-		this.open = open;
-	}
-
-	/**
-	 * @return The close time
-	 */
-	public int getClose() {
-		return close;
-	}
-
-	/**
-	 * @param close
-	 *            The close time
-	 */
-	public void setClose(final int close) {
-		this.close = close;
-	}
 
 	/**
 	 * @return The updated map
@@ -59,35 +36,5 @@ public final class TimeFrame extends AbstractEntity {
 		res.put("open", open + "");
 		res.put("close", close + "");
 		return res;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + close;
-		result = prime * result + open;
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof TimeFrame)) {
-			return false;
-		}
-		TimeFrame other = (TimeFrame) obj;
-		if (close != other.close) {
-			return false;
-		}
-		if (open != other.open) {
-			return false;
-		}
-		return true;
 	}
 }

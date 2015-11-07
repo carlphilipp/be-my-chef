@@ -27,13 +27,13 @@ public final class IllegalArgumentExceptionMapper implements ExceptionMapper<Ill
 
 	@Override
 	public Response toResponse(final IllegalArgumentException exception) {
-		ErrorMessage errorMessage = new ErrorMessage();
-		errorMessage.setError(Response.Status.BAD_REQUEST.getStatusCode());
-		errorMessage.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
+		ErrorMessage mess = new ErrorMessage();
+		mess.setError(Response.Status.BAD_REQUEST.getStatusCode());
+		mess.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
 		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
-			errorMessage.setDescription(exception.getMessage());
+			mess.setDescription(exception.getMessage());
 		}
 		LOG.error("Error: ", exception);
-		return Response.status(Status.BAD_REQUEST).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
+		return Response.status(Status.BAD_REQUEST).entity(mess).type(MediaType.APPLICATION_JSON).build();
 	}
 }

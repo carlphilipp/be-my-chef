@@ -19,8 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.business.VoucherBusiness;
 import com.epickur.api.entity.Key;
@@ -31,7 +31,7 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.Utils;
 
-public class VoucherServiceTest extends InitMocks {
+public class VoucherServiceTest {
 
 	@Mock
 	private VoucherBusiness voucherBusiness;
@@ -42,6 +42,8 @@ public class VoucherServiceTest extends InitMocks {
 
 	@Before
 	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);

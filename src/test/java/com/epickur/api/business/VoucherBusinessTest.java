@@ -12,13 +12,14 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.InitMocks;
 import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.VoucherDAO;
 import com.epickur.api.entity.Voucher;
@@ -27,7 +28,7 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
 
-public class VoucherBusinessTest extends InitMocks {
+public class VoucherBusinessTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -36,6 +37,11 @@ public class VoucherBusinessTest extends InitMocks {
 	private VoucherDAO voucherDAO;
 	@InjectMocks
 	private VoucherBusiness voucherBusiness;
+	
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
 	
 	@Test
 	public void testRead() throws EpickurException{
