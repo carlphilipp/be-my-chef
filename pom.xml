@@ -346,8 +346,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
@@ -702,10 +702,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.1</version>
+				<version>2.10.3</version>
 				<configuration>
 					<stylesheetfile>${project.build.resources[0].directory}/stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
+					<!-- Added for issue with Java 1.8 -->
+					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 				<reportSets>
 					<reportSet>
