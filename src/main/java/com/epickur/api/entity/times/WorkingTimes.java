@@ -15,6 +15,10 @@ import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 /**
  * Working times
  * 
@@ -22,40 +26,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @version 1.0
  *
  */
+@Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public final class WorkingTimes extends AbstractEntity {
 
 	/** Hours */
 	private Hours hours;
 	/** Minimum preparation time in minutes */
 	private int minimumPreparationTime;
-
-	/**
-	 * Getter
-	 * 
-	 * @return The hours
-	 */
-	public Hours getHours() {
-		return hours;
-	}
-
-	/**
-	 * Setter
-	 * 
-	 * @param hours
-	 *            The hours
-	 */
-	public void setHours(final Hours hours) {
-		this.hours = hours;
-	}
-
-	/**
-	 * Getter
-	 * 
-	 * @return The preparation time
-	 */
-	public int getMinimumPreparationTime() {
-		return minimumPreparationTime;
-	}
 
 	/**
 	 * @param day
@@ -137,39 +116,5 @@ public final class WorkingTimes extends AbstractEntity {
 	 */
 	public void setMinimumPreparationTime(final int minimumPreparationTime) {
 		this.minimumPreparationTime = minimumPreparationTime;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((hours == null) ? 0 : hours.hashCode());
-		result = prime * result + minimumPreparationTime;
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof WorkingTimes)) {
-			return false;
-		}
-		WorkingTimes other = (WorkingTimes) obj;
-		if (hours == null) {
-			if (other.hours != null) {
-				return false;
-			}
-		} else if (!hours.equals(other.hours)) {
-			return false;
-		}
-		if (minimumPreparationTime != other.minimumPreparationTime) {
-			return false;
-		}
-		return true;
 	}
 }

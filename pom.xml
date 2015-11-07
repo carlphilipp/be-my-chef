@@ -706,6 +706,8 @@
 				<configuration>
 					<stylesheetfile>${project.build.resources[0].directory}/stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
+					<!-- Added for issue with Java 1.8 -->
+					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 				<reportSets>
 					<reportSet>
