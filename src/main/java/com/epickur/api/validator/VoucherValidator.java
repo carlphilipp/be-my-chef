@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 import com.epickur.api.entity.Voucher;
-import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.exception.EpickurParsingException;
@@ -85,26 +84,10 @@ public final class VoucherValidator extends Validator {
 	 * @throws EpickurParsingException
 	 *             If a an epickur parsinf exception occures
 	 */
-	public void checkVoucherGenerate(final Integer count, final DiscountType discountType, final Integer discount,
-			final ExpirationType expirationType, final String expirationDate, final String format) throws EpickurParsingException {
-		if (count == null) {
-			throw new EpickurIllegalArgument("The param count is not allowed to be null or empty");
-		}
-		if (count < 0) {
-			throw new EpickurIllegalArgument("The param count must be a positive number");
-		}
-		if (discount == null) {
-			throw new EpickurIllegalArgument("The param discount is not allowed to be null or empty");
-		}
-		if (discount < 0) {
-			throw new EpickurIllegalArgument("The param discount must be a positive number");
-		}
-		if (discountType == null) {
-			throw new EpickurIllegalArgument("The param discountType is not allowed to be null or empty");
-		}
-		if (expirationType == null) {
-			throw new EpickurIllegalArgument("The param expirationType is not allowed to be null or empty");
-		}
+	public void checkVoucherGenerate(
+			final ExpirationType expirationType,
+			final String expirationDate,
+			final String format) throws EpickurParsingException {
 		if (expirationType.equals(ExpirationType.UNTIL)) {
 			if (StringUtils.isBlank(expirationDate)) {
 				throw new EpickurIllegalArgument("The param expirationDate is not allowed to be null or empty when expirationType is until");

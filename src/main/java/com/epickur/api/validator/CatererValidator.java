@@ -47,7 +47,6 @@ public final class CatererValidator extends Validator {
 	 *            The Caterer
 	 */
 	public void checkUpdateCaterer(final String id, final Caterer caterer) {
-		checkId(id);
 		checkCaterer(caterer);
 		if (caterer.getId() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "id"));
@@ -65,8 +64,7 @@ public final class CatererValidator extends Validator {
 	 * @param end
 	 *            The end date
 	 */
-	public void checkPaymentInfo(final String id, final DateTime start, final DateTime end) {
-		checkId(id);
+	public void checkPaymentInfo(final DateTime start, final DateTime end) {
 		if (start == null && end != null) {
 			throw new EpickurIllegalArgument("Start date missing");
 		}

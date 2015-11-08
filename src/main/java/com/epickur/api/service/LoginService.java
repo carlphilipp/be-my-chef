@@ -7,11 +7,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.validator.FactoryValidator;
-import com.epickur.api.validator.UserValidator;
 
 /**
  * JAX-RS Login Service
@@ -24,13 +24,10 @@ public final class LoginService {
 
 	/** User Business */
 	private UserBusiness userBusiness;
-	/** Service validator */
-	private UserValidator validator;
 
 	/** Constructor */
 	public LoginService() {
 		this.userBusiness = new UserBusiness();
-		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 	}
 
 	// @formatter:off
@@ -74,8 +71,10 @@ public final class LoginService {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response login(@QueryParam("email") final String email, @QueryParam("password") final String password) throws EpickurException {
-		this.validator.checkLogin(email, password);
+	public Response login(
+			@QueryParam("email") @NotBlank(message = "{login.email}") final String email,
+			@QueryParam("password") @NotBlank(message = "{login.password}") final String password)
+					throws EpickurException {
 		User user = this.userBusiness.login(email, password);
 		return Response.ok().entity(user).build();
 	}

@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 
 import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.Voucher;
@@ -79,7 +78,6 @@ public final class UserValidator extends Validator {
 	 *            The User
 	 */
 	public void checkUpdateUser(final String id, final User user) {
-		checkId(id);
 		if (user == null) {
 			throw new EpickurIllegalArgument(NO_USER_PROVIDED);
 		}
@@ -109,23 +107,12 @@ public final class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param id
-	 *            The User id
-	 * @param key
-	 *            The Key
-	 */
-	public void checkReadAllOrder(final String id, final Key key) {
-		checkId(id);
-	}
-
-	/**
 	 * @param userId
 	 *            The User id
 	 * @param order
 	 *            The Order
 	 */
-	public void checkCreateOneOrder(final String userId, final Order order) {
-		checkId(userId);
+	public void checkCreateOneOrder(final Order order) {
 		if (order == null) {
 			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
 		} else {
@@ -180,7 +167,8 @@ public final class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param voucher The voucher
+	 * @param voucher
+	 *            The voucher
 	 */
 	private void checkVoucherData(final Voucher voucher) {
 		VoucherValidator validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
@@ -195,9 +183,7 @@ public final class UserValidator extends Validator {
 	 * @param order
 	 *            The Order
 	 */
-	public void checkUpdateOneOrder(final String id, final String orderId, final Order order) {
-		checkId(id);
-		checkId(orderId);
+	public void checkUpdateOneOrder(final String orderId, final Order order) {
 		if (order == null) {
 			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
 		}
@@ -207,17 +193,6 @@ public final class UserValidator extends Validator {
 		if (!order.getId().toHexString().equals(orderId)) {
 			throw new EpickurIllegalArgument("The parameter orderId and the field order.id should match");
 		}
-	}
-
-	/**
-	 * @param id
-	 *            The User id
-	 * @param orderId
-	 *            The Order id
-	 */
-	public void checkDeleteOneOrder(final String id, final String orderId) {
-		checkId(id);
-		checkId(orderId);
 	}
 
 	/**
@@ -236,21 +211,6 @@ public final class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param email
-	 *            The user email
-	 * @param password
-	 *            The user email
-	 */
-	public void checkLogin(final String email, final String password) {
-		if (StringUtils.isBlank(email)) {
-			throw new EpickurIllegalArgument("The parameter email is not allowed to be null or empty");
-		}
-		if (StringUtils.isBlank(password)) {
-			throw new EpickurIllegalArgument("The parameter password is not allowed to be null or empty");
-		}
-	}
-
-	/**
 	 * @param role
 	 *            The Role
 	 * @param userId
@@ -264,8 +224,8 @@ public final class UserValidator extends Validator {
 	 */
 	public void checkUserRightsAfter(final Role role, final ObjectId userId, final User user, final Operation action) throws EpickurException {
 		if (role != Role.ADMIN) {
-			if ((action == Operation.READ && (role == Role.USER || role == Role.SUPER_USER))				// NOPMD
-					|| (action == Operation.UPDATE && (role == Role.USER || role == Role.SUPER_USER))) {	// NOPMD
+			if ((action == Operation.READ && (role == Role.USER || role == Role.SUPER_USER)) // NOPMD
+					|| (action == Operation.UPDATE && (role == Role.USER || role == Role.SUPER_USER))) { // NOPMD
 				if (!userId.equals(user.getId())) {
 					throw new EpickurForbiddenException();
 				}
@@ -291,14 +251,14 @@ public final class UserValidator extends Validator {
 				throw new EpickurForbiddenException();
 			}
 			if (action == Operation.READ || action == Operation.UPDATE) {
-				if (!userId.equals(order.getCreatedBy())) {					// NOPMD
+				if (!userId.equals(order.getCreatedBy())) { // NOPMD
 					throw new EpickurForbiddenException();
 				}
 			}
 		}
 	}
-	
-	public void checkOrderStatus(final Order order) throws EpickurException{
+
+	public void checkOrderStatus(final Order order) throws EpickurException {
 		if (order.getStatus() != OrderStatus.PENDING) {
 			throw new EpickurException("It's not allowed to modify an order that has a " + order.getStatus() + " status");
 		}
@@ -327,11 +287,7 @@ public final class UserValidator extends Validator {
 	 * @param token
 	 *            The token
 	 */
-	public void checkResetPasswordData(final String id, final ObjectNode node, final String token) {
-		checkId(id);
-		if (StringUtils.isBlank(token)) {
-			throw new EpickurIllegalArgument("The parameter token is not allowed to be null or empty");
-		}
+	public void checkResetPasswordDataSecondStep(final ObjectNode node) {
 		if (!node.has("password")) {
 			throw new EpickurIllegalArgument("The field password is mandatory");
 

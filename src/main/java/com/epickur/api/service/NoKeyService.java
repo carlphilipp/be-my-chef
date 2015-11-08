@@ -1,5 +1,6 @@
 package com.epickur.api.service;
 
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -11,11 +12,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.validator.CheckId;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -93,9 +97,10 @@ public final class NoKeyService {
 	@Path("/check")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response checkUser(
-			@QueryParam("email") final String email,
-			@QueryParam("check") final String check) throws EpickurException {
-		this.validator.checkCheckUser(email, check);
+			@NotBlank(message = "{nokey.check.user.email}") @QueryParam("email") final String email,
+			@NotBlank(message = "{nokey.check.user.check}") @QueryParam("check") final String check)
+					throws EpickurException {
+		//this.validator.checkCheckUser(email, check);
 		User user = this.userBusiness.checkCode(email, check);
 		this.userBusiness.suscribeToNewsletter(user);
 		return Response.ok().entity(user).build();
@@ -170,11 +175,11 @@ public final class NoKeyService {
 	@Path("/execute/users/{id}/orders/{orderId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response executeOrder(
-			@PathParam("id") final String userId,
-			@PathParam("orderId") final String orderId,
-			@QueryParam("confirm") final boolean confirm,
-			@QueryParam("ordercode") final String orderCode,
-			@DefaultValue("true") @HeaderParam("charge-agent") final boolean shouldCharge) throws EpickurException {
+			@PathParam("id") @CheckId final String userId,
+			@PathParam("orderId") @CheckId final String orderId,
+			@QueryParam("confirm") @NotNull(message = "{nokey.execute.confirm}") final boolean confirm,
+			@QueryParam("ordercode") @NotBlank(message = "{nokey.execute.ordercode}") final String orderCode,
+			@HeaderParam("charge-agent") @DefaultValue("true") final boolean shouldCharge) throws EpickurException {
 		Order result = orderBusiness.executeOrder(userId, orderId, confirm, shouldCharge, orderCode);
 		return Response.ok().entity(result).build();
 	}
@@ -230,10 +235,10 @@ public final class NoKeyService {
 	@Path("/reset/users/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response resetPasswordSecondStep(
-			@PathParam("id") final String id,
-			@QueryParam("token") final String resetCode,
+			@PathParam("id") @CheckId final String id,
+			@NotBlank(message = "{nokey.reset.token}") @QueryParam("token") final String resetCode,
 			final ObjectNode node) throws EpickurException {
-		validator.checkResetPasswordData(id, node, resetCode);
+		validator.checkResetPasswordDataSecondStep(node);
 		String newPassword = node.get("password").asText();
 		User user = userBusiness.resetPasswordSecondStep(id, newPassword, resetCode);
 		return Response.ok().entity(user).build();

@@ -2,6 +2,8 @@ package com.epickur.api.service;
 
 import java.util.Set;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 
 import com.epickur.api.business.VoucherBusiness;
@@ -174,15 +177,15 @@ public final class VoucherService {
 	@Path("/generate")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response generate(
-			@QueryParam("count") final Integer count,
-			@QueryParam("discountType") final DiscountType discountType,
-			@QueryParam("discount") final Integer discount,
-			@QueryParam("expirationType") final ExpirationType expirationType,
+			@QueryParam("count") @NotBlank(message = "{voucher.generate.count.blank}") @Min(value = 0, message = "{voucher.generate.count.positive}") final Integer count,
+			@QueryParam("discountType") @NotBlank(message = "{voucher.generate.discounttype}") final DiscountType discountType,
+			@QueryParam("discount") @NotBlank(message = "{voucher.generate.discount.blank}") @Min(value = 0, message = "{voucher.generate.discount.positive}") final Integer discount,
+			@QueryParam("expirationType") @NotNull(message = "{voucher.generate.expirationtype}") final ExpirationType expirationType,
 			@QueryParam("expiration") final String expiration,
 			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.GENERATE_VOUCHER, EndpointType.VOUCHER);
-		validator.checkVoucherGenerate(count, discountType, discount, expirationType, expiration, format);
+		validator.checkVoucherGenerate(expirationType, expiration, format);
 		DateTime date = null;
 		if (expiration != null) {
 			date = Utils.parseDate(expiration, format);

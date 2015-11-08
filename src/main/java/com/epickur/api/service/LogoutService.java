@@ -7,6 +7,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.epickur.api.business.KeyBusiness;
 import com.epickur.api.entity.message.SuccessMessage;
 import com.epickur.api.exception.EpickurException;
@@ -56,7 +58,7 @@ public final class LogoutService {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response logout(@QueryParam("key") final String key) throws EpickurException {
+	public Response logout(@QueryParam("key") @NotBlank(message = "{logout.key}") final String key) throws EpickurException {
 		this.keyBusiness.deleteWithKey(key);
 		SuccessMessage successMessage = new SuccessMessage();
 		return Response.ok().entity(successMessage).build();
