@@ -67,7 +67,6 @@ public final class UserValidator extends Validator {
 		if (user.getPhoneNumber() != null) {
 			PhoneNumberUtil util = PhoneNumberUtil.getInstance();
 			if (!util.isValidNumber(user.getPhoneNumber())) {
-				System.out.println(user.getPhoneNumber());
 				throw new EpickurIllegalArgument("The field " + getEntity() + ".phoneNumber is not valid");
 			}
 		}

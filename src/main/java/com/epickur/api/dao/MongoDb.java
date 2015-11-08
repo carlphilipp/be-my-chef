@@ -92,5 +92,6 @@ public final class MongoDb {
 	@Override
 	protected void finalize() throws Throwable {
 		mongoClient.close();
+		super.finalize();
 	}
 }
