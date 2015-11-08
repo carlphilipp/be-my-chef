@@ -1,5 +1,7 @@
 package com.epickur.api.validator;
 
+import static org.junit.Assert.fail;
+
 import org.bson.types.ObjectId;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -202,27 +204,31 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckUpdateOneOrder() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public void testCheckUpdateOneOrder() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.id is not allowed to be null or empty");
-
-		Order order = TestUtils.generateRandomOrder();
-		order.setId(null);
-		UserValidator validator = new UserValidator();
-		validator.checkUpdateOneOrder(new ObjectId().toHexString(), order);
+		try {
+			Order order = TestUtils.generateRandomOrder();
+			order.setId(null);
+			UserValidator validator = new UserValidator();
+			validator.checkUpdateOneOrder(new ObjectId().toHexString(), order);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
-	public void testCheckUpdateOneOrder2() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public void testCheckUpdateOneOrder2() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The parameter orderId and the field order.id should match");
-
-		Order order = TestUtils.generateRandomOrder();
-		order.setId(new ObjectId());
-		UserValidator validator = new UserValidator();
-		validator.checkUpdateOneOrder(new ObjectId().toHexString(), order);
+		try {
+			Order order = TestUtils.generateRandomOrder();
+			order.setId(new ObjectId());
+			UserValidator validator = new UserValidator();
+			validator.checkUpdateOneOrder(new ObjectId().toHexString(), order);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
@@ -235,11 +241,14 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckCreateOneOrder() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
-		UserValidator validator = new UserValidator();
-		Order order = TestUtils.generateRandomOrder();
-		validator.checkCreateOneOrder(order);
+	public void testCheckCreateOneOrder() {
+		try {
+			UserValidator validator = new UserValidator();
+			Order order = TestUtils.generateRandomOrder();
+			validator.checkCreateOneOrder(order);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
@@ -253,75 +262,87 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckCreateOneOrder3() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public void testCheckCreateOneOrder3() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.cardToken is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = TestUtils.generateRandomOrder();
-		order.setCardToken(null);
-		validator.checkCreateOneOrder(order);
+		try {
+			UserValidator validator = new UserValidator();
+			Order order = TestUtils.generateRandomOrder();
+			order.setCardToken(null);
+			validator.checkCreateOneOrder(order);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
-	public void testCheckCreateOneOrder4() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public void testCheckCreateOneOrder4() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.description is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = TestUtils.generateRandomOrder();
-		order.setDescription(null);
-		validator.checkCreateOneOrder(order);
+		try {
+			UserValidator validator = new UserValidator();
+			Order order = TestUtils.generateRandomOrder();
+			order.setDescription(null);
+			validator.checkCreateOneOrder(order);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
-	public void testCheckCreateOneOrder5() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public void testCheckCreateOneOrder5() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.amount is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = TestUtils.generateRandomOrder();
-		order.setAmount(null);
-		validator.checkCreateOneOrder(order);
+		try {
+			UserValidator validator = new UserValidator();
+			Order order = TestUtils.generateRandomOrder();
+			order.setAmount(null);
+			validator.checkCreateOneOrder(order);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
-	public void testCheckCreateOneOrder6() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public void testCheckCreateOneOrder6() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.currency is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = TestUtils.generateRandomOrder();
-		order.setCurrency(null);
-		validator.checkCreateOneOrder(order);
+		try {
+			UserValidator validator = new UserValidator();
+			Order order = TestUtils.generateRandomOrder();
+			order.setCurrency(null);
+			validator.checkCreateOneOrder(order);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
-	public void testCheckCreateOneOrder7() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public void testCheckCreateOneOrder7() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.pickupdate is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = TestUtils.generateRandomOrder();
-		order.setPickupdate(null);
-		validator.checkCreateOneOrder(order);
+		try {
+			UserValidator validator = new UserValidator();
+			Order order = TestUtils.generateRandomOrder();
+			order.setPickupdate(null);
+			validator.checkCreateOneOrder(order);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
-	public void testCheckCreateOneOrder8() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public void testCheckCreateOneOrder8() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.paid can not be true");
-
-		UserValidator validator = new UserValidator();
-		Order order = TestUtils.generateRandomOrder();
-		order.setPaid(true);
-		validator.checkCreateOneOrder(order);
+		try {
+			UserValidator validator = new UserValidator();
+			Order order = TestUtils.generateRandomOrder();
+			order.setPaid(true);
+			validator.checkCreateOneOrder(order);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
@@ -393,19 +414,27 @@ public class UserValidatorTest {
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.CREATE);
 	}
 
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckOrderRightsAfter() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
-		UserValidator validator = new UserValidator();
-		Order order = TestUtils.generateRandomOrder();
-		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Operation.READ);
+	@Test
+	public void testCheckOrderRightsAfter() {
+		thrown.expect(EpickurForbiddenException.class);
+		try {
+			UserValidator validator = new UserValidator();
+			Order order = TestUtils.generateRandomOrder();
+			validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Operation.READ);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
-	@Test(expected = EpickurForbiddenException.class)
-	public void testCheckOrderRightsAfter2() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
-		UserValidator validator = new UserValidator();
-		Order order = TestUtils.generateRandomOrder();
-		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Operation.DELETE);
+	@Test
+	public void testCheckOrderRightsAfter2() {
+		thrown.expect(EpickurForbiddenException.class);
+		try {
+			UserValidator validator = new UserValidator();
+			Order order = TestUtils.generateRandomOrder();
+			validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Operation.DELETE);
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 }

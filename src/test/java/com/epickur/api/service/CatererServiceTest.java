@@ -3,6 +3,7 @@ package com.epickur.api.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -39,6 +40,11 @@ import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.report.Report;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
@@ -62,7 +68,7 @@ public class CatererServiceTest {
 	public static void setUpBeforeClass() {
 		TestUtils.setupStripe();
 	}
-	
+
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		TestUtils.resetStripe();
@@ -219,76 +225,87 @@ public class CatererServiceTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testPaymentInfoPdf() throws Exception {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
-		Order order = TestUtils.generateRandomOrderWithId();
-		List<Order> orders = new ArrayList<Order>();
-		orders.add(order);
+		try {
+			Caterer caterer = TestUtils.generateRandomCatererWithoutId();
+			Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+			Order order = TestUtils.generateRandomOrderWithId();
+			List<Order> orders = new ArrayList<Order>();
+			orders.add(order);
 
-		when(catererBusiness.read(anyString())).thenReturn(catererAfterCreate);
-		when(orderBusiness.readAllWithCatererId(anyString(), (DateTime) anyObject(), (DateTime) anyObject())).thenReturn(orders);
-		when(catererBusiness.getTotalAmountSuccessful((List<Order>) anyObject())).thenReturn(150);
-		Key key = TestUtils.generateRandomAdminKey();
-		when(context.getProperty("key")).thenReturn(key);
-		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_XML_TYPE);
-		when(report.getReport()).thenReturn(new byte[10]);
-		whenNew(Report.class).withNoArguments().thenReturn(report);
+			when(catererBusiness.read(anyString())).thenReturn(catererAfterCreate);
+			when(orderBusiness.readAllWithCatererId(anyString(), (DateTime) anyObject(), (DateTime) anyObject())).thenReturn(orders);
+			when(catererBusiness.getTotalAmountSuccessful((List<Order>) anyObject())).thenReturn(150);
+			Key key = TestUtils.generateRandomAdminKey();
+			when(context.getProperty("key")).thenReturn(key);
+			when(context.getMediaType()).thenReturn(MediaType.APPLICATION_XML_TYPE);
+			when(report.getReport()).thenReturn(new byte[10]);
+			whenNew(Report.class).withNoArguments().thenReturn(report);
 
-		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), null, null, null);
-		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		assertEquals("attachment; filename =" + catererAfterCreate.getId().toHexString() + ".pdf", actual.getHeaderString("content-disposition"));
-		assertEquals("application/pdf", actual.getMediaType().toString());
+			Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), null, null, null);
+			assertNotNull(actual);
+			assertEquals(200, actual.getStatus());
+			assertEquals("attachment; filename =" + catererAfterCreate.getId().toHexString() + ".pdf", actual.getHeaderString("content-disposition"));
+			assertEquals("application/pdf", actual.getMediaType().toString());
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testPaymentInfoJson() throws Exception {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
-		Order order = TestUtils.generateRandomOrderWithId();
-		List<Order> orders = new ArrayList<Order>();
-		orders.add(order);
+		try {
+			Caterer caterer = TestUtils.generateRandomCatererWithoutId();
+			Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+			Order order = TestUtils.generateRandomOrderWithId();
+			List<Order> orders = new ArrayList<Order>();
+			orders.add(order);
 
-		when(catererBusiness.read(anyString())).thenReturn(catererAfterCreate);
-		when(orderBusiness.readAllWithCatererId(anyString(), (DateTime) anyObject(), (DateTime) anyObject())).thenReturn(orders);
-		when(catererBusiness.getTotalAmountSuccessful((List<Order>) anyObject())).thenReturn(150);
-		Key key = TestUtils.generateRandomAdminKey();
-		when(context.getProperty("key")).thenReturn(key);
-		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
-		when(report.getReport()).thenReturn(new byte[10]);
-		whenNew(Report.class).withNoArguments().thenReturn(report);
+			when(catererBusiness.read(anyString())).thenReturn(catererAfterCreate);
+			when(orderBusiness.readAllWithCatererId(anyString(), (DateTime) anyObject(), (DateTime) anyObject())).thenReturn(orders);
+			when(catererBusiness.getTotalAmountSuccessful((List<Order>) anyObject())).thenReturn(150);
+			Key key = TestUtils.generateRandomAdminKey();
+			when(context.getProperty("key")).thenReturn(key);
+			when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
+			when(report.getReport()).thenReturn(new byte[10]);
+			whenNew(Report.class).withNoArguments().thenReturn(report);
 
-		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
-		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		assertEquals("application/json", actual.getMediaType().toString());
-		PayementInfoMessage actualMessage = (PayementInfoMessage) actual.getEntity();
-		assertNotNull(actualMessage);
-		assertEquals(catererAfterCreate.getId().toHexString(), actualMessage.getId());
-		assertEquals(catererAfterCreate.getName(), actualMessage.getName());
-		assertEquals(150, actualMessage.getAmount().intValue());
-		assertEquals("01/01/2015", actualMessage.getStart());
-		assertEquals("01/01/2016", actualMessage.getEnd());
-		assertEquals("MM/dd/yyyy", actualMessage.getFormat());
+			Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
+			assertNotNull(actual);
+			assertEquals(200, actual.getStatus());
+			assertEquals("application/json", actual.getMediaType().toString());
+			PayementInfoMessage actualMessage = (PayementInfoMessage) actual.getEntity();
+			assertNotNull(actualMessage);
+			assertEquals(catererAfterCreate.getId().toHexString(), actualMessage.getId());
+			assertEquals(catererAfterCreate.getName(), actualMessage.getName());
+			assertEquals(150, actualMessage.getAmount().intValue());
+			assertEquals("01/01/2015", actualMessage.getStart());
+			assertEquals("01/01/2016", actualMessage.getEnd());
+			assertEquals("MM/dd/yyyy", actualMessage.getFormat());
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test
-	public void testPaymentInfoCatererNotFound() throws Exception {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
-		Order order = TestUtils.generateRandomOrderWithId();
-		List<Order> orders = new ArrayList<Order>();
-		orders.add(order);
+	public void testPaymentInfoCatererNotFound() throws EpickurException {
+		try {
+			Caterer caterer = TestUtils.generateRandomCatererWithoutId();
+			Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+			Order order = TestUtils.generateRandomOrderWithId();
+			List<Order> orders = new ArrayList<Order>();
+			orders.add(order);
 
-		when(catererBusiness.read(anyString())).thenReturn(null);
+			when(catererBusiness.read(anyString())).thenReturn(null);
 
-		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
-		assertNotNull(actual);
-		assertEquals(404, actual.getStatus());
-		ErrorMessage error = (ErrorMessage) actual.getEntity();
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
-
+			Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
+			assertNotNull(actual);
+			assertEquals(404, actual.getStatus());
+			ErrorMessage error = (ErrorMessage) actual.getEntity();
+			assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
+			assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 }

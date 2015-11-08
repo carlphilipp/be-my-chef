@@ -1,6 +1,7 @@
 package com.epickur.api.payment.stripe;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 
@@ -53,9 +54,13 @@ public class StripePaymentTest {
 	
 	
 	@BeforeClass
-	public static void setUpBeforeClass() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
-		TestUtils.setupStripe();
-		TOKEN = Token.create(TestUtils.getTokenParam());
+	public static void setUpBeforeClass() {
+		try {
+			TestUtils.setupStripe();
+			TOKEN = Token.create(TestUtils.getTokenParam());
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 	
 	@AfterClass
