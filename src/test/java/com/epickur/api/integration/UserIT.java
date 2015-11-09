@@ -444,8 +444,8 @@ public class UserIT {
 			// Create result
 			assertTrue(jsonResult.has("error"));
 			assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), jsonResult.get("error").asInt());
-			assertTrue(jsonResult.has("description"));
-			assertEquals("The field user.phoneNumber is not valid", jsonResult.get("description").asText());
+			assertTrue(jsonResult.has("descriptions"));
+			assertEquals("The field user.phoneNumber is not valid", jsonResult.get("descriptions").get(0).asText());
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);

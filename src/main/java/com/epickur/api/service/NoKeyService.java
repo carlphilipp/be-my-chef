@@ -19,7 +19,7 @@ import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.validator.CheckId;
+import com.epickur.api.validator.IdValidate;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -175,8 +175,8 @@ public final class NoKeyService {
 	@Path("/execute/users/{id}/orders/{orderId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response executeOrder(
-			@PathParam("id") @CheckId final String userId,
-			@PathParam("orderId") @CheckId final String orderId,
+			@PathParam("id") @IdValidate final String userId,
+			@PathParam("orderId") @IdValidate final String orderId,
 			@QueryParam("confirm") @NotNull(message = "{nokey.execute.confirm}") final boolean confirm,
 			@QueryParam("ordercode") @NotBlank(message = "{nokey.execute.ordercode}") final String orderCode,
 			@HeaderParam("charge-agent") @DefaultValue("true") final boolean shouldCharge) throws EpickurException {
@@ -235,7 +235,7 @@ public final class NoKeyService {
 	@Path("/reset/users/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response resetPasswordSecondStep(
-			@PathParam("id") @CheckId final String id,
+			@PathParam("id") @IdValidate final String id,
 			@NotBlank(message = "{nokey.reset.token}") @QueryParam("token") final String resetCode,
 			final ObjectNode node) throws EpickurException {
 		validator.checkResetPasswordDataSecondStep(node);

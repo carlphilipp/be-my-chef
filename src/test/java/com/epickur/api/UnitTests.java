@@ -73,6 +73,8 @@ import com.epickur.api.validator.AccessRightsOrderTest;
 import com.epickur.api.validator.AccessRightsUserTest;
 import com.epickur.api.validator.AccessRightsVoucherTest;
 import com.epickur.api.validator.CatererValidatorTest;
+import com.epickur.api.validator.IdValidateTest;
+import com.epickur.api.validator.UserCreateValidatorTest;
 import com.epickur.api.validator.DishValidatorTest;
 import com.epickur.api.validator.UserValidatorTest;
 import com.epickur.api.validator.VoucherValidatorTest;
@@ -161,6 +163,8 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		DishValidatorTest.class,
 		UserValidatorTest.class,
 		VoucherValidatorTest.class,
+		IdValidateTest.class,
+		UserCreateValidatorTest.class,
 
 		WorkingTimesTest.class,
 		

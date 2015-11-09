@@ -25,7 +25,7 @@ public final class NotFoundExceptionMapper implements ExceptionMapper<NotFoundEx
 		ErrorMessage errorMessage = new ErrorMessage();
 		errorMessage.setError(Response.Status.NOT_FOUND.getStatusCode());
 		errorMessage.setMessage(Response.Status.NOT_FOUND.getReasonPhrase());
-		errorMessage.setDescription("Endpoint not found");
+		errorMessage.addDescription("Endpoint not found");
 		return Response.status(Status.NOT_FOUND).type(MediaType.APPLICATION_JSON).entity(errorMessage).build();
 	}
 }

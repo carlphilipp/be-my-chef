@@ -37,7 +37,7 @@ import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.CatererValidator;
-import com.epickur.api.validator.CheckId;
+import com.epickur.api.validator.IdValidate;
 import com.epickur.api.validator.FactoryValidator;
 
 /**
@@ -213,7 +213,7 @@ public final class CatererService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") @CheckId final String id) throws EpickurException {
+	public Response read(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.CATERER);
 		Caterer caterer = catererBusiness.read(id);
@@ -300,7 +300,7 @@ public final class CatererService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(
-			@PathParam("id") @CheckId final String id,
+			@PathParam("id") @IdValidate final String id,
 			final Caterer caterer) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.CATERER);
@@ -350,7 +350,7 @@ public final class CatererService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(
-			@PathParam("id") @CheckId final String id) throws EpickurException {
+			@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.CATERER);
 		boolean resBool = catererBusiness.delete(id);
@@ -547,7 +547,7 @@ public final class CatererService {
 	@GET
 	@Path("/{id}/dishes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response readDishes(@PathParam("id") final @CheckId String catererId) throws EpickurException {
+	public Response readDishes(@PathParam("id") final @IdValidate String catererId) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ_DISHES, EndpointType.CATERER);
 		List<Dish> dishes = dishBusiness.searchDishesForOneCaterer(catererId);
@@ -599,7 +599,7 @@ public final class CatererService {
 	@Consumes({ MediaType.APPLICATION_JSON, "application/pdf" })
 	@Produces({ MediaType.APPLICATION_JSON, "application/pdf" })
 	public Response paymentInfo(
-			@PathParam("id") @CheckId final String id,
+			@PathParam("id") @IdValidate final String id,
 			@QueryParam("startDate") final String start,
 			@QueryParam("endDate") final String end,
 			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format) throws EpickurException {

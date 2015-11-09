@@ -30,7 +30,8 @@ import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.validator.AccessRights;
-import com.epickur.api.validator.CheckId;
+import com.epickur.api.validator.IdValidate;
+import com.epickur.api.validator.UserCreateValidate;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -114,10 +115,9 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create(
 			@DefaultValue("false") @HeaderParam("validate-agent") final boolean autoValidate,
-			final User user) throws EpickurException {
+			@UserCreateValidate final User user) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.USER);
-		validator.checkCreateUser(user);
 		User result = userBusiness.create(user, autoValidate);
 		// We add to the header the check code. Can be useful for tests or developers.
 		return Response.ok().entity(result).header("check", result.getCode()).build();
@@ -167,7 +167,7 @@ public final class UserService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") @CheckId final String id) throws EpickurException {
+	public Response read(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.USER);
 		User user = userBusiness.read(id, key);
@@ -229,7 +229,7 @@ public final class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(
-			@PathParam("id") @CheckId final String id,
+			@PathParam("id") @IdValidate final String id,
 			final User user) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.USER);
@@ -283,7 +283,7 @@ public final class UserService {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") @CheckId final String id) throws EpickurException {
+	public Response delete(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.USER);
 		boolean isDeleted = userBusiness.delete(id);
@@ -404,8 +404,8 @@ public final class UserService {
 	@Path("/{id}/orders/{orderId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readOneOrder(
-			@PathParam("id") final @CheckId String id,
-			@PathParam("orderId") @CheckId final String orderId) throws EpickurException {
+			@PathParam("id") final @IdValidate String id,
+			@PathParam("orderId") @IdValidate final String orderId) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.ORDER);
 		Order order = orderBusiness.read(orderId, key);
@@ -491,7 +491,7 @@ public final class UserService {
 	@Path("/{id}/orders")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readAllOrders(
-			@PathParam("id") @CheckId final String id) throws EpickurException {
+			@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.ORDER);
 		List<Order> orders = orderBusiness.readAllWithUserId(id);
@@ -567,7 +567,7 @@ public final class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createOneOrder(
-			@PathParam("id") @CheckId final String userId,
+			@PathParam("id") @IdValidate final String userId,
 			final Order order) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.ORDER);
@@ -641,8 +641,8 @@ public final class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateOneOrder(
-			@PathParam("id") @CheckId final String id,
-			@PathParam("orderId") @CheckId final String orderId,
+			@PathParam("id") @IdValidate final String id,
+			@PathParam("orderId") @IdValidate final String orderId,
 			final Order order) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.ORDER);
@@ -694,8 +694,8 @@ public final class UserService {
 	@Path("/{id}/orders/{orderId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteOneOrder(
-			@PathParam("id") @CheckId final String id,
-			@PathParam("orderId") @CheckId final String orderId) throws EpickurException {
+			@PathParam("id") @IdValidate final String id,
+			@PathParam("orderId") @IdValidate final String orderId) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.ORDER);
 		boolean isDeleted = orderBusiness.delete(orderId);

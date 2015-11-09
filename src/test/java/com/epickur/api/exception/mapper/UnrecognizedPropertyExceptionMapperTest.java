@@ -26,7 +26,8 @@ public class UnrecognizedPropertyExceptionMapperTest {
 		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), errorMessage.getError().intValue());
 		assertNotNull(errorMessage.getMessage());
 		assertEquals(Response.Status.BAD_REQUEST.getReasonPhrase(), errorMessage.getMessage());
-		assertNotNull(errorMessage.getDescription());
-		assertEquals("Unrecognized field " + exception.getPropertyName(), errorMessage.getDescription());
+		assertNotNull(errorMessage.getDescriptions());
+		assertEquals(1, errorMessage.getDescriptions().size());
+		assertEquals("Unrecognized field " + exception.getPropertyName(), errorMessage.getDescriptions().get(0));
 	}
 }

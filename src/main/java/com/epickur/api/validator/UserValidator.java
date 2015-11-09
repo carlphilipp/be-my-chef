@@ -19,7 +19,6 @@ import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 /**
  * @author cph
@@ -35,40 +34,6 @@ public final class UserValidator extends Validator {
 	 */
 	protected UserValidator() {
 		super("user");
-	}
-
-	/**
-	 * @param user
-	 *            The User to check
-	 */
-	public void checkCreateUser(final User user) {
-		if (user == null) {
-			throw new EpickurIllegalArgument(NO_USER_PROVIDED);
-		}
-		if (StringUtils.isBlank(user.getName())) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "name"));
-		}
-		if (StringUtils.isBlank(user.getPassword())) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "password"));
-		}
-		if (StringUtils.isBlank(user.getEmail())) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "email"));
-		}
-		if (StringUtils.isBlank(user.getCountry())) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "country"));
-		}
-		if (StringUtils.isBlank(user.getZipcode())) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "zipcode"));
-		}
-		if (StringUtils.isBlank(user.getState())) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "state"));
-		}
-		if (user.getPhoneNumber() != null) {
-			PhoneNumberUtil util = PhoneNumberUtil.getInstance();
-			if (!util.isValidNumber(user.getPhoneNumber())) {
-				throw new EpickurIllegalArgument("The field " + getEntity() + ".phoneNumber is not valid");
-			}
-		}
 	}
 
 	/**

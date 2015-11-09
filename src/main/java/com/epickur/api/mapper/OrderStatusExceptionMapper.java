@@ -27,7 +27,7 @@ public final class OrderStatusExceptionMapper implements ExceptionMapper<OrderSt
 		errorMessage.setError(Response.Status.BAD_REQUEST.getStatusCode());
 		errorMessage.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
 		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
-			errorMessage.setDescription(exception.getMessage());
+			errorMessage.addDescription(exception.getMessage());
 		}
 		return Response.status(Status.BAD_REQUEST).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
 	}

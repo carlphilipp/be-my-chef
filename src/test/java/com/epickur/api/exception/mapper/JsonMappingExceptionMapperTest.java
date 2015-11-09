@@ -26,7 +26,8 @@ public class JsonMappingExceptionMapperTest {
 		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), errorMessage.getError().intValue());
 		assertNotNull(errorMessage.getMessage());
 		assertEquals(Response.Status.BAD_REQUEST.getReasonPhrase(), errorMessage.getMessage());
-		assertNotNull(errorMessage.getDescription());
-		assertEquals("message", errorMessage.getDescription());
+		assertNotNull(errorMessage.getDescriptions());
+		assertEquals(1, errorMessage.getDescriptions().size());
+		assertEquals("message", errorMessage.getDescriptions().get(0));
 	}
 }

@@ -74,7 +74,7 @@ public final class ErrorUtils {
 		ErrorMessage error = new ErrorMessage();
 		error.setError(Response.Status.NOT_FOUND.getStatusCode());
 		error.setMessage(Response.Status.NOT_FOUND.getReasonPhrase());
-		error.setDescription(message + ": " + id);
+		error.addDescription(message + ": " + id);
 		return Response.status(Response.Status.NOT_FOUND).entity(error).build();
 	}
 

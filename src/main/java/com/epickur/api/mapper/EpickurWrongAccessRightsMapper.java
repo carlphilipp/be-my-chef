@@ -26,7 +26,7 @@ public final class EpickurWrongAccessRightsMapper implements ExceptionMapper<Epi
 		ErrorMessage errorMessage = new ErrorMessage();
 		errorMessage.setError(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		errorMessage.setMessage(Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
-		errorMessage.setDescription(exception.getMessage());
+		errorMessage.addDescription(exception.getMessage());
 		LOG.error("Wrong access rights exception: " + exception.getMessage(), exception);
 		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
 	}

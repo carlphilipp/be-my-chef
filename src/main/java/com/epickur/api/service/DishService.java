@@ -35,7 +35,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
-import com.epickur.api.validator.CheckId;
+import com.epickur.api.validator.IdValidate;
 import com.epickur.api.validator.DishValidator;
 import com.epickur.api.validator.FactoryValidator;
 
@@ -270,7 +270,7 @@ public final class DishService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") @CheckId final String id) throws EpickurException {
+	public Response read(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.DISH);
 		Dish dish = dishBusiness.read(id);
@@ -392,7 +392,7 @@ public final class DishService {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(@PathParam("id") @CheckId final String id, final Dish dish) throws EpickurException {
+	public Response update(@PathParam("id") @IdValidate final String id, final Dish dish) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.DISH);
 		validator.checkUpdateData(id, dish);
@@ -436,7 +436,7 @@ public final class DishService {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") @CheckId final String id) throws EpickurException {
+	public Response delete(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.DISH);
 		boolean isDeleted = dishBusiness.delete(id, key);

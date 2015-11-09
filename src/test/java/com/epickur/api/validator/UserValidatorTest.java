@@ -39,7 +39,7 @@ public class UserValidatorTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	@Test
+	/*@Test
 	public void testCheckCreateUser() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field user.name is not allowed to be null or empty");
@@ -103,7 +103,7 @@ public class UserValidatorTest {
 		User user = TestUtils.generateRandomUser();
 		user.setState(null);
 		validator.checkCreateUser(user);
-	}
+	}*/
 
 	@Test
 	public void testCheckUpdateUser() {
