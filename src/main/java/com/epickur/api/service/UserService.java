@@ -32,6 +32,7 @@ import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.IdValidate;
 import com.epickur.api.validator.UserCreateValidate;
+import com.epickur.api.validator.UserUpdateValidate;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -230,7 +231,7 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(
 			@PathParam("id") @IdValidate final String id,
-			final User user) throws EpickurException {
+			@UserUpdateValidate final User user) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.USER);
 		validator.checkUpdateUser(id, user);
@@ -490,8 +491,7 @@ public final class UserService {
 	@GET
 	@Path("/{id}/orders")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response readAllOrders(
-			@PathParam("id") @IdValidate final String id) throws EpickurException {
+	public Response readAllOrders(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.ORDER);
 		List<Order> orders = orderBusiness.readAllWithUserId(id);

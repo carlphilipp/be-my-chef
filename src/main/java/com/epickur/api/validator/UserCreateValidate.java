@@ -19,14 +19,14 @@ import com.epickur.api.entity.User;
 import com.epickur.api.validator.UserCreateValidate.UserCreateValidator;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
-@NotNull(message = "{user.create.null}")
+@NotNull(message = "{user.null}")
 @Target(PARAMETER)
 @Retention(RUNTIME)
 @Constraint(validatedBy = UserCreateValidator.class)
 @Documented
 public @interface UserCreateValidate {
 
-	String message() default "{user.create.default}";
+	String message() default "{user.default}";
 
 	Class<?>[] groups() default {};
 
@@ -73,7 +73,7 @@ public @interface UserCreateValidate {
 			if (user.getPhoneNumber() != null) {
 				PhoneNumberUtil util = PhoneNumberUtil.getInstance();
 				if (!util.isValidNumber(user.getPhoneNumber())) {
-					constraintContext.buildConstraintViolationWithTemplate("{user.create.phoneNumber}").addConstraintViolation();
+					constraintContext.buildConstraintViolationWithTemplate("{user.phoneNumber}").addConstraintViolation();
 					isValid = false;
 				}
 			}
