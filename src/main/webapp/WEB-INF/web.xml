@@ -3,61 +3,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
   http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
-	<display-name>epickur</display-name>
-	<servlet>
-		<servlet-name>epickur</servlet-name>
-		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 
-		<!-- Possibility to configure trace via HTTP Header. See documentation -->
-		<init-param>
-			<param-name>jersey.config.server.tracing.type</param-name>
-			<param-value>OFF</param-value>
-			<!-- OFF - tracing support is disabled (default value). ON_DEMAND - tracing 
-				support is in a stand-by mode; it is enabled selectively per request, via 
-				a special X-Jersey-Tracing-Accept HTTP request header. ALL - tracing support 
-				is enabled for all request. -->
-		</init-param>
-		<init-param>
-			<param-name>jersey.config.server.tracing.threshold</param-name>
-			<param-value>SUMMARY</param-value>
-			<!-- SUMMARY - very basic summary information about the main request processing 
-				stages. TRACE - detailed information about activities in all the main request 
-				processing stages (default threshold value). VERBOSE - most verbose mode 
-				that provides extended information similar to TRACE level, however with details 
-				on entity providers (MBR/MBW) that were skipped during the provider selection 
-				phase for any reason (lower priority, pattern matching, etc). Additionally, 
-				in this mode all received request headers are echoed as part of the tracing 
-				information. -->
-		</init-param>
-
-		<init-param>
-			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>com.epickur.api.service;com.epickur.api.filter;com.fasterxml.jackson.jaxrs;com.epickur.api.mapper</param-value>
-		</init-param>
-		<init-param>
-			<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-			<param-value>com.epickur.api.filter.KeyRequestFilter</param-value>
-		</init-param>
-		<init-param>
-			<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-			<param-value>com.epickur.api.filter.LogRequestFilter</param-value>
-		</init-param>
-		<init-param>
-			<param-name>com.sun.jersey.spi.container.ContainerResponseFilter</param-name>
-			<param-value>com.epickur.api.filter.HeaderResponseFilter</param-value>
-		</init-param>
-		<init-param>
-			<param-name>javax.ws.rs.Application</param-name>
-			<param-value>com.epickur.api.WebApplication</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>epickur</servlet-name>
-		<url-pattern>/api/*</url-pattern>
-	</servlet-mapping>
-
-	<error-page>
+    <error-page>
 		<error-code>400</error-code>
 		<location>/WEB-INF/errorpages/ErrorPage400.jsp</location>
 	</error-page>
@@ -79,18 +26,6 @@
 	</error-page>
 
 	<!-- Quartz property to avoid memory leak on tomcat stop -->
-	<context-param>
-		<param-name>quartz:shutdown-on-unload</param-name>
-		<param-value>true</param-value>
-	</context-param>
-  <context-param>
-     <param-name>quartz:wait-on-shutdown</param-name>
-     <param-value>true</param-value>
-  </context-param>
-  <context-param>
-     <param-name>quartz:start-scheduler-on-load</param-name>
-     <param-value>true</param-value>
-  </context-param>
 	<listener>
       <listener-class>
         org.quartz.ee.servlet.QuartzInitializerListener

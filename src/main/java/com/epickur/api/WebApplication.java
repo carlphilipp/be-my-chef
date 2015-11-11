@@ -1,6 +1,7 @@
 package com.epickur.api;
 
 import javax.annotation.PostConstruct;
+import javax.ws.rs.ApplicationPath;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,7 @@ import com.epickur.api.cron.Jobs;
  * @author cph
  * @version 1.0
  */
+@ApplicationPath("/api")
 public class WebApplication extends ResourceConfig {
 
 	/** Logger */
@@ -23,7 +25,15 @@ public class WebApplication extends ResourceConfig {
 
 	/** Constructor */
 	public WebApplication() {
+		property(ServerProperties.APPLICATION_NAME, "epickur");
 		property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
+		
+		property(ServerProperties.TRACING, "OFF");
+		property(ServerProperties.TRACING_THRESHOLD, "SUMMARY");
+		property("quartz:shutdown-on-unload", true);
+		property("quartz:wait-on-shutdown", true);
+		property("quartz:start-scheduler-on-load", true);
+		
 	}
 
 	/**
