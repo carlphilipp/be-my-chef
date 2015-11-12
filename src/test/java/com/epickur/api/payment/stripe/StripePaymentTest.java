@@ -43,12 +43,12 @@ public class StripePaymentTest {
 	private StripePayment stripePayment;
 	@Mock
 	private Charge charge;
-	@Mock
-	private APIConnectionException apiConnectionException;
-	@Mock
-	private InvalidRequestException invalidReqException;
-	@Mock
-	private AuthenticationException authenticationException;
+
+	private APIConnectionException apiConnectionException = new APIConnectionException("error");
+
+	private InvalidRequestException invalidReqException = new InvalidRequestException("error", null, null, null, new Throwable());
+
+	private AuthenticationException authenticationException = new AuthenticationException(null, null, null);
 	@Mock
 	private StripeException stripeException;
 	
