@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
+import com.amazonaws.services.simplesystemsmanagement.model.InternalServerErrorException;
 import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
@@ -109,11 +110,12 @@ public class UserBusiness {
 	 */
 	public User read(final String id, final Key key) throws EpickurException {
 		User user = userDAO.read(id);
-		if (user != null) {
-			validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.READ);
-			user.setPassword(null);
-			user.setRole(null);
+		if (user == null) {
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
 		}
+		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.READ);
+		user.setPassword(null);
+		user.setRole(null);
 		return user;
 	}
 
@@ -158,14 +160,19 @@ public class UserBusiness {
 	 */
 	public User update(final User user, final Key key) throws EpickurException {
 		User read = userDAO.read(user.getId().toHexString());
+		if (read == null) {
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getId().toHexString());
+		}
 		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
 		user.prepareForUpdateIntoDB();
 		User res = userDAO.update(user);
-		if (res != null) {
-			// We do not send back the password or the role
-			res.setPassword(null);
-			res.setRole(null);
+		if (res == null) {
+			throw new InternalServerErrorException(
+					"User update failed after checking in DB that the user was there. User id: " + user.getId().toHexString());
 		}
+		// We do not send back the password or the role
+		res.setPassword(null);
+		res.setRole(null);
 		return res;
 	}
 
@@ -179,7 +186,11 @@ public class UserBusiness {
 	 *             If an epickur exception occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
-		return userDAO.delete(id);
+		boolean isDeleted = userDAO.delete(id);
+		if(!isDeleted){
+			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
+		}
+		return isDeleted;
 	}
 
 	/**

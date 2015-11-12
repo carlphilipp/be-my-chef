@@ -165,14 +165,14 @@ public class OrderBusinessTest {
 	}
 
 	@Test
-	public void testUpdate() throws EpickurException {
+	public void testUpdateNotFound() throws EpickurException {
+		thrown.expect(EpickurNotFoundException.class);
 		try {
 			Order order = TestUtils.generateRandomOrder();
 			order.setId(new ObjectId());
 			Key key = new Key();
 			key.setUserId(order.getCreatedBy());
-			Order actual = orderBusiness.update(order, key);
-			assertNull(actual);
+			orderBusiness.update(order, key);
 		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
 			fail(stripeMessage);
 		}

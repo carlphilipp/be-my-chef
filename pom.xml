@@ -70,7 +70,7 @@
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-		
+
 		<!-- Jersey bean validation -->
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>

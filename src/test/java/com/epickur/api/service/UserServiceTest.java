@@ -33,7 +33,6 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.message.DeletedMessage;
-import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.exception.EpickurException;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -102,20 +101,6 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testReadUserNotFound() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
-
-		when(userBusiness.read(anyString(), (Key) anyObject())).thenReturn(null);
-
-		Response actual = service.read(user.getId().toHexString());
-		assertNotNull(actual);
-		assertEquals(404, actual.getStatus());
-		ErrorMessage error = (ErrorMessage) actual.getEntity();
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
-	}
-
-	@Test
 	public void testUpdate() throws EpickurException {
 		User user = TestUtils.generateRandomUserWithId();
 		User userAfterUpdate = TestUtils.mockUserAfterCreate(user);
@@ -127,20 +112,6 @@ public class UserServiceTest {
 		assertEquals(200, actual.getStatus());
 		User actualUser = (User) actual.getEntity();
 		assertNotNull(actualUser.getId());
-	}
-
-	@Test
-	public void testUpdateUserNotFound() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
-
-		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(null);
-
-		Response actual = service.update(user.getId().toHexString(), user);
-		assertNotNull(actual);
-		assertEquals(404, actual.getStatus());
-		ErrorMessage error = (ErrorMessage) actual.getEntity();
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@Test
@@ -191,20 +162,6 @@ public class UserServiceTest {
 		assertNotNull(actualDeletedMessage.getId());
 		assertNotNull(actualDeletedMessage.getDeleted());
 		assertTrue(actualDeletedMessage.getDeleted());
-	}
-
-	@Test
-	public void testDeleteUserNotFound() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
-
-		when(userBusiness.delete(anyString())).thenReturn(false);
-
-		Response actual = service.delete(user.getId().toHexString());
-		assertNotNull(actual);
-		assertEquals(404, actual.getStatus());
-		ErrorMessage error = (ErrorMessage) actual.getEntity();
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -259,20 +216,6 @@ public class UserServiceTest {
 		}
 	}
 
-	@Test
-	public void testReadOneOrderNotFound()
-			throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
-		when(orderBusiness.read(anyString(), (Key) anyObject())).thenReturn(null);
-
-		Response actual = service.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
-		assertNotNull(actual);
-		assertEquals(404, actual.getStatus());
-		ErrorMessage error = (ErrorMessage) actual.getEntity();
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
-	}
-
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadAllOrderAdmin() throws EpickurException {
@@ -314,25 +257,6 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testUpdateOneOrderNotFound() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrderWithId();
-			order.setId(new ObjectId());
-
-			when(orderBusiness.update((Order) anyObject(), (Key) anyObject())).thenReturn(null);
-
-			Response actual = service.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
-			assertNotNull(actual);
-			assertEquals(404, actual.getStatus());
-			ErrorMessage error = (ErrorMessage) actual.getEntity();
-			assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-			assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
-	}
-
-	@Test
 	public void testdeleteOneOrder() throws EpickurException {
 		try {
 			Order order = TestUtils.generateRandomOrderWithId();
@@ -346,24 +270,6 @@ public class UserServiceTest {
 			assertNotNull(actualDeletedMessage.getId());
 			assertNotNull(actualDeletedMessage.getDeleted());
 			assertTrue(actualDeletedMessage.getDeleted());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
-	}
-
-	@Test
-	public void testdeleteOneOrderFail() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrderWithId();
-
-			when(orderBusiness.delete(anyString())).thenReturn(false);
-
-			Response actual = service.deleteOneOrder(new ObjectId().toHexString(), order.getId().toHexString());
-			assertNotNull(actual);
-			assertEquals(404, actual.getStatus());
-			ErrorMessage error = (ErrorMessage) actual.getEntity();
-			assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-			assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
 			fail(TestUtils.STRIPE_MESSAGE);
 		}

@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
   http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
-
+  
     <error-page>
 		<error-code>400</error-code>
 		<location>/WEB-INF/errorpages/ErrorPage400.jsp</location>

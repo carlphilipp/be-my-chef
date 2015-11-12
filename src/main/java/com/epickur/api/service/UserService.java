@@ -28,12 +28,11 @@ import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.validator.AccessRights;
+import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.IdValidate;
 import com.epickur.api.validator.UserCreateValidate;
 import com.epickur.api.validator.UserUpdateValidate;
-import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -116,7 +115,8 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create(
 			@DefaultValue("false") @HeaderParam("validate-agent") final boolean autoValidate,
-			@UserCreateValidate final User user) throws EpickurException {
+			@UserCreateValidate final User user)
+					throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.USER);
 		User result = userBusiness.create(user, autoValidate);
@@ -172,11 +172,7 @@ public final class UserService {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.USER);
 		User user = userBusiness.read(id, key);
-		if (user == null) {
-			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
-		} else {
-			return Response.ok().entity(user).build();
-		}
+		return Response.ok().entity(user).build();
 	}
 
 	// @formatter:off
@@ -245,11 +241,7 @@ public final class UserService {
 			user.setPassword(null);
 		}
 		User result = userBusiness.update(user, key);
-		if (result == null) {
-			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
-		} else {
-			return Response.ok().entity(result).build();
-		}
+		return Response.ok().entity(result).build();
 	}
 
 	// @formatter:off
@@ -288,14 +280,10 @@ public final class UserService {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.USER);
 		boolean isDeleted = userBusiness.delete(id);
-		if (isDeleted) {
-			DeletedMessage deletedMessage = new DeletedMessage();
-			deletedMessage.setId(id);
-			deletedMessage.setDeleted(isDeleted);
-			return Response.ok().entity(deletedMessage).build();
-		} else {
-			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
-		}
+		DeletedMessage deletedMessage = new DeletedMessage();
+		deletedMessage.setId(id);
+		deletedMessage.setDeleted(isDeleted);
+		return Response.ok().entity(deletedMessage).build();
 	}
 
 	// @formatter:off
@@ -410,11 +398,7 @@ public final class UserService {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.ORDER);
 		Order order = orderBusiness.read(orderId, key);
-		if (order == null) {
-			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, id);
-		} else {
-			return Response.ok().entity(order).build();
-		}
+		return Response.ok().entity(order).build();
 	}
 
 	// @formatter:off
@@ -648,11 +632,7 @@ public final class UserService {
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.ORDER);
 		validator.checkUpdateOneOrder(orderId, order);
 		Order result = orderBusiness.update(order, key);
-		if (result == null) {
-			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, orderId);
-		} else {
-			return Response.ok().entity(result).build();
-		}
+		return Response.ok().entity(result).build();
 	}
 
 	// @formatter:off
@@ -699,14 +679,10 @@ public final class UserService {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.ORDER);
 		boolean isDeleted = orderBusiness.delete(orderId);
-		if (isDeleted) {
-			DeletedMessage deletedMessage = new DeletedMessage();
-			deletedMessage.setId(id);
-			deletedMessage.setDeleted(isDeleted);
-			return Response.ok().entity(deletedMessage).build();
-		} else {
-			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, orderId);
-		}
+		DeletedMessage deletedMessage = new DeletedMessage();
+		deletedMessage.setId(id);
+		deletedMessage.setDeleted(isDeleted);
+		return Response.ok().entity(deletedMessage).build();
 	}
 
 	// @formatter:off
