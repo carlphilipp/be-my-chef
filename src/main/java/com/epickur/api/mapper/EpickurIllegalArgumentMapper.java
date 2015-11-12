@@ -33,7 +33,7 @@ public final class EpickurIllegalArgumentMapper implements ExceptionMapper<Epick
 		message.setError(Response.Status.BAD_REQUEST.getStatusCode());
 		message.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
 		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
-			message.setDescription(exception.getMessage());
+			message.addDescription(exception.getMessage());
 		}
 		LOG.error("Error: ", exception);
 		return Response.status(Status.BAD_REQUEST).entity(message).type(MediaType.APPLICATION_JSON).build();

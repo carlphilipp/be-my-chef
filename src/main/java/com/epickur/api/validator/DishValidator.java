@@ -48,7 +48,6 @@ public final class DishValidator extends Validator {
 	 *            The Dish
 	 */
 	public void checkUpdateData(final String id, final Dish dish) {
-		checkId(id);
 		if (dish == null) {
 			throw new EpickurIllegalArgument(NO_DISH_PROVIDED);
 		}
@@ -188,26 +187,18 @@ public final class DishValidator extends Validator {
 	 *            The address to search
 	 */
 	public void checkSearch(final String pickupdate, final String types, final String at, final String searchtext) {
-		if (StringUtils.isBlank(pickupdate)) {
-			throw new EpickurIllegalArgument("The parameter pickupdate is not allowed to be null");
-		} else {
-			Object[] result = Utils.parsePickupdate(pickupdate);
-			if (result == null) {
-				throw new EpickurIllegalArgument(
-						"The parameter pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
-								+ pickupdate);
-			}
+		Object[] result = Utils.parsePickupdate(pickupdate);
+		if (result == null) {
+			throw new EpickurIllegalArgument(
+					"The parameter pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
+							+ pickupdate);
 		}
-		if (StringUtils.isBlank(types)) {
-			throw new EpickurIllegalArgument("The parameter types is not allowed to be null");
-		} else {
-			String[] typesArray = types.split(",");
-			for (String temp : typesArray) {
-				try {
-					DishType.fromString(temp);
-				} catch (IllegalArgumentException e) {
-					throw new EpickurIllegalArgument(temp + " is not recongnize as a dish type");
-				}
+		String[] typesArray = types.split(",");
+		for (String temp : typesArray) {
+			try {
+				DishType.fromString(temp);
+			} catch (IllegalArgumentException e) {
+				throw new EpickurIllegalArgument(temp + " is not recongnize as a dish type");
 			}
 		}
 		if (StringUtils.isBlank(searchtext) && StringUtils.isBlank(at)) {

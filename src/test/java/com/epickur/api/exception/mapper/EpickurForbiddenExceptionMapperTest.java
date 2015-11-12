@@ -3,19 +3,42 @@ package com.epickur.api.exception.mapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import javax.inject.Provider;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.server.ContainerRequest;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
+import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.mapper.EpickurForbiddenExceptionMapper;
 import com.epickur.api.utils.ErrorUtils;
 
 public class EpickurForbiddenExceptionMapperTest {
+
+	@Mock
+	private Provider<ContainerRequest> provider;
+	@Mock
+	private ContainerRequest context;
+	@InjectMocks
+	private EpickurForbiddenExceptionMapper mapper;
+
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		Key key = new Key();
+		Mockito.when(provider.get()).thenReturn(context);
+		Mockito.when(context.getProperty("key")).thenReturn(key);
+	}
+
 	@Test
 	public void testCreate() {
-		EpickurForbiddenExceptionMapper mapper = new EpickurForbiddenExceptionMapper();
 		EpickurForbiddenException exception = new EpickurForbiddenException();
 		Response response = mapper.toResponse(exception);
 

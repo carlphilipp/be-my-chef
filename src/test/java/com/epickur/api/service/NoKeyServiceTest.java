@@ -2,6 +2,7 @@ package com.epickur.api.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -43,12 +44,12 @@ public class NoKeyServiceTest {
 	private ContainerRequestContext context;
 	@InjectMocks
 	private NoKeyService service;
-	
+
 	@BeforeClass
 	public static void setUpBeforeClass() {
 		TestUtils.setupStripe();
 	}
-	
+
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		TestUtils.resetStripe();
@@ -57,7 +58,7 @@ public class NoKeyServiceTest {
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		
+
 		Key key = TestUtils.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 	}
@@ -75,19 +76,23 @@ public class NoKeyServiceTest {
 		User actualUser = (User) actual.getEntity();
 		assertNotNull(actualUser.getId());
 	}
-	
+
 	@Test
-	public void testExecuteOrder() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
-		User user = TestUtils.generateRandomUserWithId();
-		Order order = TestUtils.generateRandomOrderWithId();
+	public void testExecuteOrder() throws EpickurException {
+		try {
+			User user = TestUtils.generateRandomUserWithId();
+			Order order = TestUtils.generateRandomOrderWithId();
 
-		when(orderBusiness.executeOrder(anyString(), anyString(), anyBoolean(), anyBoolean(), anyString())).thenReturn(order);
+			when(orderBusiness.executeOrder(anyString(), anyString(), anyBoolean(), anyBoolean(), anyString())).thenReturn(order);
 
-		Response actual = service.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true); 
-		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		Order actualOrder = (Order) actual.getEntity();
-		assertNotNull(actualOrder.getId());
+			Response actual = service.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true);
+			assertNotNull(actual);
+			assertEquals(200, actual.getStatus());
+			Order actualOrder = (Order) actual.getEntity();
+			assertNotNull(actualOrder.getId());
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+			fail(TestUtils.STRIPE_MESSAGE);
+		}
 	}
 
 	@Test

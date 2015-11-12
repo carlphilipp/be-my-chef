@@ -37,6 +37,7 @@ import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.CatererValidator;
+import com.epickur.api.validator.IdValidate;
 import com.epickur.api.validator.FactoryValidator;
 
 /**
@@ -212,10 +213,9 @@ public final class CatererService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") final String id) throws EpickurException {
+	public Response read(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.CATERER);
-		validator.checkId(id);
 		Caterer caterer = catererBusiness.read(id);
 		if (caterer == null) {
 			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
@@ -300,7 +300,7 @@ public final class CatererService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(
-			@PathParam("id") final String id,
+			@PathParam("id") @IdValidate final String id,
 			final Caterer caterer) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.CATERER);
@@ -350,10 +350,9 @@ public final class CatererService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(
-			@PathParam("id") final String id) throws EpickurException {
+			@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.CATERER);
-		validator.checkId(id);
 		boolean resBool = catererBusiness.delete(id);
 		if (resBool) {
 			DeletedMessage deletedMessage = new DeletedMessage();
@@ -548,11 +547,9 @@ public final class CatererService {
 	@GET
 	@Path("/{id}/dishes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response readDishes(
-			@PathParam("id") final String catererId) throws EpickurException {
+	public Response readDishes(@PathParam("id") final @IdValidate String catererId) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ_DISHES, EndpointType.CATERER);
-		validator.checkId(catererId);
 		List<Dish> dishes = dishBusiness.searchDishesForOneCaterer(catererId);
 		return Response.ok().entity(dishes).build();
 	}
@@ -602,7 +599,7 @@ public final class CatererService {
 	@Consumes({ MediaType.APPLICATION_JSON, "application/pdf" })
 	@Produces({ MediaType.APPLICATION_JSON, "application/pdf" })
 	public Response paymentInfo(
-			@PathParam("id") final String id,
+			@PathParam("id") @IdValidate final String id,
 			@QueryParam("startDate") final String start,
 			@QueryParam("endDate") final String end,
 			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format) throws EpickurException {
@@ -616,7 +613,7 @@ public final class CatererService {
 		if (end != null) {
 			endDate = Utils.parseDate(start, format);
 		}
-		validator.checkPaymentInfo(id, startDate, endDate);
+		validator.checkPaymentInfo(startDate, endDate);
 		Caterer caterer = catererBusiness.read(id);
 		if (caterer == null) {
 			return ErrorUtils.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
@@ -624,7 +621,6 @@ public final class CatererService {
 			List<Order> orders = orderBusiness.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
 			Integer amount = catererBusiness.getTotalAmountSuccessful(orders);
 			if (context.getMediaType() != null && context.getMediaType().toString().equalsIgnoreCase(MediaType.APPLICATION_JSON)) {
-
 				PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
 				payementInfoMessage.setId(caterer.getId().toHexString());
 				payementInfoMessage.setName(caterer.getName());

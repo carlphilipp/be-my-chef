@@ -31,7 +31,7 @@ public final class JsonMappingExceptionMapper implements ExceptionMapper<JsonMap
 		ErrorMessage errorMessage = new ErrorMessage();
 		errorMessage.setError(Response.Status.BAD_REQUEST.getStatusCode());
 		errorMessage.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
-		errorMessage.setDescription(exception.getOriginalMessage());
+		errorMessage.addDescription(exception.getOriginalMessage());
 		LOG.error(exception.getLocalizedMessage(), exception);
 		return Response.status(Status.BAD_REQUEST).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
 	}

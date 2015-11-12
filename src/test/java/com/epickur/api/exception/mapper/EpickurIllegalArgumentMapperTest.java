@@ -26,8 +26,9 @@ public class EpickurIllegalArgumentMapperTest {
 		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), errorMessage.getError().intValue());
 		assertNotNull(errorMessage.getMessage());
 		assertEquals(Response.Status.BAD_REQUEST.getReasonPhrase(), errorMessage.getMessage());
-		assertNotNull(errorMessage.getDescription());
-		assertEquals("bad", errorMessage.getDescription());
+		assertNotNull(errorMessage.getDescriptions());
+		assertEquals(1, errorMessage.getDescriptions().size());
+		assertEquals("bad", errorMessage.getDescriptions().get(0));
 	}
 
 }

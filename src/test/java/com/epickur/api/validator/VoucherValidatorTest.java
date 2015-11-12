@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.epickur.api.entity.Voucher;
-import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.exception.EpickurParsingException;
@@ -70,125 +69,29 @@ public class VoucherValidatorTest {
 	@Test
 	public void testCheckVouchValidator6() throws EpickurParsingException {
 		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The param count is not allowed to be null or empty");
+		thrown.expectMessage("The param expirationDate is not allowed to be null or empty when expirationType is until");
 
 		VoucherValidator validator = new VoucherValidator();
-		Integer count = null;
-		DiscountType discountType = DiscountType.AMOUNT;
-		Integer discount = 10;
-		ExpirationType expirationType = ExpirationType.ONETIME;
-		String date = "05/05/2030";
+		ExpirationType expirationType = ExpirationType.UNTIL;
+		String date = null;
 		String format = "MM/dd/yyyy";
-		validator.checkVoucherGenerate(count, discountType, discount, expirationType, date, format);
+		validator.checkVoucherGenerate(expirationType, date, format);
 	}
 
 	@Test
 	public void testCheckVouchValidator7() throws EpickurParsingException {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The param count must be a positive number");
-
-		VoucherValidator validator = new VoucherValidator();
-		Integer count = -7;
-		DiscountType discountType = DiscountType.AMOUNT;
-		Integer discount = 10;
-		ExpirationType expirationType = ExpirationType.ONETIME;
-		String date = "05/05/2030";
-		String format = "MM/dd/yyyy";
-		validator.checkVoucherGenerate(count, discountType, discount, expirationType, date, format);
-	}
-
-	@Test
-	public void testCheckVouchValidator8() throws EpickurParsingException {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The param discount is not allowed to be null or empty");
-
-		VoucherValidator validator = new VoucherValidator();
-		Integer count = new Integer(10);
-		DiscountType discountType = DiscountType.AMOUNT;
-		Integer discount = null;
-		ExpirationType expirationType = ExpirationType.ONETIME;
-		String date = "05/05/2030";
-		String format = "MM/dd/yyyy";
-		validator.checkVoucherGenerate(count, discountType, discount, expirationType, date, format);
-	}
-
-	@Test
-	public void testCheckVouchValidator9() throws EpickurParsingException {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The param discount must be a positive number");
-
-		VoucherValidator validator = new VoucherValidator();
-		Integer count = new Integer(10);
-		DiscountType discountType = DiscountType.AMOUNT;
-		Integer discount = new Integer(-6);
-		ExpirationType expirationType = ExpirationType.ONETIME;
-		String date = "05/05/2030";
-		String format = "MM/dd/yyyy";
-		validator.checkVoucherGenerate(count, discountType, discount, expirationType, date, format);
-	}
-
-	@Test
-	public void testCheckVouchValidator10() throws EpickurParsingException {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The param discountType is not allowed to be null or empty");
-
-		VoucherValidator validator = new VoucherValidator();
-		Integer count = new Integer(10);
-		DiscountType discountType = null;
-		Integer discount = new Integer(6);
-		ExpirationType expirationType = ExpirationType.ONETIME;
-		String date = "05/05/2030";
-		String format = "MM/dd/yyyy";
-		validator.checkVoucherGenerate(count, discountType, discount, expirationType, date, format);
-	}
-
-	@Test
-	public void testCheckVouchValidator11() throws EpickurParsingException {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The param expirationType is not allowed to be null or empty");
-
-		VoucherValidator validator = new VoucherValidator();
-		Integer count = new Integer(10);
-		DiscountType discountType = DiscountType.AMOUNT;
-		Integer discount = new Integer(6);
-		ExpirationType expirationType = null;
-		String date = "05/05/2030";
-		String format = "MM/dd/yyyy";
-		validator.checkVoucherGenerate(count, discountType, discount, expirationType, date, format);
-	}
-
-	@Test
-	public void testCheckVouchValidator12() throws EpickurParsingException {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The param expirationDate is not allowed to be null or empty when expirationType is until");
-
-		VoucherValidator validator = new VoucherValidator();
-		Integer count = new Integer(10);
-		DiscountType discountType = DiscountType.AMOUNT;
-		Integer discount = new Integer(6);
-		ExpirationType expirationType = ExpirationType.UNTIL;
-		String date = null;
-		String format = "MM/dd/yyyy";
-		validator.checkVoucherGenerate(count, discountType, discount, expirationType, date, format);
-	}
-
-	@Test
-	public void testCheckVouchValidator13() throws EpickurParsingException {
 		thrown.expect(EpickurParsingException.class);
 		thrown.expectMessage("Error while parsing date 'derp' with format 'MM/dd/yyyy'");
 
 		VoucherValidator validator = new VoucherValidator();
-		Integer count = new Integer(10);
-		DiscountType discountType = DiscountType.AMOUNT;
-		Integer discount = new Integer(6);
 		ExpirationType expirationType = ExpirationType.UNTIL;
 		String date = "derp";
 		String format = "MM/dd/yyyy";
-		validator.checkVoucherGenerate(count, discountType, discount, expirationType, date, format);
+		validator.checkVoucherGenerate(expirationType, date, format);
 	}
 
 	@Test
-	public void testCheckVouchValidator14() throws EpickurParsingException {
+	public void testCheckVouchValidator8() throws EpickurParsingException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("No voucher has been provided");
 
@@ -196,9 +99,9 @@ public class VoucherValidatorTest {
 		Voucher voucher = null;
 		validator.checkVoucher(voucher, null);
 	}
-	
+
 	@Test
-	public void testCheckVouchValidator15() throws EpickurParsingException {
+	public void testCheckVouchValidator9() throws EpickurParsingException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field voucher.code is not allowed to be null or empty");
 
@@ -206,9 +109,9 @@ public class VoucherValidatorTest {
 		Voucher voucher = new Voucher();
 		validator.checkVoucher(voucher, null);
 	}
-	
+
 	@Test
-	public void testCheckVouchValidator16() throws EpickurParsingException {
+	public void testCheckVouchValidator10() throws EpickurParsingException {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.voucher.code is not allowed to be null or empty");
 

@@ -32,7 +32,7 @@ public final class EpickurIOExceptionMapper implements ExceptionMapper<EpickurIO
 		m.setError(Response.Status.BAD_REQUEST.getStatusCode());
 		m.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
 		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
-			m.setDescription(exception.getMessage());
+			m.addDescription(exception.getMessage());
 		}
 		LOG.error("Error: ", exception);
 		return Response.status(Status.BAD_REQUEST).entity(m).type(MediaType.APPLICATION_JSON).build();

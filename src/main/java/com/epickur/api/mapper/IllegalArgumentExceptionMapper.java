@@ -31,7 +31,7 @@ public final class IllegalArgumentExceptionMapper implements ExceptionMapper<Ill
 		mess.setError(Response.Status.BAD_REQUEST.getStatusCode());
 		mess.setMessage(Response.Status.BAD_REQUEST.getReasonPhrase());
 		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
-			mess.setDescription(exception.getMessage());
+			mess.addDescription(exception.getMessage());
 		}
 		LOG.error("Error: ", exception);
 		return Response.status(Status.BAD_REQUEST).entity(mess).type(MediaType.APPLICATION_JSON).build();

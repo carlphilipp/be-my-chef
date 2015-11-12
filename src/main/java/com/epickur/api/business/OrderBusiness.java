@@ -126,11 +126,12 @@ public class OrderBusiness {
 	 */
 	public Order read(final String id, final Key key) throws EpickurException {
 		Order order = orderDAO.read(id);
-		if (order != null) {
-			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Operation.READ);
-			return order;
+		if (order == null) {
+			throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, id);
 		}
-		return null;
+		validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, Operation.READ);
+		return order;
+
 	}
 
 	/**
@@ -170,13 +171,13 @@ public class OrderBusiness {
 	 */
 	public Order update(final Order order, final Key key) throws EpickurException {
 		Order read = orderDAO.read(order.getId().toHexString());
-		if (read != null) {
-			validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
-			validator.checkOrderStatus(read);
-			order.prepareForUpdateIntoDB();
-			return orderDAO.update(order);
+		if (read == null) {
+			throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, order.getId().toHexString());
 		}
-		return null;
+		validator.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
+		validator.checkOrderStatus(read);
+		order.prepareForUpdateIntoDB();
+		return orderDAO.update(order);
 	}
 
 	/**
@@ -187,7 +188,11 @@ public class OrderBusiness {
 	 *             If an EpickurException occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
-		return orderDAO.delete(id);
+		boolean isDeleted = orderDAO.delete(id);
+		if(!isDeleted){
+			throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, id);
+		}
+		return isDeleted;
 	}
 
 	/**

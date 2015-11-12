@@ -26,7 +26,8 @@ public class IllegalArgumentExceptionMapperTest {
 		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), errorMessage.getError().intValue());
 		assertNotNull(errorMessage.getMessage());
 		assertEquals(Response.Status.BAD_REQUEST.getReasonPhrase(), errorMessage.getMessage());
-		assertNotNull(errorMessage.getDescription());
-		assertEquals("Argument null", errorMessage.getDescription());
+		assertNotNull(errorMessage.getDescriptions());
+		assertEquals(1, errorMessage.getDescriptions().size());
+		assertEquals("Argument null", errorMessage.getDescriptions().get(0));
 	}
 }

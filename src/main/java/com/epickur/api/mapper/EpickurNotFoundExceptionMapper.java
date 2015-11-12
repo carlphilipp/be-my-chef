@@ -27,7 +27,7 @@ public final class EpickurNotFoundExceptionMapper implements ExceptionMapper<Epi
 		errorMessage.setError(Response.Status.NOT_FOUND.getStatusCode());
 		errorMessage.setMessage(Response.Status.NOT_FOUND.getReasonPhrase());
 		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
-			errorMessage.setDescription(exception.getMessage());
+			errorMessage.addDescription(exception.getMessage());
 		}
 		return Response.status(Status.NOT_FOUND).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
 	}

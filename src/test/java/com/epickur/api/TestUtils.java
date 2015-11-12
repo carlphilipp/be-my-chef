@@ -64,6 +64,8 @@ import com.stripe.model.Token;
 public class TestUtils {
 	/** Logger **/
 	private static final Logger LOG = LogManager.getLogger(TestUtils.class.getSimpleName());
+	
+	public static final String STRIPE_MESSAGE = "Fail while acquiring Stripe token. Internet issue?";
 
 	private static final String[] pickupdateDays = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
 
@@ -505,8 +507,8 @@ public class TestUtils {
 		return pickupdate;
 	}
 
-	public static Order generateRandomOrder() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public static Order generateRandomOrder()
+			throws APIException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException{
 		Order order = new Order();
 		order.setQuantity(2);
 		order.setAmount(generateRandomStripAmount());

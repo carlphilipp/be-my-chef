@@ -1,5 +1,8 @@
 package com.epickur.api.entity.message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Data;
@@ -16,5 +19,13 @@ public final class ErrorMessage {
 	/** Message */
 	private String message;
 	/** Description */
-	private String description;
+	private List<String> descriptions;
+
+	public ErrorMessage() {
+		this.descriptions = new ArrayList<>();
+	}
+
+	public void addDescription(final String description) {
+		descriptions.add(description);
+	}
 }

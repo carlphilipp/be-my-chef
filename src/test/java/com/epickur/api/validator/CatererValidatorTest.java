@@ -296,11 +296,10 @@ public class CatererValidatorTest {
 	@Test
 	public void testCheckPayementInfo() {
 		CatererValidator service = new CatererValidator();
-		String id = new ObjectId().toHexString();
 		DateTime start = new DateTime();
 		DateTime end = new DateTime();
 		end.plusMinutes(5);
-		service.checkPaymentInfo(id, start, end);
+		service.checkPaymentInfo(start, end);
 	}
 
 	@Test
@@ -309,11 +308,10 @@ public class CatererValidatorTest {
 		thrown.expectMessage("Start date missing");
 
 		CatererValidator service = new CatererValidator();
-		String id = new ObjectId().toHexString();
 		DateTime start = null;
 		DateTime end = new DateTime();
 		end = end.plusMinutes(5);
-		service.checkPaymentInfo(id, start, end);
+		service.checkPaymentInfo(start, end);
 	}
 
 	@Test
@@ -322,11 +320,10 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The start date can not be after today");
 
 		CatererValidator service = new CatererValidator();
-		String id = new ObjectId().toHexString();
 		DateTime start = new DateTime();
 		DateTime end = null;
 		start = start.plusHours(1);
-		service.checkPaymentInfo(id, start, end);
+		service.checkPaymentInfo(start, end);
 	}
 
 	@Test
@@ -335,10 +332,9 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The end date should be after the start date");
 
 		CatererValidator service = new CatererValidator();
-		String id = new ObjectId().toHexString();
 		DateTime start = new DateTime();
 		DateTime end = new DateTime();
 		end = end.minusHours(1);
-		service.checkPaymentInfo(id, start, end);
+		service.checkPaymentInfo(start, end);
 	}
 }

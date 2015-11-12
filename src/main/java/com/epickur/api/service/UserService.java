@@ -28,9 +28,11 @@ import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.FactoryValidator;
+import com.epickur.api.validator.IdValidate;
+import com.epickur.api.validator.UserCreateValidate;
+import com.epickur.api.validator.UserUpdateValidate;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -113,10 +115,10 @@ public final class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create(
 			@DefaultValue("false") @HeaderParam("validate-agent") final boolean autoValidate,
-			final User user) throws EpickurException {
+			@UserCreateValidate final User user)
+					throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.USER);
-		validator.checkCreateUser(user);
 		User result = userBusiness.create(user, autoValidate);
 		// We add to the header the check code. Can be useful for tests or developers.
 		return Response.ok().entity(result).header("check", result.getCode()).build();
@@ -166,16 +168,11 @@ public final class UserService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") final String id) throws EpickurException {
+	public Response read(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.USER);
-		validator.checkId(id);
 		User user = userBusiness.read(id, key);
-		if (user == null) {
-			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
-		} else {
-			return Response.ok().entity(user).build();
-		}
+		return Response.ok().entity(user).build();
 	}
 
 	// @formatter:off
@@ -229,8 +226,8 @@ public final class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(
-			@PathParam("id") final String id,
-			final User user) throws EpickurException {
+			@PathParam("id") @IdValidate final String id,
+			@UserUpdateValidate final User user) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.USER);
 		validator.checkUpdateUser(id, user);
@@ -244,11 +241,7 @@ public final class UserService {
 			user.setPassword(null);
 		}
 		User result = userBusiness.update(user, key);
-		if (result == null) {
-			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
-		} else {
-			return Response.ok().entity(result).build();
-		}
+		return Response.ok().entity(result).build();
 	}
 
 	// @formatter:off
@@ -283,19 +276,14 @@ public final class UserService {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") final String id) throws EpickurException {
+	public Response delete(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.USER);
-		validator.checkId(id);
 		boolean isDeleted = userBusiness.delete(id);
-		if (isDeleted) {
-			DeletedMessage deletedMessage = new DeletedMessage();
-			deletedMessage.setId(id);
-			deletedMessage.setDeleted(isDeleted);
-			return Response.ok().entity(deletedMessage).build();
-		} else {
-			return ErrorUtils.notFound(ErrorUtils.USER_NOT_FOUND, id);
-		}
+		DeletedMessage deletedMessage = new DeletedMessage();
+		deletedMessage.setId(id);
+		deletedMessage.setDeleted(isDeleted);
+		return Response.ok().entity(deletedMessage).build();
 	}
 
 	// @formatter:off
@@ -405,17 +393,12 @@ public final class UserService {
 	@Path("/{id}/orders/{orderId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readOneOrder(
-			@PathParam("id") final String id,
-			@PathParam("orderId") final String orderId) throws EpickurException {
+			@PathParam("id") final @IdValidate String id,
+			@PathParam("orderId") @IdValidate final String orderId) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.ORDER);
-		validator.checkReadOneOrder(id, orderId);
 		Order order = orderBusiness.read(orderId, key);
-		if (order == null) {
-			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, id);
-		} else {
-			return Response.ok().entity(order).build();
-		}
+		return Response.ok().entity(order).build();
 	}
 
 	// @formatter:off
@@ -492,11 +475,9 @@ public final class UserService {
 	@GET
 	@Path("/{id}/orders")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response readAllOrders(
-			@PathParam("id") final String id) throws EpickurException {
+	public Response readAllOrders(@PathParam("id") @IdValidate final String id) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.ORDER);
-		validator.checkReadAllOrder(id, key);
 		List<Order> orders = orderBusiness.readAllWithUserId(id);
 		return Response.ok().entity(orders).build();
 	}
@@ -570,11 +551,11 @@ public final class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createOneOrder(
-			@PathParam("id") final String userId,
+			@PathParam("id") @IdValidate final String userId,
 			final Order order) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.ORDER);
-		validator.checkCreateOneOrder(userId, order);
+		validator.checkCreateOneOrder(order);
 		Order result = orderBusiness.create(userId, order);
 		return Response.ok().entity(result).build();
 	}
@@ -644,18 +625,14 @@ public final class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateOneOrder(
-			@PathParam("id") final String id,
-			@PathParam("orderId") final String orderId,
+			@PathParam("id") @IdValidate final String id,
+			@PathParam("orderId") @IdValidate final String orderId,
 			final Order order) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.ORDER);
-		validator.checkUpdateOneOrder(id, orderId, order);
+		validator.checkUpdateOneOrder(orderId, order);
 		Order result = orderBusiness.update(order, key);
-		if (result == null) {
-			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, orderId);
-		} else {
-			return Response.ok().entity(result).build();
-		}
+		return Response.ok().entity(result).build();
 	}
 
 	// @formatter:off
@@ -697,20 +674,15 @@ public final class UserService {
 	@Path("/{id}/orders/{orderId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteOneOrder(
-			@PathParam("id") final String id,
-			@PathParam("orderId") final String orderId) throws EpickurException {
+			@PathParam("id") @IdValidate final String id,
+			@PathParam("orderId") @IdValidate final String orderId) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.ORDER);
-		validator.checkDeleteOneOrder(id, orderId);
 		boolean isDeleted = orderBusiness.delete(orderId);
-		if (isDeleted) {
-			DeletedMessage deletedMessage = new DeletedMessage();
-			deletedMessage.setId(id);
-			deletedMessage.setDeleted(isDeleted);
-			return Response.ok().entity(deletedMessage).build();
-		} else {
-			return ErrorUtils.notFound(ErrorUtils.ORDER_NOT_FOUND, orderId);
-		}
+		DeletedMessage deletedMessage = new DeletedMessage();
+		deletedMessage.setId(id);
+		deletedMessage.setDeleted(isDeleted);
+		return Response.ok().entity(deletedMessage).build();
 	}
 
 	// @formatter:off
@@ -744,8 +716,7 @@ public final class UserService {
 	@POST
 	@Path("/reset")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response resetPasswordFirstStep(
-			final ObjectNode node) throws EpickurException {
+	public Response resetPasswordFirstStep(final ObjectNode node) throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.RESET_PASSWORD, EndpointType.USER);
 		validator.checkResetPasswordData(node);
