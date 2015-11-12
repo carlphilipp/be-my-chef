@@ -479,13 +479,13 @@
 
 							<!-- Container configuration -->
 							<container>
-								<containerId>tomcat7x</containerId>
-								<home>${project.tomcat7.path}</home>
+								<containerId>tomcat8x</containerId>
+								<home>${project.tomcat8.path}</home>
 							</container>
 
 							<!-- Configuration to use with the container -->
 							<configuration>
-								<home>${project.build.directory}/tomcat7x</home>
+								<home>${project.build.directory}/tomcat8x</home>
 								<properties>
 									<cargo.servlet.port>8180</cargo.servlet.port>
 								</properties>
@@ -667,7 +667,7 @@
 
 										<echo message="Starting tomcat..." />
 										<sshexec host="${server.address}" username="${server.login}"
-											password="${server.password}" command="/opt/tomcat7/bin/startup.sh" />
+											password="${server.password}" command="/opt/tomcat8/bin/startup.sh" />
 									</target>
 								</configuration>
 							</execution>
