@@ -6,8 +6,8 @@ Welcome to Epickur RESTful API.
 For full endpoint documentation please go [here](../../apidoc/index.html).
 
 ###Prerequisites:
-* Java SDK 7 http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
-* Tomcat7 http://tomcat.apache.org/download-70.cgi
+* Java SDK 8 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+* Tomcat8 https://tomcat.apache.org/download-80.cgi
 * MongoDB 3.0 http://www.mongodb.org
 * Any IDE with Maven https://eclipse.org
 
@@ -16,7 +16,7 @@ Clone the Git repository in working directory:
 
 `git clone ssh://carlphilipp@git.code.sf.net/p/epickurapi/code epickur-api`
 
-Add Tomcat7 in Eclipse as a server.
+Add Tomcat8 in Eclipse as a server.
 
 ###Configure
 Two files need to be duplicated and renamed:
@@ -53,6 +53,8 @@ Another notable file:
 
 This file contains all the application properties. Maven will inject the value of your local.properties into this fiel. The properties of that file should not be modified.
 
+Lambock is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE.
+
 ###Maven profiles
 * local: The default one that should be used in local
 * aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production server
@@ -62,7 +64,7 @@ This file contains all the application properties. Maven will inject the value o
 
 ####From Eclipse:
 
-MongoDB and Tomcat7 must be started.
+MongoDB and Tomcat8 must be started.
 
 Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing.
 

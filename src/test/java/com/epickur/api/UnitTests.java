@@ -41,7 +41,6 @@ import com.epickur.api.entity.databind.ObjectIdDeserializerTest;
 import com.epickur.api.entity.databind.ObjectIdSerializerTest;
 import com.epickur.api.enumeration.CurrencyTest;
 import com.epickur.api.enumeration.MeasurementUnitTest;
-import com.epickur.api.exception.mapper.EpickurDBExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurForbiddenExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurIOExceptionMapperTest;
@@ -73,9 +72,9 @@ import com.epickur.api.validator.AccessRightsOrderTest;
 import com.epickur.api.validator.AccessRightsUserTest;
 import com.epickur.api.validator.AccessRightsVoucherTest;
 import com.epickur.api.validator.CatererValidatorTest;
+import com.epickur.api.validator.DishValidatorTest;
 import com.epickur.api.validator.IdValidateTest;
 import com.epickur.api.validator.UserCreateValidatorTest;
-import com.epickur.api.validator.DishValidatorTest;
 import com.epickur.api.validator.UserValidatorTest;
 import com.epickur.api.validator.VoucherValidatorTest;
 
@@ -114,7 +113,6 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		NotFoundExceptionMapperTest.class,
 		ThrowableExeptionMapperTest.class,
 		UnrecognizedPropertyExceptionMapperTest.class,
-		EpickurDBExceptionMapperTest.class,
 		EpickurForbiddenExceptionMapperTest.class,
 		IllegalArgumentExceptionMapperTest.class,
 		EpickurIOExceptionMapperTest.class,
