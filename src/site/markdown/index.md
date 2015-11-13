@@ -6,8 +6,8 @@ Welcome to Epickur RESTful API.
 For full endpoint documentation please go [here](../../apidoc/index.html).
 
 ###Prerequisites:
-* Java SDK 7 http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
-* Tomcat7 http://tomcat.apache.org/download-70.cgi
+* Java SDK 8 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+* Tomcat8 https://tomcat.apache.org/download-80.cgi
 * MongoDB 3.0 http://www.mongodb.org
 * Any IDE with Maven https://eclipse.org
 
@@ -16,7 +16,7 @@ Clone the Git repository in working directory:
 
 `git clone ssh://carlphilipp@git.code.sf.net/p/epickurapi/code epickur-api`
 
-Add Tomcat7 in Eclipse as a server.
+Add Tomcat8 in Eclipse as a server.
 
 ###Configure
 Two files need to be duplicated and renamed:
@@ -53,79 +53,130 @@ Another notable file:
 
 This file contains all the application properties. Maven will inject the value of your local.properties into this fiel. The properties of that file should not be modified.
 
-###Maven profiles
-* local: The default one that should be used in local
-* aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production server
-
-###Test
+Lambock is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE
 
 
-####From Eclipse:
+###Maven profile
 
-MongoDB and Tomcat7 must be started.
+* local: The default one that should be used in loca
 
-Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing.
-
-####From Maven:
-
-MongoDB must be started.
-
-Unit testing: `mvn test -P local`
-
-Integration testing: `mvn integration-test -P local`
+* aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production serve
 
 
-###Build
-####From Maven:
+###Tes
 
-Generate war with Maven: `mvn warify -P local`
 
-Generate documentation with Maven in local: `mvn site -P local`
 
-Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it.
+####From Eclipse
 
-Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Windows or `src/main/scripts/generate-api.sh` from Linux or OSX.
 
-###Amazon Web Services
+MongoDB and Tomcat8 must be started
 
-To deploy on AWS:
 
-`mvn clean package "antrun:run@upload" -P aws`
+Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing
 
-The ant plugin run several commands:
 
-* Stop tomcat
-* Clean webbapps directory
-* Clean other temp directory
-* Push ROOT.war (war generatered) to $TOMCAT/webapps
-* Start tomcat
+####From Maven
 
-To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml`
 
-```
-<profiles>
-    <profile>
-      <id>aws</id>
-      <properties>
-        <server.address>ADDRESS</server.address>
-        <server.login>LOGIN_SSH</server.login>
-        <server.password>PASSWORD_SSH</server.password>
-        <server.base>TOMCAT_BASE</server.base>
-      </properties>
-    </profile>
-</profiles>
-```
+MongoDB must be started
 
-###Known issue with Eclipse
-Issue with Maven dependencies not deployed
 
-Bug in m2Clipse
+Unit testing: `mvn test -P local
 
-###Known issue with Jersey
-Some errors are not properly routed like #API-22.
-See ticket in Jersey Jira: https://java.net/jira/browse/JERSEY-2722
-It's not a big deal, the developer needs to pass a correctly formed request anyway.
 
-###Credits
+Integration testing: `mvn integration-test -P local
 
-[@cpharmant](https://twitter.com/cpharmant)
+
+
+###Buil
+
+####From Maven
+
+
+Generate war with Maven: `mvn warify -P local
+
+
+Generate documentation with Maven in local: `mvn site -P local
+
+
+Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it
+
+
+Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Windows or `src/main/scripts/generate-api.sh` from Linux or OSX
+
+
+###Amazon Web Service
+
+
+To deploy on AWS
+
+
+`mvn clean package "antrun:run@upload" -P aws
+
+
+The ant plugin run several commands
+
+
+* Stop tomca
+
+* Clean webbapps director
+
+* Clean other temp director
+
+* Push ROOT.war (war generatered) to $TOMCAT/webapp
+
+* Start tomca
+
+
+To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml
+
+
+``
+
+<profiles
+
+    <profile
+
+      <id>aws</id
+
+      <properties
+
+        <server.address>ADDRESS</server.address
+
+        <server.login>LOGIN_SSH</server.login
+
+        <server.password>PASSWORD_SSH</server.password
+
+        <server.base>TOMCAT_BASE</server.base
+
+      </properties
+
+    </profile
+
+</profiles
+
+``
+
+
+###Known issue with Eclips
+
+Issue with Maven dependencies not deploye
+
+
+Bug in m2Clips
+
+
+###Known issue with Jerse
+
+Some errors are not properly routed like #API-22
+
+See ticket in Jersey Jira: https://java.net/jira/browse/JERSEY-272
+
+It's not a big deal, the developer needs to pass a correctly formed request anyway
+
+
+###Credit
+
+
+[@cpharmant](https://twitter.com/cpharmant
