@@ -76,26 +76,26 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.19</version>
 			</plugin>
-
-			<!-- Integration tests -->
+			
+			<!-- Integration tests --> 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.19</version>
 				<executions>
-					<execution>
-						<id>integration-test</id>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-					</execution>
-				</executions>
+          			<execution>
+            			<goals>
+	              			<goal>integration-test</goal>
+           				 </goals>
+          			</execution>
+       			</executions>
 			</plugin>
 		</plugins>
 	</build>
 
 	<reporting>
 		<plugins>
+			<!--  
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
@@ -114,14 +114,12 @@
 				</configuration>
 				<reportSets>
 					<reportSet>
-						<!-- defines pmd reports in the modules -->
 						<id>pmd-report</id>
 						<reports>
 							<report>pmd</report>
 						</reports>
 					</reportSet>
 					<reportSet>
-						<!-- defines pmd aggregate report -->
 						<id>pmd-aggregate</id>
 						<inherited>false</inherited>
 						<reports>
@@ -132,14 +130,12 @@
 						</configuration>
 					</reportSet>
 					<reportSet>
-						<!-- defines cpd reports in the modules -->
 						<id>cpd-report</id>
 						<reports>
 							<report>cpd</report>
 						</reports>
 					</reportSet>
 					<reportSet>
-						<!-- defines cpd aggregate report -->
 						<id>cpd-aggregate</id>
 						<inherited>false</inherited>
 						<reports>
@@ -151,6 +147,7 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -175,6 +172,7 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
@@ -188,6 +186,7 @@
 					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 				</configuration>
 			</plugin>
+			<!--  
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -208,6 +207,7 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
@@ -223,9 +223,6 @@
 						<reports>
 							<report>report</report>
 						</reports>
-						<configuration>
-							<aggregate>true</aggregate>
-						</configuration>
 					</reportSet>
 					<reportSet>
 						<id>unit-tests-aggregate</id>
@@ -233,18 +230,12 @@
 						<reports>
 							<report>report</report>
 						</reports>
-						<configuration>
-							<aggregate>true</aggregate>
-						</configuration>
 					</reportSet>
 					<reportSet>
 						<id>integration-tests</id>
 						<reports>
 							<report>failsafe-report-only</report>
 						</reports>
-						<configuration>
-							<aggregate>true</aggregate>
-						</configuration>
 					</reportSet>
 					<reportSet>
 						<id>integration-tests-aggregate</id>
@@ -252,26 +243,22 @@
 						<reports>
 							<report>failsafe-report-only</report>
 						</reports>
-						<configuration>
-							<aggregate>true</aggregate>
-						</configuration>
 					</reportSet>
 				</reportSets>
 			</plugin>
+			<!--  
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
 				<version>2.4</version>
 				<reportSets>
 					<reportSet>
-						<!-- defines taglist reports in the modules -->
 						<id>taglist-report</id>
 						<reports>
 							<report>taglist</report>
 						</reports>
 					</reportSet>
 					<reportSet>
-						<!-- defines taglist aggregate report -->
 						<id>taglist-aggregate</id>
 						<inherited>false</inherited>
 						<reports>
@@ -283,6 +270,7 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
@@ -293,6 +281,7 @@
 				<artifactId>versions-maven-plugin</artifactId>
 				<version>2.2</version>
 			</plugin>
+			<!--  
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>javancss-maven-plugin</artifactId>
@@ -312,6 +301,7 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			-->
 		</plugins>
 	</reporting>
 	

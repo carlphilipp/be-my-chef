@@ -25,23 +25,6 @@
 
 	<reporting>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.5</version>
-				<configuration>
-					<skipEmptyReport>false</skipEmptyReport>
-					<linkXRef>true</linkXRef>
-					<sourceEncoding>utf-8</sourceEncoding>
-					<minimumTokens>100</minimumTokens>
-					<targetJdk>1.8</targetJdk>
-					<printFailingErrors>true</printFailingErrors>
-					<failOnViolation>true</failOnViolation>
-					<rulesets>
-						<ruleset>${project.parent.basedir}\src\main\resources\lombokRuleset.xml</ruleset>
-					</rulesets>
-				</configuration>
-			</plugin>
 		</plugins>
 	</reporting>
 
