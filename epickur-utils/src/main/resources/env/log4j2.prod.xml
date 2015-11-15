@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{dd/MM/yyyy HH:mm:ss}{UTC} - %-5p [%c{1}:%L] %m%n" />
+    </Console>
+    <SMTP name="Email" subject="[BE MY CHEF] Log Exception" from="carl@bemychef.com.au"
+      to="sys@bemychef.com.au" smtpProtocol="smtps" smtpHost="smtp.zoho.com"
+      smtpPort="465" smtpUsername="carl@bemychef.com.au" smtpPassword="a3842100"
+      smtpDebug="false" bufferSize="512">
+      <PatternLayout pattern="%d{dd/MM/yyyy HH:mm:ss}{UTC} - %-5p [%c{1}:%L] %m%n" />
+    </SMTP>
+  </Appenders>
+  <Loggers>
+    <Logger name="com.epickur.api" level="info">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.mongodb.driver" level="warn">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.quartz" level="warn">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Root level="info">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="Email" level="error" />
+    </Root>
+  </Loggers>
+</Configuration>

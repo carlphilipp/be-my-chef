@@ -9,38 +9,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.epickur.api.business.CatererBusinessTest;
-import com.epickur.api.business.DishBusinessTest;
-import com.epickur.api.business.KeyBusinessTest;
-import com.epickur.api.business.OrderBusinessTest;
-import com.epickur.api.business.UserBusinessTest;
-import com.epickur.api.business.VoucherBusinessTest;
-import com.epickur.api.dao.mongo.CatererDAOTest;
-import com.epickur.api.dao.mongo.DishDAOTest;
-import com.epickur.api.dao.mongo.KeyDAOTest;
-import com.epickur.api.dao.mongo.LogDAOTest;
-import com.epickur.api.dao.mongo.OrderDAOTest;
-import com.epickur.api.dao.mongo.SequenceDAOTest;
-import com.epickur.api.dao.mongo.UserDAOTest;
-import com.epickur.api.dao.mongo.VoucherDAOTest;
-import com.epickur.api.dump.AmazonWebServicesTest;
-import com.epickur.api.dump.MongoDBDumpTest;
-import com.epickur.api.entity.AddressTest;
-import com.epickur.api.entity.CatererTest;
-import com.epickur.api.entity.DishTest;
-import com.epickur.api.entity.GeoTest;
-import com.epickur.api.entity.IngredientTest;
-import com.epickur.api.entity.KeyTest;
-import com.epickur.api.entity.LocationTest;
-import com.epickur.api.entity.NutritionFactTest;
-import com.epickur.api.entity.OrderTest;
-import com.epickur.api.entity.UserTest;
-import com.epickur.api.entity.WorkingTimesTest;
-import com.epickur.api.entity.databind.DateSerializerTest;
-import com.epickur.api.entity.databind.ObjectIdDeserializerTest;
-import com.epickur.api.entity.databind.ObjectIdSerializerTest;
-import com.epickur.api.enumeration.CurrencyTest;
-import com.epickur.api.enumeration.MeasurementUnitTest;
 import com.epickur.api.exception.mapper.EpickurExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurForbiddenExceptionMapperTest;
 import com.epickur.api.exception.mapper.EpickurIOExceptionMapperTest;
@@ -54,42 +22,25 @@ import com.epickur.api.exception.mapper.UnrecognizedPropertyExceptionMapperTest;
 import com.epickur.api.filter.HeaderResponseFilterTest;
 import com.epickur.api.filter.KeyRequestFilterTest;
 import com.epickur.api.filter.LogRequestFilterTest;
-import com.epickur.api.geocoder.here.GeocoderHereImplTest;
-import com.epickur.api.geocoder.here.HereTest;
-import com.epickur.api.payment.stripe.StripePaymentTest;
 import com.epickur.api.service.CatererServiceTest;
 import com.epickur.api.service.DishServiceTest;
 import com.epickur.api.service.LoginServiceTest;
 import com.epickur.api.service.LogoutServiceTest;
 import com.epickur.api.service.NoKeyServiceTest;
 import com.epickur.api.service.UserServiceTest;
-import com.epickur.api.utils.UtilsTest;
-import com.epickur.api.utils.email.EmailTest;
-import com.epickur.api.utils.email.EmailUtilsTest;
-import com.epickur.api.validator.AccessRightsCatererTest;
-import com.epickur.api.validator.AccessRightsDishTest;
-import com.epickur.api.validator.AccessRightsOrderTest;
-import com.epickur.api.validator.AccessRightsUserTest;
-import com.epickur.api.validator.AccessRightsVoucherTest;
-import com.epickur.api.validator.CatererValidatorTest;
-import com.epickur.api.validator.DishValidatorTest;
-import com.epickur.api.validator.IdValidateTest;
-import com.epickur.api.validator.UserCreateValidatorTest;
-import com.epickur.api.validator.UserValidatorTest;
-import com.epickur.api.validator.VoucherValidatorTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
 		WebApplicationTest.class,
 
-		CatererBusinessTest.class,
+/*		CatererBusinessTest.class,
 		DishBusinessTest.class,
 		KeyBusinessTest.class,
 		OrderBusinessTest.class,
 		UserBusinessTest.class,
-		VoucherBusinessTest.class,
+		VoucherBusinessTest.class,*/
 
-		AddressTest.class,
+/*		AddressTest.class,
 		CatererTest.class,
 		DishTest.class,
 		GeoTest.class,
@@ -98,14 +49,14 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		LocationTest.class,
 		NutritionFactTest.class,
 		OrderTest.class,
-		UserTest.class,
+		UserTest.class,*/
 
-		DateSerializerTest.class,
+/*		DateSerializerTest.class,
 		ObjectIdDeserializerTest.class,
-		ObjectIdSerializerTest.class,
+		ObjectIdSerializerTest.class,*/
 
-		CurrencyTest.class,
-		MeasurementUnitTest.class,
+/*		CurrencyTest.class,
+		MeasurementUnitTest.class,*/
 
 		EpickurExceptionMapperTest.class,
 		EpickurIllegalArgumentMapperTest.class,
@@ -122,10 +73,10 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		LogRequestFilterTest.class,
 		KeyRequestFilterTest.class,
 
-		GeocoderHereImplTest.class,
-		HereTest.class,
+/*		GeocoderHereImplTest.class,
+		HereTest.class,*/
 
-		StripePaymentTest.class,
+/*		StripePaymentTest.class,*/
 
 		CatererServiceTest.class,
 		NoKeyServiceTest.class,
@@ -133,26 +84,18 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		LoginServiceTest.class,
 		LogoutServiceTest.class,
 		UserServiceTest.class,
-		LogDAOTest.class,
-		SequenceDAOTest.class,
-		
-		OrderDAOTest.class,
-		UserDAOTest.class,
-		CatererDAOTest.class,
-		DishDAOTest.class,
-		VoucherDAOTest.class,
-		KeyDAOTest.class,
-		LogDAOTest.class,
+/*		LogDAOTest.class,
+		SequenceDAOTest.class,*/
 
 		// .utils
-		UtilsTest.class,
+/*		UtilsTest.class,*/
 
 		// .utils.email
-		EmailUtilsTest.class,
-		EmailTest.class,
+/*		EmailUtilsTest.class,
+		EmailTest.class,*/
 
 		// .validator
-		AccessRightsCatererTest.class,
+/*		AccessRightsCatererTest.class,
 		AccessRightsDishTest.class,
 		AccessRightsOrderTest.class,
 		AccessRightsUserTest.class,
@@ -162,13 +105,13 @@ import com.epickur.api.validator.VoucherValidatorTest;
 		UserValidatorTest.class,
 		VoucherValidatorTest.class,
 		IdValidateTest.class,
-		UserCreateValidatorTest.class,
+		UserCreateValidatorTest.class,*/
 
-		WorkingTimesTest.class,
+/*		WorkingTimesTest.class,*/
 		
 		// .dump
-		AmazonWebServicesTest.class,
-		MongoDBDumpTest.class
+/*		AmazonWebServicesTest.class,
+		MongoDBDumpTest.class*/
 })
 public class UnitTests {
 

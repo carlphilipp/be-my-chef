@@ -60,7 +60,7 @@
 					<deployables>
 						<deployable>
 							<groupId>com.epickur.api</groupId>
-							<artifactId>epickur-main</artifactId>
+							<artifactId>epickur-rest</artifactId>
 							<type>war</type>
 						</deployable>
 					</deployables>
@@ -146,32 +146,6 @@
 
 	<dependencyManagement>
 	</dependencyManagement>
-
-
-	<repositories>
-		<!-- Repository for jasper. Needed to avoid errors while running maven -->
-		<repository>
-			<id>jasper</id>
-			<url>http://jasperreports.sourceforge.net/maven2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>jasper1</id>
-			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/jaspersoft-repo/
-			</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<!-- Epickur Service -->

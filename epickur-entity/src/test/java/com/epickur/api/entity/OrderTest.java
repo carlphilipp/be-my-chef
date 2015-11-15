@@ -21,12 +21,12 @@ public class OrderTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		TestUtils.setupStripe();
+		//TestUtils.setupStripe();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestUtils.resetStripe();
+		//TestUtils.resetStripe();
 	}
 
 	@Test

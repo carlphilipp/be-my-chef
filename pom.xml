@@ -20,6 +20,7 @@
 	<modules>
 		<module>epickur-dao</module>
 		<module>epickur-entity</module>
+		<module>epickur-logging</module>
 		<module>epickur-rest</module>
 		<module>epickur-service</module>
 		<module>epickur-utils</module>
@@ -463,6 +464,7 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
@@ -574,6 +576,11 @@
 				<artifactId>javancss-maven-plugin</artifactId>
 				<version>2.1</version>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
 		</plugins>
 	</reporting>
 
@@ -613,6 +620,30 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<repositories>
+		<!-- Repository for jasper. Needed to avoid errors while running maven -->
+		<repository>
+			<id>jasper</id>
+			<url>http://jasperreports.sourceforge.net/maven2/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jasper1</id>
+			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/jaspersoft-repo/
+			</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<distributionManagement>
 		<site>
 			<id>website</id>
