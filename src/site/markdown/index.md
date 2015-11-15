@@ -53,7 +53,7 @@ Another notable file:
 
 This file contains all the application properties. Maven will inject the value of your local.properties into this fiel. The properties of that file should not be modified.
 
-Lambock is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE
+Lombock is used in the project. Please reefer to [lombock web site](https://projectlombok.org) to make it work in your IDE
 
 
 ###Maven profile
@@ -134,27 +134,17 @@ To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml
 
 ``
 
-<profiles
-
-    <profile
-
-      <id>aws</id
-
-      <properties
-
-        <server.address>ADDRESS</server.address
-
-        <server.login>LOGIN_SSH</server.login
-
-        <server.password>PASSWORD_SSH</server.password
-
-        <server.base>TOMCAT_BASE</server.base
-
-      </properties
-
-    </profile
-
-</profiles
+<profiles>
+    <profile>
+      <id>aws</id>
+      <properties>
+        <server.address>ADDRESS</server.address>
+        <server.login>LOGIN_SSH</server.login>
+        <server.password>PASSWORD_SSH</server.password>
+        <server.base>TOMCAT_BASE</server.base>
+      </properties>
+    </profile>
+</profiles>
 
 ``
 
@@ -165,6 +155,10 @@ Issue with Maven dependencies not deploye
 
 
 Bug in m2Clips
+
+You might have a "Cycle detected in the build path". Just remove the warning in Eclipse properties:
+got to :-> Windows -> Prefereneces -> Java-> Compiler -> Buliding -> Circular Depencies
+Maven can build the project, so Eclipse should not complain about cycle issues.
 
 
 ###Known issue with Jerse

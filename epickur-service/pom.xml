@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>epickur-dao</artifactId>
+	<artifactId>epickur-service</artifactId>
 	<packaging>jar</packaging>
 
 	<parent>
@@ -11,16 +11,15 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<name>Epickur DAO</name>
-	<description>Data Access Object layer.</description>
+	<name>Epickur Service</name>
+	<description>Service layer. This is where logic is done.</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-utils</artifactId>
+			<artifactId>epickur-dao</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-
 	</dependencies>
 
 	<reporting>
