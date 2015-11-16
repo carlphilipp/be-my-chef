@@ -7,14 +7,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 
 public class GeoTest {
 
 	@Test
 	public void testGeo() {
-		Geo geo = TestUtils.generateGeo();
+		Geo geo = EntityGenerator.generateGeo();
 		Geo geo2 = geo.clone();
 
 		assertEquals(geo.hashCode(), geo2.hashCode());

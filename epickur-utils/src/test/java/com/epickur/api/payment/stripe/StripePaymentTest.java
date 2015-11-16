@@ -19,8 +19,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.enumeration.Currency;
+import com.epickur.api.helper.EntityGenerator;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -56,16 +56,16 @@ public class StripePaymentTest {
 	@BeforeClass
 	public static void setUpBeforeClass() {
 		try {
-			TestUtils.setupStripe();
-			TOKEN = Token.create(TestUtils.getTokenParam());
+			EntityGenerator.setupStripe();
+			TOKEN = Token.create(EntityGenerator.getTokenParam());
 		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
+			fail(EntityGenerator.STRIPE_MESSAGE);
 		}
 	}
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestUtils.resetStripe();
+		EntityGenerator.resetStripe();
 	}
 	
 	@SuppressWarnings("unchecked")

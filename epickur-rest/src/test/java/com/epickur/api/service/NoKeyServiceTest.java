@@ -2,7 +2,6 @@ package com.epickur.api.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -19,20 +18,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
 
 public class NoKeyServiceTest {
 
@@ -47,26 +41,26 @@ public class NoKeyServiceTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		TestUtils.setupStripe();
+		EntityGenerator.setupStripe();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestUtils.resetStripe();
+		EntityGenerator.resetStripe();
 	}
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 	}
 
 	@Test
 	public void testCheckUserService() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
-		user.setCode(TestUtils.generateRandomString());
+		User user = EntityGenerator.generateRandomUserWithId();
+		user.setCode(EntityGenerator.generateRandomString());
 
 		when(userBusiness.checkCode(anyString(), anyString())).thenReturn(user);
 
@@ -79,26 +73,22 @@ public class NoKeyServiceTest {
 
 	@Test
 	public void testExecuteOrder() throws EpickurException {
-		try {
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrderWithId();
+		User user = EntityGenerator.generateRandomUserWithId();
+		Order order = EntityGenerator.generateRandomOrderWithId();
 
-			when(orderBusiness.executeOrder(anyString(), anyString(), anyBoolean(), anyBoolean(), anyString())).thenReturn(order);
+		when(orderBusiness.executeOrder(anyString(), anyString(), anyBoolean(), anyBoolean(), anyString())).thenReturn(order);
 
-			Response actual = service.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true);
-			assertNotNull(actual);
-			assertEquals(200, actual.getStatus());
-			Order actualOrder = (Order) actual.getEntity();
-			assertNotNull(actualOrder.getId());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		Response actual = service.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		Order actualOrder = (Order) actual.getEntity();
+		assertNotNull(actualOrder.getId());
 	}
 
 	@Test
 	public void testResetPassordSecondStep() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
-		user.setCode(TestUtils.generateRandomString());
+		User user = EntityGenerator.generateRandomUserWithId();
+		user.setCode(EntityGenerator.generateRandomString());
 
 		when(userBusiness.resetPasswordSecondStep(anyString(), anyString(), anyString())).thenReturn(user);
 		ObjectNode objectNode = JsonNodeFactory.instance.objectNode();

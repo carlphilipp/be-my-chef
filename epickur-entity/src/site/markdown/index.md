@@ -1,2 +1,2 @@
-Epickur DAO Module
+Epickur Entity Module
 ===================

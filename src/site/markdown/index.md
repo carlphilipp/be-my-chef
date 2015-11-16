@@ -53,87 +53,58 @@ Another notable file:
 
 This file contains all the application properties. Maven will inject the value of your local.properties into this fiel. The properties of that file should not be modified.
 
-Lombock is used in the project. Please reefer to [lombock web site](https://projectlombok.org) to make it work in your IDE
+Lambock is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE.
+
+###Maven profiles
+* local: The default one that should be used in local
+* aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production server
+
+###Test
 
 
-###Maven profile
+####From Eclipse:
 
-* local: The default one that should be used in loca
+MongoDB and Tomcat8 must be started.
 
-* aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production serve
+Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing.
 
+####From Maven:
 
-###Tes
+MongoDB must be started.
 
+Unit testing: `mvn test -P local`
 
-
-####From Eclipse
-
-
-MongoDB and Tomcat8 must be started
+Integration testing: `mvn integration-test -P local`
 
 
-Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing
+###Build
+####From Maven:
 
+Generate war with Maven: `mvn warify -P local`
 
-####From Maven
+Generate documentation with Maven in local: `mvn site -P local`
 
+Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it.
 
-MongoDB must be started
+Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Windows or `src/main/scripts/generate-api.sh` from Linux or OSX.
 
+###Amazon Web Services
 
-Unit testing: `mvn test -P local
+To deploy on AWS:
 
+`mvn clean package "antrun:run@upload" -P aws`
 
-Integration testing: `mvn integration-test -P local
+The ant plugin run several commands:
 
+* Stop tomcat
+* Clean webbapps directory
+* Clean other temp directory
+* Push ROOT.war (war generatered) to $TOMCAT/webapps
+* Start tomcat
 
+To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml`
 
-###Buil
-
-####From Maven
-
-
-Generate war with Maven: `mvn warify -P local
-
-
-Generate documentation with Maven in local: `mvn site -P local
-
-
-Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it
-
-
-Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Windows or `src/main/scripts/generate-api.sh` from Linux or OSX
-
-
-###Amazon Web Service
-
-
-To deploy on AWS
-
-
-`mvn clean package "antrun:run@upload" -P aws
-
-
-The ant plugin run several commands
-
-
-* Stop tomca
-
-* Clean webbapps director
-
-* Clean other temp director
-
-* Push ROOT.war (war generatered) to $TOMCAT/webapp
-
-* Start tomca
-
-
-To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml
-
-
-``
-
+```
 <profiles>
     <profile>
       <id>aws</id>
@@ -145,32 +116,18 @@ To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml
       </properties>
     </profile>
 </profiles>
+```
 
-``
+###Known issue with Eclipse
+Issue with Maven dependencies not deployed
 
+Bug in m2Clipse
 
-###Known issue with Eclips
+###Known issue with Jersey
+Some errors are not properly routed like #API-22.
+See ticket in Jersey Jira: https://java.net/jira/browse/JERSEY-2722
+It's not a big deal, the developer needs to pass a correctly formed request anyway.
 
-Issue with Maven dependencies not deploye
+###Credits
 
-
-Bug in m2Clips
-
-You might have a "Cycle detected in the build path". Just remove the warning in Eclipse properties:
-got to :-> Windows -> Prefereneces -> Java-> Compiler -> Buliding -> Circular Depencies
-Maven can build the project, so Eclipse should not complain about cycle issues.
-
-
-###Known issue with Jerse
-
-Some errors are not properly routed like #API-22
-
-See ticket in Jersey Jira: https://java.net/jira/browse/JERSEY-272
-
-It's not a big deal, the developer needs to pass a correctly formed request anyway
-
-
-###Credit
-
-
-[@cpharmant](https://twitter.com/cpharmant
+[@cpharmant](https://twitter.com/cpharmant)

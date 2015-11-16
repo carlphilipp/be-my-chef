@@ -5,13 +5,13 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.helper.EntityGenerator;
 
 public class DishTest {
 
 	@Test
 	public void testDish() {
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		Dish dish2 = dish.clone();
 
 		assertEquals(dish.hashCode(), dish2.hashCode());

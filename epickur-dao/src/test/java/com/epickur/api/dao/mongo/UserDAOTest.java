@@ -23,11 +23,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
+import com.epickur.api.helper.EntityGenerator;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -59,7 +59,7 @@ public class UserDAOTest {
 
 	@Test
 	public void testCreate() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
 
 		User actual = dao.create(user);
@@ -72,7 +72,7 @@ public class UserDAOTest {
 	public void testCreateMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
 
 		doThrow(new MongoException("")).when(collMock).insertOne(document);
@@ -87,7 +87,7 @@ public class UserDAOTest {
 	public void testRead() throws EpickurException {
 		String userId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(userId));
-		Document found = TestUtils.generateRandomUser().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
 
 		when(collMock.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
@@ -123,7 +123,7 @@ public class UserDAOTest {
 	public void testReadWithName() throws EpickurException {
 		String name = new ObjectId().toHexString();
 		Document query = new Document().append("name", name);
-		Document found = TestUtils.generateRandomUser().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
 
 		when(collMock.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
@@ -138,7 +138,7 @@ public class UserDAOTest {
 	public void testReadWithEmail() throws EpickurException {
 		String email = new ObjectId().toHexString();
 		Document query = new Document().append("email", email);
-		Document found = TestUtils.generateRandomUser().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
 
 		when(collMock.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
@@ -151,7 +151,7 @@ public class UserDAOTest {
 
 	@Test
 	public void testReadAll() throws EpickurException {
-		Document found = TestUtils.generateRandomUser().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
 
 		when(collMock.find()).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
@@ -177,7 +177,7 @@ public class UserDAOTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
@@ -190,7 +190,7 @@ public class UserDAOTest {
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
 
@@ -204,7 +204,7 @@ public class UserDAOTest {
 	public void testUpdateMongoException() throws Exception {
 		thrown.expect(EpickurDBException.class);
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
 				.thenThrow(new MongoException(""));
@@ -214,10 +214,10 @@ public class UserDAOTest {
 
 	@Test
 	public void testExists() throws EpickurDBException, EpickurParsingException {
-		String name = TestUtils.generateRandomString();
-		String email = TestUtils.generateRandomString();
+		String name = EntityGenerator.generateRandomString();
+		String email = EntityGenerator.generateRandomString();
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
 
 		when(collMock.find(any(Document.class))).thenReturn(findIteratble);

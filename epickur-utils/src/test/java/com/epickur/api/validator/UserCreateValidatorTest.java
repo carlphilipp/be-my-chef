@@ -12,8 +12,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.User;
+import com.epickur.api.helper.EntityGenerator;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 public class UserCreateValidatorTest {
@@ -31,7 +31,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValid(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		UserCreateValidate.UserCreateValidator validator = new UserCreateValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
@@ -54,7 +54,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValidNameNull(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setName(null);
 		UserCreateValidate.UserCreateValidator validator = new UserCreateValidate.UserCreateValidator();
 		
@@ -67,7 +67,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValidPasswordNull(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setPassword(null);
 		UserCreateValidate.UserCreateValidator validator = new UserCreateValidate.UserCreateValidator();
 		
@@ -80,7 +80,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValidEmailNull(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setEmail(null);
 		UserCreateValidate.UserCreateValidator validator = new UserCreateValidate.UserCreateValidator();
 		
@@ -93,7 +93,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValidCountryNull(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setCountry(null);
 		UserCreateValidate.UserCreateValidator validator = new UserCreateValidate.UserCreateValidator();
 		
@@ -106,7 +106,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValidZipCodeNull(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setZipcode(null);
 		UserCreateValidate.UserCreateValidator validator = new UserCreateValidate.UserCreateValidator();
 		
@@ -119,7 +119,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValidStateNull(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setState(null);
 		UserCreateValidate.UserCreateValidator validator = new UserCreateValidate.UserCreateValidator();
 		
@@ -132,7 +132,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValidPhoneNumberFail(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setPhoneNumber(new PhoneNumber());
 		UserCreateValidate.UserCreateValidator validator = new UserCreateValidate.UserCreateValidator();
 		
@@ -145,7 +145,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValidAllFail(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setName(null);
 		user.setZipcode(null);
 		user.setPassword(null);

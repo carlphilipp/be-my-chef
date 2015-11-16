@@ -25,11 +25,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -53,7 +54,7 @@ public class AccessRightsDishIT {
 
 			jsonMimeType = "application/json";
 			mapper = new ObjectMapper();
-			TestUtils.setupDB();
+			EntityGenerator.setupDB();
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
@@ -61,19 +62,19 @@ public class AccessRightsDishIT {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws IOException {
-		TestUtils.cleanDB();
+		EntityGenerator.cleanDB();
 	}
 
 	// User Administrator
 	@Test
 	public void testAdministratorDishCreate() throws ClientProtocolException, IOException, EpickurException {
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 		URL_NO_KEY = END_POINT + "/dishes";
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), new ObjectId());
+		Caterer caterer = IntegrationTestUtils.createCaterer(dish.getCaterer(), new ObjectId());
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
@@ -100,8 +101,8 @@ public class AccessRightsDishIT {
 
 	@Test
 	public void testAdministratorDishRead() throws ClientProtocolException, IOException, EpickurException {
-		User admin = TestUtils.createAdminAndLogin();
-		String id = TestUtils.createDish().getId().toHexString();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
+		String id = IntegrationTestUtils.createDish().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/dishes/" + id;
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -124,13 +125,13 @@ public class AccessRightsDishIT {
 
 	@Test
 	public void testAdministratorDishUpdate() throws ClientProtocolException, IOException, EpickurException {
-		User admin = TestUtils.createAdminAndLogin();
-		Dish dish = TestUtils.createDish();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
+		Dish dish = IntegrationTestUtils.createDish();
 		String id = dish.getId().toHexString();
 		URL_NO_KEY = END_POINT + "/dishes/" + id;
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
@@ -154,8 +155,8 @@ public class AccessRightsDishIT {
 
 	@Test
 	public void testAdministratorCatererDelete() throws ClientProtocolException, IOException, EpickurException {
-		User admin = TestUtils.createAdminAndLogin();
-		Dish dish = TestUtils.createDish();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
+		Dish dish = IntegrationTestUtils.createDish();
 		String id = dish.getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/dishes/" + id;
@@ -180,15 +181,15 @@ public class AccessRightsDishIT {
 	// User Super_User
 	@Test
 	public void testSuperUserDishCreate() throws ClientProtocolException, IOException, EpickurException {
-		User user = TestUtils.createSuperUserAndLogin();
+		User user = IntegrationTestUtils.createSuperUserAndLogin();
 		String key = user.getKey();
 
 		URL_NO_KEY = END_POINT + "/dishes";
 		URL = URL_NO_KEY + "?key=" + key;
 
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), new ObjectId());
+		Caterer caterer = IntegrationTestUtils.createCaterer(dish.getCaterer(), new ObjectId());
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
@@ -215,15 +216,15 @@ public class AccessRightsDishIT {
 
 	@Test
 	public void testSuperUserDishCreate2() throws ClientProtocolException, IOException, EpickurException {
-		User user = TestUtils.createSuperUserAndLogin();
+		User user = IntegrationTestUtils.createSuperUserAndLogin();
 		String key = user.getKey();
 
 		URL_NO_KEY = END_POINT + "/dishes";
 		URL = URL_NO_KEY + "?key=" + key;
 
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), user.getId());
+		Caterer caterer = IntegrationTestUtils.createCaterer(dish.getCaterer(), user.getId());
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
@@ -251,10 +252,10 @@ public class AccessRightsDishIT {
 	@Test
 	public void testSuperUserDishRead() throws ClientProtocolException, IOException, EpickurException {
 		// Read another caterer - should pass it
-		User user = TestUtils.createSuperUserAndLogin();
+		User user = IntegrationTestUtils.createSuperUserAndLogin();
 		String key = user.getKey();
 
-		Dish dish = TestUtils.createDish();
+		Dish dish = IntegrationTestUtils.createDish();
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
@@ -278,8 +279,8 @@ public class AccessRightsDishIT {
 	@Test
 	public void testSuperUserDishUpdate() throws ClientProtocolException, IOException, EpickurException {
 		// Update a dish not created by current user - should not pass it
-		Dish dish = TestUtils.createDish();
-		User superUser = TestUtils.createSuperUserAndLogin();
+		Dish dish = IntegrationTestUtils.createDish();
+		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
 		String key = superUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
@@ -307,10 +308,10 @@ public class AccessRightsDishIT {
 	@Test
 	public void testSuperUserDishUpdate2() throws ClientProtocolException, IOException, EpickurException {
 		// Update a caterer created by current user - should pass it
-		User superUser = TestUtils.createSuperUserAndLogin();
-		Dish dish = TestUtils.createDishWithUserId(superUser.getId());
+		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
+		Dish dish = IntegrationTestUtils.createDishWithUserId(superUser.getId());
 		String key = superUser.getKey();
-		Caterer caterer = TestUtils.createCatererWithUserId(superUser.getId());
+		Caterer caterer = IntegrationTestUtils.createCatererWithUserId(superUser.getId());
 		dish.setCaterer(caterer);
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
@@ -338,8 +339,8 @@ public class AccessRightsDishIT {
 	@Test
 	public void testSuperUserDishDelete() throws ClientProtocolException, IOException, EpickurException {
 		// Delete a dish not created by current user - should not pass it
-		Dish dish = TestUtils.createDish();
-		User superUser = TestUtils.createSuperUserAndLogin();
+		Dish dish = IntegrationTestUtils.createDish();
+		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
 		String key = superUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
@@ -364,10 +365,10 @@ public class AccessRightsDishIT {
 	@Test
 	public void testSuperUserDishDelete2() throws ClientProtocolException, IOException, EpickurException {
 		// Delete a caterer created by current user - should pass it
-		User superUser = TestUtils.createSuperUserAndLogin();
-		Dish dish = TestUtils.createDishWithUserId(superUser.getId());
+		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
+		Dish dish = IntegrationTestUtils.createDishWithUserId(superUser.getId());
 		String key = superUser.getKey();
-		Caterer caterer = TestUtils.createCatererWithUserId(superUser.getId());
+		Caterer caterer = IntegrationTestUtils.createCatererWithUserId(superUser.getId());
 		dish.setCaterer(caterer);
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
@@ -392,15 +393,15 @@ public class AccessRightsDishIT {
 	// User User
 	@Test
 	public void testUserDishCreate() throws ClientProtocolException, IOException, EpickurException {
-		User user = TestUtils.createUserAndLogin();
+		User user = IntegrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
 
 		URL_NO_KEY = END_POINT + "/dishes";
 		URL = URL_NO_KEY + "?key=" + key;
 
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), new ObjectId());
+		Caterer caterer = IntegrationTestUtils.createCaterer(dish.getCaterer(), new ObjectId());
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
@@ -427,15 +428,15 @@ public class AccessRightsDishIT {
 
 	@Test
 	public void testUserDishCreate2() throws ClientProtocolException, IOException, EpickurException {
-		User user = TestUtils.createUserAndLogin();
+		User user = IntegrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
 
 		URL_NO_KEY = END_POINT + "/dishes";
 		URL = URL_NO_KEY + "?key=" + key;
 
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = TestUtils.createCaterer(dish.getCaterer(), new ObjectId());
+		Caterer caterer = IntegrationTestUtils.createCaterer(dish.getCaterer(), new ObjectId());
 		dish.setCaterer(caterer);
 		dish.setCreatedBy(user.getId());
 
@@ -464,10 +465,10 @@ public class AccessRightsDishIT {
 	@Test
 	public void testUserDishRead() throws ClientProtocolException, IOException, EpickurException {
 		// Read another caterer - should pass it
-		User user = TestUtils.createUserAndLogin();
+		User user = IntegrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
 
-		Dish dish = TestUtils.createDish();
+		Dish dish = IntegrationTestUtils.createDish();
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
@@ -491,8 +492,8 @@ public class AccessRightsDishIT {
 	@Test
 	public void testUserDishUpdate() throws ClientProtocolException, IOException, EpickurException {
 		// Update a dish not created by current user - should not pass it
-		Dish dish = TestUtils.createDish();
-		User superUser = TestUtils.createUserAndLogin();
+		Dish dish = IntegrationTestUtils.createDish();
+		User superUser = IntegrationTestUtils.createUserAndLogin();
 		String key = superUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
@@ -520,10 +521,10 @@ public class AccessRightsDishIT {
 	@Test
 	public void testSuperDishUpdate2() throws ClientProtocolException, IOException, EpickurException {
 		// Update a caterer created by current user - should pass it
-		User user = TestUtils.createUserAndLogin();
-		Dish dish = TestUtils.createDishWithUserId(user.getId());
+		User user = IntegrationTestUtils.createUserAndLogin();
+		Dish dish = IntegrationTestUtils.createDishWithUserId(user.getId());
 		String key = user.getKey();
-		Caterer caterer = TestUtils.createCatererWithUserId(user.getId());
+		Caterer caterer = IntegrationTestUtils.createCatererWithUserId(user.getId());
 		dish.setCaterer(caterer);
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
@@ -551,8 +552,8 @@ public class AccessRightsDishIT {
 	@Test
 	public void testUserDishDelete() throws ClientProtocolException, IOException, EpickurException {
 		// Delete a dish - should not pass it
-		Dish dish = TestUtils.createDish();
-		User user = TestUtils.createUserAndLogin();
+		Dish dish = IntegrationTestUtils.createDish();
+		User user = IntegrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();

@@ -11,7 +11,7 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<name>Epickur Service</name>
+	<name>Service</name>
 	<description>Service layer. This is where logic is done.</description>
 
 	<dependencies>

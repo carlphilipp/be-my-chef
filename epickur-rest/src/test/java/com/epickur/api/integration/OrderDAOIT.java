@@ -23,7 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
 import com.epickur.api.dao.mongo.OrderDAO;
@@ -31,6 +31,7 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.UserService;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -53,14 +54,14 @@ public class OrderDAOIT {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
-		TestUtils.setupStripe();
+		EntityGenerator.setupStripe();
 		idsToDeleteUser = new ArrayList<ObjectId>();
 		idsToDeleteOrder = new HashMap<String, List<ObjectId>>();
 	}
-	
+
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestUtils.resetStripe();
+		EntityGenerator.resetStripe();
 		for (ObjectId id : idsToDeleteUser) {
 			userService.delete(id.toHexString());
 		}
@@ -75,8 +76,8 @@ public class OrderDAOIT {
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		
-		Key key = TestUtils.generateRandomAdminKey();
+
+		Key key = EntityGenerator.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 	}
 
@@ -84,13 +85,13 @@ public class OrderDAOIT {
 	public void readAllWithCatererIdTest() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		// Setup DB before test
-		User user = TestUtils.createUserAndLogin();
+		User user = IntegrationTestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
 
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
 		ObjectId catererId = order.getDish().getCaterer().getId();
-		Order order2 = TestUtils.createOrder(user.getId(), catererId);
+		Order order2 = IntegrationTestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		OrderDAO dao = new OrderDAO();
@@ -100,15 +101,14 @@ public class OrderDAOIT {
 	}
 
 	@Test
-	public void readAllWithCatererIdTestWithDates() throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
+	public void readAllWithCatererIdTestWithDates() throws EpickurException {
 		// Setup DB before test
-		User user = TestUtils.createUserAndLogin();
+		User user = IntegrationTestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
 		ObjectId catererId = order.getDish().getCaterer().getId();
-		Order order2 = TestUtils.createOrder(user.getId(), catererId);
+		Order order2 = IntegrationTestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		OrderDAO dao = new OrderDAO();
@@ -118,16 +118,14 @@ public class OrderDAOIT {
 	}
 
 	@Test
-	public void readAllWithCatererIdTestWithDates2()
-			throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
+	public void readAllWithCatererIdTestWithDates2() throws EpickurException {
 		// Setup DB before test
-		User user = TestUtils.createUserAndLogin();
+		User user = IntegrationTestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
 		ObjectId catererId = order.getDish().getCaterer().getId();
-		Order order2 = TestUtils.createOrder(user.getId(), catererId);
+		Order order2 = IntegrationTestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		OrderDAO dao = new OrderDAO();
@@ -139,16 +137,14 @@ public class OrderDAOIT {
 	}
 
 	@Test
-	public void readAllWithCatererIdTestWithDates3()
-			throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
+	public void readAllWithCatererIdTestWithDates3() throws EpickurException {
 		// Setup DB before test
-		User user = TestUtils.createUserAndLogin();
+		User user = IntegrationTestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
 		ObjectId catererId = order.getDish().getCaterer().getId();
-		Order order2 = TestUtils.createOrder(user.getId(), catererId);
+		Order order2 = IntegrationTestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		OrderDAO dao = new OrderDAO();
@@ -160,16 +156,14 @@ public class OrderDAOIT {
 	}
 
 	@Test
-	public void readAllWithCatererIdTestWithDates4()
-			throws EpickurException, AuthenticationException, InvalidRequestException, APIConnectionException,
-			CardException, APIException {
+	public void readAllWithCatererIdTestWithDates4() throws EpickurException {
 		// Setup DB before test
-		User user = TestUtils.createUserAndLogin();
+		User user = IntegrationTestUtils.createUserAndLogin();
 		idsToDeleteUser.add(user.getId());
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 		addOrderToDelete(user.getId().toHexString(), order.getId());
 		ObjectId catererId = order.getDish().getCaterer().getId();
-		Order order2 = TestUtils.createOrder(user.getId(), catererId);
+		Order order2 = IntegrationTestUtils.createOrder(user.getId(), catererId);
 		addOrderToDelete(user.getId().toHexString(), order2.getId());
 
 		// Test

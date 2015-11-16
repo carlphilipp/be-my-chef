@@ -4,7 +4,6 @@ import static com.epickur.api.utils.Info.ORDER_COLL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doThrow;
@@ -18,9 +17,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -28,21 +25,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Order;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
 
 public class OrderDAOTest {
 
@@ -60,16 +52,6 @@ public class OrderDAOTest {
 	@InjectMocks
 	private OrderDAO dao;
 
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		TestUtils.setupStripe();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		TestUtils.resetStripe();
-	}
-
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
@@ -78,55 +60,43 @@ public class OrderDAOTest {
 
 	@Test
 	public void testCreate() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrder();
-			Document document = order.getDocumentDBView();
+		Order order = EntityGenerator.generateRandomOrder();
+		Document document = order.getDocumentDBView();
 
-			Order actual = dao.create(order);
+		Order actual = dao.create(order);
 
-			assertNotNull(actual);
-			verify(collMock, times(1)).insertOne(document);
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		assertNotNull(actual);
+		verify(collMock, times(1)).insertOne(document);
 	}
 
 	@Test
 	public void testCreateMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
-		try {
-			Order order = TestUtils.generateRandomOrder();
-			Document document = order.getDocumentDBView();
+		Order order = EntityGenerator.generateRandomOrder();
+		Document document = order.getDocumentDBView();
 
-			doThrow(new MongoException("")).when(collMock).insertOne(document);
+		doThrow(new MongoException("")).when(collMock).insertOne(document);
 
-			Order actual = dao.create(order);
+		Order actual = dao.create(order);
 
-			assertNotNull(actual);
-			verify(dbMock, times(1)).getCollection(ORDER_COLL);
-			verify(collMock, times(1)).insertOne(document);
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		assertNotNull(actual);
+		verify(dbMock, times(1)).getCollection(ORDER_COLL);
+		verify(collMock, times(1)).insertOne(document);
 	}
 
 	@Test
 	public void testRead() throws EpickurException {
-		try {
-			String orderId = new ObjectId().toHexString();
-			Document query = new Document().append("_id", new ObjectId(orderId));
-			Document found = TestUtils.generateRandomOrder().getDocumentDBView();
+		String orderId = new ObjectId().toHexString();
+		Document query = new Document().append("_id", new ObjectId(orderId));
+		Document found = EntityGenerator.generateRandomOrder().getDocumentDBView();
 
-			when(collMock.find(query)).thenReturn(findIteratble);
-			when(findIteratble.first()).thenReturn(found);
+		when(collMock.find(query)).thenReturn(findIteratble);
+		when(findIteratble.first()).thenReturn(found);
 
-			Order actual = dao.read(orderId);
+		Order actual = dao.read(orderId);
 
-			assertNotNull(actual);
-			verify(collMock, times(1)).find(query);
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		assertNotNull(actual);
+		verify(collMock, times(1)).find(query);
 	}
 
 	@Test
@@ -152,53 +122,41 @@ public class OrderDAOTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrder();
-			Document document = order.getDocumentDBView();
+		Order order = EntityGenerator.generateRandomOrder();
+		Document document = order.getDocumentDBView();
 
-			when(collMock.findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject()))
-					.thenReturn(document);
+		when(collMock.findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject()))
+				.thenReturn(document);
 
-			Order actual = dao.update(order);
+		Order actual = dao.update(order);
 
-			assertNotNull(actual);
-			verify(collMock, times(1)).findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		assertNotNull(actual);
+		verify(collMock, times(1)).findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject());
 	}
 
 	@Test
 	public void testUpdateNotFound() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrder();
+		Order order = EntityGenerator.generateRandomOrder();
 
-			when(collMock.findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject())).thenReturn(null);
+		when(collMock.findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject())).thenReturn(null);
 
-			Order actual = dao.update(order);
+		Order actual = dao.update(order);
 
-			assertNull(actual);
-			verify(collMock, times(1)).findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		assertNull(actual);
+		verify(collMock, times(1)).findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject());
 	}
 
 	@Test
 	public void testUpdateMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
-		try {
-			Order order = TestUtils.generateRandomOrder();
+		Order order = EntityGenerator.generateRandomOrder();
 
-			when(collMock.findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject()))
-					.thenThrow(new MongoException(""));
+		when(collMock.findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject()))
+				.thenThrow(new MongoException(""));
 
-			dao.update(order);
+		dao.update(order);
 
-			verify(dbMock, times(1)).getCollection(ORDER_COLL);
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		verify(dbMock, times(1)).getCollection(ORDER_COLL);
 	}
 
 	@Test
@@ -209,25 +167,21 @@ public class OrderDAOTest {
 
 	@Test
 	public void testReadAllWithUserId() throws EpickurException {
-		try {
-			String userId = new ObjectId().toHexString();
-			Document query = new Document().append("createdBy", userId);
-			Document found = TestUtils.generateRandomOrder().getDocumentDBView();
+		String userId = new ObjectId().toHexString();
+		Document query = new Document().append("createdBy", userId);
+		Document found = EntityGenerator.generateRandomOrder().getDocumentDBView();
 
-			when(collMock.find(query)).thenReturn(findIteratble);
-			when(findIteratble.iterator()).thenReturn(cursor);
-			when(cursor.hasNext()).thenReturn(true, false);
-			when(cursor.next()).thenReturn(found);
+		when(collMock.find(query)).thenReturn(findIteratble);
+		when(findIteratble.iterator()).thenReturn(cursor);
+		when(cursor.hasNext()).thenReturn(true, false);
+		when(cursor.next()).thenReturn(found);
 
-			List<Order> actuals = dao.readAllWithUserId(userId);
+		List<Order> actuals = dao.readAllWithUserId(userId);
 
-			assertNotNull(actuals);
-			assertEquals(1, actuals.size());
-			verify(collMock, times(1)).find(query);
-			verify(cursor, times(1)).close();
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		assertNotNull(actuals);
+		assertEquals(1, actuals.size());
+		verify(collMock, times(1)).find(query);
+		verify(cursor, times(1)).close();
 	}
 
 	@Test
@@ -244,26 +198,22 @@ public class OrderDAOTest {
 
 	@Test
 	public void testReadAllWithCatererId() throws EpickurException {
-		try {
-			String catererId = new ObjectId().toHexString();
-			Document found = TestUtils.generateRandomOrder().getDocumentDBView();
+		String catererId = new ObjectId().toHexString();
+		Document found = EntityGenerator.generateRandomOrder().getDocumentDBView();
 
-			when(collMock.find(any(Document.class))).thenReturn(findIteratble);
-			when(findIteratble.iterator()).thenReturn(cursor);
-			when(cursor.hasNext()).thenReturn(true, false);
-			when(cursor.next()).thenReturn(found);
+		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
+		when(findIteratble.iterator()).thenReturn(cursor);
+		when(cursor.hasNext()).thenReturn(true, false);
+		when(cursor.next()).thenReturn(found);
 
-			DateTime start = new DateTime().minusDays(5);
-			DateTime end = new DateTime().plusDays(5);
-			List<Order> actuals = dao.readAllWithCatererId(catererId, start, end);
+		DateTime start = new DateTime().minusDays(5);
+		DateTime end = new DateTime().plusDays(5);
+		List<Order> actuals = dao.readAllWithCatererId(catererId, start, end);
 
-			assertNotNull(actuals);
-			assertEquals(1, actuals.size());
-			verify(collMock, times(1)).find((Document) anyObject());
-			verify(cursor, times(1)).close();
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		assertNotNull(actuals);
+		assertEquals(1, actuals.size());
+		verify(collMock, times(1)).find((Document) anyObject());
+		verify(cursor, times(1)).close();
 	}
 
 	@Test

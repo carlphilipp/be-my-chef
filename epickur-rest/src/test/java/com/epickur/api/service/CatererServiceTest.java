@@ -27,7 +27,6 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.business.CatererBusiness;
 import com.epickur.api.business.DishBusiness;
 import com.epickur.api.business.OrderBusiness;
@@ -39,6 +38,7 @@ import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.report.Report;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -66,25 +66,25 @@ public class CatererServiceTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		TestUtils.setupStripe();
+		EntityGenerator.setupStripe();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestUtils.resetStripe();
+		EntityGenerator.resetStripe();
 	}
 
 	@Before
 	public void setUp() {
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
+		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
 		when(catererBusiness.create((Caterer) anyObject())).thenReturn(catererAfterCreate);
 
@@ -97,8 +97,8 @@ public class CatererServiceTest {
 
 	@Test
 	public void testRead() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
+		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
 		when(catererBusiness.read(anyString())).thenReturn(catererAfterCreate);
 
@@ -111,8 +111,8 @@ public class CatererServiceTest {
 
 	@Test
 	public void testReadCatererNotFound() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
+		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
 		when(catererBusiness.read(anyString())).thenReturn(null);
 
@@ -127,8 +127,8 @@ public class CatererServiceTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadAll() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
+		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 		List<Caterer> caterers = new ArrayList<Caterer>();
 		caterers.add(catererAfterCreate);
 
@@ -145,8 +145,8 @@ public class CatererServiceTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void readDishes() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
-		Dish dish = TestUtils.generateRandomDish();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
+		Dish dish = EntityGenerator.generateRandomDish();
 		List<Dish> dishes = new ArrayList<Dish>();
 		dishes.add(dish);
 
@@ -162,8 +162,8 @@ public class CatererServiceTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
+		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterCreate.setDescription("new desc");
 
 		when(catererBusiness.update((Caterer) anyObject(), (Key) anyObject())).thenReturn(catererAfterCreate);
@@ -179,8 +179,8 @@ public class CatererServiceTest {
 
 	@Test
 	public void testUpdateCatererNotFound() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
+		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterCreate.setDescription("new desc");
 
 		when(catererBusiness.update((Caterer) anyObject(), (Key) anyObject())).thenReturn(null);
@@ -195,7 +195,7 @@ public class CatererServiceTest {
 
 	@Test
 	public void testDelete() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
 		when(catererBusiness.delete(anyString())).thenReturn(true);
 
@@ -210,7 +210,7 @@ public class CatererServiceTest {
 
 	@Test
 	public void testDeleteCatererNotFound() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
 		when(catererBusiness.delete(anyString())).thenReturn(false);
 
@@ -226,16 +226,16 @@ public class CatererServiceTest {
 	@Test
 	public void testPaymentInfoPdf() throws Exception {
 		try {
-			Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-			Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
-			Order order = TestUtils.generateRandomOrderWithId();
+			Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
+			Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			List<Order> orders = new ArrayList<Order>();
 			orders.add(order);
 
 			when(catererBusiness.read(anyString())).thenReturn(catererAfterCreate);
 			when(orderBusiness.readAllWithCatererId(anyString(), (DateTime) anyObject(), (DateTime) anyObject())).thenReturn(orders);
 			when(catererBusiness.getTotalAmountSuccessful((List<Order>) anyObject())).thenReturn(150);
-			Key key = TestUtils.generateRandomAdminKey();
+			Key key = EntityGenerator.generateRandomAdminKey();
 			when(context.getProperty("key")).thenReturn(key);
 			when(context.getMediaType()).thenReturn(MediaType.APPLICATION_XML_TYPE);
 			when(report.getReport()).thenReturn(new byte[10]);
@@ -247,7 +247,7 @@ public class CatererServiceTest {
 			assertEquals("attachment; filename =" + catererAfterCreate.getId().toHexString() + ".pdf", actual.getHeaderString("content-disposition"));
 			assertEquals("application/pdf", actual.getMediaType().toString());
 		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
+			fail(EntityGenerator.STRIPE_MESSAGE);
 		}
 	}
 
@@ -255,16 +255,16 @@ public class CatererServiceTest {
 	@Test
 	public void testPaymentInfoJson() throws Exception {
 		try {
-			Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-			Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
-			Order order = TestUtils.generateRandomOrderWithId();
+			Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
+			Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			List<Order> orders = new ArrayList<Order>();
 			orders.add(order);
 
 			when(catererBusiness.read(anyString())).thenReturn(catererAfterCreate);
 			when(orderBusiness.readAllWithCatererId(anyString(), (DateTime) anyObject(), (DateTime) anyObject())).thenReturn(orders);
 			when(catererBusiness.getTotalAmountSuccessful((List<Order>) anyObject())).thenReturn(150);
-			Key key = TestUtils.generateRandomAdminKey();
+			Key key = EntityGenerator.generateRandomAdminKey();
 			when(context.getProperty("key")).thenReturn(key);
 			when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
 			when(report.getReport()).thenReturn(new byte[10]);
@@ -283,29 +283,25 @@ public class CatererServiceTest {
 			assertEquals("01/01/2016", actualMessage.getEnd());
 			assertEquals("MM/dd/yyyy", actualMessage.getFormat());
 		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
+			fail(EntityGenerator.STRIPE_MESSAGE);
 		}
 	}
 
 	@Test
 	public void testPaymentInfoCatererNotFound() throws EpickurException {
-		try {
-			Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-			Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
-			Order order = TestUtils.generateRandomOrderWithId();
-			List<Order> orders = new ArrayList<Order>();
-			orders.add(order);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
+		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
+		Order order = EntityGenerator.generateRandomOrderWithId();
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(order);
 
-			when(catererBusiness.read(anyString())).thenReturn(null);
+		when(catererBusiness.read(anyString())).thenReturn(null);
 
-			Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
-			assertNotNull(actual);
-			assertEquals(404, actual.getStatus());
-			ErrorMessage error = (ErrorMessage) actual.getEntity();
-			assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-			assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		Response actual = service.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
+		assertNotNull(actual);
+		assertEquals(404, actual.getStatus());
+		ErrorMessage error = (ErrorMessage) actual.getEntity();
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
+		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 }

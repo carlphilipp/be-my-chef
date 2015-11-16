@@ -26,9 +26,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -51,7 +52,7 @@ public class AccessRightsUserIT {
 			END_POINT = address + path;
 			jsonMimeType = "application/json";
 			mapper = new ObjectMapper();
-			TestUtils.setupDB();
+			EntityGenerator.setupDB();
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
@@ -59,18 +60,18 @@ public class AccessRightsUserIT {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws IOException {
-		TestUtils.cleanDB();
+		EntityGenerator.cleanDB();
 	}
 
 	// User Administrator
 	@Test
 	public void testAdministratorUserCreate() throws ClientProtocolException, IOException, EpickurException {
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users";
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
@@ -97,9 +98,9 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testAdministratorUserRead() throws ClientProtocolException, IOException, EpickurException {
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 
-		String id = TestUtils.createUser().getId().toHexString();
+		String id = IntegrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -122,12 +123,12 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testAdministratorUserUpdate() throws ClientProtocolException, IOException, EpickurException {
-		User admin = TestUtils.createAdminAndLogin();
-		User normalUser = TestUtils.createUserAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
+		User normalUser = IntegrationTestUtils.createUserAndLogin();
 		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setId(normalUser.getId());
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
@@ -151,8 +152,8 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testAdministratorUserDelete() throws ClientProtocolException, IOException, EpickurException {
-		User admin = TestUtils.createAdminAndLogin();
-		String id = TestUtils.createUser().getId().toHexString();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
+		String id = IntegrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -177,12 +178,12 @@ public class AccessRightsUserIT {
 	// User Super_User
 	@Test
 	public void testSuperUserCreate() throws ClientProtocolException, IOException, EpickurException {
-		String key = TestUtils.createUserAndLogin().getKey();
+		String key = IntegrationTestUtils.createUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/users";
 		URL = URL_NO_KEY + "?key=" + key;
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
@@ -213,8 +214,8 @@ public class AccessRightsUserIT {
 	@Test
 	public void testSuperUserRead() throws ClientProtocolException, IOException, EpickurException {
 		// Read another user - should not pass it
-		String key = TestUtils.createUserAndLogin().getKey();
-		String id = TestUtils.createUser().getId().toHexString();
+		String key = IntegrationTestUtils.createUserAndLogin().getKey();
+		String id = IntegrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -241,7 +242,7 @@ public class AccessRightsUserIT {
 	@Test
 	public void testSuperUserRead2() throws ClientProtocolException, IOException, EpickurException {
 		// Read its own user - should pass it
-		User newUser = TestUtils.createUserAndLogin();
+		User newUser = IntegrationTestUtils.createUserAndLogin();
 		String key = newUser.getKey();
 		String id = newUser.getId().toHexString();
 
@@ -270,13 +271,13 @@ public class AccessRightsUserIT {
 	@Test
 	public void testSuperUserUpdate() throws ClientProtocolException, IOException, EpickurException {
 		// Update another user - should not pass it
-		User superUser = TestUtils.createUserAndLogin();
+		User superUser = IntegrationTestUtils.createUserAndLogin();
 		String key = superUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setId(superUser.getId());
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
@@ -304,14 +305,14 @@ public class AccessRightsUserIT {
 	@Test
 	public void testSuperUserUpdate2() throws ClientProtocolException, IOException, EpickurException {
 		// Update another user - should not pass it
-		User superUser = TestUtils.createUserAndLogin();
+		User superUser = IntegrationTestUtils.createUserAndLogin();
 		String key = superUser.getKey();
-		String id = TestUtils.createUser().getId().toHexString();
+		String id = IntegrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setId(new ObjectId(id));
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
@@ -338,7 +339,7 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testSuperUserDelete() throws ClientProtocolException, IOException, EpickurException {
-		User superUser = TestUtils.createUserAndLogin();
+		User superUser = IntegrationTestUtils.createUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();
@@ -362,12 +363,12 @@ public class AccessRightsUserIT {
 	// User User
 	@Test
 	public void testUserCreate() throws ClientProtocolException, IOException, EpickurException {
-		String key = TestUtils.createUserAndLogin().getKey();
+		String key = IntegrationTestUtils.createUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/users";
 		URL = URL_NO_KEY + "?key=" + key;
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
@@ -396,8 +397,8 @@ public class AccessRightsUserIT {
 	@Test
 	public void testUserRead() throws ClientProtocolException, IOException, EpickurException {
 		// Read another user - should not pass it
-		String key = TestUtils.createUserAndLogin().getKey();
-		String id = TestUtils.createUser().getId().toHexString();
+		String key = IntegrationTestUtils.createUserAndLogin().getKey();
+		String id = IntegrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -424,7 +425,7 @@ public class AccessRightsUserIT {
 	@Test
 	public void testUserRead2() throws ClientProtocolException, IOException, EpickurException {
 		// Read its own user - should pass it
-		User newUser = TestUtils.createUserAndLogin();
+		User newUser = IntegrationTestUtils.createUserAndLogin();
 		String key = newUser.getKey();
 		String id = newUser.getId().toHexString();
 
@@ -453,13 +454,13 @@ public class AccessRightsUserIT {
 	@Test
 	public void testUserUpdate() throws ClientProtocolException, IOException, EpickurException {
 		// Update another user - should not pass it
-		User normalUser = TestUtils.createUserAndLogin();
+		User normalUser = IntegrationTestUtils.createUserAndLogin();
 		String key = normalUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setId(normalUser.getId());
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
@@ -484,14 +485,14 @@ public class AccessRightsUserIT {
 	@Test
 	public void testUserUpdate2() throws ClientProtocolException, IOException, EpickurException {
 		// Update another user - should not pass it
-		User normalUser = TestUtils.createUserAndLogin();
+		User normalUser = IntegrationTestUtils.createUserAndLogin();
 		String key = normalUser.getKey();
-		String id = TestUtils.createUser().getId().toHexString();
+		String id = IntegrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setId(new ObjectId(id));
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
@@ -518,7 +519,7 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testUserDelete() throws ClientProtocolException, IOException, EpickurException {
-		User superUser = TestUtils.createUserAndLogin();
+		User superUser = IntegrationTestUtils.createUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();

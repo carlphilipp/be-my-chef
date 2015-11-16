@@ -14,11 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 
 public class LoginServiceTest {
 
@@ -33,14 +33,14 @@ public class LoginServiceTest {
 	public void setUp(){
 		MockitoAnnotations.initMocks(this);
 		
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 	}
 
 	@Test
 	public void testLogin() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
-		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUserWithId();
+		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		
 		when(userBusiness.login(anyString(), anyString())).thenReturn(userAfterCreate);
 		

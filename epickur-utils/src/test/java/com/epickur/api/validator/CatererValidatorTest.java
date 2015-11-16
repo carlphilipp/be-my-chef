@@ -6,7 +6,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Geo;
@@ -17,6 +16,7 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.helper.EntityGenerator;
 
 public class CatererValidatorTest {
 
@@ -29,7 +29,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.id is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setId(null);
 		validator.checkUpdateCaterer(new ObjectId().toHexString(), caterer);
 	}
@@ -40,7 +40,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.name is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setName(null);
 		validator.checkCaterer(caterer);
 	}
@@ -51,7 +51,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.description is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setDescription(null);
 		validator.checkCaterer(caterer);
 	}
@@ -62,7 +62,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.manager is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setManager(null);
 		validator.checkCaterer(caterer);
 	}
@@ -73,7 +73,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.email is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setEmail(null);
 		validator.checkCaterer(caterer);
 	}
@@ -84,7 +84,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.phone is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setPhone(null);
 		validator.checkCaterer(caterer);
 	}
@@ -95,7 +95,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setLocation(null);
 		validator.checkCaterer(caterer);
 	}
@@ -106,7 +106,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.geo is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		location.setGeo(null);
 		validator.checkCaterer(caterer);
@@ -118,7 +118,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.address is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		location.setAddress(null);
 		validator.checkCaterer(caterer);
@@ -130,7 +130,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.geo.latitude is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		Geo geo = location.getGeo();
 		geo.setLatitude(null);
@@ -143,7 +143,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.geo.longitude is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		Geo geo = location.getGeo();
 		geo.setLongitude(null);
@@ -156,7 +156,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.address.city is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		Address address = location.getAddress();
 		address.setCity(null);
@@ -169,7 +169,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.address.country is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		Address address = location.getAddress();
 		address.setCountry(null);
@@ -182,7 +182,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.address.housenumber is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		Address address = location.getAddress();
 		address.setHouseNumber(null);
@@ -195,7 +195,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.address.label is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		Address address = location.getAddress();
 		address.setLabel(null);
@@ -208,7 +208,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.address.postalcode is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		Address address = location.getAddress();
 		address.setPostalCode(null);
@@ -221,7 +221,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.address.state is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		Address address = location.getAddress();
 		address.setState(null);
@@ -234,7 +234,7 @@ public class CatererValidatorTest {
 		thrown.expectMessage("The field caterer.location.address.street is not allowed to be null or empty");
 
 		CatererValidator validator = new CatererValidator();
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Location location = caterer.getLocation();
 		Address address = location.getAddress();
 		address.setStreet(null);
@@ -244,11 +244,11 @@ public class CatererValidatorTest {
 	@Test
 	public void testCheckRightsAfter() throws EpickurException {
 		CatererValidator service = new CatererValidator();
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		key.setRole(Role.ADMIN);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setCreatedBy(userId);
 		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Operation.UPDATE);
 	}
@@ -256,11 +256,11 @@ public class CatererValidatorTest {
 	@Test
 	public void testCheckRightsAfter2() throws EpickurException {
 		CatererValidator service = new CatererValidator();
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		key.setRole(Role.SUPER_USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setCreatedBy(userId);
 		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Operation.UPDATE);
 	}
@@ -270,11 +270,11 @@ public class CatererValidatorTest {
 		thrown.expect(EpickurForbiddenException.class);
 
 		CatererValidator service = new CatererValidator();
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		key.setRole(Role.SUPER_USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Operation.UPDATE);
 	}
 
@@ -284,11 +284,11 @@ public class CatererValidatorTest {
 		thrown.expectMessage("Rights issue. This case should not happen");
 
 		CatererValidator service = new CatererValidator();
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		key.setRole(Role.USER);
 		ObjectId userId = new ObjectId();
 		key.setUserId(userId);
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		caterer.setCreatedBy(userId);
 		service.checkRightsAfter(key.getRole(), key.getUserId(), caterer, Operation.UPDATE);
 	}

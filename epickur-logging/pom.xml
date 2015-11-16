@@ -11,12 +11,54 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<name>Epickur Logging</name>
-	<description>Logging.</description>
+	<name>Logging</name>
+	<description>Logging that will be used in all the other modules.</description>
 
 	<dependencies>
 
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>aws</id>
+			<build>
+				<!-- Remove resources env and log4j.xml -->
+				<resources>
+					<resource>
+						<directory>${project.basedir}\src\main\resources</directory>
+						<filtering>true</filtering>
+						<excludes>
+							<exclude>env/**</exclude>
+							<exclude>log4j2.xml</exclude>
+						</excludes>
+					</resource>
+				</resources>
+				<plugins>
+					<!-- Inject log4j.prod.xml into build directory -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<id>copy-dependencies</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<echo message="Copying log4j prod file to target directory" />
+										<copy file="${project.basedir}\src\main\resources\env\log4j2.prod.xml" tofile="${project.basedir}\target\classes\log4j2.xml" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<reporting>
 		<plugins>

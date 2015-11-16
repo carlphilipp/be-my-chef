@@ -21,7 +21,6 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.SequenceDAO;
 import com.epickur.api.dao.mongo.UserDAO;
@@ -35,6 +34,7 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurNotFoundException;
+import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.payment.stripe.StripePayment;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.email.EmailUtils;
@@ -78,12 +78,12 @@ public class OrderBusinessTest {
 	@Test
 	public void testCreate() throws EpickurException {
 		try {
-			Token token = TestUtils.generateToken();
+			Token token = EntityGenerator.generateToken();
 
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrder();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrder();
 			order.setStatus(OrderStatus.PENDING);
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 
 			when(userDAOMock.read(anyString())).thenReturn(user);
 			when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
@@ -101,15 +101,15 @@ public class OrderBusinessTest {
 	@Test
 	public void testCreateWithVoucher() throws EpickurException {
 		try {
-			Token token = TestUtils.generateToken();
+			Token token = EntityGenerator.generateToken();
 
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrder();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrder();
 			order.setStatus(OrderStatus.PENDING);
 			Voucher voucher = new Voucher();
-			voucher.setCode(TestUtils.generateRandomString());
+			voucher.setCode(EntityGenerator.generateRandomString());
 			order.setVoucher(voucher);
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 
 			when(userDAOMock.read(anyString())).thenReturn(user);
 			when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
@@ -129,27 +129,24 @@ public class OrderBusinessTest {
 	public void testCreateUserNotFoundFail() throws EpickurException {
 		thrown.expect(EpickurNotFoundException.class);
 		thrown.expectMessage("User not found");
-		try {
-			Order order = TestUtils.generateRandomOrder();
-			orderBusiness.create(new ObjectId().toHexString(), order);
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(stripeMessage);
-		}
+
+		Order order = EntityGenerator.generateRandomOrder();
+		orderBusiness.create(new ObjectId().toHexString(), order);
 	}
 
 	@Test
 	public void testCreateWithVoucherOneTime() throws EpickurException {
 		try {
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrder();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrder();
 			order.setStatus(OrderStatus.PENDING);
 			Voucher voucher = new Voucher();
-			voucher.setCode(TestUtils.generateRandomString());
+			voucher.setCode(EntityGenerator.generateRandomString());
 			voucher.setExpirationType(ExpirationType.ONETIME);
-			Token token = TestUtils.generateToken();
+			Token token = EntityGenerator.generateToken();
 			order.setVoucher(voucher);
 			order.setCardToken(token.getId());
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 
 			when(userDAOMock.read(anyString())).thenReturn(user);
 			when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
@@ -167,15 +164,13 @@ public class OrderBusinessTest {
 	@Test
 	public void testUpdateNotFound() throws EpickurException {
 		thrown.expect(EpickurNotFoundException.class);
-		try {
-			Order order = TestUtils.generateRandomOrder();
-			order.setId(new ObjectId());
-			Key key = new Key();
-			key.setUserId(order.getCreatedBy());
-			orderBusiness.update(order, key);
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(stripeMessage);
-		}
+
+		Order order = EntityGenerator.generateRandomOrder();
+		order.setId(new ObjectId());
+		Key key = new Key();
+		key.setUserId(order.getCreatedBy());
+		orderBusiness.update(order, key);
+
 	}
 
 	@Test
@@ -184,12 +179,12 @@ public class OrderBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage("It's not allowed to modify an order that has a " + orderStatus + " status");
 		try {
-			Token token = TestUtils.generateToken();
-			Order order = TestUtils.generateRandomOrderWithId();
+			Token token = EntityGenerator.generateToken();
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			order.setId(new ObjectId());
 			Key key = new Key();
 			key.setUserId(order.getCreatedBy());
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 			orderAfterCreate.setStatus(orderStatus);
 
 			when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
@@ -203,11 +198,11 @@ public class OrderBusinessTest {
 	@Test
 	public void testExecuteOrder() throws Exception {
 		try {
-			Token token = TestUtils.generateToken();
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrderWithId();
+			Token token = EntityGenerator.generateToken();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			order.setCardToken(token.getId());
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 			orderAfterCreate.setId(order.getId());
 			String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
@@ -230,12 +225,12 @@ public class OrderBusinessTest {
 	@Test
 	public void testExecuteOrderNegativeAmount() throws Exception {
 		try {
-			Token token = TestUtils.generateToken();
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrderWithId();
+			Token token = EntityGenerator.generateToken();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			order.setAmount(-15);
 			order.setCardToken(token.getId());
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 			orderAfterCreate.setId(order.getId());
 			String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
@@ -259,9 +254,9 @@ public class OrderBusinessTest {
 		thrown.expect(EpickurNotFoundException.class);
 		thrown.expectMessage("Order not found");
 		try {
-			Token token = TestUtils.generateToken();
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrderWithId();
+			Token token = EntityGenerator.generateToken();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			order.setCardToken(token.getId());
 			String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
@@ -279,8 +274,8 @@ public class OrderBusinessTest {
 		thrown.expect(EpickurNotFoundException.class);
 		thrown.expectMessage("User not found");
 		try {
-			Token token = TestUtils.generateToken();
-			Order order = TestUtils.generateRandomOrderWithId();
+			Token token = EntityGenerator.generateToken();
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			order.setCardToken(token.getId());
 			String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
@@ -295,17 +290,17 @@ public class OrderBusinessTest {
 	@Test
 	public void testExecuteOrderNotConfirm() throws Exception {
 		try {
-			Token token = TestUtils.generateToken();
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrderWithId();
+			Token token = EntityGenerator.generateToken();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			order.setCardToken(token.getId());
 			order.setAmount(150);
 			Voucher voucher = new Voucher();
 			voucher.setDiscount(5);
 			voucher.setDiscountType(DiscountType.AMOUNT);
-			voucher.setCode(TestUtils.generateRandomString());
+			voucher.setCode(EntityGenerator.generateRandomString());
 			order.setVoucher(voucher);
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 			orderAfterCreate.setId(order.getId());
 			String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
@@ -332,11 +327,11 @@ public class OrderBusinessTest {
 	public void testExecuteOrderWrongCodeFail() throws Exception {
 		thrown.expect(EpickurForbiddenException.class);
 		try {
-			Token token = TestUtils.generateToken();
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrderWithId();
+			Token token = EntityGenerator.generateToken();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			order.setCardToken(token.getId());
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 			String orderCode = "wrong code";
 
 			when(userDAOMock.read(anyString())).thenReturn(user);
@@ -352,11 +347,11 @@ public class OrderBusinessTest {
 	@Test
 	public void testExecuteOrderDeclined() throws Exception {
 		try {
-			Token token = TestUtils.generateToken();
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrderWithId();
+			Token token = EntityGenerator.generateToken();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			order.setCardToken(token.getId());
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 			orderAfterCreate.setId(order.getId());
 			String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
@@ -374,11 +369,11 @@ public class OrderBusinessTest {
 	@Test
 	public void testExecuteOrderStripeException() throws Exception {
 		try {
-			Token token = TestUtils.generateToken();
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrderWithId();
+			Token token = EntityGenerator.generateToken();
+			User user = EntityGenerator.generateRandomUserWithId();
+			Order order = EntityGenerator.generateRandomOrderWithId();
 			order.setCardToken(token.getId());
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order, token);
+			Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, token);
 			orderAfterCreate.setId(order.getId());
 			String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
@@ -400,20 +395,16 @@ public class OrderBusinessTest {
 
 	@Test
 	public void testOrderFailed() throws EpickurException {
-		try {
-			User user = TestUtils.generateRandomUserWithId();
-			Order order = TestUtils.generateRandomOrderWithId();
-			Voucher voucher = new Voucher();
-			voucher.setCode(TestUtils.generateRandomString());
-			order.setVoucher(voucher);
+		User user = EntityGenerator.generateRandomUserWithId();
+		Order order = EntityGenerator.generateRandomOrderWithId();
+		Voucher voucher = new Voucher();
+		voucher.setCode(EntityGenerator.generateRandomString());
+		order.setVoucher(voucher);
 
-			orderBusiness.handleOrderFail(order, user);
+		orderBusiness.handleOrderFail(order, user);
 
-			assertNotNull(order);
-			assertFalse(order.getPaid());
-			assertEquals(OrderStatus.FAILED, order.getStatus());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(stripeMessage);
-		}
+		assertNotNull(order);
+		assertFalse(order.getPaid());
+		assertEquals(OrderStatus.FAILED, order.getStatus());
 	}
 }

@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.helper.EntityGenerator;
 
 public class CatererTest {
 
@@ -19,7 +19,7 @@ public class CatererTest {
 		String manager = "manager";
 		String email = "email@email.com";
 		String phone = "0215787236";
-		Location location = TestUtils.generateRandomLocation();
+		Location location = EntityGenerator.generateRandomLocation();
 		DateTime created = new DateTime();
 		DateTime updated = new DateTime();
 		Caterer cat = new Caterer();

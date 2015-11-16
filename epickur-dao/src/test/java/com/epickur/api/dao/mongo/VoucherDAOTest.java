@@ -22,10 +22,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -57,7 +57,7 @@ public class VoucherDAOTest {
 
 	@Test
 	public void testCreate() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucher = EntityGenerator.generateVoucher();
 		Document document = voucher.getDocumentDBView();
 
 		Voucher actual = dao.create(voucher);
@@ -70,7 +70,7 @@ public class VoucherDAOTest {
 	public void testCreateMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 
-		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucher = EntityGenerator.generateVoucher();
 		Document document = voucher.getDocumentDBView();
 
 		doThrow(new MongoException("")).when(collMock).insertOne(document);
@@ -85,7 +85,7 @@ public class VoucherDAOTest {
 	public void testRead() throws EpickurException {
 		String code = new ObjectId().toHexString();
 		Document query = new Document().append("code", code);
-		Document found = TestUtils.generateVoucher().getDocumentDBView();
+		Document found = EntityGenerator.generateVoucher().getDocumentDBView();
 
 		when(collMock.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
@@ -110,7 +110,7 @@ public class VoucherDAOTest {
 	
 	@Test
 	public void testReadToClean() throws EpickurException {
-		Document found = TestUtils.generateVoucher().getDocumentDBView();
+		Document found = EntityGenerator.generateVoucher().getDocumentDBView();
 
 		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
@@ -142,7 +142,7 @@ public class VoucherDAOTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucher = EntityGenerator.generateVoucher();
 		Document document = voucher.getDocumentDBView();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
@@ -155,7 +155,7 @@ public class VoucherDAOTest {
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
-		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucher = EntityGenerator.generateVoucher();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
 
@@ -169,7 +169,7 @@ public class VoucherDAOTest {
 	public void testUpdateMongoException() throws Exception {
 		thrown.expect(EpickurDBException.class);
 
-		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucher = EntityGenerator.generateVoucher();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
 				.thenThrow(new MongoException(""));

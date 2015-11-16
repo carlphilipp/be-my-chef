@@ -22,10 +22,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -59,7 +59,7 @@ public class KeyDAOTest {
 
 	@Test
 	public void testCreate() throws EpickurException {
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		Document document = key.getDocumentDBView();
 
 		Key actual = dao.create(key);
@@ -72,7 +72,7 @@ public class KeyDAOTest {
 	public void testCreateMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		Document document = key.getDocumentDBView();
 
 		doThrow(new MongoException("")).when(collMock).insertOne(document);
@@ -87,7 +87,7 @@ public class KeyDAOTest {
 	public void testRead() throws EpickurException {
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
-		Document found = TestUtils.generateRandomAdminKey().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomAdminKey().getDocumentDBView();
 
 		when(collMock.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
@@ -114,7 +114,7 @@ public class KeyDAOTest {
 	public void testReadWithName() throws EpickurException {
 		String userName = new ObjectId().toHexString();
 		Document query = new Document().append("userName", userName);
-		Document found = TestUtils.generateRandomAdminKey().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomAdminKey().getDocumentDBView();
 
 		when(collMock.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
@@ -127,7 +127,7 @@ public class KeyDAOTest {
 
 	@Test
 	public void testReadAll() throws EpickurException {
-		Document found = TestUtils.generateRandomAdminKey().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomAdminKey().getDocumentDBView();
 
 		when(collMock.find()).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
@@ -155,7 +155,7 @@ public class KeyDAOTest {
 	public void testUpdate() throws EpickurException {
 		thrown.expect(EpickurException.class);
 	
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		
 		dao.update(key);
 	}

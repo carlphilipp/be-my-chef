@@ -8,7 +8,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.enumeration.Operation;
@@ -16,6 +15,7 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import com.epickur.api.helper.EntityGenerator;
 
 public class DishValidatorTest {
 
@@ -28,7 +28,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.name is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setName(null);
 		validator.checkCreateData(dish);
 	}
@@ -39,7 +39,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.description is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setDescription(null);
 		validator.checkCreateData(dish);
 	}
@@ -50,7 +50,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.id is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setId(null);
 		validator.checkUpdateData(new ObjectId().toHexString(), dish);
 	}
@@ -68,7 +68,7 @@ public class DishValidatorTest {
 	@Test
 	public void testData() {
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		validator.checkData(dish);
 	}
 
@@ -78,7 +78,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.type is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setType(null);
 		validator.checkData(dish);
 	}
@@ -89,7 +89,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.price is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setPrice(null);
 		validator.checkData(dish);
 	}
@@ -100,7 +100,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.cookingTime is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setCookingTime(null);
 		validator.checkData(dish);
 	}
@@ -111,7 +111,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.difficultyLevel is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setDifficultyLevel(null);
 		validator.checkData(dish);
 	}
@@ -145,7 +145,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.ingredients is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setIngredients(null);
 		validator.checkData(dish);
 	}
@@ -156,7 +156,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.steps is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setSteps(null);
 		validator.checkData(dish);
 	}
@@ -167,7 +167,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.caterer is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setCaterer(null);
 		validator.checkData(dish);
 	}
@@ -178,7 +178,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.caterer.id is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
 		validator.checkData(dish);
 	}
@@ -189,7 +189,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.steps is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		List<String> step = new ArrayList<String>();
 		dish.setSteps(step);
 		validator.checkData(dish);
@@ -201,7 +201,7 @@ public class DishValidatorTest {
 		thrown.expectMessage("The field dish.ingredients is not allowed to be null or empty");
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		List<Ingredient> ing = new ArrayList<Ingredient>();
 		dish.setIngredients(ing);
 		validator.checkData(dish);
@@ -236,7 +236,7 @@ public class DishValidatorTest {
 		thrown.expect(EpickurForbiddenException.class);
 
 		DishValidator validator = new DishValidator();
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		validator.checkRightsAfter(Role.SUPER_USER, new ObjectId(), dish, Operation.UPDATE);
 	}
 }

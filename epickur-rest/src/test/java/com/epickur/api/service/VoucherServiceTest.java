@@ -21,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.business.VoucherBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Voucher;
@@ -29,6 +28,7 @@ import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.utils.Utils;
 
 public class VoucherServiceTest {
@@ -44,7 +44,7 @@ public class VoucherServiceTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 		when(context.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
 	}
@@ -52,8 +52,8 @@ public class VoucherServiceTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGenerate() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
-		Voucher voucherAfterCreate = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucher = EntityGenerator.generateVoucher();
+		Voucher voucherAfterCreate = EntityGenerator.mockVoucherAfterCreate(voucher);
 		Set<Voucher> vouchers = new HashSet<Voucher>();
 		vouchers.add(voucherAfterCreate);
 
@@ -70,8 +70,8 @@ public class VoucherServiceTest {
 
 	@Test
 	public void testRead() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
-		Voucher voucherAfterCreate = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucher = EntityGenerator.generateVoucher();
+		Voucher voucherAfterCreate = EntityGenerator.mockVoucherAfterCreate(voucher);
 
 		when(voucherBusiness.read(anyString())).thenReturn(voucherAfterCreate);
 

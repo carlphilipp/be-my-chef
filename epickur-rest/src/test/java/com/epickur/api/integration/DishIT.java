@@ -35,7 +35,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
@@ -45,6 +45,7 @@ import com.epickur.api.entity.Location;
 import com.epickur.api.entity.NutritionFact;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -62,7 +63,7 @@ public class DishIT {
 	public static void setUpBeforeClass() throws IOException, EpickurException {
 		InputStreamReader in = null;
 		try {
-			TestUtils.setupDB();
+			EntityGenerator.setupDB();
 			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
@@ -70,13 +71,13 @@ public class DishIT {
 			String path = prop.getProperty("api.path");
 			URL_NO_KEY = address + path + "/dishes";
 
-			User admin = TestUtils.createAdminAndLogin();
+			User admin = IntegrationTestUtils.createAdminAndLogin();
 			API_KEY = admin.getKey();
 			URL = URL_NO_KEY + "?key=" + API_KEY;
 
 			idsCatererToDelete = new ArrayList<ObjectId>();
 			context = mock(ContainerRequestContext.class);
-			Key key = TestUtils.generateRandomAdminKey();
+			Key key = EntityGenerator.generateRandomAdminKey();
 			Mockito.when(context.getProperty("key")).thenReturn(key);
 		} finally {
 			IOUtils.closeQuietly(in);
@@ -85,7 +86,7 @@ public class DishIT {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws EpickurException, IOException {
-		TestUtils.cleanDB();
+		EntityGenerator.cleanDB();
 	}
 
 	@Test
@@ -105,9 +106,9 @@ public class DishIT {
 
 	@Test
 	public void testCreate() throws ClientProtocolException, IOException, EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer cat = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
 		idsCatererToDelete.add(cat.getId());
 
@@ -141,9 +142,9 @@ public class DishIT {
 			assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
 			assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
 			assertEquals(dish.getVideoUrl(), jsonResult.get("videoUrl").asText());
-			Caterer catererRes = TestUtils.getCaererObject(jsonResult.get("caterer").toString());
+			Caterer catererRes = EntityGenerator.getCaererObject(jsonResult.get("caterer").toString());
 			assertEquals(cat, catererRes);
-			List<NutritionFact> nutritionFactsRes = TestUtils.getListObject(jsonResult.get("nutritionFacts").toString());
+			List<NutritionFact> nutritionFactsRes = EntityGenerator.getListObject(jsonResult.get("nutritionFacts").toString());
 			for (int i = 0; i < nutritionFactsRes.size(); i++) {
 				assertEquals(dish.getNutritionFacts().size(), nutritionFactsRes.size());
 				assertEquals(dish.getNutritionFacts().get(0).getName(), nutritionFactsRes.get(0).getName());
@@ -167,9 +168,9 @@ public class DishIT {
 
 	@Test
 	public void testReadOneDish() throws ClientProtocolException, IOException, EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer cat = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
 		idsCatererToDelete.add(cat.getId());
 
@@ -225,9 +226,9 @@ public class DishIT {
 			assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
 			assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
 			assertEquals(dish.getVideoUrl(), jsonResult.get("videoUrl").asText());
-			Caterer catererRes = TestUtils.getCaererObject(jsonResult.get("caterer").toString());
+			Caterer catererRes = EntityGenerator.getCaererObject(jsonResult.get("caterer").toString());
 			assertEquals(cat, catererRes);
-			List<NutritionFact> nutritionFactsRes = TestUtils.getListObject(jsonResult.get("nutritionFacts").toString());
+			List<NutritionFact> nutritionFactsRes = EntityGenerator.getListObject(jsonResult.get("nutritionFacts").toString());
 			for (int i = 0; i < nutritionFactsRes.size(); i++) {
 				assertEquals(dish.getNutritionFacts().size(), nutritionFactsRes.size());
 				assertEquals(dish.getNutritionFacts().get(0).getName(), nutritionFactsRes.get(0).getName());
@@ -247,9 +248,9 @@ public class DishIT {
 
 	@Test
 	public void testUpdateOneDish() throws ClientProtocolException, IOException, EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer cat = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
 		idsCatererToDelete.add(cat.getId());
 
@@ -265,7 +266,7 @@ public class DishIT {
 		// Put
 		String namePut = "new name";
 		String descriptionPut = "new descr";
-		String type = TestUtils.generateRandomDishType().toString();
+		String type = EntityGenerator.generateRandomDishType().toString();
 		Integer pricePut = 505;
 		int cookingTimePut = 50;
 		int difficultyLevelPut = 2;
@@ -343,7 +344,7 @@ public class DishIT {
 			assertEquals(new Long(cookingTimePut).longValue(), jsonResult.get("cookingTime").asLong(), 0.001);
 			assertEquals(new Long(difficultyLevelPut).longValue(), jsonResult.get("difficultyLevel").asLong(), 0.001);
 			assertEquals(videoURLPut, jsonResult.get("videoUrl").asText());
-			Caterer caterer3 = TestUtils.getCaererObject(jsonResult.get("caterer").toString());
+			Caterer caterer3 = EntityGenerator.getCaererObject(jsonResult.get("caterer").toString());
 			assertEquals(cat.getId(), caterer3.getId());
 			assertEquals(caterer2.getName(), caterer3.getName());
 			assertEquals(cat.getLocation().getAddress().getCity(), caterer3.getLocation().getAddress().getCity());
@@ -360,9 +361,9 @@ public class DishIT {
 
 	@Test
 	public void testDeleteOneDish() throws ClientProtocolException, IOException, EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer cat = TestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
 		idsCatererToDelete.add(cat.getId());
 		// Create

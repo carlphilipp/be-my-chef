@@ -24,10 +24,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.APIConnectionException;
@@ -55,7 +56,7 @@ public class AccessRightsOrderIT {
 			IOUtils.closeQuietly(in);
 			String address = prop.getProperty("address");
 			String path = prop.getProperty("api.path");
-			TestUtils.setupStripe();
+			EntityGenerator.setupStripe();
 			END_POINT = address + path;
 			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/api.key"));
 			BufferedReader br = new BufferedReader(in);
@@ -63,8 +64,8 @@ public class AccessRightsOrderIT {
 			IOUtils.closeQuietly(in);
 			jsonMimeType = "application/json";
 			mapper = new ObjectMapper();
-			user = TestUtils.createUserAndLogin();
-			TestUtils.setupDB();
+			user = IntegrationTestUtils.createUserAndLogin();
+			EntityGenerator.setupDB();
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
@@ -72,20 +73,20 @@ public class AccessRightsOrderIT {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestUtils.resetStripe();
-		TestUtils.cleanDB();
+		EntityGenerator.resetStripe();
+		EntityGenerator.cleanDB();
 	}
 
 	// User Administrator
 	@Test
 	public void testAdministratorOrderCreate() throws ClientProtocolException, IOException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException, EpickurException {
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
-		Order order = TestUtils.generateRandomOrder();
+		Order order = EntityGenerator.generateRandomOrder();
 
 		StringEntity requestEntity = new StringEntity(order.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
@@ -113,9 +114,9 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -143,7 +144,7 @@ public class AccessRightsOrderIT {
 	public void testAdministratorOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 
 		String id = new ObjectId().toHexString();
 
@@ -169,14 +170,14 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
-		Order updatedOrder = TestUtils.createOrder(user.getId());
+		Order updatedOrder = IntegrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
@@ -202,10 +203,10 @@ public class AccessRightsOrderIT {
 	public void testAdministratorOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		ObjectId id = new ObjectId();
-		Order updatedOrder = TestUtils.createOrder(user.getId());
+		Order updatedOrder = IntegrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
 
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -232,9 +233,9 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -259,12 +260,12 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderCreate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createSuperUserAndLogin();
+		user = IntegrationTestUtils.createSuperUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
-		Order order = TestUtils.generateRandomOrder();
+		Order order = EntityGenerator.generateRandomOrder();
 		StringEntity requestEntity = new StringEntity(order.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
@@ -291,9 +292,9 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createSuperUserAndLogin();
+		user = IntegrationTestUtils.createSuperUserAndLogin();
 
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + user.getKey();
@@ -320,7 +321,7 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createSuperUserAndLogin();
+		user = IntegrationTestUtils.createSuperUserAndLogin();
 
 		String id = new ObjectId().toHexString();
 
@@ -346,11 +347,11 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead3() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createSuperUserAndLogin();
+		user = IntegrationTestUtils.createSuperUserAndLogin();
 
-		User otherUser = TestUtils.createUserAndLogin();
+		User otherUser = IntegrationTestUtils.createUserAndLogin();
 
-		Order order = TestUtils.createOrder(otherUser.getId());
+		Order order = IntegrationTestUtils.createOrder(otherUser.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + user.getKey();
@@ -374,13 +375,13 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createSuperUserAndLogin();
-		Order order = TestUtils.createOrder(user.getId());
+		user = IntegrationTestUtils.createSuperUserAndLogin();
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
-		Order updatedOrder = TestUtils.createOrder(user.getId());
+		Order updatedOrder = IntegrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
@@ -405,12 +406,12 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createSuperUserAndLogin();
+		user = IntegrationTestUtils.createSuperUserAndLogin();
 		ObjectId id = new ObjectId();
-		Order updatedOrder = TestUtils.createOrder(user.getId());
+		Order updatedOrder = IntegrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
 
-		User sUser = TestUtils.createSuperUserAndLogin();
+		User sUser = IntegrationTestUtils.createSuperUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + sUser.getKey();
@@ -437,8 +438,8 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createSuperUserAndLogin();
-		Order order = TestUtils.createOrder(user.getId());
+		user = IntegrationTestUtils.createSuperUserAndLogin();
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + user.getKey();
@@ -463,12 +464,12 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderCreate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createUserAndLogin();
+		user = IntegrationTestUtils.createUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders";
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
-		Order order = TestUtils.generateRandomOrder();
+		Order order = EntityGenerator.generateRandomOrder();
 		StringEntity requestEntity = new StringEntity(order.toStringAPIView());
 		HttpPost request = new HttpPost(URL);
 		request.addHeader("content-type", jsonMimeType);
@@ -495,9 +496,9 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		user = TestUtils.createUserAndLogin();
+		user = IntegrationTestUtils.createUserAndLogin();
 
-		Order order = TestUtils.createOrder(user.getId());
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + user.getKey();
@@ -523,7 +524,7 @@ public class AccessRightsOrderIT {
 
 	public void testUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		user = TestUtils.createUserAndLogin();
+		user = IntegrationTestUtils.createUserAndLogin();
 		String id = new ObjectId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + id;
@@ -548,11 +549,11 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead3() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		user = TestUtils.createUserAndLogin();
+		user = IntegrationTestUtils.createUserAndLogin();
 
-		User otherUser = TestUtils.createUserAndLogin();
+		User otherUser = IntegrationTestUtils.createUserAndLogin();
 
-		Order order = TestUtils.createOrder(otherUser.getId());
+		Order order = IntegrationTestUtils.createOrder(otherUser.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + user.getKey();
@@ -575,13 +576,13 @@ public class AccessRightsOrderIT {
 
 	public void testUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createUserAndLogin();
-		Order order = TestUtils.createOrder(user.getId());
+		user = IntegrationTestUtils.createUserAndLogin();
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + API_KEY;
 
-		Order updatedOrder = TestUtils.createOrder(user.getId());
+		Order updatedOrder = IntegrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
@@ -606,9 +607,9 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createUserAndLogin();
+		user = IntegrationTestUtils.createUserAndLogin();
 		ObjectId id = new ObjectId();
-		Order updatedOrder = TestUtils.createOrder(user.getId());
+		Order updatedOrder = IntegrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + updatedOrder.getId().toHexString();
@@ -635,8 +636,8 @@ public class AccessRightsOrderIT {
 
 	public void testUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = TestUtils.createUserAndLogin();
-		Order order = TestUtils.createOrder(user.getId());
+		user = IntegrationTestUtils.createUserAndLogin();
+		Order order = IntegrationTestUtils.createOrder(user.getId());
 
 		URL_NO_KEY = END_POINT + "/users/" + user.getId().toHexString() + "/orders/" + order.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + API_KEY;

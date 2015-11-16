@@ -17,11 +17,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.PasswordManager;
 import com.epickur.api.utils.Security;
@@ -48,8 +48,8 @@ public class UserBusinessTest {
 
 	@Test
 	public void testCreate() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
 		when(userDAOMock.create((User) anyObject())).thenReturn(userAfterCreate);
 
@@ -68,7 +68,7 @@ public class UserBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage("The user already exists");
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 
 		when(userDAOMock.exists(anyString(), anyString())).thenReturn(true);
 
@@ -77,8 +77,8 @@ public class UserBusinessTest {
 
 	@Test
 	public void testLogin() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 		String newPassword = PasswordManager.createPasswordManager(user.getPassword()).createDBPassword();
 		userAfterRead.setPassword(newPassword);
 		userAfterRead.setAllow(1);
@@ -98,10 +98,10 @@ public class UserBusinessTest {
 
 	@Test(expected = EpickurException.class)
 	public void testLoginUserNotFoundFail() throws EpickurException {
-		String randomLogin = TestUtils.generateRandomString();
+		String randomLogin = EntityGenerator.generateRandomString();
 		when(userDAOMock.readWithEmail(randomLogin)).thenReturn(null);
 
-		userBusiness.login(randomLogin, TestUtils.generateRandomString());
+		userBusiness.login(randomLogin, EntityGenerator.generateRandomString());
 	}
 
 	@Test
@@ -109,14 +109,14 @@ public class UserBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		User user = TestUtils.generateRandomUser();
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
-		String dbPassword = PasswordManager.createPasswordManager(TestUtils.generateRandomString()).createDBPassword();
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
+		String dbPassword = PasswordManager.createPasswordManager(EntityGenerator.generateRandomString()).createDBPassword();
 		userAfterRead.setPassword(dbPassword);
 
 		when(userDAOMock.readWithEmail(anyString())).thenReturn(userAfterRead);
 
-		userBusiness.login(user.getEmail(), TestUtils.generateRandomString());
+		userBusiness.login(user.getEmail(), EntityGenerator.generateRandomString());
 	}
 
 	@Test
@@ -124,8 +124,8 @@ public class UserBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		User user = TestUtils.generateRandomUser();
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 		String dbPassword = PasswordManager.createPasswordManager(user.getPassword()).createDBPassword();
 		userAfterRead.setPassword(dbPassword);
 
@@ -136,9 +136,9 @@ public class UserBusinessTest {
 
 	@Test
 	public void testInjectNewPassword() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setNewPassword("newpassword");
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 		String dbPassword = PasswordManager.createPasswordManager(user.getPassword()).createDBPassword();
 		userAfterRead.setPassword(dbPassword);
 
@@ -155,7 +155,7 @@ public class UserBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 
 		when(userDAOMock.readWithEmail(anyString())).thenReturn(null);
 
@@ -167,9 +167,9 @@ public class UserBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 		String wrongPassword = PasswordManager.createPasswordManager("wrongpassword").createDBPassword();
 		userAfterRead.setPassword(wrongPassword);
 
@@ -180,9 +180,9 @@ public class UserBusinessTest {
 
 	@Test
 	public void testCheckCode() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
-		String newPassword = PasswordManager.createPasswordManager(TestUtils.generateRandomString()).createDBPassword();
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
+		String newPassword = PasswordManager.createPasswordManager(EntityGenerator.generateRandomString()).createDBPassword();
 		userAfterRead.setPassword(newPassword);
 		String code = Security.getUserCode(userAfterRead);
 		userAfterRead.setCode(code);
@@ -200,8 +200,8 @@ public class UserBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		String email = TestUtils.generateRandomString();
-		String code = TestUtils.generateRandomString();
+		String email = EntityGenerator.generateRandomString();
+		String code = EntityGenerator.generateRandomString();
 
 		when(userDAOMock.readWithEmail(anyString())).thenReturn(null);
 
@@ -213,9 +213,9 @@ public class UserBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		User user = TestUtils.generateRandomUser();
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
-		String newPassword = PasswordManager.createPasswordManager(TestUtils.generateRandomString()).createDBPassword();
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
+		String newPassword = PasswordManager.createPasswordManager(EntityGenerator.generateRandomString()).createDBPassword();
 		userAfterRead.setPassword(newPassword);
 		String code = "fail";
 		userAfterRead.setCode(code);
@@ -228,8 +228,8 @@ public class UserBusinessTest {
 
 	@Test
 	public void testResetPasswordFirstStep() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 
 		when(userDAOMock.readWithEmail(anyString())).thenReturn(userAfterRead);
 
@@ -246,8 +246,8 @@ public class UserBusinessTest {
 
 	@Test
 	public void testResetPasswordSecond() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 		String resetCode = Security.createResetCode(userAfterRead.getId(), userAfterRead.getEmail());
 		String newPassword = PasswordManager.createPasswordManager(user.getPassword()).createDBPassword();
 		userAfterRead.setPassword(newPassword);
@@ -263,8 +263,8 @@ public class UserBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		User user = TestUtils.generateRandomUser();
-		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
 		when(userDAOMock.readWithEmail(anyString())).thenReturn(userAfterCreate);
 
@@ -276,8 +276,8 @@ public class UserBusinessTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		User user = TestUtils.generateRandomUser();
-		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
 		when(userDAOMock.read(anyString())).thenReturn(userAfterCreate);
 
@@ -286,13 +286,13 @@ public class UserBusinessTest {
 	
 	@Test
 	public void testSuscribeToNewsletter(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		userBusiness.suscribeToNewsletter(user);
 	}
 	
 	@Test
 	public void testSuscribeToNewsletterMoreCoverage(){
-		User user = TestUtils.generateRandomUser();
+		User user = EntityGenerator.generateRandomUser();
 		user.setFirst(null);
 		user.setLast(null);
 		userBusiness.suscribeToNewsletter(user);

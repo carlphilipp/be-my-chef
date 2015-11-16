@@ -22,10 +22,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -57,7 +57,7 @@ public class CatererDAOTest {
 	
 	@Test
 	public void testCreate() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Document document = caterer.getDocumentDBView();
 
 		Caterer actual = dao.create(caterer);
@@ -70,7 +70,7 @@ public class CatererDAOTest {
 	public void testCreateMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Document document = caterer.getDocumentDBView();
 
 		doThrow(new MongoException("")).when(collMock).insertOne(document);
@@ -85,7 +85,7 @@ public class CatererDAOTest {
 	public void testRead() throws EpickurException {
 		String catererId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(catererId));
-		Document found = TestUtils.generateRandomCatererWithId().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomCatererWithId().getDocumentDBView();
 
 		when(collMock.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
@@ -119,7 +119,7 @@ public class CatererDAOTest {
 
 	@Test
 	public void testReadAll() throws EpickurException {
-		Document found = TestUtils.generateRandomCatererWithId().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomCatererWithId().getDocumentDBView();
 
 		when(collMock.find()).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
@@ -145,7 +145,7 @@ public class CatererDAOTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Document document = caterer.getDocumentDBView();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
@@ -158,7 +158,7 @@ public class CatererDAOTest {
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
 
@@ -172,7 +172,7 @@ public class CatererDAOTest {
 	public void testUpdateMongoException() throws Exception {
 		thrown.expect(EpickurDBException.class);
 
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
 				.thenThrow(new MongoException(""));

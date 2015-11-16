@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.helper.EntityGenerator;
 
 public class AddressTest {
 
@@ -49,7 +49,7 @@ public class AddressTest {
 	
 	@Test
 	public void testAddress2() {
-		Address address = TestUtils.generateRandomAddress();
+		Address address = EntityGenerator.generateRandomAddress();
 		address.setCity(null);
 		address.setCountry(null);
 		address.setHouseNumber(null);
@@ -63,7 +63,7 @@ public class AddressTest {
 	
 	@Test
 	public void testAddressCity() {
-		Address address = TestUtils.generateRandomAddress();
+		Address address = EntityGenerator.generateRandomAddress();
 		Address address2 = address.clone();
 		assertEquals(address, address2);
 		
@@ -75,17 +75,17 @@ public class AddressTest {
 		address2.setCity(null);
 		assertEquals(address, address2);
 		
-		address.setCity(TestUtils.generateRandomString());
-		address2.setCity(TestUtils.generateRandomString());
+		address.setCity(EntityGenerator.generateRandomString());
+		address2.setCity(EntityGenerator.generateRandomString());
 		assertNotEquals(address, address2);
-		String city = TestUtils.generateRandomString();
+		String city = EntityGenerator.generateRandomString();
 		address.setCity(city);
 		address2.setCity(city);
 	}
 	
 	@Test
 	public void testAddressCountry() {
-		Address address = TestUtils.generateRandomAddress();
+		Address address = EntityGenerator.generateRandomAddress();
 		Address address2 = address.clone();
 		assertEquals(address, address2);
 		
@@ -97,17 +97,17 @@ public class AddressTest {
 		address2.setCountry(null);
 		assertEquals(address, address2);
 		
-		address.setCountry(TestUtils.generateRandomString());
-		address2.setCountry(TestUtils.generateRandomString());
+		address.setCountry(EntityGenerator.generateRandomString());
+		address2.setCountry(EntityGenerator.generateRandomString());
 		assertNotEquals(address, address2);
-		String country = TestUtils.generateRandomString();
+		String country = EntityGenerator.generateRandomString();
 		address.setCountry(country);
 		address2.setCountry(country);
 	}
 	
 	@Test
 	public void testAddressHouseNumber() {
-		Address address = TestUtils.generateRandomAddress();
+		Address address = EntityGenerator.generateRandomAddress();
 		Address address2 = address.clone();
 		assertEquals(address, address2);
 		
@@ -119,17 +119,17 @@ public class AddressTest {
 		address2.setHouseNumber(null);
 		assertEquals(address, address2);
 		
-		address.setHouseNumber(TestUtils.generateRandomString());
-		address2.setHouseNumber(TestUtils.generateRandomString());
+		address.setHouseNumber(EntityGenerator.generateRandomString());
+		address2.setHouseNumber(EntityGenerator.generateRandomString());
 		assertNotEquals(address, address2);
-		String house = TestUtils.generateRandomString();
+		String house = EntityGenerator.generateRandomString();
 		address.setHouseNumber(house);
 		address2.setHouseNumber(house);
 	}
 	
 	@Test
 	public void testAddressLabel() {
-		Address address = TestUtils.generateRandomAddress();
+		Address address = EntityGenerator.generateRandomAddress();
 		Address address2 = address.clone();
 		assertEquals(address, address2);
 		
@@ -141,17 +141,17 @@ public class AddressTest {
 		address2.setLabel(null);
 		assertEquals(address, address2);
 		
-		address.setLabel(TestUtils.generateRandomString());
-		address2.setLabel(TestUtils.generateRandomString());
+		address.setLabel(EntityGenerator.generateRandomString());
+		address2.setLabel(EntityGenerator.generateRandomString());
 		assertNotEquals(address, address2);
-		String label = TestUtils.generateRandomString();
+		String label = EntityGenerator.generateRandomString();
 		address.setLabel(label);
 		address2.setLabel(label);
 	}
 	
 	@Test
 	public void testAddressPostCode() {
-		Address address = TestUtils.generateRandomAddress();
+		Address address = EntityGenerator.generateRandomAddress();
 		Address address2 = address.clone();
 		assertEquals(address, address2);
 		
@@ -163,17 +163,17 @@ public class AddressTest {
 		address2.setPostalCode(null);
 		assertEquals(address, address2);
 		
-		address.setPostalCode(TestUtils.generateRandomInteger());
-		address2.setPostalCode(TestUtils.generateRandomInteger());
+		address.setPostalCode(EntityGenerator.generateRandomInteger());
+		address2.setPostalCode(EntityGenerator.generateRandomInteger());
 		assertNotEquals(address, address2);
-		Integer code = TestUtils.generateRandomInteger();
+		Integer code = EntityGenerator.generateRandomInteger();
 		address.setPostalCode(code);
 		address2.setPostalCode(code);
 	}
 	
 	@Test
 	public void testAddressState() {
-		Address address = TestUtils.generateRandomAddress();
+		Address address = EntityGenerator.generateRandomAddress();
 		Address address2 = address.clone();
 		assertEquals(address, address2);
 		
@@ -185,17 +185,17 @@ public class AddressTest {
 		address2.setState(null);
 		assertEquals(address, address2);
 		
-		address.setState(TestUtils.generateRandomString());
-		address2.setState(TestUtils.generateRandomString());
+		address.setState(EntityGenerator.generateRandomString());
+		address2.setState(EntityGenerator.generateRandomString());
 		assertNotEquals(address, address2);
-		String state = TestUtils.generateRandomString();
+		String state = EntityGenerator.generateRandomString();
 		address.setState(state);
 		address2.setState(state);
 	}
 	
 	@Test
 	public void testAddressStreet() {
-		Address address = TestUtils.generateRandomAddress();
+		Address address = EntityGenerator.generateRandomAddress();
 		Address address2 = address.clone();
 		assertEquals(address, address2);
 		
@@ -207,10 +207,10 @@ public class AddressTest {
 		address2.setStreet(null);
 		assertEquals(address, address2);
 		
-		address.setStreet(TestUtils.generateRandomString());
-		address2.setStreet(TestUtils.generateRandomString());
+		address.setStreet(EntityGenerator.generateRandomString());
+		address2.setStreet(EntityGenerator.generateRandomString());
 		assertNotEquals(address, address2);
-		String street = TestUtils.generateRandomString();
+		String street = EntityGenerator.generateRandomString();
 		address.setStreet(street);
 		address2.setStreet(street);
 	}

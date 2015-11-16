@@ -5,13 +5,13 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.helper.EntityGenerator;
 
 public class KeyTest {
 
 	@Test
 	public void testKey() {
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		Key key2 = key.clone();
 
 		assertEquals(key.hashCode(), key2.hashCode());

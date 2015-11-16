@@ -23,7 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.times.Hours;
@@ -32,6 +31,7 @@ import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -63,7 +63,7 @@ public class DishDAOTest {
 	
 	@Test
 	public void testCreate() throws EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		Document document = dish.getDocumentDBView();
 
 		Dish actual = dao.create(dish);
@@ -76,7 +76,7 @@ public class DishDAOTest {
 	public void testCreateMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		Document document = dish.getDocumentDBView();
 
 		doThrow(new MongoException("")).when(collMock).insertOne(document);
@@ -91,7 +91,7 @@ public class DishDAOTest {
 	public void testRead() throws EpickurException {
 		String dishId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(dishId));
-		Document found = TestUtils.generateRandomDish().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
 
 		when(collMock.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
@@ -125,7 +125,7 @@ public class DishDAOTest {
 
 	@Test
 	public void testReadAll() throws EpickurException {
-		Document found = TestUtils.generateRandomDish().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
 
 		when(collMock.find()).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
@@ -151,7 +151,7 @@ public class DishDAOTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		Document document = dish.getDocumentDBView();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
@@ -164,7 +164,7 @@ public class DishDAOTest {
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
 
@@ -178,7 +178,7 @@ public class DishDAOTest {
 	public void testUpdateMongoException() throws Exception {
 		thrown.expect(EpickurDBException.class);
 
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 
 		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
 				.thenThrow(new MongoException(""));
@@ -188,7 +188,7 @@ public class DishDAOTest {
 	
 	@Test
 	public void testSearchOneType() throws EpickurException{
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		WorkingTimes wt = new WorkingTimes();
 		Hours hours = new Hours();
 		TimeFrame timeFrame = new TimeFrame();
@@ -203,7 +203,7 @@ public class DishDAOTest {
 		Document found = dish.getDocumentDBView();
 		List<DishType> dishTypes = new ArrayList<DishType>();
 		dishTypes.add(DishType.MAIN);
-		Geo geo = TestUtils.generateGeo();
+		Geo geo = EntityGenerator.generateGeo();
 		
 		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.limit(10)).thenReturn(findIteratble);
@@ -221,7 +221,7 @@ public class DishDAOTest {
 	
 	@Test
 	public void testSearchMultipleType() throws EpickurException{
-		Dish dish = TestUtils.generateRandomDish();
+		Dish dish = EntityGenerator.generateRandomDish();
 		WorkingTimes wt = new WorkingTimes();
 		Hours hours = new Hours();
 		TimeFrame timeFrame = new TimeFrame();
@@ -237,7 +237,7 @@ public class DishDAOTest {
 		List<DishType> dishTypes = new ArrayList<DishType>();
 		dishTypes.add(DishType.MAIN);
 		dishTypes.add(DishType.DESSERT);
-		Geo geo = TestUtils.generateGeo();
+		Geo geo = EntityGenerator.generateGeo();
 		
 		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.limit(10)).thenReturn(findIteratble);
@@ -259,7 +259,7 @@ public class DishDAOTest {
 		
 		List<DishType> dishTypes = new ArrayList<DishType>();
 		dishTypes.add(DishType.MAIN);
-		Geo geo = TestUtils.generateGeo();
+		Geo geo = EntityGenerator.generateGeo();
 		
 		when(collMock.find(any(Document.class))).thenThrow(new MongoException(""));
 		
@@ -269,7 +269,7 @@ public class DishDAOTest {
 	@Test
 	public void testSearchWithCatererId() throws EpickurException{
 		String catererId = new ObjectId().toHexString();
-		Document found = TestUtils.generateRandomDish().getDocumentDBView();
+		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
 		
 		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);

@@ -106,6 +106,25 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>aws</id>
+			<build>
+				<plugins>
+					<!-- Skip tests -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.19</version>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<!-- Mongo -->
 		<dependency>
@@ -503,8 +522,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
 				<version>2.19</version>
-
 				<configuration>
+					<skipTests>true</skipTests>
 					<alwaysGenerateFailsafeReport>true</alwaysGenerateFailsafeReport>
 					<aggregate>true</aggregate>
 				</configuration>

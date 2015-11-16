@@ -5,13 +5,13 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.helper.EntityGenerator;
 
 public class NutritionFactTest {
 
 	@Test
 	public void testNutritionFact() {
-		NutritionFact nutritionFact = TestUtils.generateRandomNutritionFact();
+		NutritionFact nutritionFact = EntityGenerator.generateRandomNutritionFact();
 		NutritionFact nutritionFact2 = nutritionFact.clone();
 
 		assertEquals(nutritionFact.hashCode(), nutritionFact2.hashCode());

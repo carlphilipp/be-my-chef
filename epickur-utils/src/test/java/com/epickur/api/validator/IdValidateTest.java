@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.helper.EntityGenerator;
 
 public class IdValidateTest {
 	
@@ -33,7 +33,7 @@ public class IdValidateTest {
 	
 	@Test
 	public void testIsValidFalse(){
-		String id = TestUtils.generateRandomString();
+		String id = EntityGenerator.generateRandomString();
 		IdValidate.IdValidator validator = new IdValidate.IdValidator();
 		boolean actual = validator.isValid(id, contextMock);
 		assertFalse(actual);

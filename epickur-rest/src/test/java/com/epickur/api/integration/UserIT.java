@@ -32,7 +32,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.entity.NutritionFact;
@@ -41,6 +41,7 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
+import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.utils.Security;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,7 +84,7 @@ public class UserIT {
 			URL_NO_KEY = address + path + "/users";
 			URL_EXECUTE_ORDER = address + path + "/nokey/execute";
 
-			User admin = TestUtils.createAdminAndLogin();
+			User admin = IntegrationTestUtils.createAdminAndLogin();
 			API_KEY = admin.getKey();
 			URL = URL_NO_KEY + "?key=" + API_KEY;
 
@@ -667,16 +668,16 @@ public class UserIT {
 
 			// Create one Order
 			json = mapper.createObjectNode();
-			Dish dish = TestUtils.generateRandomDish();
+			Dish dish = EntityGenerator.generateRandomDish();
 			dish.setId(new ObjectId());
 			json.set("dish", mapper.readTree(dish.toStringAPIView()));
 			json.put("description", "A new order");
 			json.put("quantity", 2);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
-			String cardToken = TestUtils.generateRandomString();
+			String cardToken = EntityGenerator.generateRandomString();
 			json.put("cardToken", cardToken);
 
 			request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
@@ -771,18 +772,18 @@ public class UserIT {
 			// Create one Order
 			json = mapper.createObjectNode();
 			Dish dish = new Dish();
-			dish.setCaterer(TestUtils.generateRandomCatererWithId());
+			dish.setCaterer(EntityGenerator.generateRandomCatererWithId());
 			dish.setName("Dish name");
 			dish.setDescription("A super cool dish");
 			dish.setType(DishType.MAIN);
 			dish.setPrice(500);
 			dish.setCookingTime(5);
 			dish.setDifficultyLevel(8);
-			List<String> steps = TestUtils.generateRandomListString();
+			List<String> steps = EntityGenerator.generateRandomListString();
 			dish.setSteps(steps);
-			List<NutritionFact> nutritionFacts = TestUtils.generateRandomListNutritionFact();
+			List<NutritionFact> nutritionFacts = EntityGenerator.generateRandomListNutritionFact();
 			dish.setNutritionFacts(nutritionFacts);
-			List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
+			List<Ingredient> ingredients = EntityGenerator.generateRandomListIngredient();
 			dish.setIngredients(ingredients);
 			dish.setVideoUrl("google.com");
 			dish.setImageAfterUrl("url");
@@ -791,7 +792,7 @@ public class UserIT {
 			json.put("quantity", 2);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
 
 			// Create Stripe card token
@@ -913,22 +914,22 @@ public class UserIT {
 			dish.setCookingTime(5);
 			dish.setDifficultyLevel(8);
 			dish.setImageAfterUrl("url");
-			List<String> steps = TestUtils.generateRandomListString();
+			List<String> steps = EntityGenerator.generateRandomListString();
 			dish.setSteps(steps);
-			List<NutritionFact> nutritionFacts = TestUtils.generateRandomListNutritionFact();
+			List<NutritionFact> nutritionFacts = EntityGenerator.generateRandomListNutritionFact();
 			dish.setNutritionFacts(nutritionFacts);
-			List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
+			List<Ingredient> ingredients = EntityGenerator.generateRandomListIngredient();
 			dish.setIngredients(ingredients);
 			dish.setVideoUrl("google.com");
-			dish.setCaterer(TestUtils.generateRandomCatererWithId());
+			dish.setCaterer(EntityGenerator.generateRandomCatererWithId());
 			json.set("dish", mapper.readTree(dish.toStringAPIView()));
 			json.put("description", "A new order");
 			json.put("quantity", 2);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
-			String cardToken = TestUtils.generateRandomString();
+			String cardToken = EntityGenerator.generateRandomString();
 			json.put("cardToken", cardToken);
 
 			request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
@@ -1048,23 +1049,23 @@ public class UserIT {
 			dish.setPrice(500);
 			dish.setCookingTime(5);
 			dish.setDifficultyLevel(8);
-			List<String> steps = TestUtils.generateRandomListString();
+			List<String> steps = EntityGenerator.generateRandomListString();
 			dish.setSteps(steps);
-			List<NutritionFact> nutritionFacts = TestUtils.generateRandomListNutritionFact();
+			List<NutritionFact> nutritionFacts = EntityGenerator.generateRandomListNutritionFact();
 			dish.setNutritionFacts(nutritionFacts);
-			List<Ingredient> ingredients = TestUtils.generateRandomListIngredient();
+			List<Ingredient> ingredients = EntityGenerator.generateRandomListIngredient();
 			dish.setIngredients(ingredients);
 			dish.setVideoUrl("google.com");
 			dish.setImageAfterUrl("url");
-			dish.setCaterer(TestUtils.generateRandomCatererWithId());
+			dish.setCaterer(EntityGenerator.generateRandomCatererWithId());
 			json.set("dish", mapper.readTree(dish.toStringAPIView()));
 			json.put("description", "A new order");
 			json.put("quantity", 6);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
-			String cardToken = TestUtils.generateRandomString();
+			String cardToken = EntityGenerator.generateRandomString();
 			json.put("cardToken", cardToken);
 
 			request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
@@ -1194,16 +1195,16 @@ public class UserIT {
 
 			// Create one Order
 			json = mapper.createObjectNode();
-			Dish dish = TestUtils.generateRandomDish();
+			Dish dish = EntityGenerator.generateRandomDish();
 			dish.setId(new ObjectId());
 			json.set("dish", mapper.readTree(dish.toStringAPIView()));
 			json.put("description", "A new order");
 			json.put("quantity", 2);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = TestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
-			String cardToken = TestUtils.generateRandomString();
+			String cardToken = EntityGenerator.generateRandomString();
 			json.put("cardToken", cardToken);
 
 			request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);

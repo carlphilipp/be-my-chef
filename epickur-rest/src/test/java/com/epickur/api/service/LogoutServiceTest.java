@@ -13,11 +13,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.business.KeyBusiness;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.SuccessMessage;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 
 public class LogoutServiceTest {
 
@@ -32,13 +32,13 @@ public class LogoutServiceTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		when(context.getProperty("key")).thenReturn(key);
 	}
 
 	@Test
 	public void testLogout() throws EpickurException {
-		Response actual = logoutService.logout(TestUtils.generateRandomString());
+		Response actual = logoutService.logout(EntityGenerator.generateRandomString());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		SuccessMessage message = (SuccessMessage) actual.getEntity();

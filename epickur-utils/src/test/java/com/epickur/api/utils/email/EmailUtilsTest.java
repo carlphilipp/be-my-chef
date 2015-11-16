@@ -7,13 +7,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.cribbstechnologies.clients.mandrill.request.MandrillMessagesRequest;
-import com.epickur.api.TestUtils;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.utils.Security;
 
 public class EmailUtilsTest {
@@ -54,7 +54,7 @@ public class EmailUtilsTest {
 		caterer.setName("Kebab");
 		dish.setCaterer(caterer);
 		order.setDish(dish);
-		String orderCode = Security.createOrderCode(new ObjectId(), TestUtils.generateRandomString());
+		String orderCode = Security.createOrderCode(new ObjectId(), EntityGenerator.generateRandomString());
 		emailUtils.emailNewOrder(user, order, orderCode);
 	}
 

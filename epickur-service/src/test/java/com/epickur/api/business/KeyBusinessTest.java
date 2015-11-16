@@ -16,10 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 
 public class KeyBusinessTest {
 	
@@ -35,8 +35,8 @@ public class KeyBusinessTest {
 
 	@Test
 	public void testCreate() throws EpickurException {
-		Key key = TestUtils.generateRandomAdminKey();
-		Key keyAfterCreate = TestUtils.mockKeyAfterCreate(key);
+		Key key = EntityGenerator.generateRandomAdminKey();
+		Key keyAfterCreate = EntityGenerator.mockKeyAfterCreate(key);
 
 		when(keyDAOMock.create((Key) anyObject())).thenReturn(keyAfterCreate);
 
@@ -50,12 +50,12 @@ public class KeyBusinessTest {
 
 	@Test
 	public void testReadWithName() throws EpickurException {
-		Key key = TestUtils.generateRandomAdminKey();
-		Key keyAfterRead = TestUtils.mockKeyAfterCreate(key);
+		Key key = EntityGenerator.generateRandomAdminKey();
+		Key keyAfterRead = EntityGenerator.mockKeyAfterCreate(key);
 
 		when(keyDAOMock.readWithName(anyString())).thenReturn(keyAfterRead);
 
-		Key actual = keyBusiness.readWithName(TestUtils.generateRandomString());
+		Key actual = keyBusiness.readWithName(EntityGenerator.generateRandomString());
 		assertNotNull(actual);
 	}
 
@@ -63,7 +63,7 @@ public class KeyBusinessTest {
 	public void testDelete() throws EpickurException {
 		when(keyDAOMock.delete(anyString())).thenReturn(true);
 
-		boolean actual = keyBusiness.delete(TestUtils.generateRandomString());
+		boolean actual = keyBusiness.delete(EntityGenerator.generateRandomString());
 		assertTrue(actual);
 	}
 
@@ -71,14 +71,14 @@ public class KeyBusinessTest {
 	public void testDeleteWithKey() throws EpickurException {
 		when(keyDAOMock.deleteWithKey(anyString())).thenReturn(true);
 
-		boolean actual = keyBusiness.deleteWithKey(TestUtils.generateRandomString());
+		boolean actual = keyBusiness.deleteWithKey(EntityGenerator.generateRandomString());
 		assertTrue(actual);
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
-		Key key = TestUtils.generateRandomAdminKey();
-		Key keyAfterRead = TestUtils.mockKeyAfterCreate(key);
+		Key key = EntityGenerator.generateRandomAdminKey();
+		Key keyAfterRead = EntityGenerator.mockKeyAfterCreate(key);
 		List<Key> keyList = new ArrayList<Key>();
 		keyList.add(keyAfterRead);
 

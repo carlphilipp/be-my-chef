@@ -1,5 +1,4 @@
-package com.epickur.api;
-
+package com.epickur.api.helper;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -14,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -22,11 +23,6 @@ import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
-import com.epickur.api.business.CatererBusiness;
-import com.epickur.api.business.DishBusiness;
-import com.epickur.api.business.OrderBusiness;
-import com.epickur.api.business.UserBusiness;
-import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
@@ -50,7 +46,6 @@ import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ObjectMapperWrapperAPI;
-import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
@@ -62,16 +57,16 @@ import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Token;
 
-public class TestUtils {
+public class EntityGenerator {
 	/** Logger **/
-	private static final Logger LOG = LogManager.getLogger(TestUtils.class.getSimpleName());
-	
+	private static final Logger LOG = LogManager.getLogger(EntityGenerator.class.getSimpleName());
+
 	public static final String STRIPE_MESSAGE = "Fail while acquiring Stripe token. Internet issue?";
 
 	private static final String[] pickupdateDays = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
 
 	public static void setupDB() throws IOException {
-		InputStreamReader in = new InputStreamReader(TestUtils.class.getClass().getResourceAsStream("/test.properties"));
+		InputStreamReader in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 		in.close();
@@ -83,11 +78,11 @@ public class TestUtils {
 		String scriptSetupPath = prop.getProperty("script.setup");
 
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptSetupPath;
-		TestUtils.runShellCommand(cmd);
+		EntityGenerator.runShellCommand(cmd);
 	}
 
 	public static void cleanDB() throws IOException {
-		InputStreamReader in = new InputStreamReader(TestUtils.class.getClass().getResourceAsStream("/test.properties"));
+		InputStreamReader in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
 		in.close();
@@ -99,13 +94,13 @@ public class TestUtils {
 		String scriptCleanPath = prop.getProperty("script.clean");
 
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
-		TestUtils.runShellCommand(cmd);
+		EntityGenerator.runShellCommand(cmd);
 	}
 
 	public static void setupStripe() {
 		InputStreamReader in = null;
 		try {
-			in = new InputStreamReader(TestUtils.class.getClass().getResourceAsStream("/test.properties"));
+			in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
 			Stripe.apiKey = prop.getProperty("stripe.key");
@@ -115,8 +110,8 @@ public class TestUtils {
 			IOUtils.closeQuietly(in);
 		}
 	}
-	
-	public static void resetStripe(){
+
+	public static void resetStripe() {
 		Stripe.apiKey = null;
 	}
 
@@ -498,18 +493,7 @@ public class TestUtils {
 		return selected + "-" + hoursFormatted + ":" + minutesFormatted;
 	}
 
-	public static String generateRandomCorrectPickupDate(final WorkingTimes workingTimes) {
-		String pickupdate = generateRandomPickupDate();
-		Object[] parsedPickupdate = Utils.parsePickupdate(pickupdate);
-		while (!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])) {
-			pickupdate = generateRandomPickupDate();
-			parsedPickupdate = Utils.parsePickupdate(pickupdate);
-		}
-		return pickupdate;
-	}
-
-	public static Order generateRandomOrder()
-			throws APIException, AuthenticationException, InvalidRequestException, APIConnectionException, CardException{
+	public static Order generateRandomOrder() {
 		Order order = new Order();
 		order.setQuantity(2);
 		order.setAmount(generateRandomStripAmount());
@@ -517,12 +501,12 @@ public class TestUtils {
 		order.setDescription(generateRandomString());
 		order.setDish(generateRandomDish());
 		order.setCreatedBy(new ObjectId());
-		order.setCardToken(TestUtils.generateRandomToken().getId());
-		order.setStatus(OrderStatus.SUCCESSFUL);
+		
+		order.setCardToken(generateRandomString());
 
 		String pickupdate = generateRandomPickupDate();
 		order.setPickupdate(pickupdate);
-		Object[] parsedPickupdate = Utils.parsePickupdate(pickupdate);
+		Object[] parsedPickupdate = parsePickupdate(pickupdate);
 		String day = (String) parsedPickupdate[0];
 		Integer pickupdateMinutes = (Integer) parsedPickupdate[1];
 
@@ -534,15 +518,31 @@ public class TestUtils {
 
 			pickupdate = generateRandomPickupDate();
 			order.setPickupdate(pickupdate);
-			parsedPickupdate = Utils.parsePickupdate(pickupdate);
+			parsedPickupdate = parsePickupdate(pickupdate);
 			day = (String) parsedPickupdate[0];
 			pickupdateMinutes = (Integer) parsedPickupdate[1];
 		}
+		order.setStatus(OrderStatus.SUCCESSFUL);
 		return order;
 	}
 
-	public static Order generateRandomOrderWithId()
-			throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
+	public static Object[] parsePickupdate(final String pickupdate) {
+		Object[] result = null;
+		if (pickupdate != null) {
+			Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):(([0-5][0-9])))$");
+			Matcher matcher = pattern.matcher(pickupdate);
+			if (matcher.matches()) {
+				result = new Object[2];
+				// Extract the day of the week
+				result[0] = matcher.group(1).toLowerCase();
+				// Convert in minutes the given time
+				result[1] = Integer.parseInt(matcher.group(3)) * 60 + Integer.parseInt(matcher.group(4));
+			}
+		}
+		return result;
+	}
+
+	public static Order generateRandomOrderWithId() {
 		Order order = generateRandomOrder();
 		order.setId(new ObjectId());
 		return order;
@@ -591,104 +591,6 @@ public class TestUtils {
 		key.setUserId(new ObjectId());
 		key.setRole(Role.USER);
 		return key;
-	}
-
-	public static Caterer createCaterer() throws EpickurException {
-		return createCatererWithUserId(new ObjectId());
-	}
-
-	public static Caterer createCatererWithUserId(final ObjectId userId) throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		return createCaterer(caterer, userId);
-	}
-
-	public static Caterer createCaterer(final Caterer caterer, final ObjectId userId) throws EpickurException {
-		CatererBusiness business = new CatererBusiness();
-		caterer.setCreatedBy(userId);
-		return business.create(caterer);
-	}
-
-	public static User createUser() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		UserBusiness business = new UserBusiness();
-		return business.create(user, true);
-	}
-
-	public static User createUserAndLogin() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		String password = new String(user.getPassword());
-		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, true);
-		newUser.setRole(Role.USER);
-		Key key = TestUtils.generateRandomAdminKey();
-		key.setRole(Role.ADMIN);
-		business.update(newUser, key);
-		User login = business.login(newUser.getEmail(), password);
-		return login;
-	}
-
-	public static User createSuperUserAndLogin() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		String password = new String(user.getPassword());
-		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, true);
-		newUser.setRole(Role.SUPER_USER);
-		Key key = TestUtils.generateRandomAdminKey();
-		key.setRole(Role.ADMIN);
-		business.update(newUser, key);
-		User login = business.login(newUser.getEmail(), password);
-		return login;
-	}
-
-	public static User createAdminAndLogin() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		String password = new String(user.getPassword());
-		UserBusiness business = new UserBusiness();
-		User newUser = business.create(user, true);
-		newUser.setRole(Role.ADMIN);
-		Key key = TestUtils.generateRandomAdminKey();
-		key.setRole(Role.ADMIN);
-		business.update(newUser, key);
-		User login = business.login(newUser.getEmail(), password);
-		return login;
-	}
-
-	public static Dish createDish() throws EpickurException {
-		return createDishWithUserId(new ObjectId());
-	}
-
-	public static Dish createDishWithUserId(final ObjectId userId) throws EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
-		dish.setCreatedBy(userId);
-		DishBusiness business = new DishBusiness();
-		Dish newDish = business.create(dish);
-		return newDish;
-	}
-
-	public static Order createOrder(final ObjectId userId) throws EpickurException, AuthenticationException, InvalidRequestException,
-			APIConnectionException,
-			CardException, APIException {
-		Order order = TestUtils.generateRandomOrder();
-		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId.toHexString(), order);
-		return orderRes;
-	}
-
-	public static Order createOrder(final ObjectId userId, final ObjectId catererId) throws AuthenticationException, InvalidRequestException,
-			APIConnectionException,
-			CardException, APIException, EpickurException {
-		Order order = TestUtils.generateRandomOrder();
-		order.getDish().getCaterer().setId(catererId);
-		OrderBusiness business = new OrderBusiness();
-		Order orderRes = business.create(userId.toHexString(), order);
-		return orderRes;
-	}
-
-	public static Order updateOrderStatusToSuccess(final Order order) throws EpickurException {
-		order.setStatus(OrderStatus.SUCCESSFUL);
-		OrderDAO dao = new OrderDAO();
-		order.prepareForUpdateIntoDB();
-		return dao.update(order);
 	}
 
 	public static Map<String, Object> getTokenParam() {

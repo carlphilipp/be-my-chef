@@ -11,7 +11,7 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<name>Epickur Utils</name>
+	<name>Utils</name>
 	<description>Epickur Utils.</description>
 
 	<dependencies>
@@ -57,5 +57,105 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+						<excludes>
+							<exclude>apidoc/**</exclude>
+							<exclude>env/aws.properties</exclude>
+							<exclude>env/local.template.properties</exclude>
+							<exclude>env/log4j2.prod.xml</exclude>
+							<exclude>epickur-checkstyle.xml</exclude>
+							<exclude>epickur-eclipse-profil.xml</exclude>
+							<exclude>epickur.template.properties</exclude>
+							<exclude>stylesheet.css</exclude>
+						</excludes>
+					</resource>
+				</resources>
+
+				<plugins>
+
+					<!-- Inject local properties into project -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>properties-maven-plugin</artifactId>
+						<version>1.0-alpha-2</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<goals>
+									<goal>read-project-properties</goal>
+								</goals>
+								<configuration>
+									<files>
+										<file>${project.build.resources[0].directory}/env/local.properties</file>
+									</files>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>aws</id>
+			<properties>
+				<war.name>ROOT</war.name>
+			</properties>
+			<build>
+				<!-- Remove resources env and log4j.xml -->
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+						<excludes>
+							<exclude>apidoc/**</exclude>
+							<exclude>env/**</exclude>
+							<exclude>epickur-checkstyle.xml</exclude>
+							<exclude>epickur-eclipse-profil.xml</exclude>
+							<exclude>epickur.template.properties</exclude>
+							<exclude>stylesheet.css</exclude>
+							<exclude>log4j2.xml</exclude>
+						</excludes>
+					</resource>
+				</resources>
+
+				<plugins>
+
+					<!-- Inject aws properties into project -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>properties-maven-plugin</artifactId>
+						<version>1.0-alpha-2</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<goals>
+									<goal>read-project-properties</goal>
+								</goals>
+								<configuration>
+									<files>
+										<file>${project.build.resources[0].directory}/env/aws.properties
+										</file>
+									</files>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

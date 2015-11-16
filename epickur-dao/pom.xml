@@ -11,8 +11,8 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<name>Epickur DAO</name>
-	<description>Data Access Object layer.</description>
+	<name>Data Access Object</name>
+	<description>Data Access Object layer. Connect to MongoDB and retrieve data.</description>
 
 	<dependencies>
 		<dependency>
@@ -20,7 +20,6 @@
 			<artifactId>epickur-utils</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-
 	</dependencies>
 
 	<reporting>
@@ -38,8 +37,7 @@
 					<printFailingErrors>true</printFailingErrors>
 					<failOnViolation>true</failOnViolation>
 					<rulesets>
-						<ruleset>${project.parent.basedir}\src\main\resources\lombokRuleset.xml
-						</ruleset>
+						<ruleset>${project.parent.basedir}\src\main\resources\lombokRuleset.xml</ruleset>
 					</rulesets>
 				</configuration>
 			</plugin>

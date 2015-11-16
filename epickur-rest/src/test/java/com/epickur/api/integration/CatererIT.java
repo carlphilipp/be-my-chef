@@ -25,7 +25,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Geo;
@@ -34,6 +34,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
+import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -60,7 +61,7 @@ public class CatererIT {
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
-		User admin = TestUtils.createAdminAndLogin();
+		User admin = IntegrationTestUtils.createAdminAndLogin();
 		API_KEY = admin.getKey();
 		URL = URL_NO_KEY + "?key=" + API_KEY;
 
@@ -95,7 +96,7 @@ public class CatererIT {
 		caterer.put("manager", "Manager name");
 		caterer.put("email", "email@email.com");
 		caterer.put("phone", "000011222");
-		WorkingTimes workingTimes = TestUtils.generateRandomWorkingTimes();
+		WorkingTimes workingTimes = EntityGenerator.generateRandomWorkingTimes();
 
 		caterer.set("workingTimes", mapper.readTree(workingTimes.toStringAPIView()));
 
@@ -177,7 +178,7 @@ public class CatererIT {
 		geo.setLatitude(40.77);
 		location.setGeo(geo);
 		caterer.setLocation(location);
-		caterer.setWorkingTimes(TestUtils.generateRandomWorkingTimes());
+		caterer.setWorkingTimes(EntityGenerator.generateRandomWorkingTimes());
 
 		HttpPost request = new HttpPost(URL);
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());

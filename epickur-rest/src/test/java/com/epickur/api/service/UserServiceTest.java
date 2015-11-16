@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -26,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.business.OrderBusiness;
 import com.epickur.api.business.UserBusiness;
 import com.epickur.api.entity.Key;
@@ -34,14 +32,10 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
 
 public class UserServiceTest {
 
@@ -56,26 +50,26 @@ public class UserServiceTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		TestUtils.setupStripe();
+		EntityGenerator.setupStripe();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestUtils.resetStripe();
+		EntityGenerator.resetStripe();
 	}
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		Key key = TestUtils.generateRandomAdminKey();
+		Key key = EntityGenerator.generateRandomAdminKey();
 		Mockito.when(context.getProperty("key")).thenReturn(key);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
-		User user = TestUtils.generateRandomUser();
-		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUser();
+		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
 		when(userBusiness.create((User) anyObject(), anyBoolean())).thenReturn(userAfterCreate);
 
@@ -88,8 +82,8 @@ public class UserServiceTest {
 
 	@Test
 	public void testRead() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
-		User userAfterRead = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUserWithId();
+		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 
 		when(userBusiness.read(anyString(), (Key) anyObject())).thenReturn(userAfterRead);
 
@@ -102,8 +96,8 @@ public class UserServiceTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
-		User userAfterUpdate = TestUtils.mockUserAfterCreate(user);
+		User user = EntityGenerator.generateRandomUserWithId();
+		User userAfterUpdate = EntityGenerator.mockUserAfterCreate(user);
 
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterUpdate);
 
@@ -116,10 +110,10 @@ public class UserServiceTest {
 
 	@Test
 	public void testUpdatePassword() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
+		User user = EntityGenerator.generateRandomUserWithId();
 		user.setNewPassword("newpassword");
 		user.setPassword("oldpassword");
-		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
 
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
@@ -134,9 +128,9 @@ public class UserServiceTest {
 
 	@Test
 	public void testUpdatePasswordFail() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
+		User user = EntityGenerator.generateRandomUserWithId();
 		user.setPassword("oldpassword");
-		User userAfterCreate = TestUtils.mockUserAfterCreate(user);
+		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
 
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
@@ -151,7 +145,7 @@ public class UserServiceTest {
 
 	@Test
 	public void testDelete() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
+		User user = EntityGenerator.generateRandomUserWithId();
 
 		when(userBusiness.delete(anyString())).thenReturn(true);
 
@@ -167,7 +161,7 @@ public class UserServiceTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadAll() throws EpickurException {
-		User user = TestUtils.generateRandomUserWithId();
+		User user = EntityGenerator.generateRandomUserWithId();
 		List<User> usersAfterReadAll = new ArrayList<User>();
 		usersAfterReadAll.add(user);
 
@@ -182,97 +176,77 @@ public class UserServiceTest {
 
 	@Test
 	public void testAddOneOrder() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrder();
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order);
+		Order order = EntityGenerator.generateRandomOrder();
+		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
 
-			when(orderBusiness.create(anyString(), (Order) anyObject())).thenReturn(orderAfterCreate);
+		when(orderBusiness.create(anyString(), (Order) anyObject())).thenReturn(orderAfterCreate);
 
-			Response actual = service.createOneOrder(orderAfterCreate.getId().toHexString(), order);
-			assertNotNull(actual);
-			assertEquals(200, actual.getStatus());
-			Order actualUser = (Order) actual.getEntity();
-			assertNotNull(actualUser.getId());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		Response actual = service.createOneOrder(orderAfterCreate.getId().toHexString(), order);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		Order actualUser = (Order) actual.getEntity();
+		assertNotNull(actualUser.getId());
 	}
 
 	@Test
 	public void testReadOneOrder() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrder();
-			Order orderAfterRead = TestUtils.mockOrderAfterCreate(order);
+		Order order = EntityGenerator.generateRandomOrder();
+		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order);
 
-			when(orderBusiness.read(anyString(), (Key) anyObject())).thenReturn(orderAfterRead);
+		when(orderBusiness.read(anyString(), (Key) anyObject())).thenReturn(orderAfterRead);
 
-			Response actual = service.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
-			assertNotNull(actual);
-			assertEquals(200, actual.getStatus());
-			Order actualUser = (Order) actual.getEntity();
-			assertNotNull(actualUser.getId());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		Response actual = service.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		Order actualUser = (Order) actual.getEntity();
+		assertNotNull(actualUser.getId());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadAllOrderAdmin() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrder();
-			List<Order> orders = new ArrayList<Order>();
-			orders.add(order);
+		Order order = EntityGenerator.generateRandomOrder();
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(order);
 
-			when(orderBusiness.readAllWithUserId(anyString())).thenReturn(orders);
+		when(orderBusiness.readAllWithUserId(anyString())).thenReturn(orders);
 
-			Response actual = service.readAllOrders(new ObjectId().toHexString());
-			assertNotNull(actual);
-			assertEquals(200, actual.getStatus());
-			List<Order> actualUsers = (List<Order>) actual.getEntity();
-			assertNotNull(actualUsers);
-			assertEquals(1, actualUsers.size());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		Response actual = service.readAllOrders(new ObjectId().toHexString());
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		List<Order> actualUsers = (List<Order>) actual.getEntity();
+		assertNotNull(actualUsers);
+		assertEquals(1, actualUsers.size());
 	}
 
 	@Test
 	public void testUpdateOneOrder() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrderWithId();
-			order.setId(new ObjectId());
-			Order orderAfterCreate = TestUtils.mockOrderAfterCreate(order);
+		Order order = EntityGenerator.generateRandomOrderWithId();
+		order.setId(new ObjectId());
+		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
 
-			when(orderBusiness.update((Order) anyObject(), (Key) anyObject())).thenReturn(orderAfterCreate);
+		when(orderBusiness.update((Order) anyObject(), (Key) anyObject())).thenReturn(orderAfterCreate);
 
-			Response actual = service.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
-			assertNotNull(actual);
-			assertEquals(200, actual.getStatus());
-			Order actualUser = (Order) actual.getEntity();
-			assertNotNull(actualUser.getId());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		Response actual = service.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		Order actualUser = (Order) actual.getEntity();
+		assertNotNull(actualUser.getId());
 	}
 
 	@Test
 	public void testdeleteOneOrder() throws EpickurException {
-		try {
-			Order order = TestUtils.generateRandomOrderWithId();
+		Order order = EntityGenerator.generateRandomOrderWithId();
 
-			when(orderBusiness.delete(anyString())).thenReturn(true);
+		when(orderBusiness.delete(anyString())).thenReturn(true);
 
-			Response actual = service.deleteOneOrder(new ObjectId().toHexString(), order.getId().toHexString());
-			assertNotNull(actual);
-			assertEquals(200, actual.getStatus());
-			DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
-			assertNotNull(actualDeletedMessage.getId());
-			assertNotNull(actualDeletedMessage.getDeleted());
-			assertTrue(actualDeletedMessage.getDeleted());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(TestUtils.STRIPE_MESSAGE);
-		}
+		Response actual = service.deleteOneOrder(new ObjectId().toHexString(), order.getId().toHexString());
+		assertNotNull(actual);
+		assertEquals(200, actual.getStatus());
+		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
+		assertNotNull(actualDeletedMessage.getId());
+		assertNotNull(actualDeletedMessage.getDeleted());
+		assertTrue(actualDeletedMessage.getDeleted());
 	}
 
 	@Test

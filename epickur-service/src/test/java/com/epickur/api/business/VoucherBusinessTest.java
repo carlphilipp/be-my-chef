@@ -20,13 +20,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.VoucherDAO;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 
 public class VoucherBusinessTest {
 
@@ -45,11 +45,11 @@ public class VoucherBusinessTest {
 	
 	@Test
 	public void testRead() throws EpickurException{
-		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucher = EntityGenerator.generateVoucher();
 		
 		when(voucherDAO.read(anyString())).thenReturn(voucher);
 		
-		Voucher actual = voucherBusiness.read(TestUtils.generateRandomString());
+		Voucher actual = voucherBusiness.read(EntityGenerator.generateRandomString());
 		assertNotNull(actual);
 	}
 	
@@ -65,7 +65,7 @@ public class VoucherBusinessTest {
 
 	@Test
 	public void testClean() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
+		Voucher voucher = EntityGenerator.generateVoucher();
 		List<Voucher> vouchers = new ArrayList<Voucher>();
 		vouchers.add(voucher);
 		
@@ -80,8 +80,8 @@ public class VoucherBusinessTest {
 
 	@Test
 	public void testValidate() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
-		Voucher voucherAfter = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucher = EntityGenerator.generateVoucher();
+		Voucher voucherAfter = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfter.setStatus(Status.VALID);
 		voucherAfter.setExpirationType(ExpirationType.ONETIME);
 		
@@ -110,8 +110,8 @@ public class VoucherBusinessTest {
 		UUID uuid = UUID.randomUUID();
 		thrown.expectMessage("Voucher '" + uuid.toString() + "' expired");
 		
-		Voucher voucher = TestUtils.generateVoucher();
-		Voucher voucherAfter = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucher = EntityGenerator.generateVoucher();
+		Voucher voucherAfter = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfter.setStatus(Status.EXPIRED);
 		
 		when(voucherDAO.read(uuid.toString())).thenReturn(voucherAfter);
@@ -123,12 +123,12 @@ public class VoucherBusinessTest {
 
 	@Test
 	public void testValidateUntil() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
-		Voucher voucherAfterRead = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucher = EntityGenerator.generateVoucher();
+		Voucher voucherAfterRead = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfterRead.setStatus(Status.VALID);
 		voucherAfterRead.setExpirationType(ExpirationType.UNTIL);
 		voucherAfterRead.setDiscountType(DiscountType.AMOUNT);
-		Voucher voucherAfterUpdate = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucherAfterUpdate = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfterUpdate.setStatus(Status.VALID);
 		voucherAfterUpdate.setUsedCount(1);
 		DateTime now = new DateTime();
@@ -148,12 +148,12 @@ public class VoucherBusinessTest {
 	
 	@Test
 	public void testValidateUntil2() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
-		Voucher voucherAfterCreate = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucher = EntityGenerator.generateVoucher();
+		Voucher voucherAfterCreate = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfterCreate.setStatus(Status.VALID);
 		voucherAfterCreate.setExpirationType(ExpirationType.UNTIL);
 		voucherAfterCreate.setDiscountType(DiscountType.AMOUNT);
-		Voucher voucherAfterUpdate = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucherAfterUpdate = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfterUpdate.setStatus(Status.VALID);
 		voucherAfterUpdate.setUsedCount(1);
 		DateTime now = new DateTime();
@@ -174,10 +174,10 @@ public class VoucherBusinessTest {
 	
 	@Test
 	public void testRevertOneTime() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
-		Voucher voucherAfterRead = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucher = EntityGenerator.generateVoucher();
+		Voucher voucherAfterRead = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfterRead.setExpirationType(ExpirationType.ONETIME);
-		Voucher voucherAfterUpdate = TestUtils.mockVoucherAfterCreate(voucherAfterRead);
+		Voucher voucherAfterUpdate = EntityGenerator.mockVoucherAfterCreate(voucherAfterRead);
 		voucherAfterUpdate.setStatus(Status.VALID);
 		voucherAfterUpdate.setUsedCount(0);
 		
@@ -192,11 +192,11 @@ public class VoucherBusinessTest {
 	
 	@Test
 	public void testRevertUntil() throws EpickurException {
-		Voucher voucher = TestUtils.generateVoucher();
-		Voucher voucherAfterRead = TestUtils.mockVoucherAfterCreate(voucher);
+		Voucher voucher = EntityGenerator.generateVoucher();
+		Voucher voucherAfterRead = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfterRead.setExpirationType(ExpirationType.UNTIL);
 		voucherAfterRead.setUsedCount(10);
-		Voucher voucherAfterUpdate = TestUtils.mockVoucherAfterCreate(voucherAfterRead);
+		Voucher voucherAfterUpdate = EntityGenerator.mockVoucherAfterCreate(voucherAfterRead);
 		voucherAfterUpdate.setStatus(Status.VALID);
 		voucherAfterUpdate.setUsedCount(9);
 		

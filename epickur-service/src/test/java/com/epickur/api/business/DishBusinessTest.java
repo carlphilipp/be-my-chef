@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
@@ -31,6 +30,7 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.geocoder.here.GeocoderHereImpl;
+import com.epickur.api.helper.EntityGenerator;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
@@ -62,8 +62,8 @@ public class DishBusinessTest {
 
 	@Test
 	public void testCreate() throws EpickurException {
-		Dish dish = TestUtils.generateRandomDish();
-		Dish dishAfterCreate = TestUtils.mockDishAfterCreate(dish);
+		Dish dish = EntityGenerator.generateRandomDish();
+		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 
 		when(dishDAOMock.create((Dish) anyObject())).thenReturn(dishAfterCreate);
 
@@ -77,8 +77,8 @@ public class DishBusinessTest {
 
 	@Test
 	public void testRead() throws EpickurException {
-		Dish dish = TestUtils.generateRandomDishWithId();
-		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
+		Dish dish = EntityGenerator.generateRandomDishWithId();
+		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 
 		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
 
@@ -88,8 +88,8 @@ public class DishBusinessTest {
 
 	@Test
 	public void testReadAll() throws EpickurException {
-		Dish dish = TestUtils.generateRandomDishWithId();
-		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
+		Dish dish = EntityGenerator.generateRandomDishWithId();
+		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> listDishes = new ArrayList<Dish>();
 		listDishes.add(dishAfterRead);
 
@@ -102,9 +102,9 @@ public class DishBusinessTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
-		Dish dish = TestUtils.generateRandomDishWithId();
-		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
-		Dish dishAfterUpdate = TestUtils.mockDishAfterCreate(dish);
+		Dish dish = EntityGenerator.generateRandomDishWithId();
+		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
+		Dish dishAfterUpdate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterUpdate.setName("new name");
 
 		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
@@ -117,8 +117,8 @@ public class DishBusinessTest {
 
 	@Test
 	public void testDelete() throws EpickurException {
-		Dish dish = TestUtils.generateRandomDishWithId();
-		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
+		Dish dish = EntityGenerator.generateRandomDishWithId();
+		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 
 		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
 		when(dishDAOMock.delete(dish.getId().toHexString())).thenReturn(true);
@@ -129,8 +129,8 @@ public class DishBusinessTest {
 
 	@Test
 	public void testSearchDishesForOneCaterer() throws EpickurException {
-		Dish dish = TestUtils.generateRandomDishWithId();
-		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
+		Dish dish = EntityGenerator.generateRandomDishWithId();
+		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> listDishes = new ArrayList<Dish>();
 		listDishes.add(dishAfterRead);
 
@@ -144,8 +144,8 @@ public class DishBusinessTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSearch() throws Exception {
-		Dish dish = TestUtils.generateRandomDishWithId();
-		Dish dishAfterRead = TestUtils.mockDishAfterCreate(dish);
+		Dish dish = EntityGenerator.generateRandomDishWithId();
+		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> listDishes = new ArrayList<Dish>();
 		listDishes.add(dishAfterRead);
 

@@ -16,12 +16,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.TestUtils;
 import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 
 public class CatererBusinessTest {
 
@@ -37,8 +37,8 @@ public class CatererBusinessTest {
 	
 	@Test
 	public void testCreate() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
+		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
 		when(catererDAOMock.create((Caterer) anyObject())).thenReturn(catererAfterCreate);
 
@@ -58,12 +58,12 @@ public class CatererBusinessTest {
 
 	@Test
 	public void testRead() throws EpickurException {
-		Caterer caterer = TestUtils.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = TestUtils.mockCatererAfterCreate(caterer);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
+		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
 		when(catererDAOMock.read(anyString())).thenReturn(catererAfterCreate);
 
-		Caterer actual = catererBusiness.read(TestUtils.generateRandomString());
+		Caterer actual = catererBusiness.read(EntityGenerator.generateRandomString());
 
 		assertNotNull("Caterer is null", actual);
 		assertNotNull("Id not generated", actual.getId());
@@ -79,8 +79,8 @@ public class CatererBusinessTest {
 
 	@Test
 	public void testReadAll() throws EpickurException {
-		Caterer caterer1 = TestUtils.generateRandomCatererWithId();
-		Caterer caterer2 = TestUtils.generateRandomCatererWithId();
+		Caterer caterer1 = EntityGenerator.generateRandomCatererWithId();
+		Caterer caterer2 = EntityGenerator.generateRandomCatererWithId();
 		List<Caterer> caterers = new ArrayList<Caterer>();
 		caterers.add(caterer1);
 		caterers.add(caterer2);
@@ -95,8 +95,8 @@ public class CatererBusinessTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {		
-		Caterer caterer = TestUtils.generateRandomCatererWithId();
-		Caterer catererAfterUpdate = TestUtils.mockCatererAfterCreate(caterer);
+		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
+		Caterer catererAfterUpdate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterUpdate.setDescription("new desc");
 		Key keyMock = new Key();
 		keyMock.setId(new ObjectId());

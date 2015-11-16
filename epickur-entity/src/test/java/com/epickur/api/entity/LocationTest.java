@@ -5,13 +5,13 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
-import com.epickur.api.TestUtils;
+import com.epickur.api.helper.EntityGenerator;
 
 public class LocationTest {
 
 	@Test
 	public void testLocation() {
-		Location location = TestUtils.generateRandomLocation();
+		Location location = EntityGenerator.generateRandomLocation();
 		Location location2 = location.clone();
 
 		assertEquals(location.hashCode(), location2.hashCode());
