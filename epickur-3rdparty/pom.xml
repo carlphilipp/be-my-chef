@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>epickur-dao</artifactId>
+	<artifactId>epickur-3rdparty</artifactId>
 	<packaging>jar</packaging>
 
 	<parent>
@@ -11,11 +11,10 @@
 		<version>${project.version}</version>
 	</parent>
 
-	<name>DAO Module</name>
-	<description>Data Access Object layer. Connect to MongoDB and retrieve data.</description>
+	<name>3rd Party Module</name>
+	<description>Connect to 3rd party providers.</description>
 
 	<dependencies>
-		<!-- Epickur dependencies -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-utils</artifactId>

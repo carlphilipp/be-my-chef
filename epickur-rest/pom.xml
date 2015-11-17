@@ -8,11 +8,20 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>1.0.0</version>
+		<version>${project.version}</version>
 	</parent>
 
-	<name>Rest</name>
-	<description>Rest Epickur Module.</description>
+	<name>REST Module</name>
+	<description>REST Epickur Module.</description>
+
+	<dependencies>
+		<!-- Epickur Service -->
+		<dependency>
+			<groupId>com.epickur.api</groupId>
+			<artifactId>epickur-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<finalName>epickur</finalName>
@@ -147,15 +156,6 @@
 	<dependencyManagement>
 	</dependencyManagement>
 
-	<dependencies>
-		<!-- Epickur Service -->
-		<dependency> 
-			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-service</artifactId> 
-			<version>1.0.0</version> 
-		</dependency>
-	</dependencies>
-
 	<profiles>
 		<profile>
 			<id>local</id>
@@ -227,7 +227,8 @@
 								</goals>
 								<configuration>
 									<target>
-										<echo message="Connecting to ${server.login}@${server.address}:${server.base}" />
+										<echo
+											message="Connecting to ${server.login}@${server.address}:${server.base}" />
 
 										<echo message="Push ${war.name}.war to /home/tomcat7" />
 										<scp trust="yes"

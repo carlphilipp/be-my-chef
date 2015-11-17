@@ -8,17 +8,18 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>1.0.0</version>
+		<version>${project.version}</version>
 	</parent>
 
-	<name>Entity</name>
+	<name>Entity Module</name>
 	<description>Entity data.</description>
 
 	<dependencies>
+		<!-- Epickur dependencies -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-logging</artifactId>
-			<version>1.0.0</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

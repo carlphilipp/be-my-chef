@@ -8,20 +8,19 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>1.0.0</version>
+		<version>${project.version}</version>
 	</parent>
 
-	<name>Utils</name>
+	<name>Utils Module</name>
 	<description>Epickur Utils.</description>
 
 	<dependencies>
-		<!-- Epickur Entity -->
+		<!-- Epickur dependencies -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-entity</artifactId>
-			<version>1.0.0</version>
+			<version>${project.version}</version>
 		</dependency>
-		
 	</dependencies>
 
 	<reporting>

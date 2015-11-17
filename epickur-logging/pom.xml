@@ -8,10 +8,10 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>1.0.0</version>
+		<version>${project.version}</version>
 	</parent>
 
-	<name>Logging</name>
+	<name>Logging Module</name>
 	<description>Logging that will be used in all the other modules.</description>
 
 	<dependencies>
