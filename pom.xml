@@ -20,6 +20,7 @@
 	<modules>
 		<module>epickur-3rdparty</module>
 		<module>epickur-dao</module>
+		<module>epickur-dump</module>
 		<module>epickur-entity</module>
 		<module>epickur-logging</module>
 		<module>epickur-rest</module>
@@ -372,26 +373,6 @@
 			<artifactId>java-uuid-generator</artifactId>
 			<version>3.1.4</version>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- Commons configuration. Do I need it? -->
-		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-			<version>1.10</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- Java mail needed for log4j. Do I really need it? -->
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.5.0-b01</version>
 		</dependency>
 
 		<!-- Generate PDF -->

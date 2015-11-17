@@ -1,8 +1,6 @@
 package com.epickur.api.validator;
 
 import org.bson.types.ObjectId;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -18,16 +16,6 @@ import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.helper.EntityGenerator;
 
 public class UserValidatorTest {
-
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		EntityGenerator.setupStripe();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		EntityGenerator.resetStripe();
-	}
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();

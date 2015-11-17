@@ -8,9 +8,11 @@ For full endpoint documentation please go [here](../../apidoc/index.html).
 ### Multi module project
 
 Dependency is designed that way:
-
-`Rest -> Service -> DAO -> Utils -> Entity -> Logging`
-
+```
+Rest -> Service -> DAO -> Utils -> Entity -> Logging
+		   \                
+			`-> 3rd Party
+```
 When adding new module, take care of cyclic dependency error: Two modules must not depends on each other.
 
 ###Prerequisites:

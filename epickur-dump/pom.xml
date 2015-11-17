@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>epickur-service</artifactId>
+	<artifactId>epickur-dump</artifactId>
 	<packaging>jar</packaging>
 
 	<parent>
@@ -11,25 +11,13 @@
 		<version>${project.version}</version>
 	</parent>
 
-	<name>Service Module</name>
-	<description>Service layer. This is where logic is done.</description>
+	<name>Database Dump Module</name>
+	<description>MongoDB data dump.</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-dao</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-3rdparty</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-dump</artifactId>
+			<artifactId>epickur-utils</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
@@ -49,8 +37,7 @@
 					<printFailingErrors>true</printFailingErrors>
 					<failOnViolation>true</failOnViolation>
 					<rulesets>
-						<ruleset>${project.parent.basedir}\src\main\resources\lombokRuleset.xml
-						</ruleset>
+						<ruleset>${project.parent.basedir}\src\main\resources\lombokRuleset.xml</ruleset>
 					</rulesets>
 				</configuration>
 			</plugin>
