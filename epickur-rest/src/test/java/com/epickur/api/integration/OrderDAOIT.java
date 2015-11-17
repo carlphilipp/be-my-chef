@@ -24,14 +24,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.epickur.api.IntegrationTestUtils;
-import com.epickur.api.business.OrderBusiness;
-import com.epickur.api.business.UserBusiness;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
+import com.epickur.api.rest.UserRest;
+import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -44,13 +44,13 @@ public class OrderDAOIT {
 	private static List<ObjectId> idsToDeleteUser;
 	private static Map<String, List<ObjectId>> idsToDeleteOrder;
 	@Mock
-	private OrderBusiness orderBusiness;
+	private OrderService orderService;
 	@Mock
-	private UserBusiness userBusiness;
+	private UserService userService;
 	@Mock
 	private ContainerRequestContext context;
 	@InjectMocks
-	private static UserService userService;
+	private static UserRest useRest;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
@@ -63,12 +63,12 @@ public class OrderDAOIT {
 	public static void tearDownAfterClass() throws Exception {
 		EntityGenerator.resetStripe();
 		for (ObjectId id : idsToDeleteUser) {
-			userService.delete(id.toHexString());
+			useRest.delete(id.toHexString());
 		}
 		for (Entry<String, List<ObjectId>> entry : idsToDeleteOrder.entrySet()) {
 			List<ObjectId> list = entry.getValue();
 			for (ObjectId id : list) {
-				userService.deleteOneOrder(entry.getKey(), id.toHexString());
+				useRest.deleteOneOrder(entry.getKey(), id.toHexString());
 			}
 		}
 	}

@@ -11,8 +11,8 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<name>REST</name>
-	<description>REST Epickur Module.</description>
+	<name>Rest</name>
+	<description>Rest Epickur Module.</description>
 
 	<build>
 		<finalName>epickur</finalName>

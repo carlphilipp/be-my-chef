@@ -6,13 +6,13 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.epickur.api.business.VoucherBusiness;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.email.EmailUtils;
 
 /**
@@ -31,7 +31,7 @@ public final class CancelOrderJob implements Job {
 	/** User dao */
 	private UserDAO userDAO;
 	/** Voucher Business */
-	private VoucherBusiness voucherBusiness;
+	private VoucherService voucherBusiness;
 	/** Email utils */
 	private EmailUtils emailUtils;
 

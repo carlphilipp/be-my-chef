@@ -6,8 +6,8 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.epickur.api.business.VoucherBusiness;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.service.VoucherService;
 
 /**
  * Cron clean vouchers jobs.
@@ -21,11 +21,11 @@ public final class CleanVouchersJob implements Job {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(CleanVouchersJob.class.getSimpleName());
 	/** Voucher business */
-	private VoucherBusiness voucherBusiness;
+	private VoucherService voucherBusiness;
 
 	/** Constructor */
 	public CleanVouchersJob() {
-		voucherBusiness = new VoucherBusiness();
+		voucherBusiness = new VoucherService();
 	}
 
 	@Override
