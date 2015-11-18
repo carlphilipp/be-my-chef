@@ -11,7 +11,7 @@
 		<version>${project.version}</version>
 	</parent>
 
-	<name>REST Module</name>
+	<name>REST</name>
 	<description>REST Epickur Module.</description>
 
 	<dependencies>
@@ -20,6 +20,13 @@
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-service</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.epickur.api</groupId>
+			<artifactId>epickur-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

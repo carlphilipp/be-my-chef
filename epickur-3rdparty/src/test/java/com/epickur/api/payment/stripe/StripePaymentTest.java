@@ -56,7 +56,7 @@ public class StripePaymentTest {
 	@BeforeClass
 	public static void setUpBeforeClass() {
 		try {
-			EntityGenerator.setupStripe();
+			StripeTestUtils.setupStripe();
 			TOKEN = Token.create(EntityGenerator.getTokenParam());
 		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
 			fail(EntityGenerator.STRIPE_MESSAGE);
@@ -65,7 +65,7 @@ public class StripePaymentTest {
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		EntityGenerator.resetStripe();
+		StripeTestUtils.resetStripe();
 	}
 	
 	@SuppressWarnings("unchecked")

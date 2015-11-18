@@ -11,7 +11,7 @@
 		<version>${project.version}</version>
 	</parent>
 
-	<name>DAO Module</name>
+	<name>DAO</name>
 	<description>Data Access Object layer. Connect to MongoDB and retrieve data.</description>
 
 	<dependencies>

@@ -37,6 +37,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
+import com.epickur.api.payment.stripe.StripeTestUtils;
 
 /**
  * Utils class
@@ -118,10 +119,15 @@ public final class Utils {
 			for (Entry<Object, Object> e : prop.entrySet()) {
 				properties.put(e.getKey(), e.getValue());
 			}
+			injectStripeInProperties(properties);
 		} catch (Exception e) {
 			LOG.error("Can't load resource env/local.properties. Please create it and put the right value in it.", e);
 		}
 		return properties;
+	}
+
+	private static void injectStripeInProperties(final Properties properties) {
+		properties.put("stripe.key", StripeTestUtils.getStripeTestKey());
 	}
 
 	/**

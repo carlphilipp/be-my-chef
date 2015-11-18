@@ -42,11 +42,11 @@ import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.helper.EntityGenerator;
+import com.epickur.api.payment.stripe.StripeTestUtils;
 import com.epickur.api.utils.Security;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -65,7 +65,6 @@ public class UserIT {
 	private static String end;
 	private static String id;
 	private static String API_KEY;
-	private static String STRIPE_TEST_KEY;
 
 	private static ObjectMapper mapper;
 
@@ -74,13 +73,15 @@ public class UserIT {
 		InputStreamReader in = null;
 		BufferedReader br = null;
 		try {
+			StripeTestUtils.setupStripe();
+
 			mapper = new ObjectMapper();
 			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
 			String address = prop.getProperty("address");
 			String path = prop.getProperty("api.path");
-			STRIPE_TEST_KEY = prop.getProperty("stripe.key");
+
 			URL_NO_KEY = address + path + "/users";
 			URL_EXECUTE_ORDER = address + path + "/nokey/execute";
 
@@ -127,6 +128,7 @@ public class UserIT {
 
 	@AfterClass
 	public static void afterClass() throws ClientProtocolException, IOException {
+		StripeTestUtils.resetStripe();
 		String jsonMimeType = "application/json";
 		// Delete
 		HttpDelete request = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
@@ -794,9 +796,6 @@ public class UserIT {
 			json.put("currency", "AUD");
 			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
-
-			// Create Stripe card token
-			Stripe.apiKey = STRIPE_TEST_KEY;
 
 			Map<String, Object> tokenParams = new HashMap<String, Object>();
 			Map<String, Object> cardParams = new HashMap<String, Object>();

@@ -29,6 +29,7 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
+import com.epickur.api.payment.stripe.StripeTestUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.APIConnectionException;
@@ -56,7 +57,7 @@ public class AccessRightsOrderIT {
 			IOUtils.closeQuietly(in);
 			String address = prop.getProperty("address");
 			String path = prop.getProperty("api.path");
-			EntityGenerator.setupStripe();
+			StripeTestUtils.setupStripe();
 			END_POINT = address + path;
 			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/api.key"));
 			BufferedReader br = new BufferedReader(in);
@@ -73,7 +74,7 @@ public class AccessRightsOrderIT {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		EntityGenerator.resetStripe();
+		StripeTestUtils.resetStripe();
 		EntityGenerator.cleanDB();
 	}
 

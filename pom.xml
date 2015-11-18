@@ -25,6 +25,7 @@
 		<module>epickur-logging</module>
 		<module>epickur-rest</module>
 		<module>epickur-service</module>
+		<module>epickur-test</module>
 		<module>epickur-utils</module>
 	</modules>
 
@@ -405,7 +406,7 @@
 					<linkXRef>true</linkXRef>
 					<sourceEncoding>utf-8</sourceEncoding>
 					<minimumTokens>100</minimumTokens>
-					<targetJdk>1.7</targetJdk>
+					<targetJdk>${java.version}</targetJdk>
 					<printFailingErrors>true</printFailingErrors>
 					<failOnViolation>true</failOnViolation>
 					<rulesets>

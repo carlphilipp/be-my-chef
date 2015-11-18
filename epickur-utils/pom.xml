@@ -11,7 +11,7 @@
 		<version>${project.version}</version>
 	</parent>
 
-	<name>Utils Module</name>
+	<name>Utils</name>
 	<description>Epickur Utils.</description>
 
 	<dependencies>
@@ -19,6 +19,12 @@
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-entity</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.epickur.api</groupId>
+			<artifactId>epickur-test</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
@@ -145,8 +151,7 @@
 								</goals>
 								<configuration>
 									<files>
-										<file>${project.build.resources[0].directory}/env/aws.properties
-										</file>
+										<file>${project.build.resources[0].directory}/env/aws.properties</file>
 									</files>
 								</configuration>
 							</execution>

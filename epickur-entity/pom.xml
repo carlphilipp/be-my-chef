@@ -11,7 +11,7 @@
 		<version>${project.version}</version>
 	</parent>
 
-	<name>Entity Module</name>
+	<name>Entity</name>
 	<description>Entity data.</description>
 
 	<dependencies>

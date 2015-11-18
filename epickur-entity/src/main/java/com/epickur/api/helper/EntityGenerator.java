@@ -16,7 +16,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,7 +48,6 @@ import com.epickur.api.utils.ObjectMapperWrapperAPI;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
@@ -95,24 +93,6 @@ public class EntityGenerator {
 
 		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
 		EntityGenerator.runShellCommand(cmd);
-	}
-
-	public static void setupStripe() {
-		InputStreamReader in = null;
-		try {
-			in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
-			Properties prop = new Properties();
-			prop.load(in);
-			Stripe.apiKey = prop.getProperty("stripe.key");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(in);
-		}
-	}
-
-	public static void resetStripe() {
-		Stripe.apiKey = null;
 	}
 
 	public static Caterer getCaererObject(final String json) throws EpickurException {

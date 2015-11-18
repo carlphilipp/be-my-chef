@@ -10,8 +10,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.epickur.api.enumeration.Currency;
-import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.payment.stripe.StripePayment;
+import com.epickur.api.payment.stripe.StripeTestUtils;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import com.stripe.model.Token;
@@ -20,12 +20,12 @@ public class StripePaymentIT {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		EntityGenerator.setupStripe();
+		StripeTestUtils.setupStripe();
 	}
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		EntityGenerator.resetStripe();
+		StripeTestUtils.resetStripe();
 	}
 
 	@Test

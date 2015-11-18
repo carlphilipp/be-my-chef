@@ -11,7 +11,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
+import java.io.IOException;
+
 import org.bson.types.ObjectId;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -36,9 +40,7 @@ import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.payment.stripe.StripePayment;
-import com.epickur.api.service.KeyService;
-import com.epickur.api.service.OrderService;
-import com.epickur.api.service.VoucherService;
+import com.epickur.api.payment.stripe.StripeTestUtils;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.email.EmailUtils;
 import com.stripe.exception.APIConnectionException;
@@ -77,6 +79,16 @@ public class OrderServiceTest {
 	private EmailUtils emailUtilsMock;
 	@InjectMocks
 	private OrderService orderBusiness;
+
+	@Before
+	public void setUp() throws IOException {
+		StripeTestUtils.setupStripe();
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		StripeTestUtils.resetStripe();
+	}
 
 	@Test
 	public void testCreate() throws EpickurException {
@@ -322,7 +334,7 @@ public class OrderServiceTest {
 			assertNotNull(orderAfterCharge.getVoucher());
 			assertEquals(DiscountType.AMOUNT, orderAfterCharge.getVoucher().getDiscountType());
 		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
-			fail(stripeMessage);
+			fail(stripeMessage + " " + e.getMessage());
 		}
 	}
 

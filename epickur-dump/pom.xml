@@ -11,7 +11,7 @@
 		<version>${project.version}</version>
 	</parent>
 
-	<name>Database Dump Module</name>
+	<name>Database Dump</name>
 	<description>MongoDB data dump.</description>
 
 	<dependencies>

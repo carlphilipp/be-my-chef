@@ -30,7 +30,8 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.rest.UserRest;
+import com.epickur.api.payment.stripe.StripeTestUtils;
+import com.epickur.api.rest.UserController;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
 import com.stripe.exception.APIConnectionException;
@@ -50,25 +51,25 @@ public class OrderDAOIT {
 	@Mock
 	private ContainerRequestContext context;
 	@InjectMocks
-	private static UserRest useRest;
+	private static UserController userController;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
-		EntityGenerator.setupStripe();
+		StripeTestUtils.setupStripe();
 		idsToDeleteUser = new ArrayList<ObjectId>();
 		idsToDeleteOrder = new HashMap<String, List<ObjectId>>();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		EntityGenerator.resetStripe();
+		StripeTestUtils.resetStripe();
 		for (ObjectId id : idsToDeleteUser) {
-			useRest.delete(id.toHexString());
+			userController.delete(id.toHexString());
 		}
 		for (Entry<String, List<ObjectId>> entry : idsToDeleteOrder.entrySet()) {
 			List<ObjectId> list = entry.getValue();
 			for (ObjectId id : list) {
-				useRest.deleteOneOrder(entry.getKey(), id.toHexString());
+				userController.deleteOneOrder(entry.getKey(), id.toHexString());
 			}
 		}
 	}
