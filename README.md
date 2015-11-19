@@ -16,7 +16,7 @@ Rest -> Service -> DAO -> Utils -> Entity -> Logging
 	   `-> Database dump
 ```
 
-The test modules contains classes for test purpose and is used here and there. 
+The test module contains classes for test purpose and is used here and there. 
 When adding new module, take care of cyclic dependency error: Two modules must not depends on each other.
 
 ###Prerequisites:
@@ -35,11 +35,11 @@ Add Tomcat8 in Eclipse as a server.
 ###Configure
 Two files need to be duplicated and renamed:
 
-`src/main/resources/env/local.template.properties`
+`epickur-utils/src/main/resources/env/local.template.properties`
 
 to
 
-`src/main/resources/env/local.properties`
+`epickur-utils/src/main/resources/env/local.properties`
 
 
 This file contains all the properties of the application. Some are linked with your environment like:
@@ -55,15 +55,15 @@ All those properties need to be updated to fit your environment.
 
 There is also the same things for the test file:
 
-`src/test/resources/test.template.properties`
+`epickur-rest/src/test/resources/test.template.properties`
 
 to
 
-`src/test/resources/test.properties`
+`epickur-rest/test/resources/test.properties`
 
 Another notable file:
 
-`src/main/resources/epickur.properties`
+`epickur-rest/src/main/resources/epickur.properties`
 
 This file contains all the application properties. Maven will inject the value of your local.properties into this fiel. The properties of that file should not be modified.
 
@@ -80,27 +80,27 @@ Lambock is used in the project. Please reefer to [lambock web site](https://proj
 
 MongoDB and Tomcat8 must be started.
 
-Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing.
+~~Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing.~~
 
 ####From Maven:
 
 MongoDB must be started.
 
-Unit testing: `mvn test -P local`
+Unit testing: `mvn test`
 
-Integration testing: `mvn integration-test -P local`
+Integration testing: `mvn integration-test`
 
 
 ###Build
 ####From Maven:
 
-Generate war with Maven: `mvn warify -P local`
+Generate war with Maven: `mvn package`. The generated jar will be in their respective project target directory. The final war in `epickur-rest/target`.
 
-Generate documentation with Maven in local: `mvn site -P local`
+Generate documentation with Maven in local: `mvn site` and then `mvn site:stage` to aggregate all the website in one. Find the result in the parent project `target/stage`.
 
 Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it.
 
-Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Windows or `src/main/scripts/generate-api.sh` from Linux or OSX.
+Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.bat` from Windows or `epickur-rest/src/main/scripts/generate-api.sh` from Linux or OSX.
 
 ###Amazon Web Services
 
