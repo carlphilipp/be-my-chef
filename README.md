@@ -3,7 +3,21 @@ Epickur RESTful API
 
 Welcome to Epickur RESTful API.
 
-For full endpoint documentation please go [here](../../apidoc/index.html).
+For full endpoint documentation please go [here](epickur-rest/apidoc/index.html).
+
+### Multi module project
+
+Dependency is designed that way:
+
+```
+Rest -> Service -> DAO -> Utils -> Entity -> Logging
+	 \                
+	  `-> 3rd Party 
+	   `-> Database dump
+```
+
+The test modules contains classes for test purpose and is used here and there. 
+When adding new module, take care of cyclic dependency error: Two modules must not depends on each other.
 
 ###Prerequisites:
 * Java SDK 8 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html

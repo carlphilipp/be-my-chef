@@ -3,7 +3,21 @@ Epickur RESTful API
 
 Welcome to Epickur RESTful API.
 
-For full endpoint documentation please go [here](../../apidoc/index.html).
+For full endpoint documentation please go [here](epickur-rest/apidoc/index.html).
+
+### Multi module project
+
+Dependency is designed that way:
+
+```
+Rest -> Service -> DAO -> Utils -> Entity -> Logging
+	 \                
+	  `-> 3rd Party 
+	   `-> Database dump
+```
+
+The test module contains classes for test purpose and is used here and there. 
+When adding new module, take care of cyclic dependency error: Two modules must not depends on each other.
 
 ###Prerequisites:
 * Java SDK 8 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
@@ -21,11 +35,11 @@ Add Tomcat8 in Eclipse as a server.
 ###Configure
 Two files need to be duplicated and renamed:
 
-`src/main/resources/env/local.template.properties`
+`epickur-utils/src/main/resources/env/local.template.properties`
 
 to
 
-`src/main/resources/env/local.properties`
+`epickur-utils/src/main/resources/env/local.properties`
 
 
 This file contains all the properties of the application. Some are linked with your environment like:
@@ -41,142 +55,93 @@ All those properties need to be updated to fit your environment.
 
 There is also the same things for the test file:
 
-`src/test/resources/test.template.properties`
+`epickur-rest/src/test/resources/test.template.properties`
 
 to
 
-`src/test/resources/test.properties`
+`epickur-rest/test/resources/test.properties`
 
 Another notable file:
 
-`src/main/resources/epickur.properties`
+`epickur-rest/src/main/resources/epickur.properties`
 
 This file contains all the application properties. Maven will inject the value of your local.properties into this fiel. The properties of that file should not be modified.
 
-Lambock is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE
+Lambock is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE.
 
+###Maven profiles
+* local: The default one that should be used in local
+* aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production server
 
-###Maven profile
+###Test
 
-* local: The default one that should be used in loca
 
-* aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production serve
+####From Eclipse:
 
+MongoDB and Tomcat8 must be started.
 
-###Tes
+~~Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing.~~
 
+####From Maven:
 
+MongoDB must be started.
 
-####From Eclipse
+Unit testing: `mvn test`
 
+Integration testing: `mvn integration-test`
 
-MongoDB and Tomcat8 must be started
 
+###Build
+####From Maven:
 
-Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing
+Generate war with Maven: `mvn package`. The generated jar will be in their respective project target directory. The final war in `epickur-rest/target`.
 
+Generate documentation with Maven in local: `mvn site` and then `mvn site:stage` to aggregate all the website in one. Find the result in the parent project `target/stage`.
 
-####From Maven
+Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it.
 
+Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.bat` from Windows or `epickur-rest/src/main/scripts/generate-api.sh` from Linux or OSX.
 
-MongoDB must be started
+###Amazon Web Services
 
+To deploy on AWS:
 
-Unit testing: `mvn test -P local
+`mvn clean package "antrun:run@upload" -P aws`
 
+The ant plugin run several commands:
 
-Integration testing: `mvn integration-test -P local
+* Stop tomcat
+* Clean webbapps directory
+* Clean other temp directory
+* Push ROOT.war (war generatered) to $TOMCAT/webapps
+* Start tomcat
 
+To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml`
 
+```
+<profiles>
+    <profile>
+      <id>aws</id>
+      <properties>
+        <server.address>ADDRESS</server.address>
+        <server.login>LOGIN_SSH</server.login>
+        <server.password>PASSWORD_SSH</server.password>
+        <server.base>TOMCAT_BASE</server.base>
+      </properties>
+    </profile>
+</profiles>
+```
 
-###Buil
+###Known issue with Eclipse
+Issue with Maven dependencies not deployed
 
-####From Maven
+Bug in m2Clipse
 
+###Known issue with Jersey
+Some errors are not properly routed like #API-22.
+See ticket in Jersey Jira: https://java.net/jira/browse/JERSEY-2722
+It's not a big deal, the developer needs to pass a correctly formed request anyway.
 
-Generate war with Maven: `mvn warify -P local
+###Credits
 
-
-Generate documentation with Maven in local: `mvn site -P local
-
-
-Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it
-
-
-Generate ApiDoc documentation, run `src/main/scripts/generate-api.bat` from Windows or `src/main/scripts/generate-api.sh` from Linux or OSX
-
-
-###Amazon Web Service
-
-
-To deploy on AWS
-
-
-`mvn clean package "antrun:run@upload" -P aws
-
-
-The ant plugin run several commands
-
-
-* Stop tomca
-
-* Clean webbapps director
-
-* Clean other temp director
-
-* Push ROOT.war (war generatered) to $TOMCAT/webapp
-
-* Start tomca
-
-
-To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml
-
-
-``
-
-<profiles
-
-    <profile
-
-      <id>aws</id
-
-      <properties
-
-        <server.address>ADDRESS</server.address
-
-        <server.login>LOGIN_SSH</server.login
-
-        <server.password>PASSWORD_SSH</server.password
-
-        <server.base>TOMCAT_BASE</server.base
-
-      </properties
-
-    </profile
-
-</profiles
-
-``
-
-
-###Known issue with Eclips
-
-Issue with Maven dependencies not deploye
-
-
-Bug in m2Clips
-
-
-###Known issue with Jerse
-
-Some errors are not properly routed like #API-22
-
-See ticket in Jersey Jira: https://java.net/jira/browse/JERSEY-272
-
-It's not a big deal, the developer needs to pass a correctly formed request anyway
-
-
-###Credit
-
-
-[@cpharmant](https://twitter.com/cpharmant
+[@cpharmant](https://twitter.com/cpharmant)
