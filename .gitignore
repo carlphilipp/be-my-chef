@@ -4,3 +4,12 @@
 .project
 .settings/*
 /.settings/
+epickur-3rdparty/
+epickur-dao/
+epickur-dump/
+epickur-entity/
+epickur-logging/
+epickur-rest/
+epickur-service/
+epickur-test/
+epickur-utils/
