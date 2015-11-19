@@ -24,7 +24,6 @@
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<!-- Servlet 3.1 -->

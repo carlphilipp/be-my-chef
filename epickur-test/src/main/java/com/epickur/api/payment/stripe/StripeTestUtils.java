@@ -1,7 +1,7 @@
 package com.epickur.api.payment.stripe;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -32,9 +32,9 @@ public class StripeTestUtils {
 	}
 
 	private static String getStripeProperty() throws IOException {
-		InputStreamReader in = null;
+		InputStream in = null;
 		try {
-			in = new InputStreamReader(StripeTestUtils.class.getClass().getResourceAsStream("/stripe-test.properties"));
+			in = StripeTestUtils.class.getResource("/stripe-test.properties").openStream();
 			Properties prop = new Properties();
 			prop.load(in);
 			return prop.getProperty("stripe.key");

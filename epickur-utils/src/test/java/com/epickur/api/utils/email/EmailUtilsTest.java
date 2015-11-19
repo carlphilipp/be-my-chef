@@ -11,6 +11,7 @@ import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.enumeration.Currency;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
@@ -46,6 +47,9 @@ public class EmailUtilsTest {
 
 		Order order = new Order();
 		order.setId(new ObjectId());
+		order.setQuantity(1);
+		order.setAmount(15);
+		order.setCurrency(Currency.AUD);
 		// order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();
 		dish.setName("Kebab fries");

@@ -114,14 +114,18 @@ public final class Utils {
 	 */
 	private static Properties loadLocal(final Properties properties) {
 		Properties prop = new Properties();
+		InputStream in = null;
 		try {
-			prop.load(Utils.class.getClassLoader().getResourceAsStream("env/local.properties"));
+			in = Utils.class.getResource("/env/local.properties").openStream();
+			prop.load(in);
 			for (Entry<Object, Object> e : prop.entrySet()) {
 				properties.put(e.getKey(), e.getValue());
 			}
 			injectStripeInProperties(properties);
 		} catch (Exception e) {
 			LOG.error("Can't load resource env/local.properties. Please create it and put the right value in it.", e);
+		} finally {
+			IOUtils.closeQuietly(in);
 		}
 		return properties;
 	}
@@ -302,7 +306,6 @@ public final class Utils {
 			IOUtils.closeQuietly(origin);
 		}
 	}
-	
 
 	/**
 	 * @return A random voucher code.

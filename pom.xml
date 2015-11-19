@@ -6,11 +6,11 @@
 	<artifactId>epickur-parent</artifactId>
 	<version>2.0.0.RELEASE</version>
 	<packaging>pom</packaging>
-	
+
 	<name>Parent</name>
 	<url>https://api.bemychef.com.au</url>
 	<description>The API that allow users to connect to Epickur data.</description>
-	
+
 	<prerequisites>
 		<maven>3.3.3</maven>
 	</prerequisites>
@@ -70,7 +70,7 @@
 		<jersey.version>2.22.1</jersey.version>
 		<junit.version>4.12</junit.version>
 		<mongo.version>3.1.1</mongo.version>
-		
+
 		<epickur.3rdparty.version>2.0.0.RELEASE</epickur.3rdparty.version>
 		<epickur.dao.version>2.0.0.RELEASE</epickur.dao.version>
 		<epickur.dump.version>2.0.0.RELEASE</epickur.dump.version>
@@ -513,7 +513,7 @@
 				<artifactId>epickur-utils</artifactId>
 				<version>${epickur.utils.version}</version>
 			</dependency>
-			
+
 			<!-- MongoDB -->
 			<dependency>
 				<groupId>org.mongodb</groupId>
