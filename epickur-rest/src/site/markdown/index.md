@@ -1,6 +1,7 @@
 REST Module
 ===================
 The module contains:
+
 * REST endpoints.
 * Request and response filters.
 * Exception mapper handler.

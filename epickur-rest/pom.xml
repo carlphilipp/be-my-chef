@@ -2,14 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>epickur-rest</artifactId>
-	<packaging>war</packaging>
-
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
 		<version>${project.version}</version>
 	</parent>
+
+	<artifactId>epickur-rest</artifactId>
+	<packaging>war</packaging>
+	<version>${epickur.rest.version}</version>
 
 	<name>REST</name>
 	<description>REST Epickur Module.</description>
@@ -19,15 +20,21 @@
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-service</artifactId>
-			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-test</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Servlet 3.1 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

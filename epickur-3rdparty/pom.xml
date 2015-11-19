@@ -1,31 +1,37 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<artifactId>epickur-3rdparty</artifactId>
-	<packaging>jar</packaging>
-
+	
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
 		<version>${project.version}</version>
 	</parent>
 
+	<artifactId>epickur-3rdparty</artifactId>
+	<packaging>jar</packaging>
+	<version>${epickur.3rdparty.version}</version>
+
 	<name>3rd Party</name>
 	<description>Connect to 3rd party providers.</description>
 
 	<dependencies>
+		<!-- Epickur -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-utils</artifactId>
-			<version>${project.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-test</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<!-- Amazon API -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.10.32</version>
 		</dependency>
 	</dependencies>
 

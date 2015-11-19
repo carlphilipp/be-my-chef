@@ -5,7 +5,7 @@ import static com.epickur.api.utils.Info.ORDER_COLL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -71,7 +71,7 @@ public class OrderDAO extends CrudDAO<Order> {
 
 	@Override
 	public List<Order> readAll() throws EpickurException {
-		throw new NotImplementedException();
+		throw new NotImplementedException("Not implemented yet");
 	}
 
 	/**

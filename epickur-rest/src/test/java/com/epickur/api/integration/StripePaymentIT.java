@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.epickur.api.enumeration.Currency;
@@ -17,14 +17,14 @@ import com.stripe.model.Charge;
 import com.stripe.model.Token;
 
 public class StripePaymentIT {
-	
-	@BeforeClass
-	public static void setUpBeforeClass() {
+
+	@Before
+	public void setUpBeforeClass() {
 		StripeTestUtils.setupStripe();
 	}
-	
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+
+	@After
+	public void tearDownAfterClass() throws Exception {
 		StripeTestUtils.resetStripe();
 	}
 

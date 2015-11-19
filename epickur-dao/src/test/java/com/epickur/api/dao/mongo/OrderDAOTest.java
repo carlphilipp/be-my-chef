@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;

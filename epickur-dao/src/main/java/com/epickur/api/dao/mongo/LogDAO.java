@@ -2,7 +2,7 @@ package com.epickur.api.dao.mongo;
 
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -30,7 +30,7 @@ public final class LogDAO extends CrudDAO<Log> {
 
 	@Override
 	public List<Log> readAll() throws EpickurException {
-		throw new NotImplementedException();
+		throw new NotImplementedException("Not implemented yet");
 	}
 
 	@Override
@@ -43,16 +43,16 @@ public final class LogDAO extends CrudDAO<Log> {
 
 	@Override
 	public Log read(final String id) throws EpickurException {
-		throw new NotImplementedException();
+		throw new NotImplementedException("Not implemented yet");
 	}
 
 	@Override
 	public Log update(final Log obj) throws EpickurException {
-		throw new NotImplementedException();
+		throw new NotImplementedException("Not implemented yet");
 	}
 	
 	@Override
 	public boolean delete(final String id){
-		throw new NotImplementedException();
+		throw new NotImplementedException("Not implemented yet");
 	}
 }

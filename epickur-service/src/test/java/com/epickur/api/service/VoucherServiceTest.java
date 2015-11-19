@@ -33,7 +33,6 @@ public class VoucherServiceTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
 	@Mock
 	private VoucherDAO voucherDAO;
 	@InjectMocks

@@ -2,31 +2,83 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>epickur-utils</artifactId>
-	<packaging>jar</packaging>
-
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
 		<version>${project.version}</version>
 	</parent>
 
+	<artifactId>epickur-utils</artifactId>
+	<packaging>jar</packaging>
+	<version>${epickur.utils.version}</version>
+
 	<name>Utils</name>
 	<description>Epickur Utils.</description>
 
 	<dependencies>
-		<!-- Epickur dependencies -->
+		<!-- Epickur -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-entity</artifactId>
-			<version>${project.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-test</artifactId>
-			<version>${project.version}</version>
 		</dependency>
+
+		<!--Compress -->
+		<dependency>
+			<groupId>org.xeustechnologies</groupId>
+			<artifactId>jtar</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<!-- Generate PDF -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>2.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.7</version>
+		</dependency>
+
+		<!-- Mandrill Mails -->
+		<dependency>
+			<groupId>com.cribbstechnologies.clients</groupId>
+			<artifactId>mandrillClient</artifactId>
+			<version>1.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-utils</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 	</dependencies>
 
 	<reporting>
@@ -62,7 +114,7 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	
+
 	<profiles>
 		<profile>
 			<id>local</id>

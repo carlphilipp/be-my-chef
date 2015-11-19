@@ -2,24 +2,50 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>epickur-entity</artifactId>
-	<packaging>jar</packaging>
-
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
 		<version>${project.version}</version>
 	</parent>
+	
+	<artifactId>epickur-entity</artifactId>
+	<packaging>jar</packaging>
+	<version>${epickur.entity.version}</version>
 
 	<name>Entity</name>
 	<description>Entity data.</description>
 
 	<dependencies>
-		<!-- Epickur dependencies -->
+		<!-- Epickur -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-logging</artifactId>
-			<version>${project.version}</version>
+		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.6</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Phone lib -->
+		<dependency>
+			<groupId>com.googlecode.libphonenumber</groupId>
+			<artifactId>libphonenumber</artifactId>
+		</dependency>
+
+		<!-- Stripe payment -->
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+		</dependency>
+
+		<!-- MongoDB -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
 		</dependency>
 	</dependencies>
 

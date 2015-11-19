@@ -20,7 +20,6 @@ import com.epickur.api.exception.HereException;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.util.JSONParseException;
 
 /**
  * Access to Here APIs.
@@ -181,7 +180,7 @@ public class Here {
 					}
 				}
 			}
-		} catch (IndexOutOfBoundsException | JSONParseException | IOException e) {
+		} catch (IndexOutOfBoundsException | IOException e) {
 			throw new HereException("Geolocation error", e);
 		}
 		if (geo == null) {
