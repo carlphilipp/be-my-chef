@@ -7,8 +7,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.never;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
+import org.joda.time.DateTime;
 
 import org.bson.types.ObjectId;
 import org.junit.Rule;
@@ -75,14 +81,26 @@ public class OrderServiceTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		order.setStatus(OrderStatus.PENDING);
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
+		orderAfterCreate = spy(orderAfterCreate);
+		order = spy(order);
 
-		when(userDAOMock.read(anyString())).thenReturn(user);
+		when(userDAOMock.read(user.getId().toHexString())).thenReturn(user);
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
 
 		Order actual = orderBusiness.create(user.getId().toHexString(), order);
 
 		assertNotNull(actual);
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
+		
+		verify(order, times(1)).setCreatedBy(user.getId());
+		verify(order, times(1)).setStatus(OrderStatus.PENDING);
+		verify(order, times(1)).setCreatedAt(any(DateTime.class));
+		verify(order, times(1)).setUpdatedAt(any(DateTime.class));
+		verify(userDAOMock, times(1)).read(user.getId().toHexString());
+		verify(orderDAOMock, times(1)).create(order);
+		verify(order, times(1)).getVoucher();
+		verify(voucherBusinessMock, never()).validateVoucher(anyString());
+		verify(emailUtilsMock, times(1)).emailNewOrder(eq(user), eq(orderAfterCreate), anyString());
 	}
 
 	@Test
@@ -94,6 +112,8 @@ public class OrderServiceTest {
 		voucher.setCode(EntityGenerator.generateRandomString());
 		order.setVoucher(voucher);
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
+		orderAfterCreate = spy(orderAfterCreate);
+		order = spy(order);
 
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
@@ -103,6 +123,16 @@ public class OrderServiceTest {
 		assertNotNull(actual);
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
 		assertNotNull(actual.getVoucher());
+		
+		verify(order, times(1)).setCreatedBy(user.getId());
+		verify(order, times(1)).setStatus(OrderStatus.PENDING);
+		verify(order, times(1)).setCreatedAt(any(DateTime.class));
+		verify(order, times(1)).setUpdatedAt(any(DateTime.class));
+		verify(userDAOMock, times(1)).read(user.getId().toHexString());
+		verify(orderDAOMock, times(1)).create(order);
+		verify(order, times(1)).getVoucher();
+		verify(voucherBusinessMock, times(1)).validateVoucher(voucher.getCode());
+		verify(emailUtilsMock, times(1)).emailNewOrder(eq(user), eq(orderAfterCreate), anyString());
 	}
 
 	@Test
@@ -111,7 +141,13 @@ public class OrderServiceTest {
 		thrown.expectMessage("User not found");
 
 		Order order = EntityGenerator.generateRandomOrder();
-		orderBusiness.create(new ObjectId().toHexString(), order);
+		String userId = new ObjectId().toHexString();
+		try{
+			orderBusiness.create(userId, order);
+		} finally {
+			verify(userDAOMock, times(1)).read(userId);
+			verify(orderDAOMock, never()).create(any(Order.class));
+		}
 	}
 
 	@Test
@@ -124,6 +160,8 @@ public class OrderServiceTest {
 		voucher.setExpirationType(ExpirationType.ONETIME);
 		order.setVoucher(voucher);
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
+		orderAfterCreate = spy(orderAfterCreate);
+		order = spy(order);
 
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
@@ -132,6 +170,16 @@ public class OrderServiceTest {
 		assertNotNull(actual);
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
 		assertEquals(ExpirationType.ONETIME, actual.getVoucher().getExpirationType());
+		
+		verify(order, times(1)).setCreatedBy(user.getId());
+		verify(order, times(1)).setStatus(OrderStatus.PENDING);
+		verify(order, times(1)).setCreatedAt(any(DateTime.class));
+		verify(order, times(1)).setUpdatedAt(any(DateTime.class));
+		verify(userDAOMock, times(1)).read(user.getId().toHexString());
+		verify(orderDAOMock, times(1)).create(order);
+		verify(order, times(1)).getVoucher();
+		verify(voucherBusinessMock, times(1)).validateVoucher(voucher.getCode());
+		verify(emailUtilsMock, times(1)).emailNewOrder(eq(user), eq(orderAfterCreate), anyString());
 	}
 
 	@Test

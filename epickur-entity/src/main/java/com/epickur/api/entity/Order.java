@@ -45,7 +45,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public final class Order extends AbstractMainDBEntity {
+public class Order extends AbstractMainDBEntity {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Order.class.getSimpleName());

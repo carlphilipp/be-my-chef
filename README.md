@@ -11,9 +11,9 @@ Dependency is designed that way:
 
 ```
 Rest -> Service -> DAO -> Utils -> Entity -> Logging
-	 \                
-	  `-> 3rd Party 
-	   `-> Database dump
+	    \                
+	     `-> 3rd Party 
+	      `-> Database dump
 ```
 
 The test module contains classes for test purpose and is used here and there. 
