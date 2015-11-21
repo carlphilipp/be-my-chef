@@ -39,9 +39,9 @@ public class EmailUtils {
 	 * @param email
 	 *            The email
 	 */
-	public void emailNewRegistration(final String name, final String first, final String code, final String email) {
-		emailNewRegistrationUser(name, first, code, email);
-		emailNewRegistrationAdmin(name, email);
+	public void emailNewRegistration(final User user, final String code) {
+		emailNewRegistrationUser(user, code);
+		emailNewRegistrationAdmin(user);
 	}
 
 	/**
@@ -54,11 +54,11 @@ public class EmailUtils {
 	 * @param email
 	 *            The email
 	 */
-	private void emailNewRegistrationUser(final String name, final String first, final String code, final String email) {
+	private void emailNewRegistrationUser(final User user, String code) {
 		// Convert data to use email template
-		Map<String, String> emailData = EmailTemplate.convertToDataNewRegistrationUser(name, first, email, code);
+		Map<String, String> emailData = EmailTemplate.convertToDataNewRegistrationUser(user, code);
 		// Send an email to the user
-		this.email.sendMail(EmailType.REGISTRATION_USER, emailData, new String[] { email });
+		this.email.sendMail(EmailType.REGISTRATION_USER, emailData, new String[] { user.getEmail() });
 	}
 
 	/**
@@ -67,9 +67,9 @@ public class EmailUtils {
 	 * @param email
 	 *            The user email
 	 */
-	private void emailNewRegistrationAdmin(final String name, final String email) {
+	private void emailNewRegistrationAdmin(final User user) {
 		// Convert data to use email template
-		Map<String, String> emailDataAdmin = EmailTemplate.convertToDataNewRegistrationAdmins(name, email);
+		Map<String, String> emailDataAdmin = EmailTemplate.convertToDataNewRegistrationAdmins(user);
 		// Send an email to admins
 		this.email.sendMail(EmailType.REGISTRATION_ADMIN, emailDataAdmin, Info.admins.toArray(new String[Info.admins.size()]));
 	}
@@ -270,7 +270,7 @@ public class EmailUtils {
 	 *            The order
 	 */
 	private void emailCancelOrderUser(final User user, final Order order) {
-		Map<String, String> emailData = EmailTemplate.convertToDataCancelOrderCaterer(user, order);
+		Map<String, String> emailData = EmailTemplate.convertToDataCancelOrderUser(user, order);
 		this.email.sendMail(EmailType.ORDER_USER_CANCEL, emailData, new String[] { user.getEmail() });
 	}
 

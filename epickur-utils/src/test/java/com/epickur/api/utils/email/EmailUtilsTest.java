@@ -35,7 +35,9 @@ public class EmailUtilsTest {
 
 	@Test
 	public void emailNewRegistrationTest() {
-		emailUtils.emailNewRegistration("carl", "Carl-Philipp", "codeeddd", EMAIL_TEST);
+		User user = EntityGenerator.generateRandomUserWithId();
+		user.setCode(EntityGenerator.generateRandomString());
+		emailUtils.emailNewRegistration(user, user.getCode());
 	}
 
 	@Test
@@ -64,11 +66,11 @@ public class EmailUtilsTest {
 
 	@Test
 	public void emailDeclineOrderTest() throws EpickurDBException {
-		User user = new User();
+		User user = EntityGenerator.generateRandomUserWithId();
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
 
-		Order order = new Order();
+		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setId(new ObjectId());
 		// order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();
@@ -83,11 +85,11 @@ public class EmailUtilsTest {
 
 	@Test
 	public void emailSuccessOrderTest() throws EpickurDBException {
-		User user = new User();
+		User user = EntityGenerator.generateRandomUserWithId();
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
 
-		Order order = new Order();
+		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setId(new ObjectId());
 		// order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();
@@ -102,11 +104,11 @@ public class EmailUtilsTest {
 
 	@Test
 	public void emailFailOrderTest() throws EpickurDBException {
-		User user = new User();
+		User user = EntityGenerator.generateRandomUserWithId();
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
 
-		Order order = new Order();
+		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setId(new ObjectId());
 		// order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();
@@ -121,11 +123,11 @@ public class EmailUtilsTest {
 
 	@Test
 	public void emailCancelOrder() throws EpickurDBException {
-		User user = new User();
+		User user = EntityGenerator.generateRandomUserWithId();
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
 
-		Order order = new Order();
+		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setId(new ObjectId());
 		// order.setReadableId(dao.getNextId());
 		Dish dish = new Dish();

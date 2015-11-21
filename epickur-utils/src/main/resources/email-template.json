@@ -30,7 +30,7 @@
 		"file":"order_user_declined.html"
 	},
 	"order_admins_declined": {
-		"subject":"Order declined #@@READABLE_ORDER_ID@@",
+		"subject":"Order #@@READABLE_ORDER_ID@@ declined",
 		"folder":"order/decline",
 		"file":"order_admins_declined.html"
 	},
@@ -40,42 +40,42 @@
 		"file":"order_user_success.html"
 	},
 	"order_caterer_success": {
-		"subject":"BE MY CHEF - Order confirmed #@@READABLE_ORDER_ID@@",
+		"subject":"BE MY CHEF - Order #@@READABLE_ORDER_ID@@ accepted",
 		"folder":"order/accept/success",
 		"file":"order_caterer_success.html"
 	},
 	"order_admins_success":	{
-		"subject":"Order confirmed #@@READABLE_ORDER_ID@@",
+		"subject":"Order #@@READABLE_ORDER_ID@@ accepted!",
 		"folder":"order/accept/success",
 		"file":"order_admins_success.html"
 	},
 	"order_user_fail": {
-		"subject":"BE MY CHEF - Order canceled #@@READABLE_ORDER_ID@@",
+		"subject":"BE MY CHEF - Your order #@@READABLE_ORDER_ID@@ has failed",
 		"folder":"order/accept/fail",
 		"file":"order_user_fail.html"
 	},
 	"order_caterer_fail": {
-		"subject":"BE MY CHEF - Order canceled #@@READABLE_ORDER_ID@@",
+		"subject":"BE MY CHEF - Order #@@READABLE_ORDER_ID@@ failed",
 		"folder":"order/accept/fail",
 		"file":"order_caterer_fail.html"
 	},
 	"order_admins_fail": {
-		"subject":"Order canceled #@@READABLE_ORDER_ID@@",
+		"subject":"Order #@@READABLE_ORDER_ID@@ failed",
 		"folder":"order/accept/fail",
 		"file":"order_admins_fail.html"
 	},
 	"order_user_cancel": {
-		"subject":"BE MY CHEF - Order canceled #@@READABLE_ORDER_ID@@",
+		"subject":"BE MY CHEF - Your order #@@READABLE_ORDER_ID@@ has been canceled",
 		"folder":"order/cancel",
 		"file":"order_user_cancel.html"
 	},
 	"order_caterer_cancel": {
-		"subject":"BE MY CHEF - Order canceled #@@READABLE_ORDER_ID@@",
+		"subject":"BE MY CHEF - Order #@@READABLE_ORDER_ID@@ canceled",
 		"folder":"order/cancel",
 		"file":"order_caterer_cancel.html"
 	},
 	"order_admins_cancel": {
-		"subject":"Order canceled #@@READABLE_ORDER_ID@@",
+		"subject":"Order #@@READABLE_ORDER_ID@@ canceled",
 		"folder":"order/cancel",
 		"file":"order_admins_cancel.html"
 	},

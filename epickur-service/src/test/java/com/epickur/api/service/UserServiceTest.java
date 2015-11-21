@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
@@ -12,7 +12,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
 
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -81,10 +80,7 @@ public class UserServiceTest {
 		verify(userAfterCreate, times(1)).setPassword(null);
 		verify(userAfterCreate, times(1)).setRole(null);
 		verify(userAfterCreate, times(1)).setCode(anyString());
-		String name = userAfterCreate.getName();
-		String email = userAfterCreate.getEmail();
-		String first = userAfterCreate.getFirst();
-		verify(emailUtilsMock, times(1)).emailNewRegistration(eq(name), eq(first), anyString(), eq(email));
+		verify(emailUtilsMock, times(1)).emailNewRegistration(userAfterCreate, actual.getCode());
 	}
 
 	@Test
@@ -101,7 +97,7 @@ public class UserServiceTest {
 		} finally {
 			verify(userDAOMock, times(1)).exists(user.getName(), user.getEmail());
 			verify(userDAOMock, never()).create(user);
-			verify(emailUtilsMock, never()).emailNewRegistration(anyString(), anyString(), anyString(), anyString());
+			verify(emailUtilsMock, never()).emailNewRegistration(any(User.class), anyString());
 		}
 	}
 
@@ -335,7 +331,7 @@ public class UserServiceTest {
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 
 		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(userAfterRead);
-		
+
 		try {
 			service.resetPasswordFirstStep(user.getEmail());
 		} finally {
@@ -359,16 +355,22 @@ public class UserServiceTest {
 
 	@Test
 	public void testResetPasswordSecond() throws EpickurException {
-		User user = EntityGenerator.generateRandomUser();
+		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
+		userAfterRead = spy(userAfterRead);
 		String resetCode = Security.createResetCode(userAfterRead.getId(), userAfterRead.getEmail());
 		String newPassword = PasswordManager.createPasswordManager(user.getPassword()).createDBPassword();
 		userAfterRead.setPassword(newPassword);
 
-		when(userDAOMock.read(anyString())).thenReturn(userAfterRead);
-		when(userDAOMock.update((User) anyObject())).thenReturn(userAfterRead);
+		when(userDAOMock.read(user.getId().toHexString())).thenReturn(userAfterRead);
+		when(userDAOMock.update(userAfterRead)).thenReturn(userAfterRead);
 
-		service.resetPasswordSecondStep(anyString(), "newPass", resetCode);
+		service.resetPasswordSecondStep(user.getId().toHexString(), "newPass", resetCode);
+
+		verify(userDAOMock, times(1)).read(user.getId().toHexString());
+		verify(userDAOMock, times(1)).update(userAfterRead);
+		verify(userAfterRead, times(2)).setPassword(anyString());
+		verify(userAfterRead, times(1)).setRole(null);
 	}
 
 	@Test
@@ -376,12 +378,16 @@ public class UserServiceTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		User user = EntityGenerator.generateRandomUser();
+		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userDAOMock.readWithEmail(anyString())).thenReturn(userAfterCreate);
-
-		service.resetPasswordSecondStep("", "", "");
+		when(userDAOMock.readWithEmail(user.getId().toHexString())).thenReturn(userAfterCreate);
+		try {
+			service.resetPasswordSecondStep(user.getId().toHexString(), "", "");
+		} finally {
+			verify(userDAOMock, times(1)).read(user.getId().toHexString());
+			verify(userDAOMock, never()).update(any(User.class));
+		}
 	}
 
 	@Test
@@ -389,18 +395,31 @@ public class UserServiceTest {
 		thrown.expect(EpickurException.class);
 		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
 
-		User user = EntityGenerator.generateRandomUser();
+		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userDAOMock.read(anyString())).thenReturn(userAfterCreate);
-
-		service.resetPasswordSecondStep("", "", "");
+		when(userDAOMock.read(user.getId().toHexString())).thenReturn(userAfterCreate);
+		try {
+			service.resetPasswordSecondStep(user.getId().toHexString(), "", "");
+		} finally {
+			verify(userDAOMock, times(1)).read(user.getId().toHexString());
+			verify(userDAOMock, never()).update(any(User.class));
+		}
 	}
 
 	@Test
 	public void testSuscribeToNewsletter() {
 		User user = EntityGenerator.generateRandomUser();
+		user = spy(user);
+
 		service.suscribeToNewsletter(user);
+
+		verify(user, times(2)).getFirst();
+		verify(user, times(2)).getLast();
+		verify(user, times(2)).getEmail();
+		verify(user, times(1)).getCountry();
+		verify(user, times(1)).getState();
+		verify(user, times(1)).getZipcode();
 	}
 
 	@Test
@@ -408,6 +427,15 @@ public class UserServiceTest {
 		User user = EntityGenerator.generateRandomUser();
 		user.setFirst(null);
 		user.setLast(null);
+		user = spy(user);
+
 		service.suscribeToNewsletter(user);
+
+		verify(user, times(1)).getFirst();
+		verify(user, times(1)).getLast();
+		verify(user, times(2)).getEmail();
+		verify(user, times(1)).getCountry();
+		verify(user, times(1)).getState();
+		verify(user, times(1)).getZipcode();
 	}
 }

@@ -84,7 +84,7 @@ public class UserService {
 
 		User userCreated = userDAO.create(user);
 
-		emailUtils.emailNewRegistration(user.getName(), user.getFirst(), code, user.getEmail());
+		emailUtils.emailNewRegistration(userCreated, code);
 
 		// We do not send back the password
 		userCreated.setPassword(null);
