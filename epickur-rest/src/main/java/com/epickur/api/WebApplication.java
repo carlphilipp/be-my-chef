@@ -28,12 +28,7 @@ public class WebApplication extends ResourceConfig {
 		property(ServerProperties.APPLICATION_NAME, "epickur");
 		property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
 		property(ServerProperties.TRACING, "ALL");
-		property(ServerProperties.TRACING_THRESHOLD, "SUMMARY");	
-		
-		// Quartz
-		property("quartz:shutdown-on-unload", true);
-		property("quartz:wait-on-shutdown", true);
-		property("quartz:start-scheduler-on-load", true);
+		property(ServerProperties.TRACING_THRESHOLD, "SUMMARY");
 	}
 
 	/**

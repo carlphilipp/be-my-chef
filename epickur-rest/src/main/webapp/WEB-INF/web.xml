@@ -25,10 +25,22 @@
 		<location>/WEB-INF/errorpages/ErrorPage500.jsp</location>
 	</error-page>
 
-	<!-- Quartz property to avoid memory leak on tomcat stop -->
+    <!-- Quartz property to avoid memory leak on tomcat stop -->
+    <context-param>
+       <param-name>quartz:shutdown-on-unload</param-name>
+       <param-value>true</param-value>
+    </context-param>
+    <context-param>
+       <param-name>quartz:wait-on-shutdown</param-name>
+       <param-value>true</param-value>
+    </context-param>
+    <context-param>
+       <param-name>quartz:start-scheduler-on-load</param-name>
+       <param-value>true</param-value>
+    </context-param>
 	<listener>
       <listener-class>
-        org.quartz.ee.servlet.QuartzInitializerListener
+       	org.quartz.ee.servlet.QuartzInitializerListener
       </listener-class>
   </listener>
 </web-app>

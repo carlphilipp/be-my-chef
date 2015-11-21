@@ -10,7 +10,7 @@
 
 	<artifactId>epickur-rest</artifactId>
 	<packaging>war</packaging>
-	<version>${epickur.rest.version}</version>
+	<version>2.0.0.RELEASE</version>
 
 	<name>REST</name>
 	<description>REST Epickur Module.</description>

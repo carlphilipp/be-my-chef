@@ -2,14 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>epickur-logging</artifactId>
-	<packaging>jar</packaging>
-
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
 		<version>${project.version}</version>
 	</parent>
+	
+	<artifactId>epickur-logging</artifactId>
+	<packaging>jar</packaging>
+	<version>2.0.0.RELEASE</version>
 
 	<name>Logging</name>
 	<description>Logging that will be used in all the other modules.</description>

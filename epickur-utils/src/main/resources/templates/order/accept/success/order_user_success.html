@@ -1,12 +1,13 @@
-<h2>Hi @@FIRST@@,</h2>
-Thanks for ordering with @@TEAM_NAME@@.<br>
-We received an order for @@CATERER_NAME@@,<br>
-Invoice number #@@READABLE_ORDER_ID@@<br>
-[x] portions of [delicious dish 1]              [price per unit]      [total price]<br>
-[x] portions of [delicious dish 2]              [price per unit]      [total price]<br>
-[total price]<br>
-All prices include GST.<br>
-Your order will be ready to pick up at [x]pm.<br>
+<h2>Hi @@USER_FIRST@@,</h2>
+<p>
+  Your order for <strong>@@ORDER_QUANTITY@@</strong> servings of <strong>@@DISH_NAME@@</strong>
+  for a value of <strong>@@ORDER_CURRENCY@@@@ORDER_AMOUNT@@</strong> with pickup
+  at <strong>@@ORDER_PICKUP_DATE@@</strong> has been <strong>accepted</strong>!
+</p>
+<p>
+  Please pick up your dish ingredients at @@CATERER_NAME@@ (@@CATERER_PHONE@@) 
+  at <strong>@@ORDER_PICKUP_DATE@@</strong> or slightly after.
+</p>
 <div>
   <p style="padding: 0 0 10px 0;">
     Bon App&eacute;tit!<br>

@@ -58,7 +58,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	 * @return The creation date
 	 */
 	@JsonSerialize(using = DateSerializer.class)
-	public final DateTime getCreatedAt() {
+	public DateTime getCreatedAt() {
 		return createdAt;
 	}
 
@@ -67,7 +67,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	 *            The creation date
 	 */
 	@JsonDeserialize(using = DateDeserializer.class)
-	public final void setCreatedAt(final DateTime createdAt) {
+	public void setCreatedAt(final DateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
@@ -75,7 +75,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	 * @return The updated date
 	 */
 	@JsonSerialize(using = DateSerializer.class)
-	public final DateTime getUpdatedAt() {
+	public DateTime getUpdatedAt() {
 		return updatedAt;
 	}
 
@@ -84,7 +84,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	 *            The updated date
 	 */
 	@JsonDeserialize(using = DateDeserializer.class)
-	public final void setUpdatedAt(final DateTime updatedAt) {
+	public void setUpdatedAt(final DateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 

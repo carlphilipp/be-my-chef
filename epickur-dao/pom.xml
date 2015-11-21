@@ -10,7 +10,7 @@
 
 	<artifactId>epickur-dao</artifactId>
 	<packaging>jar</packaging>
-	<version>${epickur.dao.version}</version>
+	<version>2.0.0.RELEASE</version>
 
 	<name>DAO</name>
 	<description>Data Access Object layer. Connect to MongoDB and retrieve data.</description>
