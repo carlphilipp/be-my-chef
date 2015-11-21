@@ -110,7 +110,6 @@ public final class UserValidator extends Validator {
 					if (!workingTimes.canBePickup((String) result[0], (Integer) result[1])) {
 						LOG.info("1: " + (String) result[0]);
 						LOG.info("2: " + result[1]);
-						LOG.info("Prep time: " + workingTimes.getMinimumPreparationTime());
 						try {
 							LOG.info("Hours: " + workingTimes.getHours().toStringAPIView());
 						} catch (EpickurParsingException e) {
