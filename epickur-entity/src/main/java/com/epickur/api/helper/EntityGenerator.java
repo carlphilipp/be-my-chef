@@ -404,18 +404,6 @@ public class EntityGenerator {
 		return user;
 	}
 
-	public static Token generateToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
-		cardParams.put("number", "4242424242424242");
-		cardParams.put("exp_month", 2);
-		cardParams.put("exp_year", 2016);
-		cardParams.put("cvc", "314");
-		tokenParams.put("card", cardParams);
-		Token token = Token.create(tokenParams);
-		return token;
-	}
-
 	public static User mockUserAfterCreate(final User user) {
 		User userMock = user.clone();
 		userMock.setId(new ObjectId());

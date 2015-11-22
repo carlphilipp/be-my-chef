@@ -14,30 +14,26 @@ import com.epickur.api.utils.Info;
  *
  */
 public class EmailUtils {
-	
+
 	private Email email;
-	
+
 	/**
 	 * Constructor
 	 */
 	public EmailUtils() {
 		this.email = new Email();
 	}
-	
-	public EmailUtils(final Email email){
+
+	public EmailUtils(final Email email) {
 		this.email = email;
 	}
 
 	// Registration
 	/**
-	 * @param name
-	 *            The user name
-	 * @param first
-	 *            The user first name
+	 * @param user
+	 *            The user
 	 * @param code
 	 *            The code
-	 * @param email
-	 *            The email
 	 */
 	public void emailNewRegistration(final User user, final String code) {
 		emailNewRegistrationUser(user, code);
@@ -297,12 +293,10 @@ public class EmailUtils {
 	}
 
 	/**
-	 * @param email
-	 *            The email
-	 * @param userId
-	 *            The user id
+	 * @param user
+	 *            The user.
 	 * @param resetCode
-	 *            The reset code
+	 *            The reset code.
 	 */
 	public void resetPassword(final User user, final String resetCode) {
 		Map<String, String> emailData = EmailTemplate.convertToDataResetUserPassword(user, resetCode);

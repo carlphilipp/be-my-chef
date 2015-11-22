@@ -136,15 +136,11 @@ public final class EmailTemplate {
 
 	// Registration
 	/**
-	 * @param name
-	 *            The user name
-	 * @param first
-	 *            The user first name
-	 * @param email
-	 *            The user email
+	 * @param user
+	 *            The user.
 	 * @param code
-	 *            The code
-	 * @return The map
+	 *            The code.
+	 * @return The map.
 	 */
 	public static Map<String, String> convertToDataNewRegistrationUser(final User user, String code) {
 		Map<String, String> data = getData(user, null);
@@ -154,12 +150,8 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * Convert data to registration admins
-	 * 
-	 * @param name
-	 *            The user name
-	 * @param email
-	 *            The email
+	 * @param user
+	 *            The user.
 	 * @return A map
 	 */
 	public static Map<String, String> convertToDataNewRegistrationAdmins(final User user) {
@@ -340,38 +332,36 @@ public final class EmailTemplate {
 	}
 
 	/**
-	 * @param email
-	 *            The email
-	 * @param userId
-	 *            The user id
+	 * @param user
+	 *            The user.
 	 * @param resetCode
-	 *            The reset code
-	 * @return A map
+	 *            The code.
+	 * @return The map.
 	 */
 	public static Map<String, String> convertToDataResetUserPassword(final User user, final String resetCode) {
 		Map<String, String> data = getData(user, null);
 		data.put("@@RESET_CODE@@", resetCode);
 		return data;
 	}
-	
+
 	private static Map<String, String> getData(final User user, final Order order) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@WEB_ADDRESS@@", Info.WEB_ADDRESS);
 		data.put("@@DELAY@@", delay);
-		
+
 		data.put("@@USER_ID@@", user.getId().toHexString());
 		data.put("@@USER_EMAIL@@", user.getEmail());
 		data.put("@@USER_NAME@@", user.getName());
 		data.put("@@USER_FIRST@@", user.getFirst());
 		data.put("@@USER_LAST@@", user.getLast());
-		
+
 		if (order != null) {
 			data.put("@@DISH_NAME@@", order.getDish().getName());
-			
+
 			data.put("@@CATERER_NAME@@", order.getDish().getCaterer().getName());
 			data.put("@@CATERER_PHONE@@", order.getDish().getCaterer().getPhone());
-			
+
 			data.put("@@ORDER_ID@@", order.getId().toHexString());
 			data.put("@@READABLE_ORDER_ID@@", order.getReadableId());
 			data.put("@@ORDER_QUANTITY@@", order.getQuantity().toString());
@@ -379,7 +369,7 @@ public final class EmailTemplate {
 			data.put("@@ORDER_CURRENCY@@", order.getCurrency().getSymbol());
 			data.put("@@ORDER_PICKUP_DATE@@", order.getPickupdate());
 		}
-		
+
 		return data;
 	}
 }

@@ -26,7 +26,6 @@ import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.rest.UserController;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
 import com.epickur.api.validator.AccessRights;

@@ -25,7 +25,6 @@ import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.rest.VoucherController;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
