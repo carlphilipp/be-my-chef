@@ -4,7 +4,7 @@
 
 	<groupId>com.epickur.api</groupId>
 	<artifactId>epickur-parent</artifactId>
-	<version>2.0.1.SNAPSHOT</version>
+	<version>2.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Parent</name>
@@ -74,12 +74,12 @@
 		<epickur.3rdparty.version>2.0.0.RELEASE</epickur.3rdparty.version>
 		<epickur.dao.version>2.0.0.RELEASE</epickur.dao.version>
 		<epickur.dump.version>2.0.0.RELEASE</epickur.dump.version>
-		<epickur.entity.version>2.0.1.SNAPSHOT</epickur.entity.version>
+		<epickur.entity.version>2.0.1-SNAPSHOT</epickur.entity.version>
 		<epickur.logging.version>2.0.0.RELEASE</epickur.logging.version>
 		<epickur.rest.version>2.0.0.RELEASE</epickur.rest.version>
-		<epickur.service.version>2.0.0.RELEASE</epickur.service.version>
-		<epickur.test.version>2.0.1.SNAPSHOT</epickur.test.version>
-		<epickur.utils.version>2.0.0.RELEASE</epickur.utils.version>
+		<epickur.service.version>2.0.1-SNAPSHOT</epickur.service.version>
+		<epickur.test.version>2.0.1-SNAPSHOT</epickur.test.version>
+		<epickur.utils.version>2.0.1-SNAPSHOT</epickur.utils.version>
 	</properties>
 
 	<build>
@@ -442,6 +442,12 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -483,12 +489,6 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>javancss-maven-plugin</artifactId>
 				<version>2.1</version>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.5</version>
 			</plugin>
 		</plugins>
 	</reporting>

@@ -10,7 +10,7 @@
 
 	<artifactId>epickur-service</artifactId>
 	<packaging>jar</packaging>
-	<version>2.0.0.RELEASE</version>
+	<version>2.0.1-SNAPSHOT</version>
 
 	<name>Service</name>
 	<description>Service layer. This is where logic is done.</description>

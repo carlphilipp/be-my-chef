@@ -59,7 +59,7 @@ public final class LogoutController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response logout(@QueryParam("key") @NotBlank(message = "{logout.key}") final String key) throws EpickurException {
-		this.keyService.deleteWithKey(key);
+		keyService.deleteWithKey(key);
 		SuccessMessage successMessage = new SuccessMessage();
 		return Response.ok().entity(successMessage).build();
 	}

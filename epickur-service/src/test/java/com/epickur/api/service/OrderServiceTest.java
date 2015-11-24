@@ -91,7 +91,7 @@ public class OrderServiceTest {
 
 		assertNotNull(actual);
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
-		
+
 		verify(order, times(1)).setCreatedBy(user.getId());
 		verify(order, times(1)).setStatus(OrderStatus.PENDING);
 		verify(order, times(1)).setCreatedAt(any(DateTime.class));
@@ -115,7 +115,7 @@ public class OrderServiceTest {
 		orderAfterCreate = spy(orderAfterCreate);
 		order = spy(order);
 
-		when(userDAOMock.read(anyString())).thenReturn(user);
+		when(userDAOMock.read(user.getId().toHexString())).thenReturn(user);
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
 		when(voucherBusinessMock.validateVoucher(anyString())).thenReturn(voucher);
 
@@ -123,7 +123,7 @@ public class OrderServiceTest {
 		assertNotNull(actual);
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
 		assertNotNull(actual.getVoucher());
-		
+
 		verify(order, times(1)).setCreatedBy(user.getId());
 		verify(order, times(1)).setStatus(OrderStatus.PENDING);
 		verify(order, times(1)).setCreatedAt(any(DateTime.class));
@@ -142,7 +142,7 @@ public class OrderServiceTest {
 
 		Order order = EntityGenerator.generateRandomOrder();
 		String userId = new ObjectId().toHexString();
-		try{
+		try {
 			orderBusiness.create(userId, order);
 		} finally {
 			verify(userDAOMock, times(1)).read(userId);
@@ -163,14 +163,14 @@ public class OrderServiceTest {
 		orderAfterCreate = spy(orderAfterCreate);
 		order = spy(order);
 
-		when(userDAOMock.read(anyString())).thenReturn(user);
+		when(userDAOMock.read(user.getId().toHexString())).thenReturn(user);
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
 
 		Order actual = orderBusiness.create(user.getId().toHexString(), order);
 		assertNotNull(actual);
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
 		assertEquals(ExpirationType.ONETIME, actual.getVoucher().getExpirationType());
-		
+
 		verify(order, times(1)).setCreatedBy(user.getId());
 		verify(order, times(1)).setStatus(OrderStatus.PENDING);
 		verify(order, times(1)).setCreatedAt(any(DateTime.class));
@@ -190,8 +190,12 @@ public class OrderServiceTest {
 		order.setId(new ObjectId());
 		Key key = new Key();
 		key.setUserId(order.getCreatedBy());
-		orderBusiness.update(order, key);
-
+		try {
+			orderBusiness.update(order, key);
+		} finally {
+			verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+			verify(orderDAOMock, never()).update(any(Order.class));
+		}
 	}
 
 	@Test
@@ -207,58 +211,89 @@ public class OrderServiceTest {
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
 		orderAfterCreate.setStatus(orderStatus);
 
-		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
+		when(orderDAOMock.read(order.getId().toHexString())).thenReturn(orderAfterCreate);
 
 		orderBusiness.update(order, key);
+
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+		verify(orderDAOMock, never()).update(any(Order.class));
+
 	}
 
 	@Test
 	public void testExecuteOrder() throws Exception {
 		String tokenId = "tokenId";
 		when(tokenMock.getId()).thenReturn(tokenId);
-		
+
 		User user = EntityGenerator.generateRandomUserWithId();
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setCardToken(tokenId);
-		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
-		orderAfterCreate.setId(order.getId());
+		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
+		orderAfterRead.setId(order.getId());
+		orderAfterRead = spy(orderAfterRead);
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
+		String chargeId = EntityGenerator.generateRandomString();
 
-		when(userDAOMock.read(anyString())).thenReturn(user);
-		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
-		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
+		when(userDAOMock.read(user.getId().toHexString())).thenReturn(user);
+		when(orderDAOMock.read(order.getId().toHexString())).thenReturn(orderAfterRead);
+		when(orderDAOMock.update(orderAfterRead)).thenReturn(orderAfterRead);
 		when(chargeMock.getPaid()).thenReturn(true);
-		when(stripePayementMock.chargeCard(orderAfterCreate.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
+		when(chargeMock.getId()).thenReturn(chargeId);
+		when(stripePayementMock.chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
 				.thenReturn(chargeMock);
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 
 		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertTrue(orderAfterCharge.getPaid());
+
+		verify(userDAOMock, times(1)).read(user.getId().toHexString());
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+		verify(stripePayementMock, times(1)).chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
+		verify(orderAfterRead, times(1)).setChargeId(chargeId);
+		verify(orderAfterRead, times(1)).setPaid(true);
+		verify(orderAfterRead, times(1)).setStatus(OrderStatus.SUCCESSFUL);
+		verify(emailUtilsMock, times(1)).emailSuccessOrder(user, orderAfterRead);
+		verify(orderAfterRead, times(1)).setReadableId(null);
+		verify(orderAfterRead, times(1)).setCreatedAt(null);
+		verify(orderAfterRead, times(1)).setUpdatedAt(any(DateTime.class));
+		verify(orderAfterRead, times(1)).setReadableId(null);
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+
 	}
 
 	@Test
 	public void testExecuteOrderNegativeAmount() throws Exception {
 		String tokenId = "tokenId";
 		when(tokenMock.getId()).thenReturn(tokenId);
-		
+
 		User user = EntityGenerator.generateRandomUserWithId();
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setAmount(-15);
 		order.setCardToken(tokenMock.getId());
-		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
-		orderAfterCreate.setId(order.getId());
+		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
+		orderAfterRead.setId(order.getId());
+		orderAfterRead = spy(orderAfterRead);
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
-		when(userDAOMock.read(anyString())).thenReturn(user);
-		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
-		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
+		when(userDAOMock.read(user.getId().toHexString())).thenReturn(user);
+		when(orderDAOMock.read(order.getId().toHexString())).thenReturn(orderAfterRead);
+		when(orderDAOMock.update(orderAfterRead)).thenReturn(orderAfterRead);
 		when(chargeMock.getPaid()).thenReturn(false);
-		when(stripePayementMock.chargeCard(orderAfterCreate.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
+		when(stripePayementMock.chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
 				.thenReturn(chargeMock);
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.FAILED, orderAfterCharge.getStatus());
+		verify(userDAOMock, times(1)).read(user.getId().toHexString());
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+		verify(stripePayementMock, times(1)).chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
+		verify(orderAfterRead, never()).setChargeId(anyObject());
+		verify(orderAfterRead, times(1)).setPaid(false);
+		verify(orderAfterRead, times(1)).setStatus(OrderStatus.FAILED);
+		verify(emailUtilsMock, never()).emailSuccessOrder(anyObject(), anyObject());
+		verify(emailUtilsMock, times(1)).emailFailOrder(anyObject(), anyObject());
+
 	}
 
 	@Test
@@ -270,30 +305,40 @@ public class OrderServiceTest {
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
-		when(userDAOMock.read(anyString())).thenReturn(user);
-		when(orderDAOMock.read(anyString())).thenReturn(null);
-
-		orderBusiness.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, true, orderCode);
+		when(userDAOMock.read(user.getId().toHexString())).thenReturn(user);
+		when(orderDAOMock.read(order.getId().toHexString())).thenReturn(null);
+		try {
+			orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
+		} finally {
+			verify(userDAOMock, times(1)).read(user.getId().toHexString());
+			verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+			verify(emailUtilsMock, never()).emailSuccessOrder(anyObject(), anyObject());
+		}
 	}
 
 	@Test
 	public void testExecuteOrderUserNotFoundFail() throws EpickurException {
 		thrown.expect(EpickurNotFoundException.class);
 		thrown.expectMessage("User not found");
-
+		String userId = new ObjectId().toHexString();
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
-		when(userDAOMock.read(anyString())).thenReturn(null);
-
-		orderBusiness.executeOrder(new ObjectId().toHexString(), order.getId().toHexString(), true, true, orderCode);
+		when(userDAOMock.read(userId)).thenReturn(null);
+		try {
+			orderBusiness.executeOrder(userId, order.getId().toHexString(), true, true, orderCode);
+		} finally {
+			verify(userDAOMock, times(1)).read(userId);
+			verify(orderDAOMock, never()).read(order.getId().toHexString());
+			verify(emailUtilsMock, never()).emailSuccessOrder(anyObject(), anyObject());
+		}
 	}
 
 	@Test
-	public void testExecuteOrderNotConfirm() throws Exception {
+	public void testExecuteOrderNotConfirmWithVoucher() throws Exception {
 		String tokenId = "tokenId";
 		when(tokenMock.getId()).thenReturn(tokenId);
-		
+
 		User user = EntityGenerator.generateRandomUserWithId();
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setCardToken(tokenMock.getId());
@@ -305,6 +350,7 @@ public class OrderServiceTest {
 		order.setVoucher(voucher);
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
 		orderAfterCreate.setId(order.getId());
+		orderAfterCreate = spy(orderAfterCreate);
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
 		when(userDAOMock.read(anyString())).thenReturn(user);
@@ -321,12 +367,52 @@ public class OrderServiceTest {
 		assertEquals(OrderStatus.DECLINED, orderAfterCharge.getStatus());
 		assertNotNull(orderAfterCharge.getVoucher());
 		assertEquals(DiscountType.AMOUNT, orderAfterCharge.getVoucher().getDiscountType());
+
+		verify(userDAOMock, times(1)).read(user.getId().toHexString());
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+		verify(orderAfterCreate, times(1)).setStatus(OrderStatus.DECLINED);
+		verify(emailUtilsMock, never()).emailSuccessOrder(user, orderAfterCreate);
+		verify(emailUtilsMock, times(1)).emailDeclineOrder(user, orderAfterCreate);
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+		verify(orderDAOMock, times(1)).update(orderAfterCreate);
+		verify(voucherBusinessMock, times(1)).revertVoucher(orderAfterCreate.getVoucher().getCode());
+		verify(orderAfterCharge, times(1)).setVoucher(voucher);
+	}
+	
+	@Test
+	public void testExecuteOrderNotConfirmWithoutVoucher() throws Exception {
+		String tokenId = "tokenId";
+		when(tokenMock.getId()).thenReturn(tokenId);
+
+		User user = EntityGenerator.generateRandomUserWithId();
+		Order order = EntityGenerator.generateRandomOrderWithId();
+		order.setCardToken(tokenMock.getId());
+		order = spy(order);
+		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
+		orderAfterCreate.setId(order.getId());
+		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
+
+		when(userDAOMock.read(anyString())).thenReturn(user);
+		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
+		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
+
+		Order actual = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, false, orderCode);
+		assertEquals(OrderStatus.DECLINED, actual.getStatus());
+		
+		verify(userDAOMock, times(1)).read(user.getId().toHexString());
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+		verify(orderAfterCreate, times(1)).setStatus(OrderStatus.DECLINED);
+		verify(emailUtilsMock, never()).emailSuccessOrder(user, orderAfterCreate);
+		verify(emailUtilsMock, times(1)).emailDeclineOrder(user, orderAfterCreate);
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+		verify(orderDAOMock, times(1)).update(orderAfterCreate);
+		verify(voucherBusinessMock, never()).revertVoucher(anyObject());
 	}
 
 	@Test
 	public void testExecuteOrderWrongCodeFail() throws Exception {
 		thrown.expect(EpickurForbiddenException.class);
-		
+
 		String tokenId = "tokenId";
 		when(tokenMock.getId()).thenReturn(tokenId);
 
@@ -339,53 +425,50 @@ public class OrderServiceTest {
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
 		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
-
-		orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
-	}
-
-	@Test
-	public void testExecuteOrderDeclined() throws Exception {
-		String tokenId = "tokenId";
-		when(tokenMock.getId()).thenReturn(tokenId);
-		
-		User user = EntityGenerator.generateRandomUserWithId();
-		Order order = EntityGenerator.generateRandomOrderWithId();
-		order.setCardToken(tokenMock.getId());
-		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
-		orderAfterCreate.setId(order.getId());
-		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
-
-		when(userDAOMock.read(anyString())).thenReturn(user);
-		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
-		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
-
-		Order actual = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, false, orderCode);
-		assertEquals(OrderStatus.DECLINED, actual.getStatus());
+		try {
+			orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
+		} finally {
+			verify(userDAOMock, times(1)).read(user.getId().toHexString());
+			verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+		}
 	}
 
 	@Test
 	public void testExecuteOrderStripeException() throws Exception {
 		String tokenId = "tokenId";
 		when(tokenMock.getId()).thenReturn(tokenId);
-		
+
 		User user = EntityGenerator.generateRandomUserWithId();
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setCardToken(tokenMock.getId());
-		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
-		orderAfterCreate.setId(order.getId());
+		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
+		orderAfterRead.setId(order.getId());
+		orderAfterRead = spy(orderAfterRead);
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
 		when(userDAOMock.read(anyString())).thenReturn(user);
-		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
-		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
+		when(orderDAOMock.read(anyString())).thenReturn(orderAfterRead);
+		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterRead);
 		when(chargeMock.getPaid()).thenReturn(true);
-		when(stripePayementMock.chargeCard(orderAfterCreate.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
+		when(stripePayementMock.chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
 				.thenThrow(new APIConnectionException(""));
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 
 		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.FAILED, orderAfterCharge.getStatus());
+		
+		verify(userDAOMock, times(1)).read(user.getId().toHexString());
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
+		verify(stripePayementMock, times(1)).chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
+		verify(orderAfterRead, times(1)).setPaid(false);
+		verify(orderAfterRead, times(1)).setStatus(OrderStatus.FAILED);
+		verify(emailUtilsMock, times(1)).emailFailOrder(user, orderAfterRead);
+		verify(orderAfterRead, times(1)).setReadableId(null);
+		verify(orderAfterRead, times(1)).setCreatedAt(null);
+		verify(orderAfterRead, times(1)).setUpdatedAt(any(DateTime.class));
+		verify(orderAfterRead, times(1)).setReadableId(null);
+		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
 	}
 
 	@Test
@@ -393,7 +476,8 @@ public class OrderServiceTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		Voucher voucher = new Voucher();
-		voucher.setCode(EntityGenerator.generateRandomString());
+		String code = EntityGenerator.generateRandomString();
+		voucher.setCode(code);
 		order.setVoucher(voucher);
 
 		orderBusiness.handleOrderFail(order, user);
@@ -401,5 +485,7 @@ public class OrderServiceTest {
 		assertNotNull(order);
 		assertFalse(order.getPaid());
 		assertEquals(OrderStatus.FAILED, order.getStatus());
+		verify(emailUtilsMock, times(1)).emailFailOrder(user, order);
+		verify(voucherBusinessMock, times(1)).revertVoucher(code);
 	}
 }

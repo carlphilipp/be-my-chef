@@ -3,6 +3,8 @@ package com.epickur.api.rest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
@@ -23,7 +25,7 @@ import com.epickur.api.service.KeyService;
 public class LogoutControllerTest {
 
 	@Mock
-	private KeyService keyBusiness;
+	private KeyService keyService;
 	@Mock
 	private ContainerRequestContext context;
 	@InjectMocks
@@ -39,11 +41,13 @@ public class LogoutControllerTest {
 
 	@Test
 	public void testLogout() throws EpickurException {
-		Response actual = controller.logout(EntityGenerator.generateRandomString());
+		String key = EntityGenerator.generateRandomString();
+		Response actual = controller.logout(key);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatus());
 		SuccessMessage message = (SuccessMessage) actual.getEntity();
 		assertNotNull(message);
 		assertEquals("success", message.getResult());
+		verify(keyService, times(1)).deleteWithKey(key);
 	}
 }

@@ -48,16 +48,16 @@ public final class CancelOrderJob implements Job {
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
 		try {
 			String orderId = context.getJobDetail().getJobDataMap().getString("orderId");
-			Order order = this.orderDAO.read(orderId);
+			Order order = orderDAO.read(orderId);
 			String userId = context.getJobDetail().getJobDataMap().getString("userId");
-			User user = this.userDAO.read(userId);
+			User user = userDAO.read(userId);
 			if (user != null && order != null) {
 				LOG.info("Cancel order id: " + orderId + " with user id: " + userId);
 				order.setStatus(OrderStatus.CANCELED);
 				order.prepareForUpdateIntoDB();
-				order = this.orderDAO.update(order);
+				order = orderDAO.update(order);
 				if (order.getVoucher() != null) {
-					this.voucherBusiness.revertVoucher(order.getVoucher().getCode());
+					voucherBusiness.revertVoucher(order.getVoucher().getCode());
 				}
 				emailUtils.emailCancelOrder(user, order);
 			}

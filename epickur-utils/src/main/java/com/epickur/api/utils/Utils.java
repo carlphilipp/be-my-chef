@@ -175,7 +175,8 @@ public final class Utils {
 			return false;
 		} else {
 			DateTime currentTime = new DateTime();
-			if (Days.daysBetween(key.getCreatedAt(), currentTime).getDays() > SESSION_TIMEOUT) {
+			int daysBetween = Math.abs(Days.daysBetween(key.getCreatedAt(), currentTime).getDays());
+			if (daysBetween > SESSION_TIMEOUT) {
 				return false;
 			}
 		}
