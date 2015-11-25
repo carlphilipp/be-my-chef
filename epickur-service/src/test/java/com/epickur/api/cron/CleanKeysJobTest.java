@@ -46,7 +46,7 @@ public class CleanKeysJobTest {
 
 	@Test
 	public void testExecuteValid() throws JobExecutionException, EpickurException {
-		List<Key> keys = new ArrayList<Key>();
+		List<Key> keys = new ArrayList<>();
 		Key key = EntityGenerator.generateRandomAdminKey();
 		DateTime now = new DateTime();
 		key.setCreatedAt(now);
@@ -61,7 +61,7 @@ public class CleanKeysJobTest {
 
 	@Test
 	public void testExecuteNotValid() throws JobExecutionException, EpickurException {
-		List<Key> keys = new ArrayList<Key>();
+		List<Key> keys = new ArrayList<>();
 		Key key = EntityGenerator.generateRandomAdminKey();
 		key.setId(new ObjectId());
 		DateTime now = new DateTime();

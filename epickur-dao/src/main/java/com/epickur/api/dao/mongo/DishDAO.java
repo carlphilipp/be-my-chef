@@ -85,7 +85,7 @@ public class DishDAO extends CrudDAO<Dish> {
 	@Override
 	public List<Dish> readAll() throws EpickurException {
 		MongoCursor<Document> cursor = null;
-		List<Dish> dishes = new ArrayList<Dish>();
+		List<Dish> dishes = new ArrayList<>();
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
@@ -147,7 +147,7 @@ public class DishDAO extends CrudDAO<Dish> {
 		elementMatch.append("close", close);
 		openClose.put("$elemMatch", elementMatch);
 		find.put("caterer.workingTimes.hours." + day, openClose);
-		List<Dish> dishes = new ArrayList<Dish>();
+		List<Dish> dishes = new ArrayList<>();
 		MongoCursor<Document> cursor = null;
 		LOG.debug("Searching: " + find);
 		try {
@@ -165,7 +165,7 @@ public class DishDAO extends CrudDAO<Dish> {
 		}
 		// TODO See how to optimize that and avoid doing that here.
 		// Should be doable in MongoDB.
-		List<Dish> res = new ArrayList<Dish>();
+		List<Dish> res = new ArrayList<>();
 		for (Dish dish : dishes) {
 			Caterer cat = dish.getCaterer();
 			WorkingTimes workingTimes = cat.getWorkingTimes();
@@ -185,7 +185,7 @@ public class DishDAO extends CrudDAO<Dish> {
 	 */
 	public List<Dish> searchWithCatererId(final String catererId) throws EpickurException {
 		MongoCursor<Document> cursor = null;
-		List<Dish> dishes = new ArrayList<Dish>();
+		List<Dish> dishes = new ArrayList<>();
 		Document find = new Document();
 		find.append("caterer._id", new ObjectId(catererId));
 		try {

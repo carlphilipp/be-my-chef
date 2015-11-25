@@ -50,51 +50,51 @@ public final class Hours extends AbstractEntity {
 	 */
 	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<>();
 		if (fri != null) {
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			for (TimeFrame tf : fri) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".fri", objects);
 		}
 		if (mon != null) {
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			for (TimeFrame tf : mon) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".mon", objects);
 		}
 		if (tue != null) {
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			for (TimeFrame tf : tue) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".tue", objects);
 		}
 		if (wed != null) {
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			for (TimeFrame tf : wed) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".wed", objects);
 		}
 		if (thu != null) {
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			for (TimeFrame tf : thu) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".thu", objects);
 		}
 		if (sat != null) {
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			for (TimeFrame tf : sat) {
 				objects.add(tf.getUpdateMap());
 			}
 			res.put(prefix + ".sat", objects);
 		}
 		if (sun != null) {
-			List<Object> objects = new ArrayList<Object>();
+			List<Object> objects = new ArrayList<>();
 			for (TimeFrame tf : sun) {
 				objects.add(tf.getUpdateMap());
 			}

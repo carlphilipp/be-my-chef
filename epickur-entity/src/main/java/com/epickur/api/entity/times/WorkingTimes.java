@@ -100,7 +100,7 @@ public final class WorkingTimes extends AbstractEntity {
 	 * @return The updated map
 	 */
 	public Map<String, Object> getUpdateMapObject(final String prefix) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<>();
 		if (hours != null) {
 			res.putAll(hours.getUpdateMap(prefix + ".hours"));
 		}

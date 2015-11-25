@@ -194,14 +194,14 @@ public class DishDAOTest {
 		TimeFrame timeFrame = new TimeFrame();
 		timeFrame.setOpen(1);
 		timeFrame.setClose(11);
-		List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+		List<TimeFrame> timeFrames = new ArrayList<>();
 		timeFrames.add(timeFrame);
 		hours.setMon(timeFrames);
 		wt.setHours(hours);
 		wt.setMinimumPreparationTime(0);
 		dish.getCaterer().setWorkingTimes(wt);
 		Document found = dish.getDocumentDBView();
-		List<DishType> dishTypes = new ArrayList<DishType>();
+		List<DishType> dishTypes = new ArrayList<>();
 		dishTypes.add(DishType.MAIN);
 		Geo geo = EntityGenerator.generateGeo();
 		
@@ -227,14 +227,14 @@ public class DishDAOTest {
 		TimeFrame timeFrame = new TimeFrame();
 		timeFrame.setOpen(1);
 		timeFrame.setClose(11);
-		List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+		List<TimeFrame> timeFrames = new ArrayList<>();
 		timeFrames.add(timeFrame);
 		hours.setMon(timeFrames);
 		wt.setHours(hours);
 		wt.setMinimumPreparationTime(0);
 		dish.getCaterer().setWorkingTimes(wt);
 		Document found = dish.getDocumentDBView();
-		List<DishType> dishTypes = new ArrayList<DishType>();
+		List<DishType> dishTypes = new ArrayList<>();
 		dishTypes.add(DishType.MAIN);
 		dishTypes.add(DishType.DESSERT);
 		Geo geo = EntityGenerator.generateGeo();
@@ -257,7 +257,7 @@ public class DishDAOTest {
 	public void testSearchMongoException() throws EpickurException{
 		thrown.expect(EpickurDBException.class);
 		
-		List<DishType> dishTypes = new ArrayList<DishType>();
+		List<DishType> dishTypes = new ArrayList<>();
 		dishTypes.add(DishType.MAIN);
 		Geo geo = EntityGenerator.generateGeo();
 		

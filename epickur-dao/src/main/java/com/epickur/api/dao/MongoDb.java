@@ -80,7 +80,7 @@ public final class MongoDb {
 
 		if (!StringUtils.isBlank(userName) && !StringUtils.isBlank(password)) {
 			MongoCredential credential = MongoCredential.createCredential(userName, dbName, password.toCharArray());
-			List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+			List<MongoCredential> credentials = new ArrayList<>();
 			credentials.add(credential);
 			mongoClient = new MongoClient(new ServerAddress(address, port), credentials, options);
 		} else {

@@ -30,8 +30,8 @@ public class StripePaymentIT {
 
 	@Test
 	public void testChargeCard() throws StripeException {
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
+		Map<String, Object> tokenParams = new HashMap<>();
+		Map<String, Object> cardParams = new HashMap<>();
 		cardParams.put("number", "4242424242424242");
 		cardParams.put("exp_month", 2);
 		cardParams.put("exp_year", 2016);

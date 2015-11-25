@@ -148,24 +148,25 @@ public class Here {
 			LOG.info(data);
 			ObjectMapper mapper = new ObjectMapper();
 			Map<String, Object> mapObject = null;
-			mapObject = mapper.readValue(data, new TypeReference<Map<String, Object>>(){});
+			mapObject = mapper.readValue(data, new TypeReference<Map<String, Object>>() {
+			});
 
 			if (mapObject.containsKey("response")) {
 				Map<String, Object> response = (Map<String, Object>) mapObject.get("response");
 				if (response.containsKey("view")) {
-					List<Map<String,Object>> views = (List<Map<String,Object>>) response.get("view");
+					List<Map<String, Object>> views = (List<Map<String, Object>>) response.get("view");
 					if (views.size() > 0) {
-						Map<String,Object> view = (Map<String,Object>) views.get(0);
+						Map<String, Object> view = (Map<String, Object>) views.get(0);
 						if (view.containsKey("result")) {
-							List<Map<String,Object>> results = (List<Map<String,Object>>) view.get("result");
+							List<Map<String, Object>> results = (List<Map<String, Object>>) view.get("result");
 							if (results.size() > 0) {
-								Map<String,Object> result = (Map<String,Object>) results.get(0);
+								Map<String, Object> result = (Map<String, Object>) results.get(0);
 								double relevance = (double) result.get("relevance");
 								if (relevance >= RELEVANCE_THRESHOLD) {
 									if (result.containsKey("location")) {
-										Map<String,Object> location = (Map<String,Object>) result.get("location");
+										Map<String, Object> location = (Map<String, Object>) result.get("location");
 										if (location.containsKey("displayPosition")) {
-											Map<String,Object> displayPosition = (Map<String,Object>) location.get("displayPosition");
+											Map<String, Object> displayPosition = (Map<String, Object>) location.get("displayPosition");
 											geo = new Geo();
 											geo.setLatitude((Double) displayPosition.get("latitude"));
 											geo.setLongitude((Double) displayPosition.get("longitude"));

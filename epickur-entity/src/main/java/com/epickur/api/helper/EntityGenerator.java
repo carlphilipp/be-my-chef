@@ -221,7 +221,7 @@ public class EntityGenerator {
 	}
 
 	private static List<TimeFrame> generateRandomTimeFrame() {
-		List<TimeFrame> timeFrames = new ArrayList<TimeFrame>();
+		List<TimeFrame> timeFrames = new ArrayList<>();
 		TimeFrame timeFrame1 = new TimeFrame();
 		timeFrame1.setOpen(RandomUtils.nextInt(350, 600));
 		timeFrame1.setClose(RandomUtils.nextInt(700, 900));
@@ -311,7 +311,7 @@ public class EntityGenerator {
 
 	public static List<NutritionFact> generateRandomListNutritionFact() {
 		int max = RandomUtils.nextInt(1, 5);
-		List<NutritionFact> res = new ArrayList<NutritionFact>();
+		List<NutritionFact> res = new ArrayList<>();
 		for (int i = 0; i < max; i++) {
 			res.add(generateRandomNutritionFact());
 		}
@@ -328,7 +328,7 @@ public class EntityGenerator {
 
 	public static List<Ingredient> generateRandomListIngredient() {
 		int max = RandomUtils.nextInt(1, 5);
-		List<Ingredient> res = new ArrayList<Ingredient>();
+		List<Ingredient> res = new ArrayList<>();
 		for (int i = 0; i < max; i++) {
 			res.add(generateRandomIngredient());
 		}
@@ -352,7 +352,7 @@ public class EntityGenerator {
 
 	public static List<String> generateRandomListString() {
 		int max = RandomUtils.nextInt(1, 5);
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		for (int i = 0; i < max; i++) {
 			res.add(generateRandomString());
 		}
@@ -524,8 +524,8 @@ public class EntityGenerator {
 
 	public static Token generateRandomToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
 			APIException {
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
+		Map<String, Object> tokenParams = new HashMap<>();
+		Map<String, Object> cardParams = new HashMap<>();
 		cardParams.put("number", "4242424242424242");
 		cardParams.put("exp_month", 2);
 		cardParams.put("exp_year", 2016);
@@ -562,8 +562,8 @@ public class EntityGenerator {
 	}
 
 	public static Map<String, Object> getTokenParam() {
-		Map<String, Object> tokenParams = new HashMap<String, Object>();
-		Map<String, Object> cardParams = new HashMap<String, Object>();
+		Map<String, Object> tokenParams = new HashMap<>();
+		Map<String, Object> cardParams = new HashMap<>();
 		cardParams.put("number", "4242424242424242");
 		cardParams.put("exp_month", 2);
 		cardParams.put("exp_year", 2016);

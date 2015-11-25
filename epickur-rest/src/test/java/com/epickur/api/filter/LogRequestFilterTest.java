@@ -18,7 +18,7 @@ public class LogRequestFilterTest {
 	@Test
 	public void testCreate() throws IOException {
 		ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
-		MultivaluedMap<String, String> map = new MultivaluedHashMap<String, String>();
+		MultivaluedMap<String, String> map = new MultivaluedHashMap<>();
 		UriInfo uriInfo = mock(UriInfo.class);
 		Request request = mock(Request.class);
 		Mockito.when(requestContext.getUriInfo()).thenReturn(uriInfo);

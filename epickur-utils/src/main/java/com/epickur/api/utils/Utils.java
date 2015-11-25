@@ -212,7 +212,7 @@ public final class Utils {
 	 * @return The list of DishType created
 	 */
 	public static List<DishType> stringToListDishType(final String types) {
-		List<DishType> res = new ArrayList<DishType>();
+		List<DishType> res = new ArrayList<>();
 		String[] typesArray = types.split(",");
 		for (String temp : typesArray) {
 			res.add(DishType.fromString(temp));

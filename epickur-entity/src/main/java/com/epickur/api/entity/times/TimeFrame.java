@@ -32,7 +32,7 @@ public final class TimeFrame extends AbstractEntity {
 	 */
 	@JsonIgnore
 	public Map<String, String> getUpdateMap() {
-		Map<String, String> res = new HashMap<String, String>();
+		Map<String, String> res = new HashMap<>();
 		res.put("open", open + "");
 		res.put("close", close + "");
 		return res;

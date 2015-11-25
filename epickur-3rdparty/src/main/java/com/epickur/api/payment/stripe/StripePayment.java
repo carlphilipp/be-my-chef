@@ -50,7 +50,7 @@ public class StripePayment {
 		Charge charge = null;
 		Map<String, Object> chargeMap = null;
 		try {
-			chargeMap = new HashMap<String, Object>();
+			chargeMap = new HashMap<>();
 			chargeMap.put("amount", amount);
 			chargeMap.put("currency", currency.getCode());
 			chargeMap.put("card", cardToken);

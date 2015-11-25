@@ -113,7 +113,7 @@ public class Geo extends AbstractEntity {
 	 */
 	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<>();
 		if (this.type != null) {
 			res.put(prefix + ".type", this.type);
 		}

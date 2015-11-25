@@ -66,7 +66,7 @@ public class VoucherServiceTest {
 	@Test
 	public void testClean() throws EpickurException {
 		Voucher voucher = EntityGenerator.generateVoucher();
-		List<Voucher> vouchers = new ArrayList<Voucher>();
+		List<Voucher> vouchers = new ArrayList<>();
 		vouchers.add(voucher);
 		
 		when(voucherDAO.readToClean()).thenReturn(vouchers);

@@ -56,8 +56,8 @@ public class OrderDAOIT {
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
 		StripeTestUtils.setupStripe();
-		idsToDeleteUser = new ArrayList<ObjectId>();
-		idsToDeleteOrder = new HashMap<String, List<ObjectId>>();
+		idsToDeleteUser = new ArrayList<>();
+		idsToDeleteOrder = new HashMap<>();
 	}
 
 	@AfterClass

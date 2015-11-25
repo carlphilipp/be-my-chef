@@ -100,7 +100,7 @@ public class KeyDAO extends CrudDAO<Key> {
 
 	@Override
 	public List<Key> readAll() throws EpickurException {
-		List<Key> keys = new ArrayList<Key>();
+		List<Key> keys = new ArrayList<>();
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find().iterator();

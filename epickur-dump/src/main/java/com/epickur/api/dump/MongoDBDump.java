@@ -131,7 +131,7 @@ public final class MongoDBDump {
 	 * @return The list files
 	 */
 	public List<String> getListFiles() {
-		List<String> files = new ArrayList<String>();
+		List<String> files = new ArrayList<>();
 		File[] listOfFiles = dumpDirectory.listFiles();
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {

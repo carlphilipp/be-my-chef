@@ -31,7 +31,7 @@ public class Report {
 	 * Construct a report
 	 */
 	public Report() {
-		this.parameters = new HashMap<String, Object>();
+		this.parameters = new HashMap<>();
 	}
 
 	/**

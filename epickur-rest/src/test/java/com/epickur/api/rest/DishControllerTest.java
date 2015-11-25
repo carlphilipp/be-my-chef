@@ -203,7 +203,7 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
-		List<Dish> dishes = new ArrayList<Dish>();
+		List<Dish> dishes = new ArrayList<>();
 		dishes.add(dishAfterCreate);
 
 		when(dishBusiness.search(anyString(), anyInt(), (List<DishType>) anyObject(), anyInt(), (Geo) anyObject(), anyString(), anyInt()))

@@ -104,7 +104,7 @@ public class UserDAO extends CrudDAO<User> {
 
 	@Override
 	public List<User> readAll() throws EpickurException {
-		List<User> users = new ArrayList<User>();
+		List<User> users = new ArrayList<>();
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find().iterator();

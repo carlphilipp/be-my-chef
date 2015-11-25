@@ -82,7 +82,7 @@ public class CatererServiceTest {
 	public void testReadAll() throws EpickurException {
 		Caterer caterer1 = EntityGenerator.generateRandomCatererWithId();
 		Caterer caterer2 = EntityGenerator.generateRandomCatererWithId();
-		List<Caterer> caterers = new ArrayList<Caterer>();
+		List<Caterer> caterers = new ArrayList<>();
 		caterers.add(caterer1);
 		caterers.add(caterer2);
 		

@@ -101,7 +101,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 					eq("status", Status.VALID.getType()));
 			FindIterable<Document> find = getColl().find(query);
 			if (find != null) {
-				List<Voucher> res = new ArrayList<Voucher>();
+				List<Voucher> res = new ArrayList<>();
 				MongoCursor<Document> cursor = find.iterator();
 				while (cursor.hasNext()) {
 					Voucher current = Voucher.getDocumentAsVoucher(cursor.next());

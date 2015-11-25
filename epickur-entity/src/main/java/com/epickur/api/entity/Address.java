@@ -51,7 +51,7 @@ public final class Address extends AbstractEntity {
 	 */
 	@JsonIgnore
 	public Map<String, String> getUpdateMap(final String prefix) {
-		Map<String, String> res = new HashMap<String, String>();
+		Map<String, String> res = new HashMap<>();
 		if (label != null) {
 			res.put(prefix + ".label", label);
 		}

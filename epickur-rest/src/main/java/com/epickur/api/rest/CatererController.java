@@ -626,7 +626,7 @@ public final class CatererController {
 				payementInfoMessage.setStart(start);
 				payementInfoMessage.setEnd(end);
 				payementInfoMessage.setFormat(format);
-				List<String> list = new ArrayList<String>();
+				List<String> list = new ArrayList<>();
 				for (Order order : orders) {
 					order.setDish(null);
 					list.add(order.getDocumentAPIView().toJson());

@@ -19,7 +19,7 @@ public class HeaderResponseFilterTest {
 	@Test
 	public void testCreate() throws IOException {
 		ContainerResponseContext responseContext = mock(ContainerResponseContext.class);
-		MultivaluedMap<String, Object> map = new MultivaluedHashMap<String, Object>();
+		MultivaluedMap<String, Object> map = new MultivaluedHashMap<>();
 		Mockito.when(responseContext.getHeaders()).thenReturn(map);
 
 		HeaderResponseFilter filter = new HeaderResponseFilter();

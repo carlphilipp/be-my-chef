@@ -73,7 +73,7 @@ public class KeyRequestFilterTest {
 		notValidKey.setRole(Role.EPICKUR_WEB);
 		notValidKey.setUserId(new ObjectId());
 
-		params = new MultivaluedHashMap<String, String>();
+		params = new MultivaluedHashMap<>();
 		params.add(KEY_PROPERTY, KEY_VALUE);
 	}
 

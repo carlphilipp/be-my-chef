@@ -190,7 +190,7 @@ public class DishValidatorTest {
 
 		DishValidator validator = new DishValidator();
 		Dish dish = EntityGenerator.generateRandomDish();
-		List<String> step = new ArrayList<String>();
+		List<String> step = new ArrayList<>();
 		dish.setSteps(step);
 		validator.checkData(dish);
 	}
@@ -202,7 +202,7 @@ public class DishValidatorTest {
 
 		DishValidator validator = new DishValidator();
 		Dish dish = EntityGenerator.generateRandomDish();
-		List<Ingredient> ing = new ArrayList<Ingredient>();
+		List<Ingredient> ing = new ArrayList<>();
 		dish.setIngredients(ing);
 		validator.checkData(dish);
 	}

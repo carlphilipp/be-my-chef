@@ -25,7 +25,7 @@ public class WorkingTimesTest {
 		TimeFrame timeFrame2 = new TimeFrame();
 		timeFrame2.setOpen(1058);
 		timeFrame2.setClose(1332);
-		List<TimeFrame> sat = new ArrayList<TimeFrame>();
+		List<TimeFrame> sat = new ArrayList<>();
 		sat.add(timeFrame1);
 		sat.add(timeFrame2);
 		hours.setSat(sat);

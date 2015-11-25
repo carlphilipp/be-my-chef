@@ -163,7 +163,7 @@ public class UserControllerTest {
 	@Test
 	public void testReadAll() throws EpickurException {
 		User user = EntityGenerator.generateRandomUserWithId();
-		List<User> usersAfterReadAll = new ArrayList<User>();
+		List<User> usersAfterReadAll = new ArrayList<>();
 		usersAfterReadAll.add(user);
 
 		when(userBusiness.readAll()).thenReturn(usersAfterReadAll);
@@ -207,7 +207,7 @@ public class UserControllerTest {
 	@Test
 	public void testReadAllOrderAdmin() throws EpickurException {
 		Order order = EntityGenerator.generateRandomOrder();
-		List<Order> orders = new ArrayList<Order>();
+		List<Order> orders = new ArrayList<>();
 		orders.add(order);
 
 		when(orderBusiness.readAllWithUserId(anyString())).thenReturn(orders);

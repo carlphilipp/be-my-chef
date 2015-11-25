@@ -108,7 +108,7 @@ public final class Email {
 		request.setHttpClient(httpClient);
 		MandrillMessageRequest mmr = new MandrillMessageRequest();
 		MandrillHtmlMessage mess = new MandrillHtmlMessage();
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		mess.setFrom_email(fromEmail);
 		mess.setFrom_name(fromName);
 		mess.setHeaders(headers);

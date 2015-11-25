@@ -75,7 +75,7 @@ public class DishIT {
 			API_KEY = admin.getKey();
 			URL = URL_NO_KEY + "?key=" + API_KEY;
 
-			idsCatererToDelete = new ArrayList<ObjectId>();
+			idsCatererToDelete = new ArrayList<>();
 			context = mock(ContainerRequestContext.class);
 			Key key = EntityGenerator.generateRandomAdminKey();
 			Mockito.when(context.getProperty("key")).thenReturn(key);

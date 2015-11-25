@@ -91,7 +91,7 @@ public class DishServiceTest {
 	public void testReadAll() throws EpickurException {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
-		List<Dish> listDishes = new ArrayList<Dish>();
+		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
 
 		when(dishDAOMock.readAll()).thenReturn(listDishes);
@@ -132,7 +132,7 @@ public class DishServiceTest {
 	public void testSearchDishesForOneCaterer() throws EpickurException {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
-		List<Dish> listDishes = new ArrayList<Dish>();
+		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
 
 		when(dishDAOMock.searchWithCatererId(anyString())).thenReturn(listDishes);
@@ -147,7 +147,7 @@ public class DishServiceTest {
 	public void testSearch() throws Exception {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
-		List<Dish> listDishes = new ArrayList<Dish>();
+		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
 
 		when(dishDAOMock.search(anyString(), anyInt(), (List<DishType>) anyObject(), anyInt(), (Geo) anyObject(), anyInt()))

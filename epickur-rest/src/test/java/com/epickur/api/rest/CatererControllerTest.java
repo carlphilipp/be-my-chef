@@ -130,7 +130,7 @@ public class CatererControllerTest {
 	public void testReadAll() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
-		List<Caterer> caterers = new ArrayList<Caterer>();
+		List<Caterer> caterers = new ArrayList<>();
 		caterers.add(catererAfterCreate);
 
 		when(catererService.readAll()).thenReturn(caterers);
@@ -148,7 +148,7 @@ public class CatererControllerTest {
 	public void readDishes() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Dish dish = EntityGenerator.generateRandomDish();
-		List<Dish> dishes = new ArrayList<Dish>();
+		List<Dish> dishes = new ArrayList<>();
 		dishes.add(dish);
 
 		when(dishService.searchDishesForOneCaterer(anyString())).thenReturn(dishes);
@@ -230,7 +230,7 @@ public class CatererControllerTest {
 			Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 			Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 			Order order = EntityGenerator.generateRandomOrderWithId();
-			List<Order> orders = new ArrayList<Order>();
+			List<Order> orders = new ArrayList<>();
 			orders.add(order);
 
 			when(catererService.read(anyString())).thenReturn(catererAfterCreate);
@@ -259,7 +259,7 @@ public class CatererControllerTest {
 			Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 			Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 			Order order = EntityGenerator.generateRandomOrderWithId();
-			List<Order> orders = new ArrayList<Order>();
+			List<Order> orders = new ArrayList<>();
 			orders.add(order);
 
 			when(catererService.read(anyString())).thenReturn(catererAfterCreate);
@@ -293,7 +293,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 		Order order = EntityGenerator.generateRandomOrderWithId();
-		List<Order> orders = new ArrayList<Order>();
+		List<Order> orders = new ArrayList<>();
 		orders.add(order);
 
 		when(catererService.read(anyString())).thenReturn(null);

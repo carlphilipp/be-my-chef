@@ -43,7 +43,7 @@ public final class EmailTemplate {
 
 	/** The constructor */
 	private EmailTemplate() {
-		this.templates = new HashMap<String, Map<String, String>>();
+		this.templates = new HashMap<>();
 		loadTemplates();
 	}
 
@@ -81,7 +81,7 @@ public final class EmailTemplate {
 				is2 = Utils.getResource("templates/" + folder + "/" + file);
 				String content = IOUtils.toString(is2);
 				String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
-				Map<String, String> res = new HashMap<String, String>();
+				Map<String, String> res = new HashMap<>();
 				res.put("subject", subject);
 				res.put("content", newContent);
 				this.templates.put(entry.getKey(), res);
@@ -130,7 +130,7 @@ public final class EmailTemplate {
 		if (this.templates.containsKey(typeStr)) {
 			return this.templates.get(typeStr);
 		} else {
-			return new HashMap<String, String>();
+			return new HashMap<>();
 		}
 	}
 
@@ -345,7 +345,7 @@ public final class EmailTemplate {
 	}
 
 	private static Map<String, String> getData(final User user, final Order order) {
-		Map<String, String> data = new HashMap<String, String>();
+		Map<String, String> data = new HashMap<>();
 		data.put("@@TEAM_NAME@@", Info.NAME);
 		data.put("@@WEB_ADDRESS@@", Info.WEB_ADDRESS);
 		data.put("@@DELAY@@", delay);

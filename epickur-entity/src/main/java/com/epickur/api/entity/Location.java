@@ -77,7 +77,7 @@ public final class Location extends AbstractEntity {
 	 */
 	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<>();
 		if (address != null) {
 			res.putAll(address.getUpdateMap(prefix + ".address"));
 		}

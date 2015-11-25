@@ -65,7 +65,7 @@ public final class Log extends AbstractMainDBEntity {
 	 */
 	public Map<String, String> getArgs() {
 		if (this.args == null) {
-			this.args = new HashMap<String, String>();
+			this.args = new HashMap<>();
 		}
 		return args;
 	}

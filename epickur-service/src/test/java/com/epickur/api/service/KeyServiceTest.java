@@ -80,7 +80,7 @@ public class KeyServiceTest {
 	public void testReadAll() throws EpickurException {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterRead = EntityGenerator.mockKeyAfterCreate(key);
-		List<Key> keyList = new ArrayList<Key>();
+		List<Key> keyList = new ArrayList<>();
 		keyList.add(keyAfterRead);
 
 		when(keyDAOMock.readAll()).thenReturn(keyList);

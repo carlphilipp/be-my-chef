@@ -94,7 +94,7 @@ public class Caterer extends AbstractMainDBEntity {
 	public Map<String, Object> getUpdateMap(final String prefix) throws EpickurParsingException {
 		String apiView = toStringAPIView();
 		Document found = Document.parse(apiView);
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		Set<Entry<String, Object>> entrySet = found.entrySet();
 		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
 		while (iterator.hasNext()) {
