@@ -155,7 +155,7 @@
 								</goals>
 								<configuration>
 									<files>
-										<file>${project.build.resources[0].directory}/env/local.properties</file>
+										<file>src/main/resources/env/local.properties</file>
 									</files>
 								</configuration>
 							</execution>
@@ -203,7 +203,7 @@
 								</goals>
 								<configuration>
 									<files>
-										<file>${project.build.resources[0].directory}/env/aws.properties</file>
+										<file>src/main/resources/env/aws.properties</file>
 									</files>
 								</configuration>
 							</execution>

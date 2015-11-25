@@ -97,6 +97,7 @@ public final class Utils {
 		try {
 			prop.load(Utils.class.getClassLoader().getResourceAsStream("epickur.properties"));
 			if (prop.getProperty("address").equals("${address}")) {
+				LOG.warn("Loading local properties...");
 				prop = loadLocal(prop);
 			}
 		} catch (IOException e) {
@@ -131,7 +132,9 @@ public final class Utils {
 	}
 
 	private static void injectStripeInProperties(final Properties properties) {
-		properties.put("stripe.key", StripeTestUtils.getStripeTestKey());
+		String stripeKey = StripeTestUtils.getStripeTestKey();
+		LOG.warn("Injecting stripe key into property file: " + stripeKey);
+		properties.put("stripe.key", stripeKey);
 	}
 
 	/**

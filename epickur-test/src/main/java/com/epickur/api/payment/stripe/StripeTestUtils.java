@@ -36,7 +36,7 @@ public class StripeTestUtils {
 		return null;
 	}
 
-	private static String getStripeProperty() throws IOException {
+	protected static String getStripeProperty() throws IOException {
 		InputStream in = null;
 		try {
 			in = StripeTestUtils.class.getResource("/stripe-test.properties").openStream();

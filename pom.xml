@@ -394,6 +394,8 @@
 						<format>xml</format>
 					</formats>
 					<aggregate>true</aggregate>
+					<check>
+					</check>
 				</configuration>
 				<reportSets>
 					<reportSet>

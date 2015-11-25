@@ -33,7 +33,7 @@
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
@@ -69,10 +69,10 @@
 					<!-- Container configuration -->
 					<container>
 						<containerId>tomcat8x</containerId>
-						<home>${project.tomcat8.path}</home>
-					</container>
+					<!-- <home>${project.tomcat8.path}</home> -->
+                </container>
 
-					<!-- Configuration to use with the container -->
+                <!-- Configuration to use with the container -->
 					<configuration>
 						<home>${project.build.directory}/tomcat8x</home>
 						<properties>
@@ -147,7 +147,7 @@
 					<printFailingErrors>true</printFailingErrors>
 					<failOnViolation>true</failOnViolation>
 					<rulesets>
-						<ruleset>${project.parent.basedir}\src\main\resources\lombokRuleset.xml
+						<ruleset>..\src\main\resources\lombokRuleset.xml
 						</ruleset>
 					</rulesets>
 				</configuration>
@@ -158,7 +158,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.3</version>
 				<configuration>
-					<stylesheetfile>${project.parent.basedir}\src\main\resources\stylesheet.css</stylesheetfile>
+					<stylesheetfile>..\src\main\resources\stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
