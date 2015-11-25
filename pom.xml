@@ -12,7 +12,7 @@
 	<description>The API that allow users to connect to Epickur data.</description>
 
 	<prerequisites>
-		<maven>3.3.3</maven>
+		<maven>3.3.9</maven>
 	</prerequisites>
 
 	<organization>
@@ -70,16 +70,6 @@
 		<jersey.version>2.22.1</jersey.version>
 		<junit.version>4.12</junit.version>
 		<mongo.version>3.1.1</mongo.version>
-
-		<epickur.3rdparty.version>2.0.0.RELEASE</epickur.3rdparty.version>
-		<epickur.dao.version>2.0.0.RELEASE</epickur.dao.version>
-		<epickur.dump.version>2.0.0.RELEASE</epickur.dump.version>
-		<epickur.entity.version>2.0.1-SNAPSHOT</epickur.entity.version>
-		<epickur.logging.version>2.0.0.RELEASE</epickur.logging.version>
-		<epickur.rest.version>2.0.0.RELEASE</epickur.rest.version>
-		<epickur.service.version>2.0.1-SNAPSHOT</epickur.service.version>
-		<epickur.test.version>2.0.1-SNAPSHOT</epickur.test.version>
-		<epickur.utils.version>2.0.1-SNAPSHOT</epickur.utils.version>
 	</properties>
 
 	<build>
@@ -501,27 +491,27 @@
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-3rdparty</artifactId>
-				<version>${epickur.3rdparty.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-dao</artifactId>
-				<version>${epickur.dao.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-dump</artifactId>
-				<version>${epickur.dump.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-entity</artifactId>
-				<version>${epickur.entity.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-logging</artifactId>
-				<version>${epickur.logging.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
@@ -531,17 +521,17 @@
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-service</artifactId>
-				<version>${epickur.service.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-test</artifactId>
-				<version>${epickur.test.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-utils</artifactId>
-				<version>${epickur.utils.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<!-- MongoDB -->
