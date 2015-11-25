@@ -564,7 +564,7 @@ public final class DishController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response search(
 			@QueryParam("pickupdate") @NotBlank(message = "{dish.search.pickupdate}") final String pickupdate,
-			@QueryParam("types") @NotBlank(message = "{dish.search.pickupdate}") final String types,
+			@QueryParam("types") @NotBlank(message = "{dish.search.types}") final String types,
 			@QueryParam("limit") @DefaultValue("50") @Min(value = 1, message = "{dish.search.limit}") final Integer limit,
 			@QueryParam("at") final String at,
 			@QueryParam("searchtext") final String searchtext,

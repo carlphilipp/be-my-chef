@@ -32,7 +32,7 @@ public final class CleanVouchersJob implements Job {
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
 		LOG.info("Clean vouchers job starting...");
 		try {
-			this.voucherBusiness.clean();
+			voucherBusiness.clean();
 		} catch (EpickurException e) {
 			LOG.error(e.getLocalizedMessage() + e.getMessage(), e);
 		}
