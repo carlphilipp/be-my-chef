@@ -281,6 +281,14 @@ public final class DishController {
 		}
 	}
 
+	@GET
+	@Path("/all")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response readAll() throws EpickurException {
+		List<Dish> dishes = dishService.readAll();
+		return Response.ok().entity(dishes).build();
+	}
+
 	// @formatter:off
 	/**
 	 * @api {put} /dishes/:id Update a Dish
@@ -568,7 +576,8 @@ public final class DishController {
 			@QueryParam("limit") @DefaultValue("50") @Min(value = 1, message = "{dish.search.limit}") final Integer limit,
 			@QueryParam("at") final String at,
 			@QueryParam("searchtext") final String searchtext,
-			@QueryParam("distance") @DefaultValue("500") @Min(value = 50, message = "{dish.search.distance}") final Integer distance) throws EpickurException {
+			@QueryParam("distance") @DefaultValue("500") @Min(value = 50, message = "{dish.search.distance}") final Integer distance)
+					throws EpickurException {
 		Key key = (Key) context.getProperty("key");
 		AccessRights.check(key.getRole(), Operation.SEARCH_DISH, EndpointType.DISH);
 		validator.checkSearch(pickupdate, types, at, searchtext);
