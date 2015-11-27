@@ -68,10 +68,9 @@
 					<!-- Container configuration -->
 					<container>
 						<containerId>tomcat8x</containerId>
-					<!-- <home>${project.tomcat8.path}</home> -->
-                </container>
+					</container>
 
-                <!-- Configuration to use with the container -->
+					<!-- Configuration to use with the container -->
 					<configuration>
 						<home>${project.build.directory}/tomcat8x</home>
 						<properties>
@@ -120,16 +119,24 @@
 							<target>
 								<echo message="Creating API doc" />
 								<!-- Does not work on linux/mac. Need to fix that -->
-								<exec executable="${basedir}\src\main\scripts\windows\generate-api.bat" />
+								<exec executable="${basedir}/src/main/scripts/windows/generate-api.bat" />
 							</target>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 
+			<!-- Rename war to given war name -->
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<warName>${war.name}</warName>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
-
 
 	<reporting>
 		<plugins>
@@ -146,7 +153,7 @@
 					<printFailingErrors>true</printFailingErrors>
 					<failOnViolation>true</failOnViolation>
 					<rulesets>
-						<ruleset>..\src\main\resources\lombokRuleset.xml
+						<ruleset>../src/main/resources/lombokRuleset.xml
 						</ruleset>
 					</rulesets>
 				</configuration>
@@ -157,7 +164,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.3</version>
 				<configuration>
-					<stylesheetfile>..\src\main\resources\stylesheet.css</stylesheetfile>
+					<stylesheetfile>../src/main/resources/stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
@@ -165,15 +172,15 @@
 		</plugins>
 	</reporting>
 
-	<dependencyManagement>
-	</dependencyManagement>
-
 	<profiles>
 		<profile>
 			<id>local</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<properties>
+				<war.name>epickur</war.name>
+			</properties>
 			<build>
 
 				<resources>
@@ -201,6 +208,28 @@
 								<version>2.9</version>
 							</dependency>
 						</dependencies>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<id>test</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<delete file="Delete ${env.CATALINA_BASE}/webapps/${war.name}.war"/>
+										<delete dir="${env.CATALINA_BASE}/webapps/${war.name}"/>
+										<copy file="target/${war.name}.war" todir="${env.CATALINA_BASE}/webapps/"/>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 
 				</plugins>
@@ -293,16 +322,6 @@
 								<version>1.9.6</version>
 							</dependency>
 						</dependencies>
-					</plugin>
-
-					<!-- Rename war to ROOT to deploy directly in AWS -->
-					<plugin>
-						<artifactId>maven-war-plugin</artifactId>
-						<version>2.6</version>
-						<configuration>
-							<warName>${war.name}</warName>
-							<packagingExcludes>admin.html</packagingExcludes>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>

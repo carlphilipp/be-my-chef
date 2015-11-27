@@ -516,7 +516,7 @@
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-rest</artifactId>
-				<version>${epickur.rest.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>

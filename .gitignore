@@ -1,6 +1,6 @@
-/target/
-/apidoc/
-.classpath
-.project
-.settings/*
-/.settings/
+*target/
+*.settings/
+.idea/
+*.classpath
+*.project
+*.iml
