@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
@@ -39,6 +37,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.http.HttpStatus;
 
 public class CatererIT {
 
@@ -112,7 +111,7 @@ public class CatererIT {
 			BufferedReader br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals(HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
 			// Create result
@@ -124,7 +123,7 @@ public class CatererIT {
 	}
 
 	@AfterClass
-	public static void tearDownAfterClass() throws ClientProtocolException, IOException {
+	public static void tearDownAfterClass() throws IOException {
 		if (id != null) {
 			String jsonMimeType = "application/json";
 			// Delete
@@ -135,23 +134,24 @@ public class CatererIT {
 	}
 
 	@Test
-	public void testUnauthorized() throws ClientProtocolException, IOException {
+	public void testUnauthorized() throws IOException {
 		// Given
 		String jsonMimeType = "application/json";
 		HttpUriRequest request = new HttpGet(URL_NO_KEY);
+		request.addHeader("content-type", jsonMimeType);
 
 		// When
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		// Then
-		assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getStatusLine().getStatusCode());
 
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 	}
 
 	@Test
-	public void testCreate() throws ClientProtocolException, IOException, EpickurParsingException {
+	public void testCreate() throws IOException, EpickurParsingException {
 		String jsonMimeType = "application/json";
 
 		// Create
@@ -194,7 +194,7 @@ public class CatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals(HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
 			// Create result
@@ -234,16 +234,17 @@ public class CatererIT {
 	}
 
 	@Test
-	public void testReadOneCaterer() throws ClientProtocolException, IOException {
+	public void testReadOneCaterer() throws IOException {
 		// Read
 		String jsonMimeType = "application/json";
 		HttpUriRequest request = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		request.addHeader("content-type", jsonMimeType);
 
 		// Read request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		// Read result
-		assertEquals(Response.Status.OK.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+		assertEquals(HttpStatus.OK.value(), httpResponse.getStatusLine().getStatusCode());
 		InputStreamReader in = null;
 		BufferedReader br = null;
 		try {
@@ -252,7 +253,7 @@ public class CatererIT {
 			String obj = br.readLine();
 			
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals(HttpStatus.OK.value(), statusCode);
 
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);

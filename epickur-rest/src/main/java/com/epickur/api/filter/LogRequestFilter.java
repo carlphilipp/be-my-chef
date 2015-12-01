@@ -1,67 +1,60 @@
 package com.epickur.api.filter;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.annotation.Priority;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.Provider;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
-
 import com.epickur.api.dao.mongo.LogDAO;
 import com.epickur.api.entity.Log;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.utils.EpickurPriorities;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Enumeration;
 
 /**
  * Filter that log any single request
- * 
+ *
  * @author cph
  * @version 1.0
  */
-@Priority(EpickurPriorities.LOG)
-@Provider
-public final class LogRequestFilter implements ContainerRequestFilter {
-
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(LogRequestFilter.class.getSimpleName());
+//@Priority(EpickurPriorities.LOG)
+//@Provider
+public final class LogRequestFilter extends OncePerRequestFilter {
 
 	/**
-	 * Servlet request injected
+	 * Logger
 	 */
-	@Context
-	private HttpServletRequest servletRequest;
+	private static final Logger LOG = LogManager.getLogger(LogRequestFilter.class.getSimpleName());
 
 	@Override
-	public void filter(final ContainerRequestContext requestContext) throws IOException {
+	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws
+			ServletException, IOException {
 		Log log = new Log();
 		log.setTime(new DateTime());
-		log.setUrl(servletRequest.getRequestURL().toString());
-		log.setMethod(servletRequest.getMethod());
-		log.setProtocol(servletRequest.getProtocol());
-		MultivaluedMap<String, String> params = requestContext.getUriInfo().getQueryParameters();
-		for (Entry<String, List<String>> param : params.entrySet()) {
-			log.getArgs().put(param.getKey(), param.getValue().get(0));
+		log.setUrl(request.getRequestURL().toString());
+		log.setMethod(request.getMethod());
+		log.setProtocol(request.getProtocol());
+		Enumeration<String> params = request.getParameterNames();
+		while (params.hasMoreElements()) {
+			String param = params.nextElement();
+			log.getArgs().put(param, request.getParameter(param));
 		}
-		String ipAddress = servletRequest.getHeader("X-FORWARDED-FOR");
+		String ipAddress = request.getHeader("X-FORWARDED-FOR");
 		if (ipAddress == null) {
-			ipAddress = servletRequest.getRemoteAddr();
+			ipAddress = request.getRemoteAddr();
 		}
 		log.setRemoteAddr(ipAddress);
-		log.setUserAgent(requestContext.getHeaderString("User-Agent"));
+		log.setUserAgent(request.getHeader("User-Agent"));
 		LogDAO dao = new LogDAO();
 		try {
 			dao.create(log);
 		} catch (EpickurException e) {
 			LOG.warn("Can not put log into DB. " + e.getLocalizedMessage());
 		}
+		filterChain.doFilter(request, response);
 	}
 }

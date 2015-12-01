@@ -1,5 +1,6 @@
 package com.epickur.api;
 
+import com.epickur.api.commons.CommonsUtil;
 import org.bson.types.ObjectId;
 
 import com.epickur.api.entity.Caterer;
@@ -108,10 +109,10 @@ public class IntegrationTestUtils {
 
 	public static String generateRandomCorrectPickupDate(final WorkingTimes workingTimes) {
 		String pickupdate = EntityGenerator.generateRandomPickupDate();
-		Object[] parsedPickupdate = Utils.parsePickupdate(pickupdate);
+		Object[] parsedPickupdate = CommonsUtil.parsePickupdate(pickupdate);
 		while (!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])) {
 			pickupdate = EntityGenerator.generateRandomPickupDate();
-			parsedPickupdate = Utils.parsePickupdate(pickupdate);
+			parsedPickupdate = CommonsUtil.parsePickupdate(pickupdate);
 		}
 		return pickupdate;
 	}

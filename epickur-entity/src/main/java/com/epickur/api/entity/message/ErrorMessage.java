@@ -1,11 +1,10 @@
 package com.epickur.api.entity.message;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import lombok.Data;
 
 /**
  * @author cph
@@ -14,18 +13,26 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public final class ErrorMessage {
-	/** Error */
+	/**
+	 * Error
+	 */
 	private Integer error;
-	/** Message */
+	/**
+	 * Message
+	 */
 	private String message;
-	/** Description */
+	/**
+	 * Description
+	 */
 	private List<String> descriptions;
 
 	public ErrorMessage() {
-		this.descriptions = new ArrayList<>();
 	}
 
 	public void addDescription(final String description) {
+		if (this.descriptions == null) {
+			this.descriptions = new ArrayList<>();
+		}
 		descriptions.add(description);
 	}
 }

@@ -1,13 +1,11 @@
 package com.epickur.api.exception;
 
-import javax.ws.rs.ForbiddenException;
-
 /**
  * @author cph
  * @version 1.0
  *
  */
-public class EpickurForbiddenException extends ForbiddenException {
+public class EpickurForbiddenException extends RuntimeException {
 
 	/**
 	 * Serializer

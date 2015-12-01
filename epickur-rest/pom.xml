@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>epickur-rest</artifactId>
@@ -33,6 +33,43 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>4.2.3.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>4.2.3.RELEASE</version>
+		</dependency>
+
+		<!-- Hibernate validator -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.2.2.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -55,6 +92,7 @@
 				<version>2.4</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<warName>${war.name}</warName>
 				</configuration>
 			</plugin>
 
@@ -117,22 +155,13 @@
 						</goals>
 						<configuration>
 							<target>
-								<echo message="Creating API doc" />
+								<echo message="Creating API doc"/>
 								<!-- Does not work on linux/mac. Need to fix that -->
-								<exec executable="${basedir}/src/main/scripts/windows/generate-api.bat" />
+								<exec executable="${basedir}/src/main/scripts/windows/generate-api.bat"/>
 							</target>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<!-- Rename war to given war name -->
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<warName>${war.name}</warName>
-				</configuration>
 			</plugin>
 
 		</plugins>
@@ -224,7 +253,9 @@
 								<configuration>
 									<target>
 										<delete file="Delete ${env.CATALINA_BASE}/webapps/${war.name}.war"/>
+										<!--
 										<delete dir="${env.CATALINA_BASE}/webapps/${war.name}"/>
+										-->
 										<copy file="target/${war.name}.war" todir="${env.CATALINA_BASE}/webapps/"/>
 									</target>
 								</configuration>
@@ -269,36 +300,36 @@
 								<configuration>
 									<target>
 										<echo
-											message="Connecting to ${server.login}@${server.address}:${server.base}" />
+												message="Connecting to ${server.login}@${server.address}:${server.base}"/>
 
-										<echo message="Push ${war.name}.war to /home/tomcat7" />
+										<echo message="Push ${war.name}.war to /home/tomcat7"/>
 										<scp trust="yes"
-											todir="${server.login}:${server.password}@${server.address}:/home/tomcat7"
-											file="${basedir}/target/${war.name}.war">
+											 todir="${server.login}:${server.password}@${server.address}:/home/tomcat7"
+											 file="${basedir}/target/${war.name}.war">
 										</scp>
 
-										<echo message="Stoping tomcat..." />
+										<echo message="Stoping tomcat..."/>
 										<sshexec host="${server.address}" username="${server.login}"
-											password="${server.password}" command="${server.base}/bin/shutdown.sh" />
+												 password="${server.password}" command="${server.base}/bin/shutdown.sh"/>
 
-										<echo message="Cleaning webapps directory..." />
+										<echo message="Cleaning webapps directory..."/>
 										<sshexec host="${server.address}" username="${server.login}"
-											password="${server.password}" command="rm -f -R ${server.base}/webapps/*" />
+												 password="${server.password}" command="rm -f -R ${server.base}/webapps/*"/>
 
-										<echo message="Cleaning temporary files..." />
+										<echo message="Cleaning temporary files..."/>
 										<sshexec host="${server.address}" username="${server.login}"
-											password="${server.password}"
-											command="rm -f -R ${server.base}/work/*;rm -f -R ${server.base}/temp/*" />
+												 password="${server.password}"
+												 command="rm -f -R ${server.base}/work/*;rm -f -R ${server.base}/temp/*"/>
 
 										<echo
-											message="Move ${war.name}.war from /home/tomcat7 to ${server.base}/webapps" />
+												message="Move ${war.name}.war from /home/tomcat7 to ${server.base}/webapps"/>
 										<sshexec host="${server.address}" username="${server.login}"
-											password="${server.password}"
-											command="mv /home/tomcat7/${war.name}.war ${server.base}/webapps" />
+												 password="${server.password}"
+												 command="mv /home/tomcat7/${war.name}.war ${server.base}/webapps"/>
 
-										<echo message="Starting tomcat..." />
+										<echo message="Starting tomcat..."/>
 										<sshexec host="${server.address}" username="${server.login}"
-											password="${server.password}" command="/opt/tomcat8/bin/startup.sh" />
+												 password="${server.password}" command="/opt/tomcat8/bin/startup.sh"/>
 									</target>
 								</configuration>
 							</execution>
@@ -309,8 +340,8 @@
 								</goals>
 								<configuration>
 									<target>
-										<echo message="Creating API doc" />
-										<exec executable="src/main/scripts/windows/generate-api.bat" />
+										<echo message="Creating API doc"/>
+										<exec executable="src/main/scripts/windows/generate-api.bat"/>
 									</target>
 								</configuration>
 							</execution>

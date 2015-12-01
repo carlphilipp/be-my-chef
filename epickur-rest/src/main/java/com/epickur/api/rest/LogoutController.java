@@ -1,31 +1,35 @@
 package com.epickur.api.rest;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.epickur.api.entity.message.SuccessMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.KeyService;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Logout Service
- * 
+ *
  * @author cph
  * @version 1.0
  */
-@Path("/logout")
+@RestController
+@RequestMapping(value = "/api/logout")
 public final class LogoutController {
 
-	/** Key Service */
+	/**
+	 * Key Service
+	 */
 	private KeyService keyService;
 
-	/** Constructor */
+	/**
+	 * Constructor
+	 */
 	public LogoutController() {
 		this.keyService = new KeyService();
 	}
@@ -49,18 +53,16 @@ public final class LogoutController {
 	 *	}
 	 */
 	// @formatter:on
+
 	/**
-	 * @param key
-	 *            The key
+	 * @param key The key
 	 * @return The reponse
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response logout(@QueryParam("key") @NotBlank(message = "{logout.key}") final String key) throws EpickurException {
+	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> logout(@RequestParam("key") @NotBlank(message = "{logout.key}") final String key) throws EpickurException {
 		keyService.deleteWithKey(key);
 		SuccessMessage successMessage = new SuccessMessage();
-		return Response.ok().entity(successMessage).build();
+		return new ResponseEntity<>(successMessage, HttpStatus.OK);
 	}
 }

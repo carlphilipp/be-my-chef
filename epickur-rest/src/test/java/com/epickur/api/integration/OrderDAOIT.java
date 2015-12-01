@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.ws.rs.container.ContainerRequestContext;
-
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.junit.AfterClass;
@@ -40,6 +38,8 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class OrderDAOIT {
 
 	private static List<ObjectId> idsToDeleteUser;
@@ -49,7 +49,7 @@ public class OrderDAOIT {
 	@Mock
 	private UserService userService;
 	@Mock
-	private ContainerRequestContext context;
+	private HttpServletRequest context;
 	@InjectMocks
 	private static UserController userController;
 
@@ -79,7 +79,7 @@ public class OrderDAOIT {
 		MockitoAnnotations.initMocks(this);
 
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(context.getProperty("key")).thenReturn(key);
+		when(context.getAttribute("key")).thenReturn(key);
 	}
 
 	@Test

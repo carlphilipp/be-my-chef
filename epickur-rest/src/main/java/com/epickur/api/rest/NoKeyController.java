@@ -1,37 +1,29 @@
 package com.epickur.api.rest;
 
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
 import com.epickur.api.validator.FactoryValidator;
-import com.epickur.api.validator.IdValidate;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * JAX-RS service that handles all the request that does not contain any public key.
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
-@Path("/nokey")
+@RestController
+@RequestMapping(value = "/api/nokey")
 public final class NoKeyController {
 
 	/** User Service */
@@ -84,26 +76,22 @@ public final class NoKeyController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param email
-	 *            The User email
-	 * @param check
-	 *            The code
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param email The User email
+	 * @param check The code
 	 * @return The response
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@GET
-	@Path("/check")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response checkUser(
-			@NotBlank(message = "{nokey.check.user.email}") @QueryParam("email") final String email,
-			@NotBlank(message = "{nokey.check.user.check}") @QueryParam("check") final String check)
-					throws EpickurException {
+	@RequestMapping(value = "/check", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> checkUser(
+			@RequestParam("email") @NotBlank(message = "{nokey.check.user.email}") final String email,
+			@RequestParam("check") @NotBlank(message = "{nokey.check.user.check}") final String check)
+			throws EpickurException {
 		// this.validator.checkCheckUser(email, check);
 		User user = this.userService.checkCode(email, check);
 		this.userService.suscribeToNewsletter(user);
-		return Response.ok().entity(user).build();
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -156,32 +144,25 @@ public final class NoKeyController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param userId
-	 *            The User id
-	 * @param orderId
-	 *            The Order id
-	 * @param confirm
-	 *            If the caterer confirmed the order
-	 * @param orderCode
-	 *            The Order code
-	 * @param shouldCharge
-	 *            If we charge the user
+	 * @param userId       The User id
+	 * @param orderId      The Order id
+	 * @param confirm      If the caterer confirmed the order
+	 * @param orderCode    The Order code
+	 * @param shouldCharge If we charge the user
 	 * @return The response
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@GET
-	@Path("/execute/users/{id}/orders/{orderId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response executeOrder(
-			@PathParam("id") @IdValidate final String userId,
-			@PathParam("orderId") @IdValidate final String orderId,
-			@QueryParam("confirm") @NotNull(message = "{nokey.execute.confirm}") final boolean confirm,
-			@QueryParam("ordercode") @NotBlank(message = "{nokey.execute.ordercode}") final String orderCode,
-			@HeaderParam("charge-agent") @DefaultValue("true") final boolean shouldCharge) throws EpickurException {
+	@RequestMapping(value = "/execute/users/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> executeOrder(
+			@PathVariable("id") final String userId,
+			@PathVariable("orderId") final String orderId,
+			@RequestParam("confirm") @NotNull(message = "{nokey.execute.confirm}") final boolean confirm,
+			@RequestParam("ordercode") @NotBlank(message = "{nokey.execute.ordercode}") final String orderCode,
+			@RequestHeader(value = "charge-agent", defaultValue = "true") final boolean shouldCharge) throws EpickurException {
 		Order result = orderService.executeOrder(userId, orderId, confirm, shouldCharge, orderCode);
-		return Response.ok().entity(result).build();
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -220,27 +201,22 @@ public final class NoKeyController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param id
-	 *            The User id
-	 * @param resetCode
-	 *            The reset code
-	 * @param node
-	 *            The node containing the password
+	 * @param id        The User id
+	 * @param resetCode The reset code
+	 * @param node      The node containing the password
 	 * @return The response
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@PUT
-	@Path("/reset/users/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response resetPasswordSecondStep(
-			@PathParam("id") @IdValidate final String id,
-			@NotBlank(message = "{nokey.reset.token}") @QueryParam("token") final String resetCode,
+	@RequestMapping(value = "/reset/users/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> resetPasswordSecondStep(
+			@PathVariable("id") final String id,
+			@RequestParam("token") @NotBlank(message = "{nokey.reset.token}") final String resetCode,
 			final ObjectNode node) throws EpickurException {
 		validator.checkResetPasswordDataSecondStep(node);
 		String newPassword = node.get("password").asText();
 		User user = userService.resetPasswordSecondStep(id, newPassword, resetCode);
-		return Response.ok().entity(user).build();
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 }

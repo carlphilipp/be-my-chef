@@ -20,7 +20,6 @@ import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
-import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
@@ -36,6 +35,8 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(VoucherDAO.class.getSimpleName());
+	/** Not implemented */
+	private static final String NOT_IMPLEMENTED = "Not implemented";
 
 	/** Constructor */
 	public VoucherDAO() {
@@ -45,7 +46,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 
 	@Override
 	public List<Voucher> readAll() throws EpickurException {
-		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
+		throw new EpickurException(NOT_IMPLEMENTED);
 	}
 
 	@Override

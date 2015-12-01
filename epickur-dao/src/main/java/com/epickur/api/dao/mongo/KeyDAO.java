@@ -12,7 +12,6 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
-import com.epickur.api.utils.ErrorUtils;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
 
@@ -26,6 +25,8 @@ public class KeyDAO extends CrudDAO<Key> {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(KeyDAO.class.getSimpleName());
+	/** Not implemented */
+	private static final String NOT_IMPLEMENTED = "Not implemented";
 
 	/** Constructor */
 	public KeyDAO() {
@@ -67,7 +68,7 @@ public class KeyDAO extends CrudDAO<Key> {
 
 	@Override
 	public Key update(final Key key) throws EpickurException {
-		throw new EpickurException(ErrorUtils.NOT_IMPLEMENTED);
+		throw new EpickurException(NOT_IMPLEMENTED);
 	}
 
 	/**

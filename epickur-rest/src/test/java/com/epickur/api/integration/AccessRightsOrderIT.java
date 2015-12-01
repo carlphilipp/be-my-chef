@@ -1,15 +1,14 @@
 package com.epickur.api.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Properties;
-
-import javax.ws.rs.core.Response;
-
+import com.epickur.api.IntegrationTestUtils;
+import com.epickur.api.entity.Order;
+import com.epickur.api.entity.User;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
+import com.epickur.api.payment.stripe.StripeTestUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stripe.exception.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -23,20 +22,15 @@ import org.bson.types.ObjectId;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
 
-import com.epickur.api.IntegrationTestUtils;
-import com.epickur.api.entity.Order;
-import com.epickur.api.entity.User;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.payment.stripe.StripeTestUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class AccessRightsOrderIT {
 	private static String END_POINT;
@@ -80,7 +74,7 @@ public class AccessRightsOrderIT {
 
 	// User Administrator
 	@Test
-	public void testAdministratorOrderCreate() throws ClientProtocolException, IOException, AuthenticationException, InvalidRequestException,
+	public void testAdministratorOrderCreate() throws IOException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException, EpickurException {
 		User admin = IntegrationTestUtils.createAdminAndLogin();
 
@@ -102,7 +96,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
@@ -113,7 +107,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testAdministratorOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testAdministratorOrderRead() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Order order = IntegrationTestUtils.createOrder(user.getId());
 
@@ -123,6 +117,7 @@ public class AccessRightsOrderIT {
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpGet getReq = new HttpGet(URL);
+		getReq.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -131,7 +126,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
@@ -142,7 +137,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testAdministratorOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testAdministratorOrderRead2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 
 		User admin = IntegrationTestUtils.createAdminAndLogin();
@@ -153,6 +148,7 @@ public class AccessRightsOrderIT {
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpGet request = new HttpGet(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -161,7 +157,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -169,7 +165,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testAdministratorOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testAdministratorOrderUpdate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Order order = IntegrationTestUtils.createOrder(user.getId());
 
@@ -193,7 +189,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -201,7 +197,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testAdministratorOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testAdministratorOrderUpdate2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		ObjectId id = new ObjectId();
 		Order updatedOrder = IntegrationTestUtils.createOrder(user.getId());
@@ -224,7 +220,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -232,7 +228,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testAdministratorOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testAdministratorOrderDelete() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		Order order = IntegrationTestUtils.createOrder(user.getId());
 
@@ -242,6 +238,7 @@ public class AccessRightsOrderIT {
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -250,7 +247,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -259,7 +256,7 @@ public class AccessRightsOrderIT {
 
 	// User Super_User
 	@Test
-	public void testSuperUserOrderCreate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testSuperUserOrderCreate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createSuperUserAndLogin();
 
@@ -280,7 +277,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
@@ -291,7 +288,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testSuperUserOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testSuperUserOrderRead() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createSuperUserAndLogin();
 
@@ -301,6 +298,7 @@ public class AccessRightsOrderIT {
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		HttpGet getReq = new HttpGet(URL);
+		getReq.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -309,7 +307,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
@@ -320,7 +318,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testSuperUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testSuperUserOrderRead2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createSuperUserAndLogin();
 
@@ -330,6 +328,7 @@ public class AccessRightsOrderIT {
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		HttpGet request = new HttpGet(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -338,7 +337,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -346,7 +345,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testSuperUserOrderRead3() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testSuperUserOrderRead3() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createSuperUserAndLogin();
 
@@ -358,6 +357,7 @@ public class AccessRightsOrderIT {
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		HttpGet getReq = new HttpGet(URL);
+		getReq.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -366,7 +366,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -374,7 +374,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testSuperUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testSuperUserOrderUpdate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createSuperUserAndLogin();
 		Order order = IntegrationTestUtils.createOrder(user.getId());
@@ -397,7 +397,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -405,7 +405,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testSuperUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testSuperUserOrderUpdate2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createSuperUserAndLogin();
 		ObjectId id = new ObjectId();
@@ -429,7 +429,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -437,7 +437,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testSuperUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testSuperUserOrderDelete() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createSuperUserAndLogin();
 		Order order = IntegrationTestUtils.createOrder(user.getId());
@@ -446,6 +446,7 @@ public class AccessRightsOrderIT {
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -454,7 +455,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -463,7 +464,7 @@ public class AccessRightsOrderIT {
 
 	// User User
 	@Test
-	public void testUserOrderCreate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testUserOrderCreate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createUserAndLogin();
 
@@ -484,7 +485,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
@@ -495,7 +496,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testUserOrderRead() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
+	public void testUserOrderRead() throws IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createUserAndLogin();
 
@@ -505,6 +506,7 @@ public class AccessRightsOrderIT {
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		HttpGet getReq = new HttpGet(URL);
+		getReq.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -513,7 +515,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
@@ -523,7 +525,7 @@ public class AccessRightsOrderIT {
 		}
 	}
 
-	public void testUserOrderRead2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
+	public void testUserOrderRead2() throws IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createUserAndLogin();
 		String id = new ObjectId().toHexString();
@@ -540,7 +542,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -548,7 +550,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testUserOrderRead3() throws ClientProtocolException, IOException, EpickurException, AuthenticationException, InvalidRequestException,
+	public void testUserOrderRead3() throws IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createUserAndLogin();
 
@@ -560,6 +562,7 @@ public class AccessRightsOrderIT {
 		URL = URL_NO_KEY + "?key=" + user.getKey();
 
 		HttpGet getReq = new HttpGet(URL);
+		getReq.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -568,14 +571,14 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
 		}
 	}
 
-	public void testUserOrderUpdate() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testUserOrderUpdate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createUserAndLogin();
 		Order order = IntegrationTestUtils.createOrder(user.getId());
@@ -598,7 +601,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -606,7 +609,7 @@ public class AccessRightsOrderIT {
 	}
 
 	@Test
-	public void testUserOrderUpdate2() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testUserOrderUpdate2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createUserAndLogin();
 		ObjectId id = new ObjectId();
@@ -628,14 +631,14 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
 		}
 	}
 
-	public void testUserOrderDelete() throws ClientProtocolException, IOException, EpickurException, AuthenticationException,
+	public void testUserOrderDelete() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		user = IntegrationTestUtils.createUserAndLogin();
 		Order order = IntegrationTestUtils.createOrder(user.getId());
@@ -652,7 +655,7 @@ public class AccessRightsOrderIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);

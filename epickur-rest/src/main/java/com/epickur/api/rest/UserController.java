@@ -1,24 +1,5 @@
 package com.epickur.api.rest;
 
-import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
@@ -28,34 +9,51 @@ import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import com.epickur.api.validator.AccessRights;
-import com.epickur.api.validator.FactoryValidator;
-import com.epickur.api.validator.IdValidate;
-import com.epickur.api.validator.UserCreateValidate;
-import com.epickur.api.validator.UserUpdateValidate;
-import com.epickur.api.validator.UserValidator;
+import com.epickur.api.validator.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * JAX-RS User Service
- * 
+ *
  * @author cph
  * @version 1.0
  */
-@Path("/users")
+@RestController
+@RequestMapping(value = "/api/users")
 public final class UserController {
 
-	/** Context */
-	@Context
-	private ContainerRequestContext context;
-	/** User Service */
+	/**
+	 * Context
+	 */
+	@Autowired
+	private HttpServletRequest context;
+	/**
+	 * User Service
+	 */
 	private UserService userService;
-	/** Order Service */
+	/**
+	 * Order Service
+	 */
 	private OrderService orderService;
-	/** User validator */
+	/**
+	 * User validator
+	 */
 	private UserValidator validator;
 
-	/** Constructor */
+	/**
+	 * Constructor
+	 */
 	public UserController() {
 		this.userService = new UserService();
 		this.orderService = new OrderService();
@@ -99,31 +97,29 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
 	 * Create a User
-	 * 
-	 * @param autoValidate
-	 *            The valide agent. Can onlybe true or false
-	 * @param user
-	 *            The User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 *
+	 * @param autoValidate The valide agent. Can onlybe true or false
+	 * @param user         The User
 	 * @return The reponse
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(
-			@DefaultValue("false") @HeaderParam("validate-agent") final boolean autoValidate,
-			@UserCreateValidate final User user)
-					throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> create(
+			@RequestHeader(value = "validate-agent", defaultValue = "false") final boolean autoValidate,
+			@RequestBody @Validated(Create.class) final User user)
+			throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.USER);
 		User result = userService.create(user, autoValidate);
 		// We add to the header the check code. Can be useful for tests or developers.
-		return Response.ok().entity(result).header("check", result.getCode()).build();
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("check", result.getCode());
+		return new ResponseEntity<>(result, headers, HttpStatus.OK);
 	}
- 
+
 	// @formatter:off
 	/** 
 	 * 
@@ -158,21 +154,18 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param id
-	 *            The User id
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param id The User id
 	 * @return The reponse
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@GET
-	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("id") @IdValidate final String id) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.USER);
 		User user = userService.read(id, key);
-		return Response.ok().entity(user).build();
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -212,23 +205,18 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param id
-	 *            The User id
-	 * @param user
-	 *            The User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param id   The User id
+	 * @param user The User
 	 * @return The reponse
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@PUT
-	@Path("/{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(
-			@PathParam("id") @IdValidate final String id,
-			@UserUpdateValidate final User user) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> update(
+			@PathVariable("id") final String id,
+			@RequestBody @Validated(Update.class) final User user) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.USER);
 		validator.checkUpdateUser(id, user);
 		if (StringUtils.isNotBlank(user.getPassword()) && StringUtils.isNotBlank(user.getNewPassword())) {
@@ -241,7 +229,7 @@ public final class UserController {
 			user.setPassword(null);
 		}
 		User result = userService.update(user, key);
-		return Response.ok().entity(result).build();
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -266,24 +254,21 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param id
-	 *            The User id
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param id The User id
 	 * @return The reponse
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@DELETE
-	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") @IdValidate final String id) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> delete(@PathVariable("id") final String id) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.USER);
 		boolean isDeleted = userService.delete(id);
 		DeletedMessage deletedMessage = new DeletedMessage();
 		deletedMessage.setId(id);
 		deletedMessage.setDeleted(isDeleted);
-		return Response.ok().entity(deletedMessage).build();
+		return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -318,20 +303,19 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
 	 * Read All users.
-	 * 
-	 * @throws EpickurException
-	 *             If an epickur exception occurred.
+	 *
 	 * @return A list of User.
+	 * @throws EpickurException If an epickur exception occurred.
 	 */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response readAll() throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> readAll() throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.USER);
 		List<User> users = userService.readAll();
-		return Response.ok().entity(users).build();
+		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -380,25 +364,22 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param id
-	 *            The User id
-	 * @param orderId
-	 *            The Orderid
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param id      The User id
+	 * @param orderId The Orderid
 	 * @return The reponse
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@GET
-	@Path("/{id}/orders/{orderId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response readOneOrder(
-			@PathParam("id") final @IdValidate String id,
-			@PathParam("orderId") @IdValidate final String orderId) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> readOneOrder(
+			@PathVariable("id") final String id,
+			@PathVariable("orderId") final String orderId) throws EpickurException {
+		// FIXME Check why id is not used and probably check stuff around users
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.ORDER);
 		Order order = orderService.read(orderId, key);
-		return Response.ok().entity(order).build();
+		return new ResponseEntity<>(order, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -463,23 +444,20 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
 	 * Read all orders.
-	 * 
-	 * @param id
-	 *            The User id.
-	 * @throws EpickurException
-	 *             If an epickur exception occurred.
+	 *
+	 * @param id The User id.
 	 * @return The list of Order for this User.
+	 * @throws EpickurException If an epickur exception occurred.
 	 */
-	@GET
-	@Path("/{id}/orders")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response readAllOrders(@PathParam("id") @IdValidate final String id) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> readAllOrders(@PathVariable("id") final String id) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.ORDER);
 		List<Order> orders = orderService.readAllWithUserId(id);
-		return Response.ok().entity(orders).build();
+		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -537,27 +515,22 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param userId
-	 *            The User id
-	 * @param order
-	 *            The Order
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param userId The User id
+	 * @param order  The Order
 	 * @return The reponse
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@POST
-	@Path("/{id}/orders")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response createOneOrder(
-			@PathParam("id") @IdValidate final String userId,
-			final Order order) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> createOneOrder(
+			@PathVariable("id") final String userId,
+			@RequestBody final Order order) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.ORDER);
 		validator.checkCreateOneOrder(order);
 		Order result = orderService.create(userId, order);
-		return Response.ok().entity(result).build();
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -609,30 +582,24 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param id
-	 *            The User id
-	 * @param orderId
-	 *            The Order id
-	 * @param order
-	 *            The Order
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param id      The User id
+	 * @param orderId The Order id
+	 * @param order   The Order
 	 * @return The reponse
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@PUT
-	@Path("/{id}/orders/{orderId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateOneOrder(
-			@PathParam("id") @IdValidate final String id,
-			@PathParam("orderId") @IdValidate final String orderId,
-			final Order order) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateOneOrder(
+			@PathVariable("id") final String id,
+			@PathVariable("orderId") final String orderId,
+			@RequestBody final Order order) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.ORDER);
 		validator.checkUpdateOneOrder(orderId, order);
 		Order result = orderService.update(order, key);
-		return Response.ok().entity(result).build();
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -661,28 +628,24 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param id
-	 *            The User id
-	 * @param orderId
-	 *            The Order id
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param id      The User id
+	 * @param orderId The Order id
 	 * @return The reponse
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@DELETE
-	@Path("/{id}/orders/{orderId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteOneOrder(
-			@PathParam("id") @IdValidate final String id,
-			@PathParam("orderId") @IdValidate final String orderId) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> deleteOneOrder(
+			@PathVariable("id") final String id,
+			@PathVariable("orderId") final String orderId) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.ORDER);
 		boolean isDeleted = orderService.delete(orderId);
 		DeletedMessage deletedMessage = new DeletedMessage();
 		deletedMessage.setId(id);
 		deletedMessage.setDeleted(isDeleted);
-		return Response.ok().entity(deletedMessage).build();
+		return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -706,23 +669,20 @@ public final class UserController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param node
-	 *            The node containing the user email that needs to be reset
+	 * @param node The node containing the user email that needs to be reset
 	 * @return The reponse
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@POST
-	@Path("/reset")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response resetPasswordFirstStep(final ObjectNode node) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/reset", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> resetPasswordFirstStep(final ObjectNode node) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.RESET_PASSWORD, EndpointType.USER);
 		validator.checkResetPasswordData(node);
 		String email = node.get("email").asText();
 		userService.resetPasswordFirstStep(email);
 		node.put("status", "email sent");
-		return Response.ok().entity(node).build();
+		return new ResponseEntity<>(node, HttpStatus.OK);
 	}
 }

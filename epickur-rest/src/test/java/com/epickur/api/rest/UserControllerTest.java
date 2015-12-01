@@ -12,8 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Response;
+import javax.servlet.http.HttpServletRequest;
 
 import org.bson.types.ObjectId;
 import org.junit.AfterClass;
@@ -37,6 +36,7 @@ import com.epickur.api.service.UserService;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import org.springframework.http.ResponseEntity;
 
 public class UserControllerTest {
 
@@ -45,7 +45,7 @@ public class UserControllerTest {
 	@Mock
 	private OrderService orderBusiness;
 	@Mock
-	private ContainerRequestContext context;
+	private HttpServletRequest context;
 	@InjectMocks
 	private UserController controller;
 
@@ -64,7 +64,7 @@ public class UserControllerTest {
 		MockitoAnnotations.initMocks(this);
 
 		Key key = EntityGenerator.generateRandomAdminKey();
-		Mockito.when(context.getProperty("key")).thenReturn(key);
+		Mockito.when(context.getAttribute("key")).thenReturn(key);
 	}
 
 	@Test
@@ -74,10 +74,10 @@ public class UserControllerTest {
 
 		when(userBusiness.create((User) anyObject(), anyBoolean())).thenReturn(userAfterCreate);
 
-		Response actual = controller.create(false, user);
+		ResponseEntity<?> actual = controller.create(false, user);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		User actualUser = (User) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		User actualUser = (User) actual.getBody();
 		assertNotNull(actualUser.getId());
 	}
 
@@ -88,10 +88,10 @@ public class UserControllerTest {
 
 		when(userBusiness.read(anyString(), (Key) anyObject())).thenReturn(userAfterRead);
 
-		Response actual = controller.read(user.getId().toHexString());
+		ResponseEntity<?> actual = controller.read(user.getId().toHexString());
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		User actualUser = (User) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		User actualUser = (User) actual.getBody();
 		assertNotNull(actualUser.getId());
 	}
 
@@ -102,10 +102,10 @@ public class UserControllerTest {
 
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterUpdate);
 
-		Response actual = controller.update(user.getId().toHexString(), user);
+		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		User actualUser = (User) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		User actualUser = (User) actual.getBody();
 		assertNotNull(actualUser.getId());
 	}
 
@@ -119,10 +119,10 @@ public class UserControllerTest {
 
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
 
-		Response actual = controller.update(user.getId().toHexString(), user);
+		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		User actualUser = (User) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		User actualUser = (User) actual.getBody();
 		assertNotNull(actualUser.getId());
 		assertNull(actualUser.getNewPassword());
 	}
@@ -136,10 +136,10 @@ public class UserControllerTest {
 
 		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
 
-		Response actual = controller.update(user.getId().toHexString(), user);
+		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		User actualUser = (User) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		User actualUser = (User) actual.getBody();
 		assertNotNull(actualUser.getId());
 		assertNull(actualUser.getNewPassword());
 	}
@@ -150,10 +150,10 @@ public class UserControllerTest {
 
 		when(userBusiness.delete(anyString())).thenReturn(true);
 
-		Response actual = controller.delete(user.getId().toHexString());
+		ResponseEntity<?> actual = controller.delete(user.getId().toHexString());
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getBody();
 		assertNotNull(actualDeletedMessage.getId());
 		assertNotNull(actualDeletedMessage.getDeleted());
 		assertTrue(actualDeletedMessage.getDeleted());
@@ -168,10 +168,10 @@ public class UserControllerTest {
 
 		when(userBusiness.readAll()).thenReturn(usersAfterReadAll);
 
-		Response actual = controller.readAll();
+		ResponseEntity<?> actual = controller.readAll();
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		List<User> actualUsers = (List<User>) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		List<User> actualUsers = (List<User>) actual.getBody();
 		assertEquals(1, actualUsers.size());
 	}
 
@@ -182,10 +182,10 @@ public class UserControllerTest {
 
 		when(orderBusiness.create(anyString(), (Order) anyObject())).thenReturn(orderAfterCreate);
 
-		Response actual = controller.createOneOrder(orderAfterCreate.getId().toHexString(), order);
+		ResponseEntity<?> actual = controller.createOneOrder(orderAfterCreate.getId().toHexString(), order);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		Order actualUser = (Order) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		Order actualUser = (Order) actual.getBody();
 		assertNotNull(actualUser.getId());
 	}
 
@@ -196,10 +196,10 @@ public class UserControllerTest {
 
 		when(orderBusiness.read(anyString(), (Key) anyObject())).thenReturn(orderAfterRead);
 
-		Response actual = controller.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
+		ResponseEntity<?> actual = controller.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		Order actualUser = (Order) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		Order actualUser = (Order) actual.getBody();
 		assertNotNull(actualUser.getId());
 	}
 
@@ -212,10 +212,10 @@ public class UserControllerTest {
 
 		when(orderBusiness.readAllWithUserId(anyString())).thenReturn(orders);
 
-		Response actual = controller.readAllOrders(new ObjectId().toHexString());
+		ResponseEntity<?> actual = controller.readAllOrders(new ObjectId().toHexString());
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		List<Order> actualUsers = (List<Order>) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		List<Order> actualUsers = (List<Order>) actual.getBody();
 		assertNotNull(actualUsers);
 		assertEquals(1, actualUsers.size());
 	}
@@ -228,10 +228,10 @@ public class UserControllerTest {
 
 		when(orderBusiness.update((Order) anyObject(), (Key) anyObject())).thenReturn(orderAfterCreate);
 
-		Response actual = controller.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
+		ResponseEntity<?> actual = controller.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		Order actualUser = (Order) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		Order actualUser = (Order) actual.getBody();
 		assertNotNull(actualUser.getId());
 	}
 
@@ -241,10 +241,10 @@ public class UserControllerTest {
 
 		when(orderBusiness.delete(anyString())).thenReturn(true);
 
-		Response actual = controller.deleteOneOrder(new ObjectId().toHexString(), order.getId().toHexString());
+		ResponseEntity<?> actual = controller.deleteOneOrder(new ObjectId().toHexString(), order.getId().toHexString());
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getBody();
 		assertNotNull(actualDeletedMessage.getId());
 		assertNotNull(actualDeletedMessage.getDeleted());
 		assertTrue(actualDeletedMessage.getDeleted());
@@ -256,10 +256,10 @@ public class UserControllerTest {
 		TextNode emailNode = JsonNodeFactory.instance.textNode("name@example.com");
 		node.set("email", emailNode);
 
-		Response actual = controller.resetPasswordFirstStep(node);
+		ResponseEntity<?> actual = controller.resetPasswordFirstStep(node);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		ObjectNode actualNode = (ObjectNode) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		ObjectNode actualNode = (ObjectNode) actual.getBody();
 		assertNotNull(actualNode.get("status"));
 		assertEquals("email sent", actualNode.get("status").textValue());
 	}

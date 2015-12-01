@@ -1,23 +1,28 @@
 package com.epickur.api.filter;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.ext.Provider;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Class that add Access-Control-Allow-Origin in headers of any requests.
- * 
+ *
  * @author cph
  * @version 1.0
  */
-@Provider
-public final class HeaderResponseFilter implements ContainerResponseFilter {
+//@Provider
+public final class HeaderResponseFilter extends OncePerRequestFilter {
 
 	@Override
-	public void filter(final ContainerRequestContext requestContext, final ContainerResponseContext responseContext) {
-		responseContext.getHeaders().add("Access-Control-Allow-Origin", "*");
-		responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
-		responseContext.getHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws
+			ServletException, IOException {
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
+		response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+		filterChain.doFilter(request, response);
 	}
 }

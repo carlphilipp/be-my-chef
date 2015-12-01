@@ -1,25 +1,25 @@
 package com.epickur.api.rest;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.UserService;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * JAX-RS Login Service
- * 
+ *
  * @author cph
  * @version 1.0
  */
-@Path("/login")
+@RestController
+@RequestMapping(value = "/api/login")
 public final class LoginController {
 
 	/** User Service */
@@ -60,22 +60,19 @@ public final class LoginController {
 	 *	}
 	 */
 	// @formatter:on
+
 	/**
-	 * @param email
-	 *            The email
-	 * @param password
-	 *            The password
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param email    The email
+	 * @param password The password
 	 * @return The reponse
+	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response login(
-			@QueryParam("email") @NotBlank(message = "{login.email}") final String email,
-			@QueryParam("password") @NotBlank(message = "{login.password}") final String password)
-					throws EpickurException {
+	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> login(
+			@RequestParam("email") @NotBlank(message = "{login.email}") final String email,
+			@RequestParam("password") @NotBlank(message = "{login.password}") final String password)
+			throws EpickurException {
 		User user = userService.login(email, password);
-		return Response.ok().entity(user).build();
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 }

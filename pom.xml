@@ -4,7 +4,7 @@
 
 	<groupId>com.epickur.api</groupId>
 	<artifactId>epickur-parent</artifactId>
-	<version>2.0.1-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Parent</name>
@@ -22,6 +22,7 @@
 
 	<modules>
 		<module>epickur-3rdparty</module>
+		<module>epickur-commons</module>
 		<module>epickur-dao</module>
 		<module>epickur-dump</module>
 		<module>epickur-entity</module>
@@ -163,7 +164,7 @@
 	</profiles>
 
 	<dependencies>
-		<!-- Jersey -->
+		<!-- Jersey
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
@@ -179,6 +180,7 @@
 			<artifactId>jersey-bean-validation</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
+		-->
 
 		<!-- Unit testing -->
 		<dependency>
@@ -277,7 +279,6 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<reporting>
@@ -491,6 +492,11 @@
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-3rdparty</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.epickur.api</groupId>
+				<artifactId>epickur-commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

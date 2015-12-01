@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
@@ -53,6 +51,7 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Token;
+import org.springframework.http.HttpStatus;
 
 public class UserIT {
 
@@ -127,7 +126,7 @@ public class UserIT {
 	}
 
 	@AfterClass
-	public static void afterClass() throws ClientProtocolException, IOException {
+	public static void afterClass() throws IOException {
 		StripeTestUtils.resetStripe();
 		String jsonMimeType = "application/json";
 		// Delete
@@ -137,7 +136,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testUnauthorized() throws ClientProtocolException, IOException {
+	public void testUnauthorized() throws IOException {
 		// Given
 		String jsonMimeType = "application/json";
 		HttpUriRequest request = new HttpGet(URL_NO_KEY);
@@ -146,14 +145,14 @@ public class UserIT {
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		// Then
-		assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getStatusLine().getStatusCode());
 
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 	}
 
 	@Test
-	public void testCreate() throws ClientProtocolException, IOException {
+	public void testCreate() throws IOException {
 		String jsonMimeType = "application/json";
 
 		// Create
@@ -184,7 +183,7 @@ public class UserIT {
 			String obj = br.readLine();
 
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			// Create result
@@ -207,7 +206,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testCreateFail() throws ClientProtocolException, IOException {
+	public void testCreateFail() throws IOException {
 		String jsonMimeType = "application/json";
 
 		// Create
@@ -238,7 +237,7 @@ public class UserIT {
 			String obj = br.readLine();
 
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			// Create result
@@ -272,7 +271,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			obj = br.readLine();
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.CONFLICT.getStatusCode(), statusCode2);
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.CONFLICT.value(), statusCode2);
 			jsonResult = mapper.readTree(obj);
 
 			// Delete this user
@@ -286,7 +285,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testCreatePhoneNumber() throws ClientProtocolException, IOException {
+	public void testCreatePhoneNumber() throws IOException {
 		String jsonMimeType = "application/json";
 
 		// Create
@@ -319,7 +318,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj,HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			// Create result
@@ -348,7 +347,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testCreatePhoneNumber2() throws ClientProtocolException, IOException {
+	public void testCreatePhoneNumber2() throws IOException {
 		String jsonMimeType = "application/json";
 
 		// Create
@@ -380,7 +379,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			// Create result
@@ -409,7 +408,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testCreatePhoneNumber3Fail() throws ClientProtocolException, IOException {
+	public void testCreatePhoneNumber3Fail() throws IOException {
 		String jsonMimeType = "application/json";
 
 		// Create
@@ -441,12 +440,12 @@ public class UserIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.BAD_REQUEST.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.BAD_REQUEST.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			// Create result
 			assertTrue(jsonResult.has("error"));
-			assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), jsonResult.get("error").asInt());
+			assertEquals(HttpStatus.BAD_REQUEST.value(), jsonResult.get("error").asInt());
 			assertTrue(jsonResult.has("descriptions"));
 			assertEquals("The field user.phoneNumber is not valid", jsonResult.get("descriptions").get(0).asText());
 		} finally {
@@ -456,16 +455,17 @@ public class UserIT {
 	}
 
 	@Test
-	public void testReadOneUser() throws ClientProtocolException, IOException {
+	public void testReadOneUser() throws IOException {
 		// Read
 		String jsonMimeType = "application/json";
 		HttpUriRequest request = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		request.addHeader("content-type", jsonMimeType);
 
 		// Read request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		// Read result
-		assertEquals(Response.Status.OK.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+		assertEquals(HttpStatus.OK.value(), httpResponse.getStatusLine().getStatusCode());
 
 		InputStreamReader in = null;
 		BufferedReader br = null;
@@ -474,7 +474,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 
 			JsonNode jsonResult = mapper.readTree(obj);
 			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
@@ -491,7 +491,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testUpdateOneUser() throws ClientProtocolException, IOException {
+	public void testUpdateOneUser() throws IOException {
 		String jsonMimeType = "application/json";
 		// Create
 		ObjectNode json = mapper.createObjectNode();
@@ -520,7 +520,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			String id = jsonResult.get("id").asText();
@@ -543,7 +543,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			obj = br.readLine();
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
 			jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -563,7 +563,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testDeleteOneUser() throws ClientProtocolException, IOException {
+	public void testDeleteOneUser() throws IOException {
 		String jsonMimeType = "application/json";
 		// Create
 		ObjectNode json = mapper.createObjectNode();
@@ -592,7 +592,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 
 			JsonNode jsonResult = mapper.readTree(obj);
 
@@ -605,6 +605,7 @@ public class UserIT {
 
 			// Read
 			HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request2.addHeader("content-type", jsonMimeType);
 			// Read request
 			httpResponse = HttpClientBuilder.create().build().execute(request2);
 
@@ -614,7 +615,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			obj = br.readLine();
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode2);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode2);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 		} finally {
@@ -624,7 +625,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testAddOneOrder() throws ClientProtocolException, IOException, EpickurParsingException {
+	public void testAddOneOrder() throws IOException, EpickurParsingException {
 		String jsonMimeType = "application/json";
 
 		// Create User
@@ -654,7 +655,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -696,7 +697,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			obj = br.readLine();
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
 			jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -726,7 +727,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testCreateOneOrderWithStripeToken() throws ClientProtocolException, IOException, AuthenticationException, InvalidRequestException,
+	public void testCreateOneOrderWithStripeToken() throws IOException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException, EpickurParsingException {
 		String jsonMimeType = "application/json";
 
@@ -757,7 +758,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -824,7 +825,7 @@ public class UserIT {
 			obj = br.readLine();
 
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
 			jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -859,7 +860,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testDeleteOneOrder() throws ClientProtocolException, IOException, EpickurParsingException {
+	public void testDeleteOneOrder() throws IOException, EpickurParsingException {
 		String jsonMimeType = "application/json";
 
 		// Create User
@@ -890,7 +891,7 @@ public class UserIT {
 			String obj = br.readLine();
 
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -946,7 +947,7 @@ public class UserIT {
 			obj = br.readLine();
 
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
 			jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -977,12 +978,12 @@ public class UserIT {
 			obj = br.readLine();
 
 			int statusCode3 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.NOT_FOUND.getStatusCode(), statusCode3);
+			assertEquals("Wrong status code: " + statusCode3 + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode3);
 			jsonResult = mapper.readTree(obj);
 
 			assertNotNull(jsonResult.get("error"));
 			assertEquals(new Long(404), jsonResult.get("error").asLong(), 0.01);
-			assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
+			assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
 
 			// Delete this user
 			requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
@@ -995,7 +996,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testUpdateOneOrder() throws ClientProtocolException, IOException, EpickurParsingException {
+	public void testUpdateOneOrder() throws IOException, EpickurParsingException {
 		String jsonMimeType = "application/json";
 
 		// Create User
@@ -1025,7 +1026,7 @@ public class UserIT {
 			String obj = br.readLine();
 
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -1082,7 +1083,7 @@ public class UserIT {
 			obj = br.readLine();
 
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
 			jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -1118,7 +1119,7 @@ public class UserIT {
 			obj = br.readLine();
 
 			int statusCode3 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode3);
+			assertEquals("Wrong status code: " + statusCode3 + " with " + obj, HttpStatus.OK.value(), statusCode3);
 			jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -1147,7 +1148,7 @@ public class UserIT {
 	}
 
 	@Test
-	public void testExecuteOneOrder() throws ClientProtocolException, IOException, EpickurException {
+	public void testExecuteOneOrder() throws IOException, EpickurException {
 		String jsonMimeType = "application/json";
 
 		// Create User
@@ -1178,7 +1179,7 @@ public class UserIT {
 			String obj = br.readLine();
 
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -1221,7 +1222,7 @@ public class UserIT {
 			obj = br.readLine();
 
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode2);
+			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
 			jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -1240,8 +1241,7 @@ public class UserIT {
 
 			// Execute order (Caterer choose yes or no)
 			String confirm = "false";
-			HttpGet httpGet = new HttpGet(
-					URL_EXECUTE_ORDER + "/users/" + id + "/orders/" + orderId + "?confirm=" + confirm + "&ordercode=" + orderCode);
+			HttpGet httpGet = new HttpGet(URL_EXECUTE_ORDER + "/users/" + id + "/orders/" + orderId + "?confirm=" + confirm + "&ordercode=" + orderCode);
 			httpGet.addHeader("content-type", jsonMimeType);
 			httpGet.addHeader("charge-agent", "false");
 			httpResponse = HttpClientBuilder.create().build().execute(httpGet);
@@ -1252,7 +1252,7 @@ public class UserIT {
 			obj = br.readLine();
 
 			int statusCode3 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode3 + " with " + obj, Response.Status.OK.getStatusCode(), statusCode3);
+			assertEquals("Wrong status code: " + statusCode3 + " with " + obj, HttpStatus.OK.value(), statusCode3);
 			jsonResult = mapper.readTree(obj);
 			assertNotNull(jsonResult.has("status"));
 			assertEquals(OrderStatus.DECLINED.toString(), jsonResult.get("status").asText());

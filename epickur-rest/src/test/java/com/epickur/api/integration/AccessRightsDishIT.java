@@ -1,16 +1,13 @@
 package com.epickur.api.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Properties;
-
-import javax.ws.rs.core.Response;
-
+import com.epickur.api.IntegrationTestUtils;
+import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Dish;
+import com.epickur.api.entity.User;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -24,15 +21,14 @@ import org.bson.types.ObjectId;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
 
-import com.epickur.api.IntegrationTestUtils;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.User;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Properties;
+
+import static org.junit.Assert.*;
 
 public class AccessRightsDishIT {
 	private static String END_POINT;
@@ -67,7 +63,7 @@ public class AccessRightsDishIT {
 
 	// User Administrator
 	@Test
-	public void testAdministratorDishCreate() throws ClientProtocolException, IOException, EpickurException {
+	public void testAdministratorDishCreate() throws IOException, EpickurException {
 		User admin = IntegrationTestUtils.createAdminAndLogin();
 		URL_NO_KEY = END_POINT + "/dishes";
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -89,7 +85,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
@@ -100,7 +96,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testAdministratorDishRead() throws ClientProtocolException, IOException, EpickurException {
+	public void testAdministratorDishRead() throws IOException, EpickurException {
 		User admin = IntegrationTestUtils.createAdminAndLogin();
 		String id = IntegrationTestUtils.createDish().getId().toHexString();
 
@@ -108,6 +104,7 @@ public class AccessRightsDishIT {
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpGet request = new HttpGet(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -116,7 +113,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -124,7 +121,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testAdministratorDishUpdate() throws ClientProtocolException, IOException, EpickurException {
+	public void testAdministratorDishUpdate() throws IOException, EpickurException {
 		User admin = IntegrationTestUtils.createAdminAndLogin();
 		Dish dish = IntegrationTestUtils.createDish();
 		String id = dish.getId().toHexString();
@@ -146,7 +143,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -154,7 +151,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testAdministratorCatererDelete() throws ClientProtocolException, IOException, EpickurException {
+	public void testAdministratorCatererDelete() throws IOException, EpickurException {
 		User admin = IntegrationTestUtils.createAdminAndLogin();
 		Dish dish = IntegrationTestUtils.createDish();
 		String id = dish.getId().toHexString();
@@ -163,6 +160,7 @@ public class AccessRightsDishIT {
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -171,7 +169,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -180,7 +178,7 @@ public class AccessRightsDishIT {
 
 	// User Super_User
 	@Test
-	public void testSuperUserDishCreate() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserDishCreate() throws IOException, EpickurException {
 		User user = IntegrationTestUtils.createSuperUserAndLogin();
 		String key = user.getKey();
 
@@ -204,7 +202,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
 			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
@@ -215,7 +213,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testSuperUserDishCreate2() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserDishCreate2() throws IOException, EpickurException {
 		User user = IntegrationTestUtils.createSuperUserAndLogin();
 		String key = user.getKey();
 
@@ -239,7 +237,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
@@ -250,7 +248,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testSuperUserDishRead() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserDishRead() throws IOException, EpickurException {
 		// Read another caterer - should pass it
 		User user = IntegrationTestUtils.createSuperUserAndLogin();
 		String key = user.getKey();
@@ -261,6 +259,7 @@ public class AccessRightsDishIT {
 		URL = URL_NO_KEY + "?key=" + key;
 
 		HttpGet request = new HttpGet(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -269,7 +268,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -277,7 +276,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testSuperUserDishUpdate() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserDishUpdate() throws IOException, EpickurException {
 		// Update a dish not created by current user - should not pass it
 		Dish dish = IntegrationTestUtils.createDish();
 		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
@@ -298,7 +297,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -306,7 +305,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testSuperUserDishUpdate2() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserDishUpdate2() throws IOException, EpickurException {
 		// Update a caterer created by current user - should pass it
 		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
 		Dish dish = IntegrationTestUtils.createDishWithUserId(superUser.getId());
@@ -329,7 +328,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -337,7 +336,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testSuperUserDishDelete() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserDishDelete() throws IOException, EpickurException {
 		// Delete a dish not created by current user - should not pass it
 		Dish dish = IntegrationTestUtils.createDish();
 		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
@@ -347,6 +346,7 @@ public class AccessRightsDishIT {
 		URL = URL_NO_KEY + "?key=" + key;
 
 		HttpDelete request = new HttpDelete(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -355,7 +355,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -363,7 +363,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testSuperUserDishDelete2() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserDishDelete2() throws IOException, EpickurException {
 		// Delete a caterer created by current user - should pass it
 		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
 		Dish dish = IntegrationTestUtils.createDishWithUserId(superUser.getId());
@@ -375,6 +375,7 @@ public class AccessRightsDishIT {
 		URL = URL_NO_KEY + "?key=" + key;
 
 		HttpDelete request = new HttpDelete(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -383,7 +384,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -392,7 +393,7 @@ public class AccessRightsDishIT {
 
 	// User User
 	@Test
-	public void testUserDishCreate() throws ClientProtocolException, IOException, EpickurException {
+	public void testUserDishCreate() throws IOException, EpickurException {
 		User user = IntegrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
 
@@ -416,7 +417,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
 			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
@@ -427,7 +428,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testUserDishCreate2() throws ClientProtocolException, IOException, EpickurException {
+	public void testUserDishCreate2() throws IOException, EpickurException {
 		User user = IntegrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
 
@@ -452,7 +453,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
 			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
@@ -463,7 +464,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testUserDishRead() throws ClientProtocolException, IOException, EpickurException {
+	public void testUserDishRead() throws IOException, EpickurException {
 		// Read another caterer - should pass it
 		User user = IntegrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
@@ -474,6 +475,7 @@ public class AccessRightsDishIT {
 		URL = URL_NO_KEY + "?key=" + key;
 
 		HttpGet request = new HttpGet(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -482,7 +484,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -490,7 +492,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testUserDishUpdate() throws ClientProtocolException, IOException, EpickurException {
+	public void testUserDishUpdate() throws IOException, EpickurException {
 		// Update a dish not created by current user - should not pass it
 		Dish dish = IntegrationTestUtils.createDish();
 		User superUser = IntegrationTestUtils.createUserAndLogin();
@@ -511,7 +513,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj,HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -519,7 +521,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testSuperDishUpdate2() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperDishUpdate2() throws IOException, EpickurException {
 		// Update a caterer created by current user - should pass it
 		User user = IntegrationTestUtils.createUserAndLogin();
 		Dish dish = IntegrationTestUtils.createDishWithUserId(user.getId());
@@ -542,7 +544,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -550,7 +552,7 @@ public class AccessRightsDishIT {
 	}
 
 	@Test
-	public void testUserDishDelete() throws ClientProtocolException, IOException, EpickurException {
+	public void testUserDishDelete() throws IOException, EpickurException {
 		// Delete a dish - should not pass it
 		Dish dish = IntegrationTestUtils.createDish();
 		User user = IntegrationTestUtils.createUserAndLogin();
@@ -560,6 +562,7 @@ public class AccessRightsDishIT {
 		URL = URL_NO_KEY + "?key=" + key;
 
 		HttpDelete request = new HttpDelete(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -568,7 +571,7 @@ public class AccessRightsDishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);

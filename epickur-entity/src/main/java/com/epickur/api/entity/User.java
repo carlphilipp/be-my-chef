@@ -1,13 +1,5 @@
 package com.epickur.api.entity;
 
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.json.JsonMode;
-import org.bson.json.JsonWriterSettings;
-
 import com.epickur.api.entity.deserialize.PhoneNumberDeserializer;
 import com.epickur.api.entity.deserialize.RoleDeserializer;
 import com.epickur.api.entity.serialize.PhoneNumberSerializer;
@@ -15,6 +7,10 @@ import com.epickur.api.entity.serialize.RoleSerializer;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
+import com.epickur.api.validator.Create;
+import com.epickur.api.validator.Update;
+import com.epickur.api.validator.UserUpdateValidate;
+import com.epickur.api.validator.UserValidate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -22,17 +18,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
+
+import java.io.IOException;
 
 /**
  * User entity
- * 
+ *
  * @author cph
  * @version 1.0
  */
+@UserValidate(groups = Create.class)
+@UserUpdateValidate(groups = Update.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "role", "phoneNumber", "zipcode", "state", "country", "allow",
 		"key", "allow", "createdAt", "updatedAt" })
@@ -41,36 +45,66 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class User extends AbstractMainDBEntity {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(User.class.getSimpleName());
-	/** Name */
+	/**
+	 * Name
+	 */
 	private String name;
-	/** First */
+	/**
+	 * First
+	 */
 	private String first;
-	/** Last */
+	/**
+	 * Last
+	 */
 	private String last;
-	/** Password */
+	/**
+	 * Password
+	 */
 	private String password;
-	/** Email */
+	/**
+	 * Email
+	 */
 	private String email;
-	/** Phone number */
+	/**
+	 * Phone number
+	 */
 	private PhoneNumber phoneNumber;
-	/** Zip code */
+	/**
+	 * Zip code
+	 */
 	private String zipcode;
-	/** State */
+	/**
+	 * State
+	 */
 	private String state;
-	/** Country */
+	/**
+	 * Country
+	 */
 	private String country;
-	/** Indicate if allowed to login */
+	/**
+	 * Indicate if allowed to login
+	 */
 	private Integer allow;
-	/** Code generated the first time on create */
+	/**
+	 * Code generated the first time on create
+	 */
 	@JsonIgnore
 	private String code;
-	/** API key generated */
+	/**
+	 * API key generated
+	 */
 	private String key;
-	/** New password to check */
+	/**
+	 * New password to check
+	 */
 	private String newPassword;
-	/** Role. Not exposed to User */
+	/**
+	 * Role. Not exposed to User
+	 */
 	private Role role;
 
 	/**
@@ -82,8 +116,7 @@ public class User extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param role
-	 *            The User role
+	 * @param role The User role
 	 */
 	@JsonDeserialize(using = RoleDeserializer.class)
 	public void setRole(final Role role) {
@@ -99,8 +132,7 @@ public class User extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param phoneNumber
-	 *            The User phone number
+	 * @param phoneNumber The User phone number
 	 */
 	@JsonDeserialize(using = PhoneNumberDeserializer.class)
 	public void setPhoneNumber(final PhoneNumber phoneNumber) {
@@ -121,22 +153,18 @@ public class User extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param obj
-	 *            The Document
+	 * @param obj The Document
 	 * @return The User
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	public static User getDocumentAsUser(final Document obj) throws EpickurParsingException {
 		return User.getJsonStringAsUser(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
-	 * @param json
-	 *            The json string
+	 * @param json The json string
 	 * @return The User
-	 * @throws EpickurParsingException
-	 *             If an Epickur exception occurred
+	 * @throws EpickurParsingException If an Epickur exception occurred
 	 */
 	private static User getJsonStringAsUser(final String json) throws EpickurParsingException {
 		try {

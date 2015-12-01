@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
@@ -50,13 +47,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.http.HttpStatus;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class DishIT {
 	private static String URL;
 	private static String URL_NO_KEY;
 	private static String API_KEY;
 	private static List<ObjectId> idsCatererToDelete;
-	private static ContainerRequestContext context;
+	private static HttpServletRequest context;
 	private static String jsonMimeType = "application/json";
 
 	@BeforeClass
@@ -76,9 +76,9 @@ public class DishIT {
 			URL = URL_NO_KEY + "?key=" + API_KEY;
 
 			idsCatererToDelete = new ArrayList<>();
-			context = mock(ContainerRequestContext.class);
+			context = mock(HttpServletRequest.class);
 			Key key = EntityGenerator.generateRandomAdminKey();
-			Mockito.when(context.getProperty("key")).thenReturn(key);
+			Mockito.when(context.getAttribute("key")).thenReturn(key);
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
@@ -90,7 +90,7 @@ public class DishIT {
 	}
 
 	@Test
-	public void testUnauthorized() throws ClientProtocolException, IOException {
+	public void testUnauthorized() throws IOException {
 		// Given
 		HttpUriRequest request = new HttpGet(URL_NO_KEY);
 
@@ -98,14 +98,14 @@ public class DishIT {
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		// Then
-		assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getStatusLine().getStatusCode());
 
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 	}
 
 	@Test
-	public void testCreate() throws ClientProtocolException, IOException, EpickurException {
+	public void testCreate() throws IOException, EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
@@ -129,7 +129,7 @@ public class DishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals(HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -167,7 +167,7 @@ public class DishIT {
 	}
 
 	@Test
-	public void testReadOneDish() throws ClientProtocolException, IOException, EpickurException {
+	public void testReadOneDish() throws IOException, EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
@@ -192,7 +192,7 @@ public class DishIT {
 			String obj = br.readLine();
 
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals(HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -205,6 +205,7 @@ public class DishIT {
 		try {
 			// Read
 			HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request2.addHeader("content-type", jsonMimeType);
 
 			// Read request
 			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request2);
@@ -213,7 +214,7 @@ public class DishIT {
 			String obj = br.readLine();
 
 			// Read result
-			assertEquals(Response.Status.OK.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+			assertEquals(HttpStatus.OK.value(), httpResponse.getStatusLine().getStatusCode());
 
 			JsonNode jsonResult = mapper.readTree(obj);
 			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
@@ -247,7 +248,7 @@ public class DishIT {
 	}
 
 	@Test
-	public void testUpdateOneDish() throws ClientProtocolException, IOException, EpickurException {
+	public void testUpdateOneDish() throws IOException, EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
@@ -299,7 +300,7 @@ public class DishIT {
 			br = new BufferedReader(in);
 			obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals(HttpStatus.OK.value(), statusCode);
 			jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -360,7 +361,7 @@ public class DishIT {
 	}
 
 	@Test
-	public void testDeleteOneDish() throws ClientProtocolException, IOException, EpickurException {
+	public void testDeleteOneDish() throws IOException, EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
@@ -382,7 +383,7 @@ public class DishIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals(Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals(HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -391,13 +392,13 @@ public class DishIT {
 
 			// Delete this user
 			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-			request.addHeader("content-type", jsonMimeType);
+			requestDelete.addHeader("content-type", jsonMimeType);
 			httpResponse = HttpClientBuilder.create().build().execute(requestDelete);
 			in = new InputStreamReader(httpResponse.getEntity().getContent());
 			br = new BufferedReader(in);
 			obj = br.readLine();
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
-			assertEquals(Response.Status.OK.getStatusCode(), statusCode2);
+			assertEquals(HttpStatus.OK.value(), statusCode2);
 			jsonResult = mapper.readTree(obj);
 			String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -408,6 +409,7 @@ public class DishIT {
 
 			// Read
 			HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+			request2.addHeader("content-type", jsonMimeType);
 
 			// Read request
 			httpResponse = HttpClientBuilder.create().build().execute(request2);
@@ -420,13 +422,13 @@ public class DishIT {
 			assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
 			// Read result
-			assertEquals(Response.Status.NOT_FOUND.getStatusCode(), httpResponse.getStatusLine().getStatusCode());
+			assertEquals(HttpStatus.NOT_FOUND.value(), httpResponse.getStatusLine().getStatusCode());
 
 			jsonResult = mapper.readTree(obj);
 			mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 			assertEquals(jsonMimeType, mimeType);
-			assertEquals(Response.Status.NOT_FOUND.getStatusCode(), Integer.valueOf(jsonResult.get("error").toString()).intValue());
-			assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
+			assertEquals(HttpStatus.NOT_FOUND.value(), Integer.valueOf(jsonResult.get("error").toString()).intValue());
+			assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -436,13 +438,14 @@ public class DishIT {
 	// Search tests
 
 	@Test
-	public void testSearchUsa() throws ClientProtocolException, IOException {
+	public void testSearchUsa() throws IOException {
 		String type = "main";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-19:00";
 		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
 				+ URLEncoder.encode(address, "UTF-8"));
+		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -465,7 +468,7 @@ public class DishIT {
 	}
 
 	@Test
-	public void testSearchUsa2() throws ClientProtocolException, IOException {
+	public void testSearchUsa2() throws IOException {
 		// Same test with another pickupdate
 		String type = "Main";
 		String limit = "100";
@@ -473,6 +476,7 @@ public class DishIT {
 		String pickupdate = "mon-16:00";
 		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
 				+ URLEncoder.encode(address, "UTF-8"));
+		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -494,13 +498,14 @@ public class DishIT {
 	}
 
 	@Test
-	public void testSearchUsa3() throws ClientProtocolException, IOException {
+	public void testSearchUsa3() throws IOException {
 		String type = "main";
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-22:00";
 		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
 				+ URLEncoder.encode(address, "UTF-8"));
+		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -523,13 +528,14 @@ public class DishIT {
 	}
 
 	@Test
-	public void testSearchAustralia() throws ClientProtocolException, IOException {
+	public void testSearchAustralia() throws IOException {
 		String type = "Main";
 		String limit = "100";
 		String address = "388 Bourke St Melbourne, Australia";
 		String pickupdate = "mon-19:00";
 		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
 				+ URLEncoder.encode(address, "UTF-8"));
+		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();

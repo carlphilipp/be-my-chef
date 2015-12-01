@@ -1,23 +1,6 @@
 package com.epickur.api.rest;
 
-import java.util.Set;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.hibernate.validator.constraints.NotBlank;
-import org.joda.time.DateTime;
-
+import com.epickur.api.ResponseError;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.EndpointType;
@@ -31,23 +14,41 @@ import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.VoucherValidator;
+import org.hibernate.validator.constraints.NotBlank;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 /**
  * JAX-RS Voucher Service
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
-@Path("/vouchers")
+@RestController
+@RequestMapping(value = "/api/vouchers")
 public final class VoucherController {
 
-	/** Context */
-	@Context
-	private ContainerRequestContext context;
-	/** User Service */
+	/**
+	 * Context
+	 */
+	@Autowired
+	private HttpServletRequest context;
+	/**
+	 * User Service
+	 */
 	private VoucherService voucherService;
-	/** User validator */
+	/**
+	 * User validator
+	 */
 	private VoucherValidator validator;
 
 	/**
@@ -88,25 +89,22 @@ public final class VoucherController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param code
-	 *            The voucher code
+	 * @param code The voucher code
 	 * @return A response
-	 * @throws EpickurException
-	 *             If an EpickurException occured
+	 * @throws EpickurException If an EpickurException occured
 	 */
-	@GET
-	@Path("/{code}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@PathParam("code") final String code) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/{code}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> read(@PathVariable("code") final String code) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.READ, EndpointType.VOUCHER);
 		validator.checkVoucherCode(code);
 		Voucher voucher = voucherService.read(code);
 		if (voucher == null) {
-			return ErrorUtils.notFound(ErrorUtils.VOUCHER_NOT_FOUND, code);
+			return ResponseError.notFound(ErrorUtils.VOUCHER_NOT_FOUND, code);
 		} else {
-			return Response.ok().entity(voucher).build();
+			return new ResponseEntity<>(voucher, HttpStatus.OK);
 		}
 	}
 
@@ -156,34 +154,26 @@ public final class VoucherController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
-	 * @param count
-	 *            The number of voucher we want to generate
-	 * @param discountType
-	 *            The discount type. Can be amount or percentage
-	 * @param discount
-	 *            The actual discount
-	 * @param expirationType
-	 *            The expiraton type. Can be onetime or until
-	 * @param expiration
-	 *            The expiration date. Only relevant if expiration type is until
-	 * @param format
-	 *            The expiration date format. If not provided MM/dd/yyyy
+	 * @param count          The number of voucher we want to generate
+	 * @param discountType   The discount type. Can be amount or percentage
+	 * @param discount       The actual discount
+	 * @param expirationType The expiraton type. Can be onetime or until
+	 * @param expiration     The expiration date. Only relevant if expiration type is until
+	 * @param format         The expiration date format. If not provided MM/dd/yyyy
 	 * @return The response
-	 * @throws EpickurException
-	 *             If an EpickurException occured
+	 * @throws EpickurException If an EpickurException occured
 	 */
-	@GET
-	@Path("/generate")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response generate(
-			@QueryParam("count") @NotBlank(message = "{voucher.generate.count.blank}") @Min(value = 0, message = "{voucher.generate.count.positive}") final Integer count,
-			@QueryParam("discountType") @NotBlank(message = "{voucher.generate.discounttype}") final DiscountType discountType,
-			@QueryParam("discount") @NotBlank(message = "{voucher.generate.discount.blank}") @Min(value = 0, message = "{voucher.generate.discount.positive}") final Integer discount,
-			@QueryParam("expirationType") @NotNull(message = "{voucher.generate.expirationtype}") final ExpirationType expirationType,
-			@QueryParam("expiration") final String expiration,
-			@DefaultValue("MM/dd/yyyy") @QueryParam("formatDate") final String format) throws EpickurException {
-		Key key = (Key) context.getProperty("key");
+	@RequestMapping(value = "/generate", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> generate(
+			@RequestParam("count") @NotBlank(message = "{voucher.generate.count.blank}") @Min(value = 0, message = "{voucher.generate.count.positive}") final Integer count,
+			@RequestParam("discountType") @NotBlank(message = "{voucher.generate.discounttype}") final DiscountType discountType,
+			@RequestParam("discount") @NotBlank(message = "{voucher.generate.discount.blank}") @Min(value = 0, message = "{voucher.generate.discount.positive}") final Integer discount,
+			@RequestParam("expirationType") @NotNull(message = "{voucher.generate.expirationtype}") final ExpirationType expirationType,
+			@RequestParam("expiration") final String expiration,
+			@RequestParam(value = "formatDate", required = false, defaultValue = "MM/dd/yyyy") final String format) throws EpickurException {
+		Key key = (Key) context.getAttribute("key");
 		AccessRights.check(key.getRole(), Operation.GENERATE_VOUCHER, EndpointType.VOUCHER);
 		validator.checkVoucherGenerate(expirationType, expiration, format);
 		DateTime date = null;
@@ -191,6 +181,6 @@ public final class VoucherController {
 			date = Utils.parseDate(expiration, format);
 		}
 		Set<Voucher> vouchers = voucherService.generate(count, discountType, discount, expirationType, date);
-		return Response.ok().entity(vouchers).build();
+		return new ResponseEntity<>(vouchers, HttpStatus.OK);
 	}
 }

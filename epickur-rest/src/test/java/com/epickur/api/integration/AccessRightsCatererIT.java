@@ -1,19 +1,14 @@
 package com.epickur.api.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Properties;
-
-import javax.ws.rs.core.Response;
-
+import com.epickur.api.IntegrationTestUtils;
+import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.User;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -23,14 +18,14 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
 
-import com.epickur.api.IntegrationTestUtils;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.User;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Properties;
+
+import static org.junit.Assert.*;
 
 public class AccessRightsCatererIT {
 	private static String END_POINT;
@@ -64,7 +59,7 @@ public class AccessRightsCatererIT {
 
 	// User Administrator
 	@Test
-	public void testAdministratorCatererCreate() throws EpickurException, ClientProtocolException, IOException {
+	public void testAdministratorCatererCreate() throws EpickurException, IOException {
 
 		User admin = IntegrationTestUtils.createAdminAndLogin();
 		URL_NO_KEY = END_POINT + "/caterers";
@@ -84,7 +79,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
 			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
@@ -95,7 +90,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testAdministratorCatererRead() throws ClientProtocolException, IOException, EpickurException {
+	public void testAdministratorCatererRead() throws IOException, EpickurException {
 		User admin = IntegrationTestUtils.createAdminAndLogin();
 		String id = IntegrationTestUtils.createCaterer().getId().toHexString();
 
@@ -103,6 +98,7 @@ public class AccessRightsCatererIT {
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpGet request = new HttpGet(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -111,7 +107,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -119,7 +115,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testAdministratorCatererUpdate() throws ClientProtocolException, IOException, EpickurException {
+	public void testAdministratorCatererUpdate() throws IOException, EpickurException {
 		User admin = IntegrationTestUtils.createAdminAndLogin();
 		Caterer caterer = IntegrationTestUtils.createCaterer();
 		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
@@ -140,7 +136,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -148,7 +144,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testAdministratorCatererDelete() throws ClientProtocolException, IOException, EpickurException {
+	public void testAdministratorCatererDelete() throws IOException, EpickurException {
 		User admin = IntegrationTestUtils.createAdminAndLogin();
 		String id = IntegrationTestUtils.createCaterer().getId().toHexString();
 
@@ -156,6 +152,7 @@ public class AccessRightsCatererIT {
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -164,7 +161,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -173,7 +170,7 @@ public class AccessRightsCatererIT {
 
 	// User Super_User
 	@Test
-	public void testSuperUserCaterCreate() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserCaterCreate() throws IOException, EpickurException {
 		String key = IntegrationTestUtils.createSuperUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/caterers";
@@ -193,7 +190,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
 			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
@@ -204,7 +201,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testSuperUserCatererRead() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserCatererRead() throws IOException, EpickurException {
 		// Read another caterer - should pass it
 		String key = IntegrationTestUtils.createSuperUserAndLogin().getKey();
 		String id = IntegrationTestUtils.createCaterer().getId().toHexString();
@@ -213,6 +210,7 @@ public class AccessRightsCatererIT {
 		URL = URL_NO_KEY + "?key=" + key;
 
 		HttpGet request = new HttpGet(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -221,7 +219,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -229,7 +227,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testSuperUserCatererUpdate() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserCatererUpdate() throws IOException, EpickurException {
 		// Update a caterer not created by current user - should not pass it
 		Caterer caterer = IntegrationTestUtils.createCaterer();
 		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
@@ -250,7 +248,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -258,7 +256,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testSuperUserCatererUpdate2() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserCatererUpdate2() throws IOException, EpickurException {
 		// Update a caterer created by current user - should pass it
 		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
 		Caterer caterer = IntegrationTestUtils.createCatererWithUserId(superUser.getId());
@@ -281,7 +279,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -289,7 +287,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testSuperUserCatererDelete() throws ClientProtocolException, IOException, EpickurException {
+	public void testSuperUserCatererDelete() throws IOException, EpickurException {
 		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
 		Caterer id = IntegrationTestUtils.createCaterer();
 
@@ -297,6 +295,7 @@ public class AccessRightsCatererIT {
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -305,7 +304,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -314,7 +313,7 @@ public class AccessRightsCatererIT {
 
 	// User User
 	@Test
-	public void testUserCaterCreate() throws ClientProtocolException, IOException, EpickurException {
+	public void testUserCaterCreate() throws IOException, EpickurException {
 		String key = IntegrationTestUtils.createUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/caterers";
@@ -334,7 +333,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
 			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
@@ -345,7 +344,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testUserCatererRead() throws ClientProtocolException, IOException, EpickurException {
+	public void testUserCatererRead() throws IOException, EpickurException {
 		// Read another caterer - should pass it
 		String key = IntegrationTestUtils.createUserAndLogin().getKey();
 		String id = IntegrationTestUtils.createCaterer().getId().toHexString();
@@ -354,6 +353,7 @@ public class AccessRightsCatererIT {
 		URL = URL_NO_KEY + "?key=" + key;
 
 		HttpGet request = new HttpGet(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -362,7 +362,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.OK.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -370,7 +370,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testUserCatererUpdate() throws ClientProtocolException, IOException, EpickurException {
+	public void testUserCatererUpdate() throws IOException, EpickurException {
 		// Update a caterer not created by current user - should not pass it
 		Caterer caterer = IntegrationTestUtils.createCaterer();
 		User superUser = IntegrationTestUtils.createUserAndLogin();
@@ -391,7 +391,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
@@ -399,7 +399,7 @@ public class AccessRightsCatererIT {
 	}
 
 	@Test
-	public void testUserCatererDelete() throws ClientProtocolException, IOException, EpickurException {
+	public void testUserCatererDelete() throws IOException, EpickurException {
 		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
 		Caterer id = IntegrationTestUtils.createCaterer();
 
@@ -407,6 +407,7 @@ public class AccessRightsCatererIT {
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();
 
 		HttpDelete request = new HttpDelete(URL);
+		request.addHeader("content-type", jsonMimeType);
 		BufferedReader br = null;
 		InputStreamReader in = null;
 		try {
@@ -415,7 +416,7 @@ public class AccessRightsCatererIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		} finally {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);

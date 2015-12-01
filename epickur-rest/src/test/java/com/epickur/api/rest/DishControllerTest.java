@@ -11,8 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Response;
+import javax.servlet.http.HttpServletRequest;
 
 import org.bson.types.ObjectId;
 import org.junit.Before;
@@ -32,6 +31,8 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class DishControllerTest {
 
@@ -40,7 +41,7 @@ public class DishControllerTest {
 	@Mock
 	private CatererService catererBusiness;
 	@Mock
-	private ContainerRequestContext context;
+	private HttpServletRequest context;
 	@InjectMocks
 	private DishController controller;
 
@@ -49,7 +50,7 @@ public class DishControllerTest {
 		MockitoAnnotations.initMocks(this);
 
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(context.getProperty("key")).thenReturn(key);
+		when(context.getAttribute("key")).thenReturn(key);
 	}
 
 	@Test
@@ -63,10 +64,10 @@ public class DishControllerTest {
 		when(catererBusiness.read(anyString())).thenReturn(caterer);
 		when(dishBusiness.create((Dish) anyObject())).thenReturn(dishAfterCreate);
 
-		Response actual = controller.create(dish);
+		ResponseEntity<?> actual = controller.create(dish);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		Dish actualDish = (Dish) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		Dish actualDish = (Dish) actual.getBody();
 		assertNotNull(actualDish.getId());
 	}
 
@@ -79,12 +80,12 @@ public class DishControllerTest {
 
 		when(catererBusiness.read(anyString())).thenReturn(null);
 
-		Response actual = controller.create(dish);
+		ResponseEntity<?> actual = controller.create(dish);
 		assertNotNull(actual);
-		assertEquals(404, actual.getStatus());
-		ErrorMessage error = (ErrorMessage) actual.getEntity();
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
+		assertEquals(404, actual.getStatusCode().value());
+		ErrorMessage error = (ErrorMessage) actual.getBody();
+		assertEquals(HttpStatus.NOT_FOUND.value(), error.getError().intValue());
+		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@Test
@@ -97,10 +98,10 @@ public class DishControllerTest {
 
 		when(dishBusiness.read(anyString())).thenReturn(dishAfterCreate);
 
-		Response actual = controller.read(new ObjectId().toHexString());
+		ResponseEntity actual = controller.read(new ObjectId().toHexString());
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		Dish actualDish = (Dish) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		Dish actualDish = (Dish) actual.getBody();
 		assertNotNull(actualDish.getId());
 	}
 
@@ -113,12 +114,12 @@ public class DishControllerTest {
 
 		when(dishBusiness.read(anyString())).thenReturn(null);
 
-		Response actual = controller.read(new ObjectId().toHexString());
+		ResponseEntity actual = controller.read(new ObjectId().toHexString());
 		assertNotNull(actual);
-		assertEquals(404, actual.getStatus());
-		ErrorMessage error = (ErrorMessage) actual.getEntity();
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
+		assertEquals(404, actual.getStatusCode().value());
+		ErrorMessage error = (ErrorMessage) actual.getBody();
+		assertEquals(HttpStatus.NOT_FOUND.value(), error.getError().intValue());
+		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@Test
@@ -132,10 +133,10 @@ public class DishControllerTest {
 
 		when(dishBusiness.update((Dish) anyObject(), (Key) anyObject())).thenReturn(dishAfterCreate);
 
-		Response actual = controller.update(dish.getId().toHexString(), dish);
+		ResponseEntity<?> actual = controller.update(dish.getId().toHexString(), dish);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		Dish actualDish = (Dish) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		Dish actualDish = (Dish) actual.getBody();
 		assertNotNull(actualDish.getId());
 		assertEquals("desc", actualDish.getDescription());
 	}
@@ -151,12 +152,12 @@ public class DishControllerTest {
 
 		when(dishBusiness.update((Dish) anyObject(), (Key) anyObject())).thenReturn(null);
 
-		Response actual = controller.update(dish.getId().toHexString(), dish);
+		ResponseEntity<?> actual = controller.update(dish.getId().toHexString(), dish);
 		assertNotNull(actual);
-		assertEquals(404, actual.getStatus());
-		ErrorMessage error = (ErrorMessage) actual.getEntity();
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
+		assertEquals(404, actual.getStatusCode().value());
+		ErrorMessage error = (ErrorMessage) actual.getBody();
+		assertEquals(HttpStatus.NOT_FOUND.value(), error.getError().intValue());
+		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@Test
@@ -168,10 +169,10 @@ public class DishControllerTest {
 
 		when(dishBusiness.delete(anyString(), (Key) anyObject())).thenReturn(true);
 
-		Response actual = controller.delete(dish.getId().toHexString());
+		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getBody();
 		assertNotNull(actualDeletedMessage.getId());
 		assertNotNull(actualDeletedMessage.getDeleted());
 		assertTrue(actualDeletedMessage.getDeleted());
@@ -186,12 +187,12 @@ public class DishControllerTest {
 
 		when(dishBusiness.delete(anyString(), (Key) anyObject())).thenReturn(false);
 
-		Response actual = controller.delete(dish.getId().toHexString());
+		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
 		assertNotNull(actual);
-		assertEquals(404, actual.getStatus());
-		ErrorMessage error = (ErrorMessage) actual.getEntity();
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), error.getError().intValue());
-		assertEquals(Response.Status.NOT_FOUND.getReasonPhrase(), error.getMessage());
+		assertEquals(404, actual.getStatusCode().value());
+		ErrorMessage error = (ErrorMessage) actual.getBody();
+		assertEquals(HttpStatus.NOT_FOUND.value(), error.getError().intValue());
+		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	// Search dish
@@ -209,13 +210,14 @@ public class DishControllerTest {
 		when(dishBusiness.search(anyString(), anyInt(), (List<DishType>) anyObject(), anyInt(), (Geo) anyObject(), anyString(), anyInt()))
 				.thenReturn(dishes);
 
-		Response actual = controller.search(EntityGenerator.generateRandomPickupDate(), EntityGenerator.generateRandomDishType().toString(), 1,
-				"1,1",
-				EntityGenerator.generateRandomString(), 5);
+		ResponseEntity<?> actual = controller
+				.search(EntityGenerator.generateRandomPickupDate(), EntityGenerator.generateRandomDishType().toString(), 1,
+						"1,1",
+						EntityGenerator.generateRandomString(), 5);
 		assertNotNull(actual);
-		assertEquals(200, actual.getStatus());
-		assertNotNull(actual.getEntity());
-		List<Dish> actualDishes = (List<Dish>) actual.getEntity();
+		assertEquals(200, actual.getStatusCode().value());
+		assertNotNull(actual.getBody());
+		List<Dish> actualDishes = (List<Dish>) actual.getBody();
 		assertNotNull(actualDishes);
 		assertEquals(1, actualDishes.size());
 	}

@@ -16,9 +16,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.TimeZone;;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.random.RandomDataGenerator;
@@ -234,27 +232,6 @@ public final class Utils {
 		geo.setLatitude(Double.valueOf(geoArray[0]));
 		geo.setLongitude(Double.valueOf(geoArray[1]));
 		return geo;
-	}
-
-	/**
-	 * @param pickupdate
-	 *            The pickup date
-	 * @return An array of object containing in the first cell the day and in the second cell the time.
-	 */
-	public static Object[] parsePickupdate(final String pickupdate) {
-		Object[] result = null;
-		if (pickupdate != null) {
-			Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):(([0-5][0-9])))$");
-			Matcher matcher = pattern.matcher(pickupdate);
-			if (matcher.matches()) {
-				result = new Object[2];
-				// Extract the day of the week
-				result[0] = matcher.group(1).toLowerCase();
-				// Convert in minutes the given time
-				result[1] = Integer.parseInt(matcher.group(3)) * 60 + Integer.parseInt(matcher.group(4));
-			}
-		}
-		return result;
 	}
 
 	/**
