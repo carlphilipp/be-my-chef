@@ -1,43 +1,43 @@
 package com.epickur.api.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
-
+import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.dao.mongo.VoucherDAO;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Voucher business layer. Access voucher DAO layer and executes logic.
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
 public class VoucherService {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(VoucherService.class.getSimpleName());
-	/** User dao */
+	/**
+	 * User dao
+	 */
 	@Autowired
 	private VoucherDAO voucherDAO;
 
 	/**
-	 * @param code
-	 *            The Voucher code
+	 * @param code The Voucher code
 	 * @return A Voucher
-	 * @throws EpickurException
-	 *             If an EpickurException occurred
+	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public Voucher read(final String code) throws EpickurException {
 		return voucherDAO.read(code);
@@ -45,27 +45,21 @@ public class VoucherService {
 
 	/**
 	 * Generate vouchers. We use a Set to store data, and we need to check in the database if the voucher code has not been generated already.
-	 * 
-	 * @param count
-	 *            The number of vouchers
-	 * @param discountType
-	 *            The discount type
-	 * @param discount
-	 *            The discount amount or percentage
-	 * @param expirationType
-	 *            The expiration type
-	 * @param expiration
-	 *            The expiration date
+	 *
+	 * @param count          The number of vouchers
+	 * @param discountType   The discount type
+	 * @param discount       The discount amount or percentage
+	 * @param expirationType The expiration type
+	 * @param expiration     The expiration date
 	 * @return a Set of vouchers generated
-	 * @throws EpickurException
-	 *             If an EpickurException occurred
+	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public Set<Voucher> generate(final int count, final DiscountType discountType, final int discount, final ExpirationType expirationType,
 			final DateTime expiration) throws EpickurException {
 		Set<Voucher> result = new HashSet<Voucher>();
 		do {
 			Voucher voucher = new Voucher();
-			voucher.setCode(Utils.generateRandomCode());
+			voucher.setCode(CommonsUtil.generateRandomCode());
 			voucher.setDiscount(discount);
 			voucher.setDiscountType(discountType);
 			voucher.setExpirationType(expirationType);
@@ -90,8 +84,7 @@ public class VoucherService {
 
 	/**
 	 * @return A list of voucher
-	 * @throws EpickurException
-	 *             If an EpickurException occurred.
+	 * @throws EpickurException If an EpickurException occurred.
 	 */
 	public List<Voucher> clean() throws EpickurException {
 		List<Voucher> vouchers = this.voucherDAO.readToClean();
@@ -105,11 +98,9 @@ public class VoucherService {
 	}
 
 	/**
-	 * @param code
-	 *            The code
+	 * @param code The code
 	 * @return The Voucher
-	 * @throws EpickurException
-	 *             If an EpickurException occurred
+	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public Voucher validateVoucher(final String code) throws EpickurException {
 		Voucher found = this.readAndThrowException(code);
@@ -130,11 +121,9 @@ public class VoucherService {
 	}
 
 	/**
-	 * @param code
-	 *            The voucher code
+	 * @param code The voucher code
 	 * @return The Voucher
-	 * @throws EpickurException
-	 *             If an EpickurException occurred
+	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public Voucher revertVoucher(final String code) throws EpickurException {
 		Voucher found = this.readAndThrowException(code);

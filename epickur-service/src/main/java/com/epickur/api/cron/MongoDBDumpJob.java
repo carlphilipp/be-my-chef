@@ -1,16 +1,15 @@
 package com.epickur.api.cron;
 
-import java.util.List;
-
+import com.epickur.api.commons.CommonsUtil;
+import com.epickur.api.dump.AmazonWebServices;
+import com.epickur.api.dump.MongoDBDump;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.epickur.api.dump.AmazonWebServices;
-import com.epickur.api.dump.MongoDBDump;
-import com.epickur.api.utils.Utils;
+import java.util.List;
 
 /**
  * Job that creat a dump of MongoDB and send it to Amazon servers.
@@ -27,13 +26,13 @@ public final class MongoDBDumpJob implements Job {
 	@Override
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
 		LOG.info("Start DB dump...");
-		MongoDBDump mongoDBDump = new MongoDBDump(Utils.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
+		MongoDBDump mongoDBDump = new MongoDBDump(CommonsUtil.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
 		boolean exported = mongoDBDump.exportMongo();
 		LOG.info("DB dump done");
 		if (exported) {
 			LOG.info("Creating tar.gz...");
 			List<String> list = mongoDBDump.getListFiles();
-			Utils.createTarGz(list, mongoDBDump.getCurrentFullPathName());
+			CommonsUtil.createTarGz(list, mongoDBDump.getCurrentFullPathName());
 			LOG.info("tar.gz generated: " + mongoDBDump.getCurrentFullPathName());
 
 			AmazonWebServices aws = new AmazonWebServices();

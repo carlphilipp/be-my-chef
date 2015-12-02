@@ -1,23 +1,6 @@
 package com.epickur.api.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import com.epickur.api.validator.VoucherValidator;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
+import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.entity.message.ErrorMessage;
@@ -26,12 +9,24 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.VoucherService;
-import com.epickur.api.utils.Utils;
+import com.epickur.api.validator.VoucherValidator;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.when;
 
 public class VoucherControllerTest {
 
@@ -47,7 +42,7 @@ public class VoucherControllerTest {
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		
+
 		Key key = EntityGenerator.generateRandomAdminKey();
 		when(context.getAttribute("key")).thenReturn(key);
 		when(context.getContentType()).thenReturn(MediaType.APPLICATION_JSON_VALUE);
@@ -79,7 +74,7 @@ public class VoucherControllerTest {
 
 		when(voucherBusiness.read(anyString())).thenReturn(voucherAfterCreate);
 
-		ResponseEntity<?> actual = controller.read(Utils.generateRandomCode());
+		ResponseEntity<?> actual = controller.read(CommonsUtil.generateRandomCode());
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Voucher actualVoucher = (Voucher) actual.getBody();
@@ -91,7 +86,7 @@ public class VoucherControllerTest {
 	public void testReadVoucherNotFound() throws EpickurException {
 		when(voucherBusiness.read(anyString())).thenReturn(null);
 
-		ResponseEntity<?> actual = controller.read(Utils.generateRandomCode());
+		ResponseEntity<?> actual = controller.read(CommonsUtil.generateRandomCode());
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatusCode().value());
 		ErrorMessage error = (ErrorMessage) actual.getBody();
