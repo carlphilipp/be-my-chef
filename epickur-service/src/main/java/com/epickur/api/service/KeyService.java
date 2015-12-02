@@ -5,6 +5,8 @@ import java.util.List;
 import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Key business layer. Access Key DAO layer and execute logic.
@@ -12,21 +14,12 @@ import com.epickur.api.exception.EpickurException;
  * @author cph
  * @version 1.0
  */
+@Service
 public class KeyService {
 
 	/** Key dao */
+	@Autowired
 	private KeyDAO keyDao;
-
-	/**
-	 * The constructor
-	 */
-	public KeyService() {
-		this.keyDao = new KeyDAO();
-	}
-
-	public KeyService(final KeyDAO keyDAO) {
-		this.keyDao = keyDAO;
-	}
 
 	/**
 	 * Create a new Key

@@ -1,7 +1,5 @@
 package com.epickur.api.service;
 
-import java.util.List;
-
 import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
@@ -12,7 +10,9 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.geocoder.IGeocoder;
 import com.epickur.api.geocoder.here.GeocoderHereImpl;
 import com.epickur.api.validator.DishValidator;
-import com.epickur.api.validator.FactoryValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * {@link Dish} business layer. Execute logic and access {@link DishDAO} layer to update the database.
@@ -23,17 +23,11 @@ import com.epickur.api.validator.FactoryValidator;
 public class DishService {
 
 	/** The DAO {@link DishDAO}. */
+	@Autowired
 	private DishDAO dao;
 	/** The validator {@link DishValidator}. */
+	@Autowired
 	private DishValidator validator;
-
-	/**
-	 * Construct a Dish Business.
-	 */
-	public DishService() {
-		this.dao = new DishDAO();
-		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
-	}
 
 	/**
 	 * Create a {@link Dish}

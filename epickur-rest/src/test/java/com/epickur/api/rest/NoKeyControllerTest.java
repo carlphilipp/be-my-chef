@@ -8,6 +8,7 @@ import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.payment.stripe.StripeTestUtils;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
+import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.bson.types.ObjectId;
@@ -36,6 +37,8 @@ public class NoKeyControllerTest {
 	private OrderService orderBusiness;
 	@Mock
 	private HttpServletRequest context;
+	@Mock
+	private UserValidator validator;
 	@InjectMocks
 	private NoKeyController controller;
 
@@ -78,7 +81,8 @@ public class NoKeyControllerTest {
 
 		when(orderBusiness.executeOrder(anyString(), anyString(), anyBoolean(), anyBoolean(), anyString())).thenReturn(order);
 
-		ResponseEntity<?> actual = controller.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true);
+		ResponseEntity<?> actual = controller
+				.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true);
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Order actualOrder = (Order) actual.getBody();

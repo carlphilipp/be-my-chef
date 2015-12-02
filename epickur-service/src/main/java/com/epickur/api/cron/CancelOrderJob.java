@@ -1,11 +1,5 @@
 package com.epickur.api.cron;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Order;
@@ -14,33 +8,48 @@ import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.email.EmailUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 /**
  * This class represents a process to cancel orders when it's been too long time it was not accepted.
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
 public final class CancelOrderJob implements Job {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(CancelOrderJob.class.getSimpleName());
-	/** Order dao */
+	/**
+	 * Order dao
+	 */
 	private OrderDAO orderDAO;
-	/** User dao */
+	/**
+	 * User dao
+	 */
 	private UserDAO userDAO;
-	/** Voucher Business */
+	/**
+	 * Voucher Business
+	 */
 	private VoucherService voucherBusiness;
-	/** Email utils */
+	/**
+	 * Email utils
+	 */
 	private EmailUtils emailUtils;
 
 	/**
 	 * Constructs a Cancel Order Job
 	 */
 	public CancelOrderJob() {
-		orderDAO = new OrderDAO();
 		userDAO = new UserDAO();
+		voucherBusiness = new VoucherService();
+		orderDAO = new OrderDAO();
 		emailUtils = new EmailUtils();
 	}
 

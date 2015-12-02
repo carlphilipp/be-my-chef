@@ -9,7 +9,10 @@ import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import com.epickur.api.validator.*;
+import com.epickur.api.validator.AccessRights;
+import com.epickur.api.validator.Create;
+import com.epickur.api.validator.Update;
+import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,24 +44,18 @@ public final class UserController {
 	/**
 	 * User Service
 	 */
+	@Autowired
 	private UserService userService;
 	/**
 	 * Order Service
 	 */
+	@Autowired
 	private OrderService orderService;
 	/**
 	 * User validator
 	 */
+	@Autowired
 	private UserValidator validator;
-
-	/**
-	 * Constructor
-	 */
-	public UserController() {
-		this.userService = new UserService();
-		this.orderService = new OrderService();
-		this.validator = (UserValidator) FactoryValidator.getValidator("user");
-	}
 
 	// @formatter:off
 	/**

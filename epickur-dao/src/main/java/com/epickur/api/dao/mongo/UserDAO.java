@@ -1,10 +1,11 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.utils.Info.USER_COLL;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.epickur.api.entity.User;
+import com.epickur.api.exception.EpickurDBException;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurParsingException;
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoCursor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.BsonArray;
@@ -13,25 +14,27 @@ import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import com.epickur.api.entity.User;
-import com.epickur.api.exception.EpickurDBException;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.exception.EpickurParsingException;
-import com.mongodb.MongoException;
-import com.mongodb.client.MongoCursor;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.epickur.api.utils.Info.USER_COLL;
 
 /**
  * User DAO access with CRUD operations.
- * 
+ *
  * @author cph
  * @version 1.0
  */
 public class UserDAO extends CrudDAO<User> {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(UserDAO.class.getSimpleName());
 
-	/** Constructor */
+	/**
+	 * Constructor
+	 */
 	public UserDAO() {
 		super();
 		initCollection(USER_COLL);
@@ -55,12 +58,10 @@ public class UserDAO extends CrudDAO<User> {
 
 	/**
 	 * Read a User with its Name
-	 * 
-	 * @param name
-	 *            The name of the User
+	 *
+	 * @param name The name of the User
 	 * @return The User
-	 * @throws EpickurException
-	 *             if an epickur exception occurred
+	 * @throws EpickurException if an epickur exception occurred
 	 */
 	public User readWithName(final String name) throws EpickurException {
 		LOG.debug("Read user with name: " + name);
@@ -71,12 +72,10 @@ public class UserDAO extends CrudDAO<User> {
 
 	/**
 	 * Read a User with its email
-	 * 
-	 * @param email
-	 *            The email
+	 *
+	 * @param email The email
 	 * @return The User
-	 * @throws EpickurException
-	 *             if an epickur exception occurred
+	 * @throws EpickurException if an epickur exception occurred
 	 */
 	public User readWithEmail(final String email) throws EpickurException {
 		LOG.debug("Read user with email: " + email);
@@ -124,14 +123,11 @@ public class UserDAO extends CrudDAO<User> {
 
 	/**
 	 * Check if a user exists with it's name or email
-	 * 
-	 * @param name
-	 *            The User name
-	 * @param email
-	 *            The User email
+	 *
+	 * @param name  The User name
+	 * @param email The User email
 	 * @return true if the user if found
-	 * @throws EpickurDBException
-	 *             If an epickur exception occurred
+	 * @throws EpickurDBException If an epickur exception occurred
 	 */
 	public boolean exists(final String name, final String email) throws EpickurDBException {
 		Document query = createExistsQuery(name, email);
@@ -142,15 +138,15 @@ public class UserDAO extends CrudDAO<User> {
 	private Document createExistsQuery(final String name, final String email) {
 		Document query = new Document();
 		BsonArray or = new BsonArray();
-		
+
 		BsonDocument bsonName = new BsonDocument();
 		BsonDocument bsonEmail = new BsonDocument();
 		bsonName.append("name", new BsonString(name));
 		bsonEmail.append("email", new BsonString(email));
-		
+
 		or.add(bsonName);
 		or.add(bsonEmail);
-		
+
 		query.append("$or", or);
 		return query;
 	}

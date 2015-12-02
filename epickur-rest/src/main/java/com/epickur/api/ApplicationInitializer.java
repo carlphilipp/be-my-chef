@@ -63,24 +63,3 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 		}
 	}
 }
-
-//@ApplicationPath("/api")
-//public class WebApplication extends ResourceConfig {
-//	private static final Logger LOG = LogManager.getLogger(WebApplication.class.getSimpleName());
-//	/** Constructor */
-//	public WebApplication() {
-//		property(ServerProperties.APPLICATION_NAME, "epickur");
-//		property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
-//		property(ServerProperties.TRACING, "ALL");
-//		property(ServerProperties.TRACING_THRESHOLD, "SUMMARY");
-//	}
-//	@PostConstruct
-//	public static void initialize() {
-//		try {
-//			Jobs jobs = Jobs.getInstance();
-//			jobs.run();
-//		} catch (SchedulerException e) {
-//			LOG.error(e.getLocalizedMessage(), e);
-//		}
-//	}
-//}

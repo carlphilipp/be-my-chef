@@ -18,12 +18,14 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
+import org.springframework.stereotype.Component;
 
 /**
  * @author cph
  * @version 1.0
  */
-public final class CatererValidator extends Validator {
+@Component
+public class CatererValidator extends Validator {
 
 	/**
 	 * Constructor

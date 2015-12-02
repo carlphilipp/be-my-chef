@@ -42,7 +42,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private HttpServletRequest context;
 
 	@ExceptionHandler({ Throwable.class, Exception.class })
-	public ResponseEntity<?> handleThrowable(final HttpServletRequest req, final Throwable throwable) {
+	public ResponseEntity<?> handleThrowable(final Throwable throwable) {
 		ErrorMessage errorMessage = new ErrorMessage();
 		errorMessage.setError(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		errorMessage.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
@@ -51,14 +51,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler(EpickurException.class)
-	public ResponseEntity<?> handleEpickurException(final HttpServletRequest req, final EpickurException exception) {
+	public ResponseEntity<?> handleEpickurException(final EpickurException exception) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		if (exception instanceof EpickurNotFoundException) {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setError(HttpStatus.NOT_FOUND.value());
 			errorMessage.setMessage(HttpStatus.NOT_FOUND.getReasonPhrase());
-			if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
+			if (!StringUtils.isBlank(exception.getMessage())) {
 				errorMessage.addDescription(exception.getMessage());
 			}
 			return new ResponseEntity<>(errorMessage, headers, HttpStatus.NOT_FOUND);
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setError(HttpStatus.BAD_REQUEST.value());
 			errorMessage.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-			if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
+			if (!StringUtils.isBlank(exception.getMessage())) {
 				errorMessage.addDescription(exception.getMessage());
 			}
 			return new ResponseEntity<>(errorMessage, getHeaders(), HttpStatus.BAD_REQUEST);
@@ -101,7 +101,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<?> handleConstraintViolationException(final HttpServletRequest req, final ConstraintViolationException exception) {
+	public ResponseEntity<?> handleConstraintViolationException(final ConstraintViolationException exception) {
 		ErrorMessage message = new ErrorMessage();
 		message.setError(HttpStatus.BAD_REQUEST.value());
 		message.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
@@ -123,7 +123,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
 			mess.addDescription(exception.getMessage());
 		}
-		LOG.error("Error: {}", exception.getLocalizedMessage(), exception);
+		LOG.error("Error: {}", exception.getMessage(), exception);
 		return new ResponseEntity<>(mess, getHeaders(), HttpStatus.BAD_REQUEST);
 	}
 

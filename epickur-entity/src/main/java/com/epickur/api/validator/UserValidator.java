@@ -19,12 +19,14 @@ import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.commons.CommonsUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.stereotype.Component;
 
 /**
  * @author cph
  * @version 1.0
  */
-public final class UserValidator extends Validator {
+@Component
+public class UserValidator extends Validator {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(UserValidator.class.getSimpleName());

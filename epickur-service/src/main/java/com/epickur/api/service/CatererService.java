@@ -1,7 +1,5 @@
 package com.epickur.api.service;
 
-import java.util.List;
-
 import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Key;
@@ -10,7 +8,10 @@ import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.validator.CatererValidator;
-import com.epickur.api.validator.FactoryValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * {@link Caterer} business layer. Execute logic and access {@link CatererDAO} layer to update the database.
@@ -18,20 +19,15 @@ import com.epickur.api.validator.FactoryValidator;
  * @author cph
  * @version 1.0
  */
+@Service
 public class CatererService {
 
 	/** The DAO {@link CatererDAO} */
+	@Autowired
 	private CatererDAO dao;
 	/** The validator {@link CatererValidator} */
+	@Autowired
 	private CatererValidator validator;
-
-	/**
-	 * Construct a Caterer Business
-	 */
-	public CatererService() {
-		this.dao = new CatererDAO();
-		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
-	}
 
 	/**
 	 * Create a {@link Caterer}

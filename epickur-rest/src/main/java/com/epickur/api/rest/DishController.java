@@ -17,7 +17,6 @@ import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.DishValidator;
-import com.epickur.api.validator.FactoryValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,24 +47,18 @@ public final class DishController {
 	/**
 	 * Dish Service
 	 */
+	@Autowired
 	private DishService dishService;
 	/**
 	 * Dish Service
 	 */
+	@Autowired
 	private CatererService catererService;
 	/**
 	 * Service validator
 	 */
+	@Autowired
 	private DishValidator validator;
-
-	/**
-	 * Constructor
-	 */
-	public DishController() {
-		this.dishService = new DishService();
-		this.catererService = new CatererService();
-		this.validator = (DishValidator) FactoryValidator.getValidator("dish");
-	}
 
 	// @formatter:off
 	/**
@@ -439,7 +432,7 @@ public final class DishController {
 		if (isDeleted) {
 			DeletedMessage message = new DeletedMessage();
 			message.setId(id);
-			message.setDeleted(isDeleted);
+			message.setDeleted(true);
 			return new ResponseEntity<>(message, HttpStatus.OK);
 		} else {
 			return ResponseError.notFound(ErrorUtils.DISH_NOT_FOUND, id);

@@ -5,10 +5,10 @@ import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,18 +27,14 @@ import javax.validation.constraints.NotNull;
 public final class NoKeyController {
 
 	/** User Service */
+	@Autowired
 	private UserService userService;
 	/** Order Service */
+	@Autowired
 	private OrderService orderService;
 	/** Service validator */
+	@Autowired
 	private UserValidator validator;
-
-	/** Construct the service */
-	public NoKeyController() {
-		this.userService = new UserService();
-		this.orderService = new OrderService();
-		this.validator = (UserValidator) FactoryValidator.getValidator("user");
-	}
 
 	// @formatter:off
 	/** 

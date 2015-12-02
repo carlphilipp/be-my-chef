@@ -1,35 +1,6 @@
 package com.epickur.api.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.bson.types.ObjectId;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
+import com.epickur.api.ApplicationConfigTest;
 import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
@@ -45,21 +16,47 @@ import com.epickur.api.utils.Security;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
+import com.stripe.exception.*;
 import com.stripe.model.Token;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.bson.types.ObjectId;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import static org.junit.Assert.*;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ApplicationConfigTest.class)
 public class UserIT {
+
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
 
 	private static String URL;
 	private static String URL_NO_KEY;
 	private static String URL_EXECUTE_ORDER;
 	private static String name;
-	private static String password;
 	private static String start;
 	private static String end;
 	private static String id;
@@ -67,8 +64,13 @@ public class UserIT {
 
 	private static ObjectMapper mapper;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws IOException, EpickurException {
+	@AfterClass
+	public static void afterClass() throws IOException {
+		EntityGenerator.cleanDB();
+	}
+
+	@Before
+	public void setUp() throws IOException, EpickurException {
 		InputStreamReader in = null;
 		BufferedReader br = null;
 		try {
@@ -84,12 +86,12 @@ public class UserIT {
 			URL_NO_KEY = address + path + "/users";
 			URL_EXECUTE_ORDER = address + path + "/nokey/execute";
 
-			User admin = IntegrationTestUtils.createAdminAndLogin();
+			User admin = integrationTestUtils.createAdminAndLogin();
 			API_KEY = admin.getKey();
 			URL = URL_NO_KEY + "?key=" + API_KEY;
 
 			name = RandomStringUtils.randomAlphabetic(10);
-			password = RandomStringUtils.randomAlphabetic(10);
+			String password = RandomStringUtils.randomAlphabetic(10);
 			start = RandomStringUtils.randomAlphabetic(5);
 			end = RandomStringUtils.randomAlphabetic(3);
 
@@ -123,16 +125,6 @@ public class UserIT {
 			IOUtils.closeQuietly(br);
 			IOUtils.closeQuietly(in);
 		}
-	}
-
-	@AfterClass
-	public static void afterClass() throws IOException {
-		StripeTestUtils.resetStripe();
-		String jsonMimeType = "application/json";
-		// Delete
-		HttpDelete request = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(request);
 	}
 
 	@Test
@@ -272,7 +264,6 @@ public class UserIT {
 			obj = br.readLine();
 			int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 			assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.CONFLICT.value(), statusCode2);
-			jsonResult = mapper.readTree(obj);
 
 			// Delete this user
 			HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
@@ -318,7 +309,7 @@ public class UserIT {
 			br = new BufferedReader(in);
 			String obj = br.readLine();
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj,HttpStatus.OK.value(), statusCode);
+			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 			JsonNode jsonResult = mapper.readTree(obj);
 
 			// Create result
@@ -678,7 +669,7 @@ public class UserIT {
 			json.put("quantity", 2);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = integrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
 			String cardToken = EntityGenerator.generateRandomString();
 			json.put("cardToken", cardToken);
@@ -795,7 +786,7 @@ public class UserIT {
 			json.put("quantity", 2);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = integrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
 
 			Map<String, Object> tokenParams = new HashMap<>();
@@ -927,7 +918,7 @@ public class UserIT {
 			json.put("quantity", 2);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = integrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
 			String cardToken = EntityGenerator.generateRandomString();
 			json.put("cardToken", cardToken);
@@ -1063,7 +1054,7 @@ public class UserIT {
 			json.put("quantity", 6);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = integrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
 			String cardToken = EntityGenerator.generateRandomString();
 			json.put("cardToken", cardToken);
@@ -1202,7 +1193,7 @@ public class UserIT {
 			json.put("quantity", 2);
 			json.put("amount", 500);
 			json.put("currency", "AUD");
-			String pickupdate = IntegrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
+			String pickupdate = integrationTestUtils.generateRandomCorrectPickupDate(dish.getCaterer().getWorkingTimes());
 			json.put("pickupdate", pickupdate);
 			String cardToken = EntityGenerator.generateRandomString();
 			json.put("cardToken", cardToken);
@@ -1241,7 +1232,8 @@ public class UserIT {
 
 			// Execute order (Caterer choose yes or no)
 			String confirm = "false";
-			HttpGet httpGet = new HttpGet(URL_EXECUTE_ORDER + "/users/" + id + "/orders/" + orderId + "?confirm=" + confirm + "&ordercode=" + orderCode);
+			HttpGet httpGet = new HttpGet(
+					URL_EXECUTE_ORDER + "/users/" + id + "/orders/" + orderId + "?confirm=" + confirm + "&ordercode=" + orderCode);
 			httpGet.addHeader("content-type", jsonMimeType);
 			httpGet.addHeader("charge-agent", "false");
 			httpResponse = HttpClientBuilder.create().build().execute(httpGet);

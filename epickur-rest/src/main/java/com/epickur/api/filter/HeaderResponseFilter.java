@@ -14,7 +14,6 @@ import java.io.IOException;
  * @author cph
  * @version 1.0
  */
-//@Provider
 public final class HeaderResponseFilter extends OncePerRequestFilter {
 
 	@Override

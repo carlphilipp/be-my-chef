@@ -4,6 +4,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.UserService;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 public final class LoginController {
 
 	/** User Service */
+	@Autowired
 	private UserService userService;
-
-	/** Constructor */
-	public LoginController() {
-		this.userService = new UserService();
-	}
 
 	// @formatter:off
 	/** 

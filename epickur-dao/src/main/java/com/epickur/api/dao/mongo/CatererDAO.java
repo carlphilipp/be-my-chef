@@ -16,6 +16,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import org.springframework.stereotype.Service;
 
 /**
  * Caterer DAO access with CRUD operations.
@@ -23,6 +24,7 @@ import com.mongodb.client.MongoCursor;
  * @author cph
  * @version 1.0
  */
+@Service
 public class CatererDAO extends CrudDAO<Caterer> {
 
 	/** Logger */

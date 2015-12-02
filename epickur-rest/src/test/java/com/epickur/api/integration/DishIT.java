@@ -1,69 +1,65 @@
 package com.epickur.api.integration;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.bson.types.ObjectId;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Mockito;
-
+import com.epickur.api.ApplicationConfigTest;
 import com.epickur.api.IntegrationTestUtils;
-import com.epickur.api.entity.Address;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Geo;
-import com.epickur.api.entity.Key;
-import com.epickur.api.entity.Location;
-import com.epickur.api.entity.NutritionFact;
-import com.epickur.api.entity.User;
+import com.epickur.api.entity.*;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Properties;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ApplicationConfigTest.class)
 public class DishIT {
+
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
+
 	private static String URL;
 	private static String URL_NO_KEY;
 	private static String API_KEY;
-	private static List<ObjectId> idsCatererToDelete;
-	private static HttpServletRequest context;
 	private static String jsonMimeType = "application/json";
 
 	@BeforeClass
-	public static void setUpBeforeClass() throws IOException, EpickurException {
+	public static void setUpBeforeClass() throws IOException {
+		EntityGenerator.setupDB();
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws EpickurException, IOException {
+		EntityGenerator.cleanDB();
+	}
+
+	@Before
+	public void setUp() throws IOException, EpickurException {
 		InputStreamReader in = null;
 		try {
-			EntityGenerator.setupDB();
 			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
 			Properties prop = new Properties();
 			prop.load(in);
@@ -71,22 +67,12 @@ public class DishIT {
 			String path = prop.getProperty("api.path");
 			URL_NO_KEY = address + path + "/dishes";
 
-			User admin = IntegrationTestUtils.createAdminAndLogin();
+			User admin = integrationTestUtils.createAdminAndLogin();
 			API_KEY = admin.getKey();
 			URL = URL_NO_KEY + "?key=" + API_KEY;
-
-			idsCatererToDelete = new ArrayList<>();
-			context = mock(HttpServletRequest.class);
-			Key key = EntityGenerator.generateRandomAdminKey();
-			Mockito.when(context.getAttribute("key")).thenReturn(key);
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws EpickurException, IOException {
-		EntityGenerator.cleanDB();
 	}
 
 	@Test
@@ -108,9 +94,8 @@ public class DishIT {
 	public void testCreate() throws IOException, EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer cat = integrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
-		idsCatererToDelete.add(cat.getId());
 
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
@@ -170,9 +155,8 @@ public class DishIT {
 	public void testReadOneDish() throws IOException, EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer cat = integrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
-		idsCatererToDelete.add(cat.getId());
 
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
@@ -251,9 +235,8 @@ public class DishIT {
 	public void testUpdateOneDish() throws IOException, EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer cat = integrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
-		idsCatererToDelete.add(cat.getId());
 
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
@@ -289,9 +272,9 @@ public class DishIT {
 		caterer2.setLocation(location2);
 		InputStreamReader in = null;
 		BufferedReader br = null;
-		HttpResponse httpResponse = null;
-		String obj = null;
-		JsonNode jsonResult = null;
+		HttpResponse httpResponse;
+		String obj;
+		JsonNode jsonResult;
 		String id = null;
 		HttpPut putRequest = null;
 		try {
@@ -364,9 +347,8 @@ public class DishIT {
 	public void testDeleteOneDish() throws IOException, EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer cat = IntegrationTestUtils.createCaterer(dish.getCaterer(), null);
+		Caterer cat = integrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
-		idsCatererToDelete.add(cat.getId());
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
 		HttpPost request = new HttpPost(URL);

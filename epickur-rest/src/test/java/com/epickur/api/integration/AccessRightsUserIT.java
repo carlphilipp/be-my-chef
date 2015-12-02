@@ -1,18 +1,14 @@
 package com.epickur.api.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Properties;
-
+import com.epickur.api.ApplicationConfigTest;
+import com.epickur.api.IntegrationTestUtils;
+import com.epickur.api.entity.User;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -23,16 +19,26 @@ import org.bson.types.ObjectId;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.epickur.api.IntegrationTestUtils;
-import com.epickur.api.entity.User;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Properties;
+
+import static org.junit.Assert.*;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ApplicationConfigTest.class)
 public class AccessRightsUserIT {
+
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
+
 	private static String END_POINT;
 	private static String URL;
 	private static String URL_NO_KEY;
@@ -65,7 +71,7 @@ public class AccessRightsUserIT {
 	// User Administrator
 	@Test
 	public void testAdministratorUserCreate() throws IOException, EpickurException {
-		User admin = IntegrationTestUtils.createAdminAndLogin();
+		User admin = integrationTestUtils.createAdminAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users";
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -97,9 +103,9 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testAdministratorUserRead() throws IOException, EpickurException {
-		User admin = IntegrationTestUtils.createAdminAndLogin();
+		User admin = integrationTestUtils.createAdminAndLogin();
 
-		String id = IntegrationTestUtils.createUser().getId().toHexString();
+		String id = integrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -123,8 +129,8 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testAdministratorUserUpdate() throws IOException, EpickurException {
-		User admin = IntegrationTestUtils.createAdminAndLogin();
-		User normalUser = IntegrationTestUtils.createUserAndLogin();
+		User admin = integrationTestUtils.createAdminAndLogin();
+		User normalUser = integrationTestUtils.createUserAndLogin();
 		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
@@ -152,8 +158,8 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testAdministratorUserDelete() throws IOException, EpickurException {
-		User admin = IntegrationTestUtils.createAdminAndLogin();
-		String id = IntegrationTestUtils.createUser().getId().toHexString();
+		User admin = integrationTestUtils.createAdminAndLogin();
+		String id = integrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -179,7 +185,7 @@ public class AccessRightsUserIT {
 	// User Super_User
 	@Test
 	public void testSuperUserCreate() throws IOException, EpickurException {
-		String key = IntegrationTestUtils.createUserAndLogin().getKey();
+		String key = integrationTestUtils.createUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/users";
 		URL = URL_NO_KEY + "?key=" + key;
@@ -215,8 +221,8 @@ public class AccessRightsUserIT {
 	@Test
 	public void testSuperUserRead() throws IOException, EpickurException {
 		// Read another user - should not pass it
-		String key = IntegrationTestUtils.createUserAndLogin().getKey();
-		String id = IntegrationTestUtils.createUser().getId().toHexString();
+		String key = integrationTestUtils.createUserAndLogin().getKey();
+		String id = integrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -244,7 +250,7 @@ public class AccessRightsUserIT {
 	@Test
 	public void testSuperUserRead2() throws IOException, EpickurException {
 		// Read its own user - should pass it
-		User newUser = IntegrationTestUtils.createUserAndLogin();
+		User newUser = integrationTestUtils.createUserAndLogin();
 		String key = newUser.getKey();
 		String id = newUser.getId().toHexString();
 
@@ -274,7 +280,7 @@ public class AccessRightsUserIT {
 	@Test
 	public void testSuperUserUpdate() throws IOException, EpickurException {
 		// Update another user - should not pass it
-		User superUser = IntegrationTestUtils.createUserAndLogin();
+		User superUser = integrationTestUtils.createUserAndLogin();
 		String key = superUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
@@ -308,9 +314,9 @@ public class AccessRightsUserIT {
 	@Test
 	public void testSuperUserUpdate2() throws IOException, EpickurException {
 		// Update another user - should not pass it
-		User superUser = IntegrationTestUtils.createUserAndLogin();
+		User superUser = integrationTestUtils.createUserAndLogin();
 		String key = superUser.getKey();
-		String id = IntegrationTestUtils.createUser().getId().toHexString();
+		String id = integrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -342,7 +348,7 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testSuperUserDelete() throws IOException, EpickurException {
-		User superUser = IntegrationTestUtils.createUserAndLogin();
+		User superUser = integrationTestUtils.createUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();
@@ -367,7 +373,7 @@ public class AccessRightsUserIT {
 	// User User
 	@Test
 	public void testUserCreate() throws IOException, EpickurException {
-		String key = IntegrationTestUtils.createUserAndLogin().getKey();
+		String key = integrationTestUtils.createUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/users";
 		URL = URL_NO_KEY + "?key=" + key;
@@ -401,8 +407,8 @@ public class AccessRightsUserIT {
 	@Test
 	public void testUserRead() throws IOException, EpickurException {
 		// Read another user - should not pass it
-		String key = IntegrationTestUtils.createUserAndLogin().getKey();
-		String id = IntegrationTestUtils.createUser().getId().toHexString();
+		String key = integrationTestUtils.createUserAndLogin().getKey();
+		String id = integrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -430,7 +436,7 @@ public class AccessRightsUserIT {
 	@Test
 	public void testUserRead2() throws IOException, EpickurException {
 		// Read its own user - should pass it
-		User newUser = IntegrationTestUtils.createUserAndLogin();
+		User newUser = integrationTestUtils.createUserAndLogin();
 		String key = newUser.getKey();
 		String id = newUser.getId().toHexString();
 
@@ -460,7 +466,7 @@ public class AccessRightsUserIT {
 	@Test
 	public void testUserUpdate() throws IOException, EpickurException {
 		// Update another user - should not pass it
-		User normalUser = IntegrationTestUtils.createUserAndLogin();
+		User normalUser = integrationTestUtils.createUserAndLogin();
 		String key = normalUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
@@ -491,9 +497,9 @@ public class AccessRightsUserIT {
 	@Test
 	public void testUserUpdate2() throws IOException, EpickurException {
 		// Update another user - should not pass it
-		User normalUser = IntegrationTestUtils.createUserAndLogin();
+		User normalUser = integrationTestUtils.createUserAndLogin();
 		String key = normalUser.getKey();
-		String id = IntegrationTestUtils.createUser().getId().toHexString();
+		String id = integrationTestUtils.createUser().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/users/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -525,7 +531,7 @@ public class AccessRightsUserIT {
 
 	@Test
 	public void testUserDelete() throws IOException, EpickurException {
-		User superUser = IntegrationTestUtils.createUserAndLogin();
+		User superUser = integrationTestUtils.createUserAndLogin();
 
 		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();

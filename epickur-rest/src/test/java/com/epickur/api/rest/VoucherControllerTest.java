@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.epickur.api.validator.VoucherValidator;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +39,8 @@ public class VoucherControllerTest {
 	private VoucherService voucherBusiness;
 	@Mock
 	private HttpServletRequest context;
+	@Mock
+	private VoucherValidator validator;
 	@InjectMocks
 	private VoucherController controller;
 
@@ -55,10 +58,10 @@ public class VoucherControllerTest {
 	public void testGenerate() throws EpickurException {
 		Voucher voucher = EntityGenerator.generateVoucher();
 		Voucher voucherAfterCreate = EntityGenerator.mockVoucherAfterCreate(voucher);
-		Set<Voucher> vouchers = new HashSet<Voucher>();
+		Set<Voucher> vouchers = new HashSet<>();
 		vouchers.add(voucherAfterCreate);
 
-		when(voucherBusiness.generate(anyInt(), (DiscountType) anyObject(), anyInt(), (ExpirationType) anyObject(), (DateTime) anyObject()))
+		when(voucherBusiness.generate(anyInt(), anyObject(), anyInt(), anyObject(), anyObject()))
 				.thenReturn(vouchers);
 
 		ResponseEntity<?> actual = controller.generate(1, DiscountType.AMOUNT, 1, ExpirationType.ONETIME, "05/05/2020", "MM/dd/yyyy");

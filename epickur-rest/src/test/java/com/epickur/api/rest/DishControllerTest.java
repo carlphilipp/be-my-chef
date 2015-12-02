@@ -1,38 +1,31 @@
 package com.epickur.api.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Dish;
+import com.epickur.api.entity.Key;
+import com.epickur.api.entity.message.DeletedMessage;
+import com.epickur.api.entity.message.ErrorMessage;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
+import com.epickur.api.service.CatererService;
+import com.epickur.api.service.DishService;
+import com.epickur.api.validator.DishValidator;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Geo;
-import com.epickur.api.entity.Key;
-import com.epickur.api.entity.message.DeletedMessage;
-import com.epickur.api.entity.message.ErrorMessage;
-import com.epickur.api.enumeration.DishType;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.service.CatererService;
-import com.epickur.api.service.DishService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.when;
 
 public class DishControllerTest {
 
@@ -42,6 +35,8 @@ public class DishControllerTest {
 	private CatererService catererBusiness;
 	@Mock
 	private HttpServletRequest context;
+	@Mock
+	private DishValidator validator;
 	@InjectMocks
 	private DishController controller;
 
@@ -62,7 +57,7 @@ public class DishControllerTest {
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 
 		when(catererBusiness.read(anyString())).thenReturn(caterer);
-		when(dishBusiness.create((Dish) anyObject())).thenReturn(dishAfterCreate);
+		when(dishBusiness.create(anyObject())).thenReturn(dishAfterCreate);
 
 		ResponseEntity<?> actual = controller.create(dish);
 		assertNotNull(actual);
@@ -131,7 +126,7 @@ public class DishControllerTest {
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterCreate.setDescription("desc");
 
-		when(dishBusiness.update((Dish) anyObject(), (Key) anyObject())).thenReturn(dishAfterCreate);
+		when(dishBusiness.update(anyObject(), anyObject())).thenReturn(dishAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(dish.getId().toHexString(), dish);
 		assertNotNull(actual);
@@ -150,7 +145,7 @@ public class DishControllerTest {
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterCreate.setDescription("desc");
 
-		when(dishBusiness.update((Dish) anyObject(), (Key) anyObject())).thenReturn(null);
+		when(dishBusiness.update(anyObject(), anyObject())).thenReturn(null);
 
 		ResponseEntity<?> actual = controller.update(dish.getId().toHexString(), dish);
 		assertNotNull(actual);
@@ -167,7 +162,7 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
-		when(dishBusiness.delete(anyString(), (Key) anyObject())).thenReturn(true);
+		when(dishBusiness.delete(anyString(), anyObject())).thenReturn(true);
 
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
 		assertNotNull(actual);
@@ -185,7 +180,7 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
-		when(dishBusiness.delete(anyString(), (Key) anyObject())).thenReturn(false);
+		when(dishBusiness.delete(anyString(), anyObject())).thenReturn(false);
 
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
 		assertNotNull(actual);
@@ -207,7 +202,7 @@ public class DishControllerTest {
 		List<Dish> dishes = new ArrayList<>();
 		dishes.add(dishAfterCreate);
 
-		when(dishBusiness.search(anyString(), anyInt(), (List<DishType>) anyObject(), anyInt(), (Geo) anyObject(), anyString(), anyInt()))
+		when(dishBusiness.search(anyString(), anyInt(), anyObject(), anyInt(), anyObject(), anyString(), anyInt()))
 				.thenReturn(dishes);
 
 		ResponseEntity<?> actual = controller

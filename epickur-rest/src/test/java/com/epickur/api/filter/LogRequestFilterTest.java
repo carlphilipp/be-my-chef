@@ -9,6 +9,8 @@ import org.mockito.Mockito;
 
 public class LogRequestFilterTest {
 
+	// TODO create test
+
 	@Test
 	public void testCreate() throws IOException {
 //		ContainerRequestContext requestContext = mock(ContainerRequestContext.class);

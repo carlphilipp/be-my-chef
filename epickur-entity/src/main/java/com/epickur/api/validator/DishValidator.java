@@ -16,6 +16,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.commons.CommonsUtil;
+import org.springframework.stereotype.Component;
 
 /**
  * The Dish Validator class
@@ -24,7 +25,8 @@ import com.epickur.api.commons.CommonsUtil;
  * @version 1.0
  *
  */
-public final class DishValidator extends Validator {
+@Component
+public class DishValidator extends Validator {
 
 	/**
 	 * Constructor

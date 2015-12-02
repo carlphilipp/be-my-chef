@@ -18,7 +18,6 @@ import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
 import com.epickur.api.validator.CatererValidator;
-import com.epickur.api.validator.FactoryValidator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -48,29 +47,23 @@ public final class CatererController {
 	/**
 	 * Caterer Service
 	 */
+	@Autowired
 	private CatererService catererService;
 	/**
 	 * Order Service
 	 */
+	@Autowired
 	private OrderService orderService;
 	/**
 	 * Dish Service
 	 */
+	@Autowired
 	private DishService dishService;
 	/**
 	 * Caterer validator
 	 */
+	@Autowired
 	private CatererValidator validator;
-
-	/**
-	 * Constructor
-	 */
-	public CatererController() {
-		this.catererService = new CatererService();
-		this.orderService = new OrderService();
-		this.dishService = new DishService();
-		this.validator = (CatererValidator) FactoryValidator.getValidator("caterer");
-	}
 
 	// @formatter:off
 	/**
@@ -346,7 +339,7 @@ public final class CatererController {
 		if (resBool) {
 			DeletedMessage deletedMessage = new DeletedMessage();
 			deletedMessage.setId(id);
-			deletedMessage.setDeleted(resBool);
+			deletedMessage.setDeleted(true);
 			return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
 		} else {
 			return ResponseError.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
@@ -597,7 +590,7 @@ public final class CatererController {
 		} else {
 			List<Order> orders = orderService.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
 			Integer amount = catererService.getTotalAmountSuccessful(orders);
-			if (context.getContentType() != null && context.getContentType().toString().equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
+			if (context.getContentType() != null && context.getContentType().equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
 				PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
 				payementInfoMessage.setId(caterer.getId().toHexString());
 				payementInfoMessage.setName(caterer.getName());

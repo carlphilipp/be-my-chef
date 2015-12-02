@@ -12,6 +12,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.epickur.api.validator.DishValidator;
 import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +32,6 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.geocoder.here.GeocoderHereImpl;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.service.DishService;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
@@ -44,8 +44,10 @@ public class DishServiceTest {
 	private GeocoderHereImpl geoCoder;
 	@Mock
 	private Geo geo;
+	@Mock
+	private DishValidator validator;
 	@InjectMocks
-	private DishService dishBusiness;
+	private DishService dishService;
 
 	private Key key;
 
@@ -68,7 +70,7 @@ public class DishServiceTest {
 
 		when(dishDAOMock.create((Dish) anyObject())).thenReturn(dishAfterCreate);
 
-		Dish actual = dishBusiness.create(dish);
+		Dish actual = dishService.create(dish);
 		assertNotNull("Dish is null", actual);
 		assertNotNull("Id not generated", actual.getId());
 		assertNotNull("CreatedAt is null", actual.getCreatedAt());
@@ -83,7 +85,7 @@ public class DishServiceTest {
 
 		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
 
-		Dish actual = dishBusiness.read(dish.getId().toHexString());
+		Dish actual = dishService.read(dish.getId().toHexString());
 		assertNotNull("Dish is null", actual);
 	}
 
@@ -96,7 +98,7 @@ public class DishServiceTest {
 
 		when(dishDAOMock.readAll()).thenReturn(listDishes);
 
-		List<Dish> listActual = dishBusiness.readAll();
+		List<Dish> listActual = dishService.readAll();
 		Dish actual = listActual.get(0);
 		assertNotNull("Dish is null", actual);
 	}
@@ -111,7 +113,7 @@ public class DishServiceTest {
 		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
 		when(dishDAOMock.update((Dish) anyObject())).thenReturn(dishAfterUpdate);
 
-		Dish actual = dishBusiness.update(dish, key);
+		Dish actual = dishService.update(dish, key);
 		assertNotNull("Dish is null", actual);
 		assertEquals("new name", actual.getName());
 	}
@@ -124,7 +126,7 @@ public class DishServiceTest {
 		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
 		when(dishDAOMock.delete(dish.getId().toHexString())).thenReturn(true);
 
-		boolean actual = dishBusiness.delete(dish.getId().toHexString(), key);
+		boolean actual = dishService.delete(dish.getId().toHexString(), key);
 		assertTrue(actual);
 	}
 
@@ -137,7 +139,7 @@ public class DishServiceTest {
 
 		when(dishDAOMock.searchWithCatererId(anyString())).thenReturn(listDishes);
 
-		List<Dish> listActual = dishBusiness.searchDishesForOneCaterer(anyString());
+		List<Dish> listActual = dishService.searchDishesForOneCaterer(anyString());
 		Dish actual = listActual.get(0);
 		assertNotNull("Dish is null", actual);
 	}
@@ -155,7 +157,7 @@ public class DishServiceTest {
 		whenNew(GeocoderHereImpl.class).withNoArguments().thenReturn(geoCoder);
 		when(geoCoder.getPosition(anyString())).thenReturn(geo);
 
-		List<Dish> listActual = dishBusiness.search("", 0, (List<DishType>)new ArrayList<DishType>(), 0, new Geo(),"", 0);
+		List<Dish> listActual = dishService.search("", 0, (List<DishType>)new ArrayList<DishType>(), 0, new Geo(),"", 0);
 		Dish actual = listActual.get(0);
 		assertNotNull("Dish is null", actual);
 	}

@@ -12,7 +12,6 @@ import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.AccessRights;
-import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.VoucherValidator;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
@@ -45,19 +44,13 @@ public final class VoucherController {
 	/**
 	 * User Service
 	 */
+	@Autowired
 	private VoucherService voucherService;
 	/**
 	 * User validator
 	 */
+	@Autowired
 	private VoucherValidator validator;
-
-	/**
-	 * Construct a voucher service
-	 */
-	public VoucherController() {
-		this.voucherService = new VoucherService();
-		this.validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
-	}
 
 	// @formatter:off
 	/**

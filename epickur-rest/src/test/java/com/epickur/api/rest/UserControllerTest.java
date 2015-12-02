@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.epickur.api.validator.UserValidator;
 import org.bson.types.ObjectId;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -46,6 +47,8 @@ public class UserControllerTest {
 	private OrderService orderBusiness;
 	@Mock
 	private HttpServletRequest context;
+	@Mock
+	private UserValidator validator;
 	@InjectMocks
 	private UserController controller;
 
@@ -72,7 +75,7 @@ public class UserControllerTest {
 		User user = EntityGenerator.generateRandomUser();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userBusiness.create((User) anyObject(), anyBoolean())).thenReturn(userAfterCreate);
+		when(userBusiness.create(anyObject(), anyBoolean())).thenReturn(userAfterCreate);
 
 		ResponseEntity<?> actual = controller.create(false, user);
 		assertNotNull(actual);
@@ -86,7 +89,7 @@ public class UserControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userBusiness.read(anyString(), (Key) anyObject())).thenReturn(userAfterRead);
+		when(userBusiness.read(anyString(), anyObject())).thenReturn(userAfterRead);
 
 		ResponseEntity<?> actual = controller.read(user.getId().toHexString());
 		assertNotNull(actual);
@@ -100,7 +103,7 @@ public class UserControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterUpdate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterUpdate);
+		when(userBusiness.update(anyObject(), anyObject())).thenReturn(userAfterUpdate);
 
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
@@ -117,7 +120,7 @@ public class UserControllerTest {
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
 
-		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
+		when(userBusiness.update(anyObject(), anyObject())).thenReturn(userAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
@@ -134,7 +137,7 @@ public class UserControllerTest {
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
 
-		when(userBusiness.update((User) anyObject(), (Key) anyObject())).thenReturn(userAfterCreate);
+		when(userBusiness.update(anyObject(), anyObject())).thenReturn(userAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
@@ -180,7 +183,7 @@ public class UserControllerTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
 
-		when(orderBusiness.create(anyString(), (Order) anyObject())).thenReturn(orderAfterCreate);
+		when(orderBusiness.create(anyString(), anyObject())).thenReturn(orderAfterCreate);
 
 		ResponseEntity<?> actual = controller.createOneOrder(orderAfterCreate.getId().toHexString(), order);
 		assertNotNull(actual);
@@ -194,7 +197,7 @@ public class UserControllerTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order);
 
-		when(orderBusiness.read(anyString(), (Key) anyObject())).thenReturn(orderAfterRead);
+		when(orderBusiness.read(anyString(), anyObject())).thenReturn(orderAfterRead);
 
 		ResponseEntity<?> actual = controller.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
 		assertNotNull(actual);
@@ -226,7 +229,7 @@ public class UserControllerTest {
 		order.setId(new ObjectId());
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
 
-		when(orderBusiness.update((Order) anyObject(), (Key) anyObject())).thenReturn(orderAfterCreate);
+		when(orderBusiness.update(anyObject(), anyObject())).thenReturn(orderAfterCreate);
 
 		ResponseEntity<?> actual = controller.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
 		assertNotNull(actual);

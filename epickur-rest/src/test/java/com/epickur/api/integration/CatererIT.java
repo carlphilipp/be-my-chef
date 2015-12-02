@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import com.epickur.api.ApplicationConfigTest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
@@ -19,9 +20,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.entity.Address;
@@ -37,9 +36,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ApplicationConfigTest.class)
 public class CatererIT {
+
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
 
 	private static String URL;
 	private static String URL_NO_KEY;
@@ -47,8 +55,13 @@ public class CatererIT {
 	private static String id;
 	private static String name;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws IOException, EpickurException {
+	@AfterClass
+	public static void tearDownAfterClass() throws IOException {
+		EntityGenerator.cleanDB();
+	}
+
+	@Before
+	public void setUp() throws IOException, EpickurException {
 		InputStreamReader in = null;
 		try {
 			in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
@@ -60,7 +73,7 @@ public class CatererIT {
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
-		User admin = IntegrationTestUtils.createAdminAndLogin();
+		User admin = integrationTestUtils.createAdminAndLogin();
 		API_KEY = admin.getKey();
 		URL = URL_NO_KEY + "?key=" + API_KEY;
 
@@ -122,8 +135,8 @@ public class CatererIT {
 
 	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws IOException {
+	@After
+	public void tearDown() throws IOException {
 		if (id != null) {
 			String jsonMimeType = "application/json";
 			// Delete

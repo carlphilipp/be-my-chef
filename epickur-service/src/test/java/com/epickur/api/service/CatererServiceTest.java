@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.epickur.api.validator.CatererValidator;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,14 +23,15 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.service.CatererService;
 
 public class CatererServiceTest {
 
 	@Mock
 	private CatererDAO catererDAOMock;
+	@Mock
+	private CatererValidator validator;
 	@InjectMocks
-	private CatererService catererBusiness;
+	private CatererService catererService;
 	
 	@Before
 	public void setUp() {
@@ -41,9 +43,9 @@ public class CatererServiceTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererDAOMock.create((Caterer) anyObject())).thenReturn(catererAfterCreate);
+		when(catererDAOMock.create(anyObject())).thenReturn(catererAfterCreate);
 
-		Caterer actual = catererBusiness.create(caterer);
+		Caterer actual = catererService.create(caterer);
 
 		assertNotNull("Caterer is null", actual);
 		assertNotNull("Id not generated", actual.getId());
@@ -64,7 +66,7 @@ public class CatererServiceTest {
 
 		when(catererDAOMock.read(anyString())).thenReturn(catererAfterCreate);
 
-		Caterer actual = catererBusiness.read(EntityGenerator.generateRandomString());
+		Caterer actual = catererService.read(EntityGenerator.generateRandomString());
 
 		assertNotNull("Caterer is null", actual);
 		assertNotNull("Id not generated", actual.getId());
@@ -88,7 +90,7 @@ public class CatererServiceTest {
 		
 		when(catererDAOMock.readAll()).thenReturn(caterers);
 		
-		List<Caterer> actual = catererBusiness.readAll();
+		List<Caterer> actual = catererService.readAll();
 		assertNotNull("Caterer is null", actual);
 		assertEquals(caterer1.getId(), actual.get(0).getId());
 		assertEquals(caterer2.getId(), actual.get(1).getId());
@@ -107,7 +109,7 @@ public class CatererServiceTest {
 		when(catererDAOMock.read(anyString())).thenReturn(catererAfterUpdate);
 		when(catererDAOMock.update(caterer)).thenReturn(catererAfterUpdate);
 
-		Caterer actual = catererBusiness.update(caterer, keyMock);
+		Caterer actual = catererService.update(caterer, keyMock);
 		assertNotNull("Caterer is null", actual);
 
 		assertNotNull("CreatedAt is null", actual.getCreatedAt());

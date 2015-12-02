@@ -4,6 +4,7 @@ import com.epickur.api.entity.message.SuccessMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.KeyService;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +26,8 @@ public final class LogoutController {
 	/**
 	 * Key Service
 	 */
+	@Autowired
 	private KeyService keyService;
-
-	/**
-	 * Constructor
-	 */
-	public LogoutController() {
-		this.keyService = new KeyService();
-	}
 
 	// @formatter:off
 	/** 

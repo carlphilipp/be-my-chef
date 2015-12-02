@@ -1,15 +1,5 @@
 package com.epickur.api.service;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
-
 import com.amazonaws.services.simplesystemsmanagement.model.InternalServerErrorException;
 import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Key;
@@ -24,48 +14,66 @@ import com.epickur.api.utils.PasswordManager;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.EmailUtils;
-import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * User business layer. Accesses User DAO layer and executes logic.
- * 
+ *
  * @author cph
  * @version 1.0
  */
+@Service
 public class UserService {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(UserService.class.getSimpleName());
-	/** User dao */
+	/**
+	 * User dao
+	 */
+	@Autowired
 	private UserDAO userDAO;
-	/** Key Business */
-	private KeyService keyBusiness;
-	/** User validator */
+	/**
+	 * Key Business
+	 */
+	@Autowired
+	private KeyService keyService;
+	/**
+	 * User validator
+	 */
+	@Autowired
 	private UserValidator validator;
-	/** User Email utils */
+	/**
+	 * User Email utils
+	 */
 	private EmailUtils emailUtils;
 
 	/**
 	 * The constructor
 	 */
 	public UserService() {
-		this.userDAO = new UserDAO();
-		this.keyBusiness = new KeyService();
-		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 		this.emailUtils = new EmailUtils();
 	}
 
 	/**
 	 * Create a User
-	 * 
-	 * @param user
-	 *            The User
-	 * @param autoValidate
-	 *            True if you want to auto validate the User
+	 *
+	 * @param user         The User
+	 * @param autoValidate True if you want to auto validate the User
 	 * @return The User created
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User create(final User user, final boolean autoValidate) throws EpickurException {
 		checkIfUserExists(user);
@@ -100,13 +108,10 @@ public class UserService {
 	}
 
 	/**
-	 * @param id
-	 *            the User id to read
-	 * @param key
-	 *            The key
+	 * @param id  the User id to read
+	 * @param key The key
 	 * @return The User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User read(final String id, final Key key) throws EpickurException {
 		User user = userDAO.read(id);
@@ -121,12 +126,10 @@ public class UserService {
 
 	/**
 	 * Read a User with its email
-	 * 
-	 * @param email
-	 *            The email of the User
+	 *
+	 * @param email The email of the User
 	 * @return The User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User readWithEmail(final String email) throws EpickurException {
 		return userDAO.readWithEmail(email);
@@ -134,10 +137,9 @@ public class UserService {
 
 	/**
 	 * Read a list of User
-	 * 
+	 *
 	 * @return A list of User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public List<User> readAll() throws EpickurException {
 		List<User> users = userDAO.readAll();
@@ -150,13 +152,10 @@ public class UserService {
 	}
 
 	/**
-	 * @param user
-	 *            The User to update
-	 * @param key
-	 *            The key
+	 * @param user The User to update
+	 * @param key  The key
 	 * @return The User updated
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User update(final User user, final Key key) throws EpickurException {
 		User read = userDAO.read(user.getId().toHexString());
@@ -178,16 +177,14 @@ public class UserService {
 
 	/**
 	 * Delete a User
-	 * 
-	 * @param id
-	 *            The id of the User to delete
+	 *
+	 * @param id The id of the User to delete
 	 * @return True if the User has been deleted
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
 		boolean isDeleted = userDAO.delete(id);
-		if(!isDeleted){
+		if (!isDeleted) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
 		}
 		return isDeleted;
@@ -195,14 +192,11 @@ public class UserService {
 
 	/**
 	 * Login
-	 * 
-	 * @param email
-	 *            The email of the User
-	 * @param password
-	 *            The password of the User
+	 *
+	 * @param email    The email of the User
+	 * @param password The password of the User
 	 * @return A User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User login(final String email, final String password) throws EpickurException {
 		User userFound = readWithEmail(email);
@@ -212,16 +206,16 @@ public class UserService {
 			} else if (userFound.getAllow() == 1) {
 				String tempKey = Security.generateRandomMd5();
 				userFound.setKey(tempKey);
-				Key currentKey = keyBusiness.readWithName(userFound.getName());
+				Key currentKey = keyService.readWithName(userFound.getName());
 				if (currentKey != null) {
-					keyBusiness.delete(currentKey.getId().toHexString());
+					keyService.delete(currentKey.getId().toHexString());
 				}
 				Key key = new Key();
 				key.setCreatedAt(new DateTime());
 				key.setUserId(userFound.getId());
 				key.setKey(userFound.getKey());
 				key.setRole(userFound.getRole());
-				keyBusiness.create(key);
+				keyService.create(key);
 				userFound.setPassword(null);
 				userFound.setRole(null);
 			} else {
@@ -235,12 +229,10 @@ public class UserService {
 
 	/**
 	 * Inject a new encoded password into the User
-	 * 
-	 * @param user
-	 *            The User
+	 *
+	 * @param user The User
 	 * @return The User modified with its new encoded password
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User injectNewPassword(final User user) throws EpickurException {
 		User userFound = readWithEmail(user.getEmail());
@@ -259,14 +251,11 @@ public class UserService {
 
 	/**
 	 * Check if the code provided is correct and unlock the User
-	 * 
-	 * @param email
-	 *            The email of the User
-	 * @param code
-	 *            The code provided by the API to the User
+	 *
+	 * @param email The email of the User
+	 * @param code  The code provided by the API to the User
 	 * @return An updated User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User checkCode(final String email, final String code) throws EpickurException {
 		User userFound = readWithEmail(email);
@@ -288,10 +277,8 @@ public class UserService {
 	}
 
 	/**
-	 * @param email
-	 *            The email
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @param email The email
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public void resetPasswordFirstStep(final String email) throws EpickurException {
 		User user = readWithEmail(email);
@@ -303,15 +290,11 @@ public class UserService {
 	}
 
 	/**
-	 * @param id
-	 *            The User Id
-	 * @param newPassword
-	 *            The new password
-	 * @param resetCode
-	 *            The reset code
+	 * @param id          The User Id
+	 * @param newPassword The new password
+	 * @param resetCode   The reset code
 	 * @return A User
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User resetPasswordSecondStep(final String id, final String newPassword, final String resetCode) throws EpickurException {
 		User user = userDAO.read(id);
@@ -335,9 +318,8 @@ public class UserService {
 
 	/**
 	 * Suscribe a user to newsletter
-	 * 
-	 * @param user
-	 *            The user.
+	 *
+	 * @param user The user.
 	 */
 	public void suscribeToNewsletter(final User user) {
 		String url = buildNewsletterUrl(user);

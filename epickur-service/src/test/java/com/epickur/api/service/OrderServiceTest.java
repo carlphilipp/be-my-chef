@@ -1,31 +1,5 @@
 package com.epickur.api.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.never;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-import org.joda.time.DateTime;
-
-import org.bson.types.ObjectId;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.SequenceDAO;
 import com.epickur.api.dao.mongo.UserDAO;
@@ -43,9 +17,28 @@ import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.payment.stripe.StripePayment;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.email.EmailUtils;
+import com.epickur.api.validator.UserValidator;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.model.Charge;
 import com.stripe.model.Token;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
@@ -72,8 +65,10 @@ public class OrderServiceTest {
 	private Token tokenMock;
 	@Mock
 	private EmailUtils emailUtilsMock;
+	@Mock
+	private UserValidator validator;
 	@InjectMocks
-	private OrderService orderBusiness;
+	private OrderService orderService;
 
 	@Test
 	public void testCreate() throws EpickurException {
@@ -87,7 +82,7 @@ public class OrderServiceTest {
 		when(userDAOMock.read(user.getId().toHexString())).thenReturn(user);
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
 
-		Order actual = orderBusiness.create(user.getId().toHexString(), order);
+		Order actual = orderService.create(user.getId().toHexString(), order);
 
 		assertNotNull(actual);
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
@@ -119,7 +114,7 @@ public class OrderServiceTest {
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
 		when(voucherBusinessMock.validateVoucher(anyString())).thenReturn(voucher);
 
-		Order actual = orderBusiness.create(user.getId().toHexString(), order);
+		Order actual = orderService.create(user.getId().toHexString(), order);
 		assertNotNull(actual);
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
 		assertNotNull(actual.getVoucher());
@@ -143,7 +138,7 @@ public class OrderServiceTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		String userId = new ObjectId().toHexString();
 		try {
-			orderBusiness.create(userId, order);
+			orderService.create(userId, order);
 		} finally {
 			verify(userDAOMock, times(1)).read(userId);
 			verify(orderDAOMock, never()).create(any(Order.class));
@@ -166,7 +161,7 @@ public class OrderServiceTest {
 		when(userDAOMock.read(user.getId().toHexString())).thenReturn(user);
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
 
-		Order actual = orderBusiness.create(user.getId().toHexString(), order);
+		Order actual = orderService.create(user.getId().toHexString(), order);
 		assertNotNull(actual);
 		assertEquals(OrderStatus.PENDING, actual.getStatus());
 		assertEquals(ExpirationType.ONETIME, actual.getVoucher().getExpirationType());
@@ -191,7 +186,7 @@ public class OrderServiceTest {
 		Key key = new Key();
 		key.setUserId(order.getCreatedBy());
 		try {
-			orderBusiness.update(order, key);
+			orderService.update(order, key);
 		} finally {
 			verify(orderDAOMock, times(1)).read(order.getId().toHexString());
 			verify(orderDAOMock, never()).update(any(Order.class));
@@ -202,7 +197,7 @@ public class OrderServiceTest {
 	public void testUpdatePendingStatusFail() throws EpickurException {
 		OrderStatus orderStatus = OrderStatus.SUCCESSFUL;
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage("It's not allowed to modify an order that has a " + orderStatus + " status");
+		//thrown.expectMessage("It's not allowed to modify an order that has a " + orderStatus + " status");
 
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setId(new ObjectId());
@@ -212,8 +207,9 @@ public class OrderServiceTest {
 		orderAfterCreate.setStatus(orderStatus);
 
 		when(orderDAOMock.read(order.getId().toHexString())).thenReturn(orderAfterCreate);
+		doThrow(EpickurException.class).when(validator).checkOrderStatus(anyObject());
 
-		orderBusiness.update(order, key);
+		orderService.update(order, key);
 
 		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
 		verify(orderDAOMock, never()).update(any(Order.class));
@@ -243,7 +239,7 @@ public class OrderServiceTest {
 				.thenReturn(chargeMock);
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 
-		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
+		Order orderAfterCharge = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertTrue(orderAfterCharge.getPaid());
 
 		verify(userDAOMock, times(1)).read(user.getId().toHexString());
@@ -282,7 +278,7 @@ public class OrderServiceTest {
 		when(stripePayementMock.chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
 				.thenReturn(chargeMock);
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
-		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
+		Order orderAfterCharge = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.FAILED, orderAfterCharge.getStatus());
 		verify(userDAOMock, times(1)).read(user.getId().toHexString());
@@ -308,7 +304,7 @@ public class OrderServiceTest {
 		when(userDAOMock.read(user.getId().toHexString())).thenReturn(user);
 		when(orderDAOMock.read(order.getId().toHexString())).thenReturn(null);
 		try {
-			orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
+			orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		} finally {
 			verify(userDAOMock, times(1)).read(user.getId().toHexString());
 			verify(orderDAOMock, times(1)).read(order.getId().toHexString());
@@ -326,7 +322,7 @@ public class OrderServiceTest {
 
 		when(userDAOMock.read(userId)).thenReturn(null);
 		try {
-			orderBusiness.executeOrder(userId, order.getId().toHexString(), true, true, orderCode);
+			orderService.executeOrder(userId, order.getId().toHexString(), true, true, orderCode);
 		} finally {
 			verify(userDAOMock, times(1)).read(userId);
 			verify(orderDAOMock, never()).read(order.getId().toHexString());
@@ -362,7 +358,7 @@ public class OrderServiceTest {
 		when(voucherBusinessMock.revertVoucher(anyString())).thenReturn(voucher);
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 
-		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, true, orderCode);
+		Order orderAfterCharge = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, true, orderCode);
 		assertNull(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.DECLINED, orderAfterCharge.getStatus());
 		assertNotNull(orderAfterCharge.getVoucher());
@@ -378,7 +374,7 @@ public class OrderServiceTest {
 		verify(voucherBusinessMock, times(1)).revertVoucher(orderAfterCreate.getVoucher().getCode());
 		verify(orderAfterCharge, times(1)).setVoucher(voucher);
 	}
-	
+
 	@Test
 	public void testExecuteOrderNotConfirmWithoutVoucher() throws Exception {
 		String tokenId = "tokenId";
@@ -396,9 +392,9 @@ public class OrderServiceTest {
 		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
 		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
 
-		Order actual = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, false, orderCode);
+		Order actual = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, false, orderCode);
 		assertEquals(OrderStatus.DECLINED, actual.getStatus());
-		
+
 		verify(userDAOMock, times(1)).read(user.getId().toHexString());
 		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
 		verify(orderAfterCreate, times(1)).setStatus(OrderStatus.DECLINED);
@@ -426,7 +422,7 @@ public class OrderServiceTest {
 		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
 		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
 		try {
-			orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
+			orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		} finally {
 			verify(userDAOMock, times(1)).read(user.getId().toHexString());
 			verify(orderDAOMock, times(1)).read(order.getId().toHexString());
@@ -454,10 +450,10 @@ public class OrderServiceTest {
 				.thenThrow(new APIConnectionException(""));
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 
-		Order orderAfterCharge = orderBusiness.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
+		Order orderAfterCharge = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.FAILED, orderAfterCharge.getStatus());
-		
+
 		verify(userDAOMock, times(1)).read(user.getId().toHexString());
 		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
 		verify(stripePayementMock, times(1)).chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
@@ -480,7 +476,7 @@ public class OrderServiceTest {
 		voucher.setCode(code);
 		order.setVoucher(voucher);
 
-		orderBusiness.handleOrderFail(order, user);
+		orderService.handleOrderFail(order, user);
 
 		assertNotNull(order);
 		assertFalse(order.getPaid());

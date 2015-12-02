@@ -1,5 +1,6 @@
 package com.epickur.api.integration;
 
+import com.epickur.api.ApplicationConfigTest;
 import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.User;
@@ -18,7 +19,11 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,7 +32,13 @@ import java.util.Properties;
 
 import static org.junit.Assert.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ApplicationConfigTest.class)
 public class AccessRightsCatererIT {
+
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
+
 	private static String END_POINT;
 	private static String URL;
 	private static String URL_NO_KEY;
@@ -170,8 +181,8 @@ public class AccessRightsCatererIT {
 
 	// User Super_User
 	@Test
-	public void testSuperUserCaterCreate() throws IOException, EpickurException {
-		String key = IntegrationTestUtils.createSuperUserAndLogin().getKey();
+	public void testSuperUserCatererCreate() throws IOException, EpickurException {
+		String key = integrationTestUtils.createSuperUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/caterers";
 		URL = URL_NO_KEY + "?key=" + key;
@@ -288,8 +299,8 @@ public class AccessRightsCatererIT {
 
 	@Test
 	public void testSuperUserCatererDelete() throws IOException, EpickurException {
-		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
-		Caterer id = IntegrationTestUtils.createCaterer();
+		User superUser = integrationTestUtils.createSuperUserAndLogin();
+		Caterer id = integrationTestUtils.createCaterer();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();

@@ -1,30 +1,5 @@
 package com.epickur.api.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.joda.time.DateTime;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
@@ -39,14 +14,30 @@ import com.epickur.api.report.Report;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
+import com.epickur.api.validator.CatererValidator;
+import com.stripe.exception.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
@@ -63,6 +54,8 @@ public class CatererControllerTest {
 	private HttpServletRequest context;
 	@Mock
 	private Report report;
+	@Mock
+	private CatererValidator validator;
 	@InjectMocks
 	private CatererController controller;
 
@@ -80,7 +73,7 @@ public class CatererControllerTest {
 	public void setUp() {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		when(context.getAttribute("key")).thenReturn(key);
-		when(context.getContentType()).thenReturn(MediaType.APPLICATION_JSON_VALUE.toString());
+		when(context.getContentType()).thenReturn(MediaType.APPLICATION_JSON_VALUE);
 	}
 
 	@Test
@@ -88,7 +81,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererService.create((Caterer) anyObject())).thenReturn(catererAfterCreate);
+		when(catererService.create(anyObject())).thenReturn(catererAfterCreate);
 
 		ResponseEntity<?> actual = controller.create(caterer);
 		assertNotNull(actual);
@@ -168,7 +161,7 @@ public class CatererControllerTest {
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterCreate.setDescription("new desc");
 
-		when(catererService.update((Caterer) anyObject(), (Key) anyObject())).thenReturn(catererAfterCreate);
+		when(catererService.update(anyObject(), anyObject())).thenReturn(catererAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(caterer.getId().toHexString(), caterer);
 		assertNotNull(actual);
@@ -185,7 +178,7 @@ public class CatererControllerTest {
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterCreate.setDescription("new desc");
 
-		when(catererService.update((Caterer) anyObject(), (Key) anyObject())).thenReturn(null);
+		when(catererService.update(anyObject(), anyObject())).thenReturn(null);
 
 		ResponseEntity<?> actual = controller.update(caterer.getId().toHexString(), caterer);
 		assertNotNull(actual);
@@ -235,8 +228,8 @@ public class CatererControllerTest {
 			orders.add(order);
 
 			when(catererService.read(anyString())).thenReturn(catererAfterCreate);
-			when(orderService.readAllWithCatererId(anyString(), (DateTime) anyObject(), (DateTime) anyObject())).thenReturn(orders);
-			when(catererService.getTotalAmountSuccessful((List<Order>) anyObject())).thenReturn(150);
+			when(orderService.readAllWithCatererId(anyString(), anyObject(), anyObject())).thenReturn(orders);
+			when(catererService.getTotalAmountSuccessful(anyObject())).thenReturn(150);
 			Key key = EntityGenerator.generateRandomAdminKey();
 			when(context.getAttribute("key")).thenReturn(key);
 			when(context.getContentType()).thenReturn(MediaType.APPLICATION_XML.toString());
@@ -264,8 +257,8 @@ public class CatererControllerTest {
 			orders.add(order);
 
 			when(catererService.read(anyString())).thenReturn(catererAfterCreate);
-			when(orderService.readAllWithCatererId(anyString(), (DateTime) anyObject(), (DateTime) anyObject())).thenReturn(orders);
-			when(catererService.getTotalAmountSuccessful((List<Order>) anyObject())).thenReturn(150);
+			when(orderService.readAllWithCatererId(anyString(), anyObject(), anyObject())).thenReturn(orders);
+			when(catererService.getTotalAmountSuccessful(anyObject())).thenReturn(150);
 			Key key = EntityGenerator.generateRandomAdminKey();
 			when(context.getAttribute("key")).thenReturn(key);
 			when(context.getContentType()).thenReturn(MediaType.APPLICATION_JSON.toString());
@@ -293,9 +286,6 @@ public class CatererControllerTest {
 	public void testPaymentInfoCatererNotFound() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
-		Order order = EntityGenerator.generateRandomOrderWithId();
-		List<Order> orders = new ArrayList<>();
-		orders.add(order);
 
 		when(catererService.read(anyString())).thenReturn(null);
 

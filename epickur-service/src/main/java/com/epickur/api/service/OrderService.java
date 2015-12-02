@@ -1,10 +1,5 @@
 package com.epickur.api.service;
 
-import java.util.List;
-
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-
 import com.epickur.api.cron.Jobs;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.SequenceDAO;
@@ -23,10 +18,14 @@ import com.epickur.api.payment.stripe.StripePayment;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.email.EmailUtils;
-import com.epickur.api.validator.FactoryValidator;
 import com.epickur.api.validator.UserValidator;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * Order business layer. Access Order and User DAO layer and execute logic.
@@ -37,25 +36,25 @@ import com.stripe.model.Charge;
 public class OrderService {
 
 	/** Order dao */
+	@Autowired
 	private OrderDAO orderDAO;
 	/** User dao */
+	@Autowired
 	private UserDAO userDAO;
 	/** Sequence Order dao */
+	@Autowired
 	private SequenceDAO seqDAO;
 	/** Voucher dao */
-	private VoucherService voucherBusiness;
+	@Autowired
+	private VoucherService voucherService;
 	/** User validator */
+	@Autowired
 	private UserValidator validator;
 	/** User Email utils */
 	private EmailUtils emailUtils;
 
 	/** The constructor */
 	public OrderService() {
-		this.orderDAO = new OrderDAO();
-		this.userDAO = new UserDAO();
-		this.seqDAO = new SequenceDAO();
-		this.voucherBusiness = new VoucherService();
-		this.validator = (UserValidator) FactoryValidator.getValidator("user");
 		this.emailUtils = new EmailUtils();
 	}
 
@@ -85,7 +84,7 @@ public class OrderService {
 	protected void handleVoucher(final Order order) throws EpickurException {
 		Voucher voucher = order.getVoucher();
 		if (voucher != null) {
-			Voucher updated = voucherBusiness.validateVoucher(voucher.getCode());
+			Voucher updated = voucherService.validateVoucher(voucher.getCode());
 			order.setVoucher(updated);
 		}
 	}
@@ -225,7 +224,7 @@ public class OrderService {
 			// Send email to USER and ADMINS - Order decline
 			emailUtils.emailDeclineOrder(user, order);
 			if (order.getVoucher() != null) {
-				Voucher voucher = voucherBusiness.revertVoucher(order.getVoucher().getCode());
+				Voucher voucher = voucherService.revertVoucher(order.getVoucher().getCode());
 				order.setVoucher(voucher);
 			}
 			order.setStatus(OrderStatus.DECLINED);
@@ -290,7 +289,7 @@ public class OrderService {
 		// Send email to User, Caterer and admins - Order failed
 		emailUtils.emailFailOrder(user, order);
 		if (order.getVoucher() != null) {
-			Voucher voucher = voucherBusiness.revertVoucher(order.getVoucher().getCode());
+			Voucher voucher = voucherService.revertVoucher(order.getVoucher().getCode());
 			order.setVoucher(voucher);
 		}
 	}

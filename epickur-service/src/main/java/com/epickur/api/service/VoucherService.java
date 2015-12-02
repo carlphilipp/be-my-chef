@@ -15,6 +15,7 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Voucher business layer. Access voucher DAO layer and executes logic.
@@ -28,14 +29,8 @@ public class VoucherService {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(VoucherService.class.getSimpleName());
 	/** User dao */
+	@Autowired
 	private VoucherDAO voucherDAO;
-
-	/**
-	 * The constructor
-	 */
-	public VoucherService() {
-		this.voucherDAO = new VoucherDAO();
-	}
 
 	/**
 	 * @param code
