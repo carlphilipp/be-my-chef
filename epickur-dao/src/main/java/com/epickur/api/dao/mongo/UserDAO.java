@@ -13,6 +13,7 @@ import org.bson.BsonDocument;
 import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import static com.epickur.api.utils.Info.USER_COLL;
  * @author cph
  * @version 1.0
  */
+@Repository
 public class UserDAO extends CrudDAO<User> {
 
 	/**

@@ -1,36 +1,41 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.utils.Info.ORDER_COLL;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-
 import com.epickur.api.entity.Order;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.epickur.api.utils.Info.ORDER_COLL;
 
 /**
  * Order DAO access with CRUD operations.
- * 
+ *
  * @author cph
  * @version 1.0
  */
+@Repository
 public class OrderDAO extends CrudDAO<Order> {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(OrderDAO.class.getSimpleName());
 
-	/** Constructor */
+	/**
+	 * Constructor
+	 */
 	public OrderDAO() {
 		super();
 		initCollection(ORDER_COLL);
@@ -76,12 +81,10 @@ public class OrderDAO extends CrudDAO<Order> {
 
 	/**
 	 * Read all the Order for a User
-	 * 
-	 * @param userId
-	 *            The User id
+	 *
+	 * @param userId The User id
 	 * @return A list of Order
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public List<Order> readAllWithUserId(final String userId) throws EpickurException {
 		List<Order> orders = new ArrayList<>();
@@ -104,15 +107,11 @@ public class OrderDAO extends CrudDAO<Order> {
 	}
 
 	/**
-	 * @param catererId
-	 *            the Caterer Id.
-	 * @param start
-	 *            The start date to filter on
-	 * @param end
-	 *            The start end to filter on
+	 * @param catererId the Caterer Id.
+	 * @param start     The start date to filter on
+	 * @param end       The start end to filter on
 	 * @return A list of Orders
-	 * @throws EpickurException
-	 *             If an epickur exception occurred
+	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
 		List<Order> orders = new ArrayList<>();

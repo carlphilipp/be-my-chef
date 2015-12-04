@@ -1,30 +1,37 @@
 package com.epickur.api.dao.mongo;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.BsonInt32;
-import org.bson.Document;
-
 import com.epickur.api.dao.MongoDb;
 import com.epickur.api.exception.EpickurDBException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.BsonInt32;
+import org.bson.Document;
+import org.springframework.stereotype.Repository;
 
 /**
  * Sequence DAO access with CRUD operations.
+ *
  * @author cph
  * @version 1.0
- *
  */
+@Repository
 public class SequenceDAO {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(SequenceDAO.class.getSimpleName());
-	/** Database collection */
+	/**
+	 * Database collection
+	 */
 	private MongoCollection<Document> coll;
 
-	/** Construct a Order sequence DAO */
+	/**
+	 * Construct a Order sequence DAO
+	 */
 	public SequenceDAO() {
 		init();
 	}
@@ -39,10 +46,9 @@ public class SequenceDAO {
 
 	/**
 	 * Get next id
-	 * 
+	 *
 	 * @return The next order id
-	 * @throws EpickurDBException
-	 *             If an epickur exception occurred
+	 * @throws EpickurDBException If an epickur exception occurred
 	 */
 	public String getNextId() throws EpickurDBException {
 		String sequenceId = "order";

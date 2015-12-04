@@ -1,34 +1,34 @@
 package com.epickur.api.service;
 
-import java.util.List;
-
 import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Key business layer. Access Key DAO layer and execute logic.
- * 
+ *
  * @author cph
  * @version 1.0
  */
 @Service
 public class KeyService {
 
-	/** Key dao */
+	/**
+	 * Key dao
+	 */
 	@Autowired
 	private KeyDAO keyDao;
 
 	/**
 	 * Create a new Key
-	 * 
-	 * @param key
-	 *            the Key
+	 *
+	 * @param key the Key
 	 * @return the Key created
-	 * @throws EpickurException
-	 *             If an ${@link EpickurException} occurred
+	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
 	public Key create(final Key key) throws EpickurException {
 		key.prepareForInsertionIntoDB();
@@ -37,12 +37,10 @@ public class KeyService {
 
 	/**
 	 * Read a Key with its name
-	 * 
-	 * @param name
-	 *            the name of the Key
+	 *
+	 * @param name the name of the Key
 	 * @return the Key found
-	 * @throws EpickurException
-	 *             If an ${@link EpickurException} occurred
+	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
 	public Key readWithName(final String name) throws EpickurException {
 		return this.keyDao.readWithName(name);
@@ -50,12 +48,10 @@ public class KeyService {
 
 	/**
 	 * Delete a Key with its id
-	 * 
-	 * @param id
-	 *            the id of the Key
+	 *
+	 * @param id the id of the Key
 	 * @return a boolean
-	 * @throws EpickurException
-	 *             If an ${@link EpickurException} occurred
+	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
 		return this.keyDao.delete(id);
@@ -67,8 +63,7 @@ public class KeyService {
 
 	/**
 	 * @return A list of Key
-	 * @throws EpickurException
-	 *             If an ${@link EpickurException} occurred
+	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
 	public List<Key> readAll() throws EpickurException {
 		return this.keyDao.readAll();

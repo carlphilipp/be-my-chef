@@ -1,28 +1,32 @@
 package com.epickur.api.dao.mongo;
 
-import java.util.List;
-
+import com.epickur.api.entity.Log;
+import com.epickur.api.exception.EpickurException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.springframework.stereotype.Repository;
 
-import com.epickur.api.entity.Log;
-import com.epickur.api.exception.EpickurException;
+import java.util.List;
 
 /**
  * Log DAO access with CRUD operations.
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
+@Repository
 public final class LogDAO extends CrudDAO<Log> {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(Log.class.getSimpleName());
 
-	/** Constructor */
+	/**
+	 * Constructor
+	 */
 	public LogDAO() {
 		super();
 		initCollection("logs");
@@ -50,9 +54,9 @@ public final class LogDAO extends CrudDAO<Log> {
 	public Log update(final Log obj) throws EpickurException {
 		throw new NotImplementedException("Not implemented yet");
 	}
-	
+
 	@Override
-	public boolean delete(final String id){
+	public boolean delete(final String id) {
 		throw new NotImplementedException("Not implemented yet");
 	}
 }

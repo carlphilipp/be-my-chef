@@ -11,6 +11,7 @@ import com.epickur.api.geocoder.IGeocoder;
 import com.epickur.api.geocoder.here.GeocoderHereImpl;
 import com.epickur.api.validator.DishValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@Service
 public class DishService {
 
 	/** The DAO {@link DishDAO}. */

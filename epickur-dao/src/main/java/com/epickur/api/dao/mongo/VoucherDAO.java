@@ -1,19 +1,5 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.utils.Info.VOUCHER_COLL;
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.lt;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.joda.time.DateTime;
-
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
@@ -23,22 +9,40 @@ import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.epickur.api.utils.Info.VOUCHER_COLL;
+import static com.mongodb.client.model.Filters.*;
 
 /**
  * Voucher DAO access with CRUD operations.
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
+@Repository
 public class VoucherDAO extends CrudDAO<Voucher> {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(VoucherDAO.class.getSimpleName());
-	/** Not implemented */
+	/**
+	 * Not implemented
+	 */
 	private static final String NOT_IMPLEMENTED = "Not implemented";
 
-	/** Constructor */
+	/**
+	 * Constructor
+	 */
 	public VoucherDAO() {
 		super();
 		initCollection(VOUCHER_COLL);
@@ -91,8 +95,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 
 	/**
 	 * @return A list of voucher that can be cleaned
-	 * @throws EpickurException
-	 *             If an EpickurException occurred
+	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public List<Voucher> readToClean() throws EpickurException {
 		try {

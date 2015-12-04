@@ -1,19 +1,5 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.utils.Info.DISH_COLL;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.BsonArray;
-import org.bson.BsonDocument;
-import org.bson.BsonInt32;
-import org.bson.BsonString;
-import org.bson.Document;
-import org.bson.types.ObjectId;
-
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
@@ -24,19 +10,34 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.*;
+import org.bson.types.ObjectId;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.epickur.api.utils.Info.DISH_COLL;
 
 /**
  * Dish DAO access with CRUD operations.
- * 
+ *
  * @author cph
  * @version 1.0
  */
+@Repository
 public class DishDAO extends CrudDAO<Dish> {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(DishDAO.class.getSimpleName());
 
-	/** Constructor */
+	/**
+	 * Constructor
+	 */
 	public DishDAO() {
 		super();
 		initCollection(DISH_COLL);
@@ -68,11 +69,9 @@ public class DishDAO extends CrudDAO<Dish> {
 	}
 
 	/**
-	 * @param document
-	 *            The document.
+	 * @param document The document.
 	 * @return The dish.
-	 * @throws EpickurParsingException
-	 *             If an EpickurException occurred.
+	 * @throws EpickurParsingException If an EpickurException occurred.
 	 */
 	private Dish processAfterQuery(final Document document) throws EpickurParsingException {
 		if (document != null) {
@@ -104,22 +103,15 @@ public class DishDAO extends CrudDAO<Dish> {
 
 	/**
 	 * Search a list of Dish
-	 * 
-	 * @param day
-	 *            The day
-	 * @param pickupdateMinutes
-	 *            The pickup date in minutes
-	 * @param types
-	 *            The type of Dish to search
-	 * @param limit
-	 *            The max result returned
-	 * @param geo
-	 *            The Geo
-	 * @param distance
-	 *            The distance
+	 *
+	 * @param day               The day
+	 * @param pickupdateMinutes The pickup date in minutes
+	 * @param types             The type of Dish to search
+	 * @param limit             The max result returned
+	 * @param geo               The Geo
+	 * @param distance          The distance
 	 * @return A list of Dish
-	 * @throws EpickurException
-	 *             if an epickur exception occurred
+	 * @throws EpickurException if an epickur exception occurred
 	 */
 	public List<Dish> search(final String day, final Integer pickupdateMinutes, final List<DishType> types, final Integer limit, final Geo geo,
 			final Integer distance) throws EpickurException {
@@ -177,11 +169,9 @@ public class DishDAO extends CrudDAO<Dish> {
 	}
 
 	/**
-	 * @param catererId
-	 *            The {@link Caterer} id.
+	 * @param catererId The {@link Caterer} id.
 	 * @return A list of {@link Dish} list.
-	 * @throws EpickurException
-	 *             if an epickur exception occurred
+	 * @throws EpickurException if an epickur exception occurred
 	 */
 	public List<Dish> searchWithCatererId(final String catererId) throws EpickurException {
 		MongoCursor<Document> cursor = null;

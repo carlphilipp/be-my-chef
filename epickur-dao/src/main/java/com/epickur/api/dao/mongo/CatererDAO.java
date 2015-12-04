@@ -1,36 +1,39 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.utils.Info.CATERER_COLL;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.types.ObjectId;
-
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
-import org.springframework.stereotype.Service;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.epickur.api.utils.Info.CATERER_COLL;
 
 /**
  * Caterer DAO access with CRUD operations.
- * 
+ *
  * @author cph
  * @version 1.0
  */
-@Service
+@Repository
 public class CatererDAO extends CrudDAO<Caterer> {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(CatererDAO.class.getSimpleName());
 
-	/** Constructor */
+	/**
+	 * Constructor
+	 */
 	public CatererDAO() {
 		super();
 		initCollection(CATERER_COLL);
@@ -62,11 +65,9 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	}
 
 	/**
-	 * @param caterer
-	 *            The caterer.
+	 * @param caterer The caterer.
 	 * @return A Caterer
-	 * @throws EpickurParsingException
-	 *             If an EpickurException occurred.
+	 * @throws EpickurParsingException If an EpickurException occurred.
 	 */
 	private Caterer processAfterQuery(final Document caterer) throws EpickurParsingException {
 		if (caterer != null) {

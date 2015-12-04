@@ -24,6 +24,7 @@ import com.stripe.model.Charge;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@Service
 public class OrderService {
 
 	/** Order dao */
