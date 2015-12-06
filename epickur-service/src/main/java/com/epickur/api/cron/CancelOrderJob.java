@@ -20,7 +20,7 @@ import org.quartz.JobExecutionException;
  * @author cph
  * @version 1.0
  */
-public final class CancelOrderJob implements Job {
+public class CancelOrderJob implements Job {
 
 	/**
 	 * Logger

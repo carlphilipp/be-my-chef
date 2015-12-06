@@ -29,7 +29,7 @@ public final class NutritionFact implements Cloneable {
 	private MeasurementUnit unit;
 
 	@Override
-	public NutritionFact clone() {
+	public NutritionFact clone() throws CloneNotSupportedException {
 		NutritionFact nutritionFact = new NutritionFact();
 		nutritionFact.setName(this.name);
 		nutritionFact.setUnit(this.unit);

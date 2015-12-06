@@ -26,5 +26,5 @@ public enum Operation {
 	/** Search dish */
 	SEARCH_DISH,
 	/** Generate voucher */
-	GENERATE_VOUCHER;
+	GENERATE_VOUCHER
 }

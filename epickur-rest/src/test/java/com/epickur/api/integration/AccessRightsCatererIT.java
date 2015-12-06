@@ -72,7 +72,7 @@ public class AccessRightsCatererIT {
 	@Test
 	public void testAdministratorCatererCreate() throws EpickurException, IOException {
 
-		User admin = IntegrationTestUtils.createAdminAndLogin();
+		User admin = integrationTestUtils.createAdminAndLogin();
 		URL_NO_KEY = END_POINT + "/caterers";
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
@@ -102,8 +102,8 @@ public class AccessRightsCatererIT {
 
 	@Test
 	public void testAdministratorCatererRead() throws IOException, EpickurException {
-		User admin = IntegrationTestUtils.createAdminAndLogin();
-		String id = IntegrationTestUtils.createCaterer().getId().toHexString();
+		User admin = integrationTestUtils.createAdminAndLogin();
+		String id = integrationTestUtils.createCaterer().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id;
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -127,8 +127,8 @@ public class AccessRightsCatererIT {
 
 	@Test
 	public void testAdministratorCatererUpdate() throws IOException, EpickurException {
-		User admin = IntegrationTestUtils.createAdminAndLogin();
-		Caterer caterer = IntegrationTestUtils.createCaterer();
+		User admin = integrationTestUtils.createAdminAndLogin();
+		Caterer caterer = integrationTestUtils.createCaterer();
 		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
 
@@ -156,8 +156,8 @@ public class AccessRightsCatererIT {
 
 	@Test
 	public void testAdministratorCatererDelete() throws IOException, EpickurException {
-		User admin = IntegrationTestUtils.createAdminAndLogin();
-		String id = IntegrationTestUtils.createCaterer().getId().toHexString();
+		User admin = integrationTestUtils.createAdminAndLogin();
+		String id = integrationTestUtils.createCaterer().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id;
 		URL = URL_NO_KEY + "?key=" + admin.getKey();
@@ -214,8 +214,8 @@ public class AccessRightsCatererIT {
 	@Test
 	public void testSuperUserCatererRead() throws IOException, EpickurException {
 		// Read another caterer - should pass it
-		String key = IntegrationTestUtils.createSuperUserAndLogin().getKey();
-		String id = IntegrationTestUtils.createCaterer().getId().toHexString();
+		String key = integrationTestUtils.createSuperUserAndLogin().getKey();
+		String id = integrationTestUtils.createCaterer().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -240,8 +240,8 @@ public class AccessRightsCatererIT {
 	@Test
 	public void testSuperUserCatererUpdate() throws IOException, EpickurException {
 		// Update a caterer not created by current user - should not pass it
-		Caterer caterer = IntegrationTestUtils.createCaterer();
-		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
+		Caterer caterer = integrationTestUtils.createCaterer();
+		User superUser = integrationTestUtils.createSuperUserAndLogin();
 		String key = superUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
@@ -269,8 +269,8 @@ public class AccessRightsCatererIT {
 	@Test
 	public void testSuperUserCatererUpdate2() throws IOException, EpickurException {
 		// Update a caterer created by current user - should pass it
-		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
-		Caterer caterer = IntegrationTestUtils.createCatererWithUserId(superUser.getId());
+		User superUser = integrationTestUtils.createSuperUserAndLogin();
+		Caterer caterer = integrationTestUtils.createCatererWithUserId(superUser.getId());
 
 		String key = superUser.getKey();
 
@@ -325,7 +325,7 @@ public class AccessRightsCatererIT {
 	// User User
 	@Test
 	public void testUserCaterCreate() throws IOException, EpickurException {
-		String key = IntegrationTestUtils.createUserAndLogin().getKey();
+		String key = integrationTestUtils.createUserAndLogin().getKey();
 
 		URL_NO_KEY = END_POINT + "/caterers";
 		URL = URL_NO_KEY + "?key=" + key;
@@ -357,8 +357,8 @@ public class AccessRightsCatererIT {
 	@Test
 	public void testUserCatererRead() throws IOException, EpickurException {
 		// Read another caterer - should pass it
-		String key = IntegrationTestUtils.createUserAndLogin().getKey();
-		String id = IntegrationTestUtils.createCaterer().getId().toHexString();
+		String key = integrationTestUtils.createUserAndLogin().getKey();
+		String id = integrationTestUtils.createCaterer().getId().toHexString();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id;
 		URL = URL_NO_KEY + "?key=" + key;
@@ -383,8 +383,8 @@ public class AccessRightsCatererIT {
 	@Test
 	public void testUserCatererUpdate() throws IOException, EpickurException {
 		// Update a caterer not created by current user - should not pass it
-		Caterer caterer = IntegrationTestUtils.createCaterer();
-		User superUser = IntegrationTestUtils.createUserAndLogin();
+		Caterer caterer = integrationTestUtils.createCaterer();
+		User superUser = integrationTestUtils.createUserAndLogin();
 		String key = superUser.getKey();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
@@ -411,8 +411,8 @@ public class AccessRightsCatererIT {
 
 	@Test
 	public void testUserCatererDelete() throws IOException, EpickurException {
-		User superUser = IntegrationTestUtils.createSuperUserAndLogin();
-		Caterer id = IntegrationTestUtils.createCaterer();
+		User superUser = integrationTestUtils.createSuperUserAndLogin();
+		Caterer id = integrationTestUtils.createCaterer();
 
 		URL_NO_KEY = END_POINT + "/caterers/" + id.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + superUser.getKey();

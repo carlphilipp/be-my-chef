@@ -1,6 +1,6 @@
 package com.epickur.api.service;
 
-import com.epickur.api.aop.ValidateRequestAfter;
+import com.epickur.api.aop.ValidateRequestBefore;
 import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Order;
@@ -67,7 +67,7 @@ public class CatererService {
 	 * @return The updated {@link Caterer}
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
-	@ValidateRequestAfter(operation = UPDATE, type = CATERER)
+	@ValidateRequestBefore(operation = UPDATE, type = CATERER)
 	public Caterer update(final Caterer caterer) throws EpickurException {
 		caterer.prepareForUpdateIntoDB();
 		return dao.update(caterer);
@@ -89,7 +89,7 @@ public class CatererService {
 	 * @return The addition of all orders amount
 	 */
 	public Integer getTotalAmountSuccessful(final List<Order> orders) {
-		Integer amount = Integer.valueOf(0);
+		Integer amount = 0;
 		for (Order order : orders) {
 			if (order.getStatus() == OrderStatus.SUCCESSFUL) {
 				amount += order.getAmount();

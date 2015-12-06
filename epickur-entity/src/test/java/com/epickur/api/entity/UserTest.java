@@ -1,13 +1,10 @@
 package com.epickur.api.entity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-
+import com.epickur.api.helper.EntityGenerator;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 
-import com.epickur.api.helper.EntityGenerator;
+import static org.junit.Assert.*;
 
 public class UserTest {
 
@@ -21,7 +18,7 @@ public class UserTest {
 
 		User user3 = user2;
 		assertEquals(user, user3);
-		assertFalse(user.equals(null));
+		assertNotNull(user);
 		assertFalse(user.equals(new Address()));
 	}
 

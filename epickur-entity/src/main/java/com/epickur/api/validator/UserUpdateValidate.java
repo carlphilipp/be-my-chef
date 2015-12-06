@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@NotNull(message = "{user.create.null}")
+@NotNull(message = "{user.null}")
 @Target(TYPE)
 @Retention(RUNTIME)
 @Constraint(validatedBy = UserUpdateValidator.class)
@@ -30,8 +30,7 @@ public @interface UserUpdateValidate {
 
 	Class<? extends Payload>[] payload() default {};
 
-	@Component
-	public class UserUpdateValidator implements ConstraintValidator<UserUpdateValidate, User> {
+	@Component class UserUpdateValidator implements ConstraintValidator<UserUpdateValidate, User> {
 
 		private static final String ENTITY = "user";
 

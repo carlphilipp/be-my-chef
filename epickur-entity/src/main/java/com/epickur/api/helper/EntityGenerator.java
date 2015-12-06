@@ -532,8 +532,7 @@ public class EntityGenerator {
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
 
-		Token token = Token.create(tokenParams);
-		return token;
+		return Token.create(tokenParams);
 	}
 
 	public static Key generateRandomAdminKey() {

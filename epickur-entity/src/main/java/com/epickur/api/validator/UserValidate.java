@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @NotNull(message = "{user.null}")
 @Target(TYPE)
 @Retention(RUNTIME)
-@Constraint(validatedBy = UserValidate.UserValidator.class)
+@Constraint(validatedBy = UserValidate.UserCreateValidator.class)
 @Documented
 public @interface UserValidate {
 
@@ -32,8 +32,7 @@ public @interface UserValidate {
 
 	Class<? extends Payload>[] payload() default {};
 
-	@Component
-	public class UserValidator implements ConstraintValidator<UserValidate, User> {
+	@Component class UserCreateValidator implements ConstraintValidator<UserValidate, User> {
 
 		private static final Logger LOG = LogManager.getLogger(UserValidator.class.getSimpleName());
 
@@ -41,11 +40,6 @@ public @interface UserValidate {
 
 		@Override
 		public void initialize(final UserValidate constraintAnnotation) {
-			//constraintAnnotation.ann
-			Class<?>[] groups = constraintAnnotation.groups();
-			for(Class<?> group: groups){
-				LOG.info(group);
-			}
 		}
 
 		@Override

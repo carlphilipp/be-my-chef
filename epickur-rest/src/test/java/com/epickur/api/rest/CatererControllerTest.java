@@ -265,19 +265,4 @@ public class CatererControllerTest {
 			fail(EntityGenerator.STRIPE_MESSAGE);
 		}
 	}
-
-	@Test
-	public void testPaymentInfoCatererNotFound() throws EpickurException {
-		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
-		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
-
-		when(catererService.read(anyString())).thenReturn(null);
-
-		ResponseEntity<?> actual = controller.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
-		assertNotNull(actual);
-		assertEquals(404, actual.getStatusCode().value());
-		ErrorMessage error = (ErrorMessage) actual.getBody();
-		assertEquals(HttpStatus.NOT_FOUND.value(), error.getError().intValue());
-		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), error.getMessage());
-	}
 }

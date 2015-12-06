@@ -1,10 +1,5 @@
 package com.epickur.api.validator;
 
-import org.bson.types.ObjectId;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
@@ -14,70 +9,15 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.helper.EntityGenerator;
+import org.bson.types.ObjectId;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class UserValidatorTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-
-	/*
-	 * @Test public void testCheckCreateUser() { thrown.expect(EpickurIllegalArgument.class); thrown.expectMessage(
-	 * "The field user.name is not allowed to be null or empty");
-	 * 
-	 * UserValidator validator = new UserValidator(); User user = TestUtils.generateRandomUser(); user.setName(null); validator.checkCreateUser(user);
-	 * }
-	 * 
-	 * @Test public void testCheckCreateUser2() { thrown.expect(EpickurIllegalArgument.class); thrown.expectMessage(
-	 * "The field user.password is not allowed to be null or empty");
-	 * 
-	 * UserValidator validator = new UserValidator(); User user = TestUtils.generateRandomUser(); user.setPassword(null);
-	 * validator.checkCreateUser(user); }
-	 * 
-	 * @Test public void testCheckCreateUser3() { thrown.expect(EpickurIllegalArgument.class); thrown.expectMessage(
-	 * "The field user.email is not allowed to be null or empty");
-	 * 
-	 * UserValidator validator = new UserValidator(); User user = TestUtils.generateRandomUser(); user.setEmail(null);
-	 * validator.checkCreateUser(user); }
-	 * 
-	 * @Test public void testCheckCreateUser4() { thrown.expect(EpickurIllegalArgument.class); thrown.expectMessage(
-	 * "The field user.country is not allowed to be null or empty");
-	 * 
-	 * UserValidator validator = new UserValidator(); User user = TestUtils.generateRandomUser(); user.setCountry(null);
-	 * validator.checkCreateUser(user); }
-	 * 
-	 * @Test public void testCheckCreateUser5() { thrown.expect(EpickurIllegalArgument.class); thrown.expectMessage(
-	 * "The field user.zipcode is not allowed to be null or empty");
-	 * 
-	 * UserValidator validator = new UserValidator(); User user = TestUtils.generateRandomUser(); user.setZipcode(null);
-	 * validator.checkCreateUser(user); }
-	 * 
-	 * @Test public void testCheckCreateUser6() { thrown.expect(EpickurIllegalArgument.class); thrown.expectMessage(
-	 * "The field user.state is not allowed to be null or empty");
-	 * 
-	 * UserValidator validator = new UserValidator(); User user = TestUtils.generateRandomUser(); user.setState(null);
-	 * validator.checkCreateUser(user); }
-	 */
-
-	@Test
-	public void testCheckUpdateUser() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field user.id is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		User user = EntityGenerator.generateRandomUser();
-		user.setId(null);
-		user.setRole(Role.ADMIN);
-		validator.checkUpdateUser(new ObjectId().toHexString(), user);
-	}
-
-	@Test
-	public void testCheckUpdateUser2() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("No user has been provided");
-
-		UserValidator validator = new UserValidator();
-		validator.checkUpdateUser(new ObjectId().toHexString(), null);
-	}
 
 	@Test
 	public void testCheckUpdateUser3() {
@@ -92,17 +32,6 @@ public class UserValidatorTest {
 	}
 
 	@Test
-	public void testCheckUpdateUser4() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field user.id is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		User user = EntityGenerator.generateRandomUser();
-		user.setId(null);
-		validator.checkUpdateUser(new ObjectId().toHexString(), user);
-	}
-
-	@Test
 	public void testCheckUpdateUser5() {
 		UserValidator validator = new UserValidator();
 		User user = EntityGenerator.generateRandomUser();
@@ -110,18 +39,6 @@ public class UserValidatorTest {
 		user.setId(id);
 		user.setRole(null);
 		validator.checkUpdateUser(id.toHexString(), user);
-	}
-
-	@Test
-	public void testCheckUpdateUser6() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field user.id is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		User user = EntityGenerator.generateRandomUser();
-		user.setNewPassword("password");
-		user.setPassword("password");
-		validator.checkUpdateUser(new ObjectId().toHexString(), user);
 	}
 
 	@Test

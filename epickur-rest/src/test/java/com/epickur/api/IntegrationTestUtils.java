@@ -68,74 +68,74 @@ public class IntegrationTestUtils {
 	}
 
 
-	public static User createAdminAndLogin() throws EpickurException {
+	public User createAdminAndLogin() throws EpickurException {
 		User user = EntityGenerator.generateRandomUser();
-		String password = new String(user.getPassword());
+		String password = user.getPassword();
 		User newUser = userService.create(user, true);
 		newUser.setRole(Role.ADMIN);
 		userService.update(newUser);
 		return userService.login(newUser.getEmail(), password);
 	}
 
-	public static Caterer createCaterer() throws EpickurException {
+	public Caterer createCaterer() throws EpickurException {
 		return createCatererWithUserId(new ObjectId());
 	}
 
-	public static Caterer createCatererWithUserId(final ObjectId userId) throws EpickurException {
+	public Caterer createCatererWithUserId(final ObjectId userId) throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		return createCaterer(caterer, userId);
 	}
 
-	public static Caterer createCaterer(final Caterer caterer, final ObjectId userId) throws EpickurException {
+	public Caterer createCaterer(final Caterer caterer, final ObjectId userId) throws EpickurException {
 		caterer.setCreatedBy(userId);
 		return catererService.create(caterer);
 	}
 
-	public static User createSuperUserAndLogin() throws EpickurException {
+	public User createSuperUserAndLogin() throws EpickurException {
 		User user = EntityGenerator.generateRandomUser();
-		String password = new String(user.getPassword());
+		String password = user.getPassword();
 		User newUser = userService.create(user, true);
 		newUser.setRole(Role.SUPER_USER);
 		userService.update(newUser);
 		return userService.login(newUser.getEmail(), password);
 	}
 
-	public static User createUserAndLogin() throws EpickurException {
+	public User createUserAndLogin() throws EpickurException {
 		User user = EntityGenerator.generateRandomUser();
-		String password = new String(user.getPassword());
+		String password = user.getPassword();
 		User newUser = userService.create(user, true);
 		newUser.setRole(Role.USER);
 		userService.update(newUser);
 		return userService.login(newUser.getEmail(), password);
 	}
 
-	public static Dish createDish() throws EpickurException {
+	public Dish createDish() throws EpickurException {
 		return createDishWithUserId(new ObjectId());
 	}
 
-	public static Dish createDishWithUserId(final ObjectId userId) throws EpickurException {
+	public Dish createDishWithUserId(final ObjectId userId) throws EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setCreatedBy(userId);
 		return dishService.create(dish);
 	}
 
-	public static Order createOrder(final ObjectId userId) throws EpickurException {
+	public Order createOrder(final ObjectId userId) throws EpickurException {
 		Order order = EntityGenerator.generateRandomOrder();
 		return orderService.create(userId.toHexString(), order);
 	}
 
-	public static User createUser() throws EpickurException {
+	public User createUser() throws EpickurException {
 		User user = EntityGenerator.generateRandomUser();
 		return userService.create(user, true);
 	}
 
-	public static Order createOrder(final ObjectId userId, final ObjectId catererId) throws EpickurException {
+	public Order createOrder(final ObjectId userId, final ObjectId catererId) throws EpickurException {
 		Order order = EntityGenerator.generateRandomOrder();
 		order.getDish().getCaterer().setId(catererId);
 		return orderService.create(userId.toHexString(), order);
 	}
 
-	public static String generateRandomCorrectPickupDate(final WorkingTimes workingTimes) {
+	public String generateRandomCorrectPickupDate(final WorkingTimes workingTimes) {
 		String pickupdate = EntityGenerator.generateRandomPickupDate();
 		Object[] parsedPickupdate = CommonsUtil.parsePickupdate(pickupdate);
 		while (!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])) {

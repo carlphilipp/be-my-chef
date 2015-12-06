@@ -56,7 +56,7 @@ public abstract class Validator {
 	 *            The field
 	 * @return A String
 	 */
-	public static final String fieldNull(final String entity, final String field) {
+	public static String fieldNull(final String entity, final String field) {
 		return FIELD_NULL.replaceAll("@object@", entity).replaceAll("@field@", field);
 	}
 

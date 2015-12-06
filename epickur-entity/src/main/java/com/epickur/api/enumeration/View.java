@@ -9,5 +9,5 @@ public enum View {
 	/** The API View */
 	API,
 	/** The DB View */
-	DB;
+	DB
 }

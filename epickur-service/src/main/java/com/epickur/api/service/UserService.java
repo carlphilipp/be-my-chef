@@ -1,6 +1,6 @@
 package com.epickur.api.service;
 
-import com.epickur.api.aop.ValidateRequestAfter;
+import com.epickur.api.aop.ValidateRequestBefore;
 import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
@@ -109,7 +109,7 @@ public class UserService {
 	 * @return The User
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequestAfter(operation = READ, type = USER)
+	@ValidateRequestBefore(operation = READ, type = USER)
 	public User read(final String id) throws EpickurException {
 		User user = userDAO.read(id);
 		user.setPassword(null);
@@ -149,7 +149,7 @@ public class UserService {
 	 * @return The User updated
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequestAfter(operation = UPDATE, type = USER)
+	@ValidateRequestBefore(operation = UPDATE, type = USER)
 	public User update(final User user) throws EpickurException {
 		user.prepareForUpdateIntoDB();
 		User res = userDAO.update(user);

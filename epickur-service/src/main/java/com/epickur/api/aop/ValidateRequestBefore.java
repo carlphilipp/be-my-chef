@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ValidateRequestAfter {
+public @interface ValidateRequestBefore {
 	Operation operation();
 
 	EndpointType type();

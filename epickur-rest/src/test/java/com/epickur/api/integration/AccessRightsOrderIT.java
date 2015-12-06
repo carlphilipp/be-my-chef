@@ -46,7 +46,6 @@ public class AccessRightsOrderIT {
 	private static String END_POINT;
 	private static String URL;
 	private static String URL_NO_KEY;
-	private static String API_KEY;
 	private static String jsonMimeType;
 	private static ObjectMapper mapper;
 	private static User user;
@@ -65,7 +64,7 @@ public class AccessRightsOrderIT {
 			END_POINT = address + path;
 			in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/api.key"));
 			BufferedReader br = new BufferedReader(in);
-			API_KEY = br.readLine();
+			String API_KEY = br.readLine();
 			IOUtils.closeQuietly(in);
 			jsonMimeType = "application/json";
 			mapper = new ObjectMapper();

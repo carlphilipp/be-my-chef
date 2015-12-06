@@ -42,14 +42,8 @@ public class UserValidator extends Validator {
 	 * @param user The User
 	 */
 	public void checkUpdateUser(final String id, final User user) {
-		if (user == null) {
-			throw new EpickurIllegalArgument(NO_USER_PROVIDED);
-		}
 		if (StringUtils.isNotBlank(user.getNewPassword()) && StringUtils.isBlank(user.getPassword())) {
 			throw new EpickurIllegalArgument("The field " + getEntity() + ".password is mandatory when a new password is provided");
-		}
-		if (user.getId() == null) {
-			throw new EpickurIllegalArgument(fieldNull(getEntity(), "id"));
 		}
 		if (!user.getId().toHexString().equals(id)) {
 			throw new EpickurIllegalArgument("The parameter id and the field user.id should match");

@@ -128,7 +128,7 @@ public class Order extends AbstractMainDBEntity {
 	 * @return An integer.
 	 */
 	public Integer calculateTotalAmount() {
-		Integer totalAmout = Integer.valueOf(0);
+		Integer totalAmout = 0;
 		if (this.getVoucher() != null) {
 			Voucher v = this.getVoucher();
 			if (v.getDiscountType() == DiscountType.AMOUNT) {

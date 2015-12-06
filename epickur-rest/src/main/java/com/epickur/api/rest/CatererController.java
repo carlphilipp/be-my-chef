@@ -1,6 +1,5 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.web.ResponseError;
 import com.epickur.api.aop.ValidateRequest;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
@@ -15,6 +14,7 @@ import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
+import com.epickur.api.web.ResponseError;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -550,10 +550,9 @@ public class CatererController {
 	 * @return A Response
 	 * @throws EpickurException If an EpickurException occured
 	 */
-
+	@ValidateRequest(operation = PAYEMENT_INFO, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/paymentInfo", method = RequestMethod.GET, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			"application/pdf" }, produces = { MediaType.APPLICATION_JSON_VALUE, "application/pdf" })
-	@ValidateRequest(operation = PAYEMENT_INFO, endpoint = CATERER)
 	public ResponseEntity<?> paymentInfo(
 			@PathVariable("id") final String id,
 			@RequestParam("startDate") final String start,
@@ -568,39 +567,35 @@ public class CatererController {
 			endDate = Utils.parseDate(start, format);
 		}
 		Caterer caterer = catererService.read(id);
-		if (caterer == null) {
-			return ResponseError.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
+		List<Order> orders = orderService.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
+		Integer amount = catererService.getTotalAmountSuccessful(orders);
+		if (request.getContentType() != null && request.getContentType().equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
+			PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
+			payementInfoMessage.setId(caterer.getId().toHexString());
+			payementInfoMessage.setName(caterer.getName());
+			payementInfoMessage.setAmount(amount);
+			payementInfoMessage.setStart(start);
+			payementInfoMessage.setEnd(end);
+			payementInfoMessage.setFormat(format);
+			//				List<String> list = new ArrayList<>();
+			//				for (Order order : orders) {
+			//					order.setDish(null);
+			//					list.add(order.getDocumentAPIView().toJson());
+			//				}
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			return new ResponseEntity<>(payementInfoMessage, headers, HttpStatus.OK);
+			//return Response.ok().entity(payementInfoMessage).type(MediaType.APPLICATION_JSON).build();
 		} else {
-			List<Order> orders = orderService.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
-			Integer amount = catererService.getTotalAmountSuccessful(orders);
-			if (request.getContentType() != null && request.getContentType().equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
-				PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
-				payementInfoMessage.setId(caterer.getId().toHexString());
-				payementInfoMessage.setName(caterer.getName());
-				payementInfoMessage.setAmount(amount);
-				payementInfoMessage.setStart(start);
-				payementInfoMessage.setEnd(end);
-				payementInfoMessage.setFormat(format);
-				//				List<String> list = new ArrayList<>();
-				//				for (Order order : orders) {
-				//					order.setDish(null);
-				//					list.add(order.getDocumentAPIView().toJson());
-				//				}
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_JSON);
-				return new ResponseEntity<>(payementInfoMessage, headers, HttpStatus.OK);
-				//return Response.ok().entity(payementInfoMessage).type(MediaType.APPLICATION_JSON).build();
-			} else {
-				Report report = new Report();
-				report.addParam("caterer", caterer);
-				report.addParam("orders", orders);
-				report.addParam("amount", amount);
+			Report report = new Report();
+			report.addParam("caterer", caterer);
+			report.addParam("orders", orders);
+			report.addParam("amount", amount);
 
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.parseMediaType("application/pdf"));
-				headers.add("content-disposition", "attachment; filename =" + caterer.getId().toHexString() + ".pdf");
-				return new ResponseEntity<>(report.getReport(), headers, HttpStatus.OK);
-			}
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.parseMediaType("application/pdf"));
+			headers.add("content-disposition", "attachment; filename =" + caterer.getId().toHexString() + ".pdf");
+			return new ResponseEntity<>(report.getReport(), headers, HttpStatus.OK);
 		}
 	}
 }

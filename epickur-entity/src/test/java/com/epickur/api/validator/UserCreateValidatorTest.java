@@ -32,7 +32,7 @@ public class UserCreateValidatorTest {
 	@Test
 	public void testIsValid(){
 		User user = EntityGenerator.generateRandomUser();
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
 		
@@ -43,7 +43,7 @@ public class UserCreateValidatorTest {
 	
 	@Test
 	public void testIsValidUserNull(){
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(null, contextMock);
 		
@@ -56,7 +56,7 @@ public class UserCreateValidatorTest {
 	public void testIsValidNameNull(){
 		User user = EntityGenerator.generateRandomUser();
 		user.setName(null);
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
 		
@@ -69,7 +69,7 @@ public class UserCreateValidatorTest {
 	public void testIsValidPasswordNull(){
 		User user = EntityGenerator.generateRandomUser();
 		user.setPassword(null);
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
 		
@@ -82,7 +82,7 @@ public class UserCreateValidatorTest {
 	public void testIsValidEmailNull(){
 		User user = EntityGenerator.generateRandomUser();
 		user.setEmail(null);
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
 		
@@ -95,7 +95,7 @@ public class UserCreateValidatorTest {
 	public void testIsValidCountryNull(){
 		User user = EntityGenerator.generateRandomUser();
 		user.setCountry(null);
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
 		
@@ -108,7 +108,7 @@ public class UserCreateValidatorTest {
 	public void testIsValidZipCodeNull(){
 		User user = EntityGenerator.generateRandomUser();
 		user.setZipcode(null);
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
 		
@@ -121,7 +121,7 @@ public class UserCreateValidatorTest {
 	public void testIsValidStateNull(){
 		User user = EntityGenerator.generateRandomUser();
 		user.setState(null);
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
 		
@@ -134,7 +134,7 @@ public class UserCreateValidatorTest {
 	public void testIsValidPhoneNumberFail(){
 		User user = EntityGenerator.generateRandomUser();
 		user.setPhoneNumber(new PhoneNumber());
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
 		
@@ -153,7 +153,7 @@ public class UserCreateValidatorTest {
 		user.setCountry(null);
 		user.setState(null);
 		user.setPhoneNumber(new PhoneNumber());
-		UserValidate.UserValidator validator = new UserValidate.UserValidator();
+		UserValidate.UserCreateValidator validator = new UserValidate.UserCreateValidator();
 		
 		boolean actual = validator.isValid(user, contextMock);
 		

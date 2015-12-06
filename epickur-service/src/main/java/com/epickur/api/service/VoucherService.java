@@ -34,6 +34,7 @@ public class VoucherService {
 	 * User dao
 	 */
 	@Autowired
+	// TODO : fixme. Do not autowire this field or put implement spring scheduler instead of quartz
 	private VoucherDAO voucherDAO;
 
 	/**
@@ -58,7 +59,7 @@ public class VoucherService {
 	 */
 	public Set<Voucher> generate(final int count, final DiscountType discountType, final int discount, final ExpirationType expirationType,
 			final DateTime expiration) throws EpickurException {
-		Set<Voucher> result = new HashSet<Voucher>();
+		Set<Voucher> result = new HashSet<>();
 		do {
 			Voucher voucher = new Voucher();
 			voucher.setCode(CommonsUtil.generateRandomCode());

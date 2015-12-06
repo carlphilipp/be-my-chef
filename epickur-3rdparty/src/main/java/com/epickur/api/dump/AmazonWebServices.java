@@ -96,7 +96,7 @@ public final class AmazonWebServices {
 					dateTimeEntry = dateTime;
 				}
 			}
-			if (entry.getKey() != null) {
+			if (entry != null && entry.getKey() != null) {
 				LOG.info("Deleting: " + entry.getKey() + ": " + entry.getLastModified());
 				s3client.deleteObject(bucketName, entry.getKey());
 			}

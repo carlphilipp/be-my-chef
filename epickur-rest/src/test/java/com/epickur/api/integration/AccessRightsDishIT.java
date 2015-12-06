@@ -80,7 +80,7 @@ public class AccessRightsDishIT {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = IntegrationTestUtils.createCaterer(dish.getCaterer(), new ObjectId());
+		Caterer caterer = integrationTestUtils.createCaterer(dish.getCaterer(), new ObjectId());
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
@@ -197,7 +197,7 @@ public class AccessRightsDishIT {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = IntegrationTestUtils.createCaterer(dish.getCaterer(), new ObjectId());
+		Caterer caterer = integrationTestUtils.createCaterer(dish.getCaterer(), new ObjectId());
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
@@ -232,7 +232,7 @@ public class AccessRightsDishIT {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		Caterer caterer = IntegrationTestUtils.createCaterer(dish.getCaterer(), user.getId());
+		Caterer caterer = integrationTestUtils.createCaterer(dish.getCaterer(), user.getId());
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
@@ -263,7 +263,7 @@ public class AccessRightsDishIT {
 		User user = integrationTestUtils.createSuperUserAndLogin();
 		String key = user.getKey();
 
-		Dish dish = IntegrationTestUtils.createDish();
+		Dish dish = integrationTestUtils.createDish();
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
 		URL = URL_NO_KEY + "?key=" + key;
@@ -320,7 +320,7 @@ public class AccessRightsDishIT {
 		User superUser = integrationTestUtils.createSuperUserAndLogin();
 		Dish dish = integrationTestUtils.createDishWithUserId(superUser.getId());
 		String key = superUser.getKey();
-		Caterer caterer = IntegrationTestUtils.createCatererWithUserId(superUser.getId());
+		Caterer caterer = integrationTestUtils.createCatererWithUserId(superUser.getId());
 		dish.setCaterer(caterer);
 
 		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();

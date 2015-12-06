@@ -10,7 +10,7 @@ import com.epickur.api.helper.EntityGenerator;
 public class NutritionFactTest {
 
 	@Test
-	public void testNutritionFact() {
+	public void testNutritionFact() throws CloneNotSupportedException {
 		NutritionFact nutritionFact = EntityGenerator.generateRandomNutritionFact();
 		NutritionFact nutritionFact2 = nutritionFact.clone();
 

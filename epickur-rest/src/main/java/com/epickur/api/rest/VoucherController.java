@@ -1,6 +1,5 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.web.ResponseError;
 import com.epickur.api.aop.ValidateRequest;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.voucher.DiscountType;
@@ -9,6 +8,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
+import com.epickur.api.web.ResponseError;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
