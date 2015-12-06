@@ -1,6 +1,6 @@
 package com.epickur.api.exception;
 
-import com.epickur.api.ResponseError;
+import com.epickur.api.web.ResponseError;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.utils.ErrorUtils;

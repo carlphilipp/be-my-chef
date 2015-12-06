@@ -1,10 +1,9 @@
 package com.epickur.api.service;
 
-import com.amazonaws.services.simplesystemsmanagement.model.InternalServerErrorException;
+import com.epickur.api.aop.ValidateRequestAfter;
 import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
-import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurDuplicateKeyException;
 import com.epickur.api.exception.EpickurException;
@@ -14,7 +13,6 @@ import com.epickur.api.utils.PasswordManager;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.EmailUtils;
-import com.epickur.api.validator.UserValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -26,6 +24,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.epickur.api.enumeration.EndpointType.USER;
+import static com.epickur.api.enumeration.Operation.READ;
+import static com.epickur.api.enumeration.Operation.UPDATE;
 
 /**
  * User business layer. Accesses User DAO layer and executes logic.
@@ -50,11 +52,6 @@ public class UserService {
 	 */
 	@Autowired
 	private KeyService keyService;
-	/**
-	 * User validator
-	 */
-	@Autowired
-	private UserValidator validator;
 	/**
 	 * User Email utils
 	 */
@@ -108,17 +105,13 @@ public class UserService {
 	}
 
 	/**
-	 * @param id  the User id to read
-	 * @param key The key
+	 * @param id the User id to read
 	 * @return The User
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	public User read(final String id, final Key key) throws EpickurException {
+	@ValidateRequestAfter(operation = READ, type = USER)
+	public User read(final String id) throws EpickurException {
 		User user = userDAO.read(id);
-		if (user == null) {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
-		}
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, Operation.READ);
 		user.setPassword(null);
 		user.setRole(null);
 		return user;
@@ -153,22 +146,13 @@ public class UserService {
 
 	/**
 	 * @param user The User to update
-	 * @param key  The key
 	 * @return The User updated
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	public User update(final User user, final Key key) throws EpickurException {
-		User read = userDAO.read(user.getId().toHexString());
-		if (read == null) {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getId().toHexString());
-		}
-		validator.checkUserRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
+	@ValidateRequestAfter(operation = UPDATE, type = USER)
+	public User update(final User user) throws EpickurException {
 		user.prepareForUpdateIntoDB();
 		User res = userDAO.update(user);
-		if (res == null) {
-			throw new InternalServerErrorException(
-					"User update failed after checking in DB that the user was there. User id: " + user.getId().toHexString());
-		}
 		// We do not send back the password or the role
 		res.setPassword(null);
 		res.setRole(null);

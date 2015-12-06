@@ -1,4 +1,4 @@
-package com.epickur.api;
+package com.epickur.api.web;
 
 import com.epickur.api.entity.message.ErrorMessage;
 import org.springframework.http.HttpHeaders;

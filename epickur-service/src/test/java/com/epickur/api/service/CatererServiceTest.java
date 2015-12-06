@@ -101,15 +101,11 @@ public class CatererServiceTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Caterer catererAfterUpdate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterUpdate.setDescription("new desc");
-		Key keyMock = new Key();
-		keyMock.setId(new ObjectId());
-		keyMock.setUserId(new ObjectId());
-		keyMock.setRole(Role.ADMIN);
 		
 		when(catererDAOMock.read(anyString())).thenReturn(catererAfterUpdate);
 		when(catererDAOMock.update(caterer)).thenReturn(catererAfterUpdate);
 
-		Caterer actual = catererService.update(caterer, keyMock);
+		Caterer actual = catererService.update(caterer);
 		assertNotNull("Caterer is null", actual);
 
 		assertNotNull("CreatedAt is null", actual.getCreatedAt());

@@ -42,12 +42,7 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 	 * Constructor
 	 */
 	public KeyRequestFilter() {
-		super();
 		this.keyDAO = new KeyDAO();
-	}
-
-	public KeyRequestFilter(final KeyDAO keyDao) {
-		this.keyDAO = keyDao;
 	}
 
 	@Override

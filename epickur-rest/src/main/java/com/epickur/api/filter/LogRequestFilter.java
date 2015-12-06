@@ -21,14 +21,18 @@ import java.util.Enumeration;
  * @author cph
  * @version 1.0
  */
-//@Priority(EpickurPriorities.LOG)
-//@Provider
 public final class LogRequestFilter extends OncePerRequestFilter {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger LOG = LogManager.getLogger(LogRequestFilter.class.getSimpleName());
+
+	private LogDAO logDAO;
+
+	public LogRequestFilter(){
+		this.logDAO = new LogDAO();
+	}
 
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws
@@ -49,9 +53,8 @@ public final class LogRequestFilter extends OncePerRequestFilter {
 		}
 		log.setRemoteAddr(ipAddress);
 		log.setUserAgent(request.getHeader("User-Agent"));
-		LogDAO dao = new LogDAO();
 		try {
-			dao.create(log);
+			logDAO.create(log);
 		} catch (EpickurException e) {
 			LOG.warn("Can not put log into DB. " + e.getLocalizedMessage());
 		}

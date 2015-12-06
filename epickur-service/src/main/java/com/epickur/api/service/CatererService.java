@@ -1,17 +1,18 @@
 package com.epickur.api.service;
 
+import com.epickur.api.aop.ValidateRequestAfter;
 import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
-import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.validator.CatererValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.epickur.api.enumeration.EndpointType.CATERER;
+import static com.epickur.api.enumeration.Operation.UPDATE;
 
 /**
  * {@link Caterer} business layer. Execute logic and access {@link CatererDAO} layer to update the database.
@@ -27,11 +28,6 @@ public class CatererService {
 	 */
 	@Autowired
 	private CatererDAO dao;
-	/**
-	 * The validator {@link CatererValidator}
-	 */
-	@Autowired
-	private CatererValidator validator;
 
 	/**
 	 * Create a {@link Caterer}
@@ -68,18 +64,13 @@ public class CatererService {
 
 	/**
 	 * @param caterer The {@link Caterer}
-	 * @param key     The Key
 	 * @return The updated {@link Caterer}
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
-	public Caterer update(final Caterer caterer, final Key key) throws EpickurException {
-		Caterer read = dao.read(caterer.getId().toHexString());
-		if (read != null) {
-			validator.checkRightsAfter(key.getRole(), key.getUserId(), read, Operation.UPDATE);
-			caterer.prepareForUpdateIntoDB();
-			return dao.update(caterer);
-		}
-		return read;
+	@ValidateRequestAfter(operation = UPDATE, type = CATERER)
+	public Caterer update(final Caterer caterer) throws EpickurException {
+		caterer.prepareForUpdateIntoDB();
+		return dao.update(caterer);
 	}
 
 	/**

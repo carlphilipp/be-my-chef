@@ -1,10 +1,6 @@
 package com.epickur.api.validator;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.bson.types.ObjectId;
-
+import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
@@ -15,17 +11,17 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
-import com.epickur.api.commons.CommonsUtil;
-import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
+
+import java.util.List;
 
 /**
  * The Dish Validator class
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
-@Component
 public class DishValidator extends Validator {
 
 	/**
@@ -36,18 +32,15 @@ public class DishValidator extends Validator {
 	}
 
 	/**
-	 * @param dish
-	 *            The Dish
+	 * @param dish The Dish
 	 */
 	public void checkCreateData(final Dish dish) {
 		checkData(dish);
 	}
 
 	/**
-	 * @param id
-	 *            The Dish Id
-	 * @param dish
-	 *            The Dish
+	 * @param id   The Dish Id
+	 * @param dish The Dish
 	 */
 	public void checkUpdateData(final String id, final Dish dish) {
 		if (dish == null) {
@@ -62,8 +55,7 @@ public class DishValidator extends Validator {
 	}
 
 	/**
-	 * @param dish
-	 *            The dish
+	 * @param dish The dish
 	 */
 	protected void checkData(final Dish dish) {
 		if (dish == null) {
@@ -108,8 +100,7 @@ public class DishValidator extends Validator {
 	}
 
 	/**
-	 * @param caterer
-	 *            The Caterer
+	 * @param caterer The Caterer
 	 */
 	private void checkCatererData(final Caterer caterer) {
 		CatererValidator validator = (CatererValidator) FactoryValidator.getValidator("caterer");
@@ -120,20 +111,13 @@ public class DishValidator extends Validator {
 	}
 
 	/**
-	 * @param role
-	 *            The Role
-	 * @param action
-	 *            The Crud Action
-	 * @param dish
-	 *            The Dish
-	 * @param catererDB
-	 *            The CatererDB
-	 * @param key
-	 *            The Key
-	 * @throws EpickurException
-	 *             If an EpickurExeption occured
+	 * @param role      The Role
+	 * @param action    The Crud Action
+	 * @param catererDB The CatererDB
+	 * @param key       The Key
+	 * @throws EpickurException If an EpickurExeption occured
 	 */
-	public void checkRightsBefore(final Role role, final Operation action, final Dish dish, final Caterer catererDB, final Key key)
+	public void checkRightsBefore(final Role role, final Operation action, final Caterer catererDB, final Key key)
 			throws EpickurException {
 		if (role == Role.SUPER_USER && action == Operation.CREATE && !key.getUserId().equals(catererDB.getCreatedBy())) {
 			throw new EpickurForbiddenException();
@@ -141,8 +125,7 @@ public class DishValidator extends Validator {
 	}
 
 	/**
-	 * @param steps
-	 *            A list of step
+	 * @param steps A list of step
 	 */
 	private void checkStepsData(final List<String> steps) {
 		if (steps.size() == 0) {
@@ -151,8 +134,7 @@ public class DishValidator extends Validator {
 	}
 
 	/**
-	 * @param ingredients
-	 *            The list of ingredients
+	 * @param ingredients The list of ingredients
 	 */
 	private void checkIngredientsData(final List<Ingredient> ingredients) {
 		if (ingredients.size() == 0) {
@@ -161,14 +143,10 @@ public class DishValidator extends Validator {
 	}
 
 	/**
-	 * @param role
-	 *            The Role
-	 * @param userId
-	 *            The User Id
-	 * @param dish
-	 *            The Dish
-	 * @param action
-	 *            The action
+	 * @param role   The Role
+	 * @param userId The User Id
+	 * @param dish   The Dish
+	 * @param action The action
 	 */
 	public void checkRightsAfter(final Role role, final ObjectId userId, final Dish dish, final Operation action) {
 		if (role != Role.ADMIN) {
@@ -179,14 +157,10 @@ public class DishValidator extends Validator {
 	}
 
 	/**
-	 * @param pickupdate
-	 *            The pickupdate
-	 * @param types
-	 *            The list of dish type
-	 * @param at
-	 *            The geo coordinate
-	 * @param searchtext
-	 *            The address to search
+	 * @param pickupdate The pickupdate
+	 * @param types      The list of dish type
+	 * @param at         The geo coordinate
+	 * @param searchtext The address to search
 	 */
 	public void checkSearch(final String pickupdate, final String types, final String at, final String searchtext) {
 		Object[] result = CommonsUtil.parsePickupdate(pickupdate);

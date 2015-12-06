@@ -1,14 +1,13 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.ResponseError;
+import com.epickur.api.web.ResponseError;
+import com.epickur.api.aop.ValidateRequest;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
-import com.epickur.api.enumeration.EndpointType;
-import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.report.Report;
 import com.epickur.api.service.CatererService;
@@ -16,8 +15,6 @@ import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
-import com.epickur.api.validator.AccessRights;
-import com.epickur.api.validator.CatererValidator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.epickur.api.enumeration.EndpointType.CATERER;
+import static com.epickur.api.enumeration.Operation.*;
+
 /**
  * JAX-RS Caterer service
  *
@@ -37,13 +37,13 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/api/caterers")
-public final class CatererController {
+public class CatererController {
 
 	/**
 	 * Context
 	 */
 	@Autowired
-	private HttpServletRequest context;
+	private HttpServletRequest request;
 	/**
 	 * Caterer Service
 	 */
@@ -59,11 +59,6 @@ public final class CatererController {
 	 */
 	@Autowired
 	private DishService dishService;
-	/**
-	 * Caterer validator
-	 */
-	@Autowired
-	private CatererValidator validator;
 
 	// @formatter:off
 	/**
@@ -132,11 +127,10 @@ public final class CatererController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@ValidateRequest(operation = CREATE, endpoint = CATERER)
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(@RequestBody final Caterer caterer) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.CATERER);
-		validator.checkCreateCaterer(caterer);
+		Key key = (Key) request.getAttribute("key");
 		caterer.setCreatedBy(key.getUserId());
 		Caterer result = catererService.create(caterer);
 		return new ResponseEntity<>(result, HttpStatus.OK);
@@ -202,10 +196,9 @@ public final class CatererController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@ValidateRequest(operation = READ, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.READ, EndpointType.CATERER);
 		Caterer caterer = catererService.read(id);
 		if (caterer == null) {
 			return ResponseError.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
@@ -283,19 +276,13 @@ public final class CatererController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@ValidateRequest(operation = UPDATE, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(
 			@PathVariable("id") final String id,
 			@RequestBody final Caterer caterer) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.CATERER);
-		validator.checkUpdateCaterer(id, caterer);
-		Caterer result = catererService.update(caterer, key);
-		if (result == null) {
-			return ResponseError.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
-		} else {
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		}
+		Caterer result = catererService.update(caterer);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -330,11 +317,10 @@ public final class CatererController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@ValidateRequest(operation = DELETE, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(
 			@PathVariable("id") final String id) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.CATERER);
 		boolean resBool = catererService.delete(id);
 		if (resBool) {
 			DeletedMessage deletedMessage = new DeletedMessage();
@@ -405,10 +391,9 @@ public final class CatererController {
 	 * @return The response.
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
+	@ValidateRequest(operation = READ_ALL, endpoint = CATERER)
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.READ_ALL, EndpointType.CATERER);
 		List<Caterer> caterers = catererService.readAll();
 		return new ResponseEntity<>(caterers, HttpStatus.OK);
 	}
@@ -522,10 +507,9 @@ public final class CatererController {
 	 * @return The response.
 	 * @throws EpickurException If an Epickur exception occurred.
 	 */
+	@ValidateRequest(operation = READ_DISHES, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/dishes", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readDishes(@PathVariable("id") final String catererId) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.READ_DISHES, EndpointType.CATERER);
 		List<Dish> dishes = dishService.searchDishesForOneCaterer(catererId);
 		return new ResponseEntity<>(dishes, HttpStatus.OK);
 	}
@@ -566,15 +550,15 @@ public final class CatererController {
 	 * @return A Response
 	 * @throws EpickurException If an EpickurException occured
 	 */
+
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/paymentInfo", method = RequestMethod.GET, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			"application/pdf" }, produces = { MediaType.APPLICATION_JSON_VALUE, "application/pdf" })
+	@ValidateRequest(operation = PAYEMENT_INFO, endpoint = CATERER)
 	public ResponseEntity<?> paymentInfo(
 			@PathVariable("id") final String id,
 			@RequestParam("startDate") final String start,
 			@RequestParam("endDate") final String end,
 			@RequestParam(value = "formatDate", defaultValue = "MM/dd/yyyy") final String format) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.PAYEMENT_INFO, EndpointType.CATERER);
 		DateTime startDate = null;
 		DateTime endDate = null;
 		if (start != null) {
@@ -583,14 +567,13 @@ public final class CatererController {
 		if (end != null) {
 			endDate = Utils.parseDate(start, format);
 		}
-		validator.checkPaymentInfo(startDate, endDate);
 		Caterer caterer = catererService.read(id);
 		if (caterer == null) {
 			return ResponseError.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
 		} else {
 			List<Order> orders = orderService.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
 			Integer amount = catererService.getTotalAmountSuccessful(orders);
-			if (context.getContentType() != null && context.getContentType().equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
+			if (request.getContentType() != null && request.getContentType().equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
 				PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
 				payementInfoMessage.setId(caterer.getId().toHexString());
 				payementInfoMessage.setName(caterer.getName());

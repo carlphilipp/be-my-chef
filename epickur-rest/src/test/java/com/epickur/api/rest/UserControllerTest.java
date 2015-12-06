@@ -89,7 +89,7 @@ public class UserControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userBusiness.read(anyString(), anyObject())).thenReturn(userAfterRead);
+		when(userBusiness.read(anyString())).thenReturn(userAfterRead);
 
 		ResponseEntity<?> actual = controller.read(user.getId().toHexString());
 		assertNotNull(actual);
@@ -103,7 +103,7 @@ public class UserControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterUpdate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userBusiness.update(anyObject(), anyObject())).thenReturn(userAfterUpdate);
+		when(userBusiness.update(anyObject())).thenReturn(userAfterUpdate);
 
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
@@ -120,7 +120,7 @@ public class UserControllerTest {
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
 
-		when(userBusiness.update(anyObject(), anyObject())).thenReturn(userAfterCreate);
+		when(userBusiness.update(anyObject())).thenReturn(userAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
@@ -137,7 +137,7 @@ public class UserControllerTest {
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
 
-		when(userBusiness.update(anyObject(), anyObject())).thenReturn(userAfterCreate);
+		when(userBusiness.update(anyObject())).thenReturn(userAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
@@ -197,7 +197,7 @@ public class UserControllerTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order);
 
-		when(orderBusiness.read(anyString(), anyObject())).thenReturn(orderAfterRead);
+		when(orderBusiness.readOrder(anyString())).thenReturn(orderAfterRead);
 
 		ResponseEntity<?> actual = controller.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
 		assertNotNull(actual);
@@ -229,7 +229,7 @@ public class UserControllerTest {
 		order.setId(new ObjectId());
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
 
-		when(orderBusiness.update(anyObject(), anyObject())).thenReturn(orderAfterCreate);
+		when(orderBusiness.update(anyObject())).thenReturn(orderAfterCreate);
 
 		ResponseEntity<?> actual = controller.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
 		assertNotNull(actual);

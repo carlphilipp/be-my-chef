@@ -67,23 +67,6 @@ public class DishControllerTest {
 	}
 
 	@Test
-	public void testCreateCatererNotFound() throws EpickurException {
-		Dish dish = EntityGenerator.generateRandomDish();
-		dish.getCaterer().setId(null);
-		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
-		dish.setCaterer(caterer);
-
-		when(catererBusiness.read(anyString())).thenReturn(null);
-
-		ResponseEntity<?> actual = controller.create(dish);
-		assertNotNull(actual);
-		assertEquals(404, actual.getStatusCode().value());
-		ErrorMessage error = (ErrorMessage) actual.getBody();
-		assertEquals(HttpStatus.NOT_FOUND.value(), error.getError().intValue());
-		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), error.getMessage());
-	}
-
-	@Test
 	public void testRead() throws EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
@@ -126,7 +109,7 @@ public class DishControllerTest {
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterCreate.setDescription("desc");
 
-		when(dishBusiness.update(anyObject(), anyObject())).thenReturn(dishAfterCreate);
+		when(dishBusiness.update(anyObject())).thenReturn(dishAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(dish.getId().toHexString(), dish);
 		assertNotNull(actual);
@@ -137,32 +120,13 @@ public class DishControllerTest {
 	}
 
 	@Test
-	public void testUpdateDishNotFound() throws EpickurException {
-		Dish dish = EntityGenerator.generateRandomDishWithId();
-		dish.getCaterer().setId(null);
-		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
-		dish.setCaterer(caterer);
-		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
-		dishAfterCreate.setDescription("desc");
-
-		when(dishBusiness.update(anyObject(), anyObject())).thenReturn(null);
-
-		ResponseEntity<?> actual = controller.update(dish.getId().toHexString(), dish);
-		assertNotNull(actual);
-		assertEquals(404, actual.getStatusCode().value());
-		ErrorMessage error = (ErrorMessage) actual.getBody();
-		assertEquals(HttpStatus.NOT_FOUND.value(), error.getError().intValue());
-		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), error.getMessage());
-	}
-
-	@Test
 	public void testDelete() throws EpickurException {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
-		when(dishBusiness.delete(anyString(), anyObject())).thenReturn(true);
+		when(dishBusiness.delete(anyString())).thenReturn(true);
 
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
 		assertNotNull(actual);
@@ -180,7 +144,7 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
-		when(dishBusiness.delete(anyString(), anyObject())).thenReturn(false);
+		when(dishBusiness.delete(anyString())).thenReturn(false);
 
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
 		assertNotNull(actual);

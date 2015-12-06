@@ -1,11 +1,11 @@
 package com.epickur.api.rest;
 
+import com.epickur.api.aop.ValidateRequest;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import com.epickur.api.validator.UserValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 
+import static com.epickur.api.enumeration.EndpointType.NO_KEY;
+import static com.epickur.api.enumeration.Operation.RESET_PASSWORD;
+
 /**
  * JAX-RS service that handles all the request that does not contain any public key.
  *
@@ -24,17 +27,18 @@ import javax.validation.constraints.NotNull;
  */
 @RestController
 @RequestMapping(value = "/api/nokey")
-public final class NoKeyController {
+public class NoKeyController {
 
-	/** User Service */
+	/**
+	 * User Service
+	 */
 	@Autowired
 	private UserService userService;
-	/** Order Service */
+	/**
+	 * Order Service
+	 */
 	@Autowired
 	private OrderService orderService;
-	/** Service validator */
-	@Autowired
-	private UserValidator validator;
 
 	// @formatter:off
 	/** 
@@ -205,12 +209,12 @@ public final class NoKeyController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@ValidateRequest(operation = RESET_PASSWORD, endpoint = NO_KEY)
 	@RequestMapping(value = "/reset/users/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> resetPasswordSecondStep(
 			@PathVariable("id") final String id,
 			@RequestParam("token") @NotBlank(message = "{nokey.reset.token}") final String resetCode,
-			final ObjectNode node) throws EpickurException {
-		validator.checkResetPasswordDataSecondStep(node);
+			@RequestBody final ObjectNode node) throws EpickurException {
 		String newPassword = node.get("password").asText();
 		User user = userService.resetPasswordSecondStep(id, newPassword, resetCode);
 		return new ResponseEntity<>(user, HttpStatus.OK);

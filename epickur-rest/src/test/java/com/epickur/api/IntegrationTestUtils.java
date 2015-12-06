@@ -73,9 +73,7 @@ public class IntegrationTestUtils {
 		String password = new String(user.getPassword());
 		User newUser = userService.create(user, true);
 		newUser.setRole(Role.ADMIN);
-		Key key = EntityGenerator.generateRandomAdminKey();
-		key.setRole(Role.ADMIN);
-		userService.update(newUser, key);
+		userService.update(newUser);
 		return userService.login(newUser.getEmail(), password);
 	}
 
@@ -98,9 +96,7 @@ public class IntegrationTestUtils {
 		String password = new String(user.getPassword());
 		User newUser = userService.create(user, true);
 		newUser.setRole(Role.SUPER_USER);
-		Key key = EntityGenerator.generateRandomAdminKey();
-		key.setRole(Role.ADMIN);
-		userService.update(newUser, key);
+		userService.update(newUser);
 		return userService.login(newUser.getEmail(), password);
 	}
 
@@ -109,9 +105,7 @@ public class IntegrationTestUtils {
 		String password = new String(user.getPassword());
 		User newUser = userService.create(user, true);
 		newUser.setRole(Role.USER);
-		Key key = EntityGenerator.generateRandomAdminKey();
-		key.setRole(Role.ADMIN);
-		userService.update(newUser, key);
+		userService.update(newUser);
 		return userService.login(newUser.getEmail(), password);
 	}
 

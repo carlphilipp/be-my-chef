@@ -1,22 +1,17 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.ResponseError;
+import com.epickur.api.web.ResponseError;
+import com.epickur.api.aop.ValidateRequest;
 import com.epickur.api.commons.CommonsUtil;
-import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.enumeration.DishType;
-import com.epickur.api.enumeration.EndpointType;
-import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
-import com.epickur.api.validator.AccessRights;
-import com.epickur.api.validator.DishValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+import static com.epickur.api.enumeration.EndpointType.DISH;
+import static com.epickur.api.enumeration.Operation.*;
+
 /**
  * JAX-RS Dish Service
  *
@@ -37,13 +35,13 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/api/dishes")
-public final class DishController {
+public class DishController {
 
 	/**
 	 * Context
 	 */
 	@Autowired
-	private HttpServletRequest context;
+	private HttpServletRequest request;
 	/**
 	 * Dish Service
 	 */
@@ -54,11 +52,6 @@ public final class DishController {
 	 */
 	@Autowired
 	private CatererService catererService;
-	/**
-	 * Service validator
-	 */
-	@Autowired
-	private DishValidator validator;
 
 	// @formatter:off
 	/**
@@ -152,16 +145,9 @@ public final class DishController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@ValidateRequest(operation = CREATE, endpoint = DISH)
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(@RequestBody final Dish dish) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		validator.checkCreateData(dish);
-		Caterer caterer = catererService.read(dish.getCaterer().getId().toHexString());
-		if (caterer == null) {
-			return ResponseError.notFound(ErrorUtils.CATERER_NOT_FOUND, dish.getCaterer().getId().toHexString());
-		}
-		validator.checkRightsBefore(key.getRole(), Operation.CREATE, dish, caterer, key);
-		AccessRights.check(key.getRole(), Operation.CREATE, EndpointType.DISH);
 		Dish result = dishService.create(dish);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
@@ -258,10 +244,9 @@ public final class DishController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@ValidateRequest(operation = READ, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.READ, EndpointType.DISH);
 		Dish dish = dishService.read(id);
 		if (dish == null) {
 			return ResponseError.notFound(ErrorUtils.DISH_NOT_FOUND, id);
@@ -381,19 +366,13 @@ public final class DishController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@ValidateRequest(operation = UPDATE, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(
 			@PathVariable("id") final String id,
 			@RequestBody final Dish dish) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.UPDATE, EndpointType.DISH);
-		validator.checkUpdateData(id, dish);
-		Dish result = dishService.update(dish, key);
-		if (result == null) {
-			return ResponseError.notFound(ErrorUtils.DISH_NOT_FOUND, id);
-		} else {
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		}
+		Dish result = dishService.update(dish);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	// @formatter:off
@@ -424,11 +403,10 @@ public final class DishController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@ValidateRequest(operation = DELETE, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(@PathVariable("id") final String id) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.DELETE, EndpointType.DISH);
-		boolean isDeleted = dishService.delete(id, key);
+		boolean isDeleted = dishService.delete(id);
 		if (isDeleted) {
 			DeletedMessage message = new DeletedMessage();
 			message.setId(id);
@@ -543,6 +521,7 @@ public final class DishController {
 	 * @return The response.
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
+	@ValidateRequest(operation = SEARCH_DISH, endpoint = DISH)
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> search(
 			@RequestParam("pickupdate") @NotBlank(message = "{dish.search.pickupdate}") final String pickupdate,
@@ -552,9 +531,6 @@ public final class DishController {
 			@RequestParam("searchtext") final String searchtext,
 			@RequestParam(value = "distance", defaultValue = "500") @Min(value = 50, message = "{dish.search.distance}") final Integer distance)
 			throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.SEARCH_DISH, EndpointType.DISH);
-		validator.checkSearch(pickupdate, types, at, searchtext);
 		List<DishType> dishTypes = Utils.stringToListDishType(types);
 		Geo geo = null;
 		if (!StringUtils.isBlank(at)) {

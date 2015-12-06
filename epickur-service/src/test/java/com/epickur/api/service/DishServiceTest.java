@@ -111,9 +111,9 @@ public class DishServiceTest {
 		dishAfterUpdate.setName("new name");
 
 		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
-		when(dishDAOMock.update((Dish) anyObject())).thenReturn(dishAfterUpdate);
+		when(dishDAOMock.update(anyObject())).thenReturn(dishAfterUpdate);
 
-		Dish actual = dishService.update(dish, key);
+		Dish actual = dishService.update(dish);
 		assertNotNull("Dish is null", actual);
 		assertEquals("new name", actual.getName());
 	}
@@ -126,7 +126,7 @@ public class DishServiceTest {
 		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
 		when(dishDAOMock.delete(dish.getId().toHexString())).thenReturn(true);
 
-		boolean actual = dishService.delete(dish.getId().toHexString(), key);
+		boolean actual = dishService.delete(dish.getId().toHexString());
 		assertTrue(actual);
 	}
 
@@ -144,7 +144,6 @@ public class DishServiceTest {
 		assertNotNull("Dish is null", actual);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testSearch() throws Exception {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
@@ -152,12 +151,12 @@ public class DishServiceTest {
 		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
 
-		when(dishDAOMock.search(anyString(), anyInt(), (List<DishType>) anyObject(), anyInt(), (Geo) anyObject(), anyInt()))
+		when(dishDAOMock.search(anyString(), anyInt(), anyObject(), anyInt(), anyObject(), anyInt()))
 				.thenReturn(listDishes);
 		whenNew(GeocoderHereImpl.class).withNoArguments().thenReturn(geoCoder);
 		when(geoCoder.getPosition(anyString())).thenReturn(geo);
 
-		List<Dish> listActual = dishService.search("", 0, (List<DishType>)new ArrayList<DishType>(), 0, new Geo(),"", 0);
+		List<Dish> listActual = dishService.search("", 0, new ArrayList<>(), 0, new Geo(),"", 0);
 		Dish actual = listActual.get(0);
 		assertNotNull("Dish is null", actual);
 	}

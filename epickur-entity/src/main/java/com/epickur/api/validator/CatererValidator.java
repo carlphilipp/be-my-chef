@@ -1,11 +1,5 @@
 package com.epickur.api.validator;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-
 import com.epickur.api.entity.Address;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Geo;
@@ -18,13 +12,16 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
-import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+
+import java.util.List;
 
 /**
  * @author cph
  * @version 1.0
  */
-@Component
 public class CatererValidator extends Validator {
 
 	/**
@@ -35,18 +32,15 @@ public class CatererValidator extends Validator {
 	}
 
 	/**
-	 * @param caterer
-	 *            The Caterer
+	 * @param caterer The Caterer
 	 */
 	public void checkCreateCaterer(final Caterer caterer) {
 		checkCaterer(caterer);
 	}
 
 	/**
-	 * @param id
-	 *            The caterer Id
-	 * @param caterer
-	 *            The Caterer
+	 * @param id      The caterer Id
+	 * @param caterer The Caterer
 	 */
 	public void checkUpdateCaterer(final String id, final Caterer caterer) {
 		checkCaterer(caterer);
@@ -59,10 +53,8 @@ public class CatererValidator extends Validator {
 	}
 
 	/**
-	 * @param start
-	 *            The start date
-	 * @param end
-	 *            The end date
+	 * @param start The start date
+	 * @param end   The end date
 	 */
 	public void checkPaymentInfo(final DateTime start, final DateTime end) {
 		if (start == null && end != null) {
@@ -80,18 +72,15 @@ public class CatererValidator extends Validator {
 	}
 
 	/**
-	 * @param caterer
-	 *            The caterer to check
+	 * @param caterer The caterer to check
 	 */
 	protected void checkCaterer(final Caterer caterer) {
 		checkCaterer(caterer, null);
 	}
 
 	/**
-	 * @param caterer
-	 *            The caterer to check
-	 * @param prefix
-	 *            The prefix
+	 * @param caterer The caterer to check
+	 * @param prefix  The prefix
 	 */
 	protected void checkCaterer(final Caterer caterer, final String prefix) {
 		String entity = getEntity();
@@ -162,10 +151,8 @@ public class CatererValidator extends Validator {
 	}
 
 	/**
-	 * @param entity
-	 *            The entity
-	 * @param workingTimes
-	 *            The working times
+	 * @param entity       The entity
+	 * @param workingTimes The working times
 	 */
 	private void checkWorkingHours(final String entity, final WorkingTimes workingTimes) {
 		if (workingTimes == null) {
@@ -210,12 +197,9 @@ public class CatererValidator extends Validator {
 	}
 
 	/**
-	 * @param entity
-	 *            The entity
-	 * @param suffix
-	 *            The suffix
-	 * @param timeFrames
-	 *            The time frame
+	 * @param entity     The entity
+	 * @param suffix     The suffix
+	 * @param timeFrames The time frame
 	 */
 	private void checkTimeFrames(final String entity, final String suffix, final List<TimeFrame> timeFrames) {
 		int i = 0;
@@ -228,16 +212,11 @@ public class CatererValidator extends Validator {
 	}
 
 	/**
-	 * @param role
-	 *            The role
-	 * @param userId
-	 *            The User Id
-	 * @param caterer
-	 *            The Caterer
-	 * @param action
-	 *            The action
-	 * @throws EpickurException
-	 *             If an EpickurException occured
+	 * @param role    The role
+	 * @param userId  The User Id
+	 * @param caterer The Caterer
+	 * @param action  The action
+	 * @throws EpickurException If an EpickurException occured
 	 */
 	public void checkRightsAfter(final Role role, final ObjectId userId, final Caterer caterer, final Operation action) throws EpickurException {
 		if (role != Role.ADMIN && action != Operation.READ) {

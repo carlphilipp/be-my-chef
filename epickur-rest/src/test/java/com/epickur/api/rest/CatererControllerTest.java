@@ -161,7 +161,7 @@ public class CatererControllerTest {
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterCreate.setDescription("new desc");
 
-		when(catererService.update(anyObject(), anyObject())).thenReturn(catererAfterCreate);
+		when(catererService.update(anyObject())).thenReturn(catererAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(caterer.getId().toHexString(), caterer);
 		assertNotNull(actual);
@@ -170,22 +170,6 @@ public class CatererControllerTest {
 		assertNotNull(actualCaterer);
 		assertNotNull(actualCaterer.getId());
 		assertEquals("new desc", actualCaterer.getDescription());
-	}
-
-	@Test
-	public void testUpdateCatererNotFound() throws EpickurException {
-		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
-		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
-		catererAfterCreate.setDescription("new desc");
-
-		when(catererService.update(anyObject(), anyObject())).thenReturn(null);
-
-		ResponseEntity<?> actual = controller.update(caterer.getId().toHexString(), caterer);
-		assertNotNull(actual);
-		assertEquals(404, actual.getStatusCode().value());
-		ErrorMessage error = (ErrorMessage) actual.getBody();
-		assertEquals(HttpStatus.NOT_FOUND.value(), error.getError().intValue());
-		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), error.getMessage());
 	}
 
 	@Test

@@ -1,10 +1,6 @@
 package com.epickur.api.validator;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.types.ObjectId;
-
+import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
@@ -17,18 +13,21 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.exception.EpickurParsingException;
-import com.epickur.api.commons.CommonsUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
 
 /**
  * @author cph
  * @version 1.0
  */
-@Component
 public class UserValidator extends Validator {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(UserValidator.class.getSimpleName());
 
 	/**
@@ -39,10 +38,8 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param id
-	 *            The User id
-	 * @param user
-	 *            The User
+	 * @param id   The User id
+	 * @param user The User
 	 */
 	public void checkUpdateUser(final String id, final User user) {
 		if (user == null) {
@@ -63,10 +60,8 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param id
-	 *            The User id
-	 * @param orderId
-	 *            The Order id
+	 * @param id      The User id
+	 * @param orderId The Order id
 	 */
 	public void checkReadOneOrder(final String id, final String orderId) {
 		checkId(id);
@@ -74,8 +69,7 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param order
-	 *            The Order
+	 * @param order The Order
 	 */
 	public void checkCreateOneOrder(final Order order) {
 		if (order == null) {
@@ -131,8 +125,7 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param voucher
-	 *            The voucher
+	 * @param voucher The voucher
 	 */
 	private void checkVoucherData(final Voucher voucher) {
 		VoucherValidator validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
@@ -140,10 +133,8 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param orderId
-	 *            The Order id
-	 * @param order
-	 *            The Order
+	 * @param orderId The Order id
+	 * @param order   The Order
 	 */
 	public void checkUpdateOneOrder(final String orderId, final Order order) {
 		if (order == null) {
@@ -158,10 +149,8 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param email
-	 *            The user email
-	 * @param check
-	 *            The check code
+	 * @param email The user email
+	 * @param check The check code
 	 */
 	public void checkCheckUser(final String email, final String check) {
 		if (StringUtils.isBlank(email)) {
@@ -173,16 +162,11 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param role
-	 *            The Role
-	 * @param userId
-	 *            The User Id
-	 * @param user
-	 *            The User
-	 * @param action
-	 *            The Crud action
-	 * @throws EpickurException
-	 *             If a EpickurException occured
+	 * @param role   The Role
+	 * @param userId The User Id
+	 * @param user   The User
+	 * @param action The Crud action
+	 * @throws EpickurException If a EpickurException occured
 	 */
 	public void checkUserRightsAfter(final Role role, final ObjectId userId, final User user, final Operation action) throws EpickurException {
 		if (role != Role.ADMIN) {
@@ -198,14 +182,10 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param role
-	 *            The Role
-	 * @param userId
-	 *            The User Id
-	 * @param order
-	 *            The Order
-	 * @param action
-	 *            The Crud action
+	 * @param role   The Role
+	 * @param userId The User Id
+	 * @param order  The Order
+	 * @param action The Crud action
 	 */
 	public void checkOrderRightsAfter(final Role role, final ObjectId userId, final Order order, final Operation action) {
 		if (role != Role.ADMIN) {
@@ -227,8 +207,7 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param node
-	 *            The node containing the email
+	 * @param node The node containing the email
 	 */
 	public void checkResetPasswordData(final ObjectNode node) {
 		if (!node.has("email")) {
@@ -242,8 +221,7 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param node
-	 *            The node containing the password
+	 * @param node The node containing the password
 	 */
 	public void checkResetPasswordDataSecondStep(final ObjectNode node) {
 		if (!node.has("password")) {

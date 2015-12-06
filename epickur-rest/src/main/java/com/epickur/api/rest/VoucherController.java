@@ -1,18 +1,14 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.ResponseError;
-import com.epickur.api.entity.Key;
+import com.epickur.api.web.ResponseError;
+import com.epickur.api.aop.ValidateRequest;
 import com.epickur.api.entity.Voucher;
-import com.epickur.api.enumeration.EndpointType;
-import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
-import com.epickur.api.validator.AccessRights;
-import com.epickur.api.validator.VoucherValidator;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +22,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
+import static com.epickur.api.enumeration.EndpointType.VOUCHER;
+import static com.epickur.api.enumeration.Operation.GENERATE_VOUCHER;
+import static com.epickur.api.enumeration.Operation.READ;
+
 /**
  * JAX-RS Voucher Service
  *
@@ -34,7 +34,7 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping(value = "/api/vouchers")
-public final class VoucherController {
+public class VoucherController {
 
 	/**
 	 * Context
@@ -46,11 +46,6 @@ public final class VoucherController {
 	 */
 	@Autowired
 	private VoucherService voucherService;
-	/**
-	 * User validator
-	 */
-	@Autowired
-	private VoucherValidator validator;
 
 	// @formatter:off
 	/**
@@ -88,11 +83,9 @@ public final class VoucherController {
 	 * @return A response
 	 * @throws EpickurException If an EpickurException occured
 	 */
+	@ValidateRequest(operation = READ, endpoint = VOUCHER)
 	@RequestMapping(value = "/{code}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("code") final String code) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.READ, EndpointType.VOUCHER);
-		validator.checkVoucherCode(code);
 		Voucher voucher = voucherService.read(code);
 		if (voucher == null) {
 			return ResponseError.notFound(ErrorUtils.VOUCHER_NOT_FOUND, code);
@@ -158,6 +151,7 @@ public final class VoucherController {
 	 * @return The response
 	 * @throws EpickurException If an EpickurException occured
 	 */
+	@ValidateRequest(operation = GENERATE_VOUCHER, endpoint = VOUCHER)
 	@RequestMapping(value = "/generate", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> generate(
 			@RequestParam("count") @NotBlank(message = "{voucher.generate.count.blank}") @Min(value = 0, message = "{voucher.generate.count.positive}") final Integer count,
@@ -166,9 +160,6 @@ public final class VoucherController {
 			@RequestParam("expirationType") @NotNull(message = "{voucher.generate.expirationtype}") final ExpirationType expirationType,
 			@RequestParam("expiration") final String expiration,
 			@RequestParam(value = "formatDate", required = false, defaultValue = "MM/dd/yyyy") final String format) throws EpickurException {
-		Key key = (Key) context.getAttribute("key");
-		AccessRights.check(key.getRole(), Operation.GENERATE_VOUCHER, EndpointType.VOUCHER);
-		validator.checkVoucherGenerate(expirationType, expiration, format);
 		DateTime date = null;
 		if (expiration != null) {
 			date = Utils.parseDate(expiration, format);

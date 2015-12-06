@@ -15,5 +15,7 @@ public enum EndpointType {
 	/** The dish endpoint */
 	DISH,
 	/** The voucher endpoint */
-	VOUCHER;
+	VOUCHER,
+	/** The no key endpoint */
+	NO_KEY
 }

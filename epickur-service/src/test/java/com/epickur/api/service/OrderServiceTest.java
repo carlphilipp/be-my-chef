@@ -3,7 +3,6 @@ package com.epickur.api.service;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.SequenceDAO;
 import com.epickur.api.dao.mongo.UserDAO;
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.Voucher;
@@ -175,45 +174,6 @@ public class OrderServiceTest {
 		verify(order, times(1)).getVoucher();
 		verify(voucherBusinessMock, times(1)).validateVoucher(voucher.getCode());
 		verify(emailUtilsMock, times(1)).emailNewOrder(eq(user), eq(orderAfterCreate), anyString());
-	}
-
-	@Test
-	public void testUpdateNotFound() throws EpickurException {
-		thrown.expect(EpickurNotFoundException.class);
-
-		Order order = EntityGenerator.generateRandomOrder();
-		order.setId(new ObjectId());
-		Key key = new Key();
-		key.setUserId(order.getCreatedBy());
-		try {
-			orderService.update(order, key);
-		} finally {
-			verify(orderDAOMock, times(1)).read(order.getId().toHexString());
-			verify(orderDAOMock, never()).update(any(Order.class));
-		}
-	}
-
-	@Test
-	public void testUpdatePendingStatusFail() throws EpickurException {
-		OrderStatus orderStatus = OrderStatus.SUCCESSFUL;
-		thrown.expect(EpickurException.class);
-		//thrown.expectMessage("It's not allowed to modify an order that has a " + orderStatus + " status");
-
-		Order order = EntityGenerator.generateRandomOrderWithId();
-		order.setId(new ObjectId());
-		Key key = new Key();
-		key.setUserId(order.getCreatedBy());
-		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
-		orderAfterCreate.setStatus(orderStatus);
-
-		when(orderDAOMock.read(order.getId().toHexString())).thenReturn(orderAfterCreate);
-		doThrow(EpickurException.class).when(validator).checkOrderStatus(anyObject());
-
-		orderService.update(order, key);
-
-		verify(orderDAOMock, times(1)).read(order.getId().toHexString());
-		verify(orderDAOMock, never()).update(any(Order.class));
-
 	}
 
 	@Test
