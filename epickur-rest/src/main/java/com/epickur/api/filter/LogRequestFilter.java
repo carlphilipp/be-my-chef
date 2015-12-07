@@ -6,6 +6,8 @@ import com.epickur.api.exception.EpickurException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -21,6 +23,7 @@ import java.util.Enumeration;
  * @author cph
  * @version 1.0
  */
+@Component("logRequestFilter")
 public final class LogRequestFilter extends OncePerRequestFilter {
 
 	/**
@@ -28,11 +31,8 @@ public final class LogRequestFilter extends OncePerRequestFilter {
 	 */
 	private static final Logger LOG = LogManager.getLogger(LogRequestFilter.class.getSimpleName());
 
+	@Autowired
 	private LogDAO logDAO;
-
-	public LogRequestFilter(){
-		this.logDAO = new LogDAO();
-	}
 
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws

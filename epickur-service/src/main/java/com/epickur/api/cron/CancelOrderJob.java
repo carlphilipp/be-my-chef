@@ -2,11 +2,14 @@ package com.epickur.api.cron;
 
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.UserDAO;
+import com.epickur.api.dao.mongo.VoucherDAO;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.OrderStatus;
+import com.epickur.api.enumeration.voucher.ExpirationType;
+import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.email.EmailUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +40,7 @@ public class CancelOrderJob implements Job {
 	/**
 	 * Voucher Business
 	 */
-	private VoucherService voucherBusiness;
+	private VoucherDAO voucherDAO;
 	/**
 	 * Email utils
 	 */
@@ -48,7 +51,7 @@ public class CancelOrderJob implements Job {
 	 */
 	public CancelOrderJob() {
 		userDAO = new UserDAO();
-		voucherBusiness = new VoucherService();
+		voucherDAO = new VoucherDAO();
 		orderDAO = new OrderDAO();
 		emailUtils = new EmailUtils();
 	}
@@ -66,12 +69,27 @@ public class CancelOrderJob implements Job {
 				order.prepareForUpdateIntoDB();
 				order = orderDAO.update(order);
 				if (order.getVoucher() != null) {
-					voucherBusiness.revertVoucher(order.getVoucher().getCode());
+					revertVoucher(order.getVoucher().getCode());
 				}
 				emailUtils.emailCancelOrder(user, order);
 			}
 		} catch (EpickurException e) {
 			LOG.error(e.getLocalizedMessage(), e);
 		}
+	}
+
+	// TODO: duplicated method with the one in voucher service. Need to be merged when scheduler will be managed by Spring
+	public void revertVoucher(final String code) throws EpickurException {
+		Voucher found = voucherDAO.read(code);
+		if (found == null) {
+			throw new EpickurException("Voucher '" + code + "' not found");
+		}
+		if (found.getExpirationType() == ExpirationType.ONETIME) {
+			found.setStatus(Status.VALID);
+		} else if (found.getExpirationType() == ExpirationType.UNTIL) {
+			found.setUsedCount(found.getUsedCount() - 1);
+		}
+		found.prepareForUpdateIntoDB();
+		voucherDAO.update(found);
 	}
 }

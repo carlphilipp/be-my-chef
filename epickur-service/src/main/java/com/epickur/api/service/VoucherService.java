@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -34,7 +33,6 @@ public class VoucherService {
 	 * User dao
 	 */
 	@Autowired
-	// TODO : fixme. Do not autowire this field or put implement spring scheduler instead of quartz
 	private VoucherDAO voucherDAO;
 
 	/**
@@ -83,21 +81,6 @@ public class VoucherService {
 			}
 		} while (result.size() < count);
 		return result;
-	}
-
-	/**
-	 * @return A list of voucher
-	 * @throws EpickurException If an EpickurException occurred.
-	 */
-	public List<Voucher> clean() throws EpickurException {
-		List<Voucher> vouchers = this.voucherDAO.readToClean();
-		for (Voucher voucher : vouchers) {
-			LOG.info("Expire voucher " + voucher.getCode() + " " + voucher.getExpiration());
-			voucher.setStatus(Status.EXPIRED);
-			voucher.prepareForUpdateIntoDB();
-			this.voucherDAO.update(voucher);
-		}
-		return vouchers;
 	}
 
 	/**

@@ -3,12 +3,11 @@ package com.epickur.api;
 import com.epickur.api.config.ApplicationConfig;
 import com.epickur.api.cron.Jobs;
 import com.epickur.api.filter.HeaderResponseFilter;
-import com.epickur.api.filter.KeyRequestFilter;
-import com.epickur.api.filter.LogRequestFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.quartz.ee.servlet.QuartzInitializerListener;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.Filter;
@@ -41,7 +40,9 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 
 	@Override
 	protected Filter[] getServletFilters() {
-		return new Filter[] { new HeaderResponseFilter(), new LogRequestFilter(), new KeyRequestFilter() };
+		DelegatingFilterProxy keyRequestFilter = new DelegatingFilterProxy("keyRequestFilter");
+		DelegatingFilterProxy logRequestFilter = new DelegatingFilterProxy("logRequestFilter");
+		return new Filter[] { new HeaderResponseFilter(), logRequestFilter, keyRequestFilter };
 	}
 
 	@Override

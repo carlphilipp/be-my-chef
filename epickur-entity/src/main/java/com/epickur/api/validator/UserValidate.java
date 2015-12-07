@@ -32,7 +32,8 @@ public @interface UserValidate {
 
 	Class<? extends Payload>[] payload() default {};
 
-	@Component class UserCreateValidator implements ConstraintValidator<UserValidate, User> {
+	@Component
+	class UserCreateValidator implements ConstraintValidator<UserValidate, User> {
 
 		private static final Logger LOG = LogManager.getLogger(UserValidator.class.getSimpleName());
 

@@ -184,11 +184,11 @@ public class UserValidator extends Validator {
 	public void checkOrderRightsAfter(final Role role, final ObjectId userId, final Order order, final Operation action) {
 		if (role != Role.ADMIN) {
 			if (action == Operation.DELETE) {
-				throw new EpickurForbiddenException();
+				throw new EpickurForbiddenException("User not allowed to access to the order");
 			}
 			if (action == Operation.READ || action == Operation.UPDATE) {
 				if (!userId.equals(order.getCreatedBy())) { // NOPMD
-					throw new EpickurForbiddenException();
+					throw new EpickurForbiddenException("User not allowed to access to the order");
 				}
 			}
 		}

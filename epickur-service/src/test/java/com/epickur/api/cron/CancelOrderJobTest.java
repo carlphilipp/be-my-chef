@@ -2,6 +2,7 @@ package com.epickur.api.cron;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
 
+import com.epickur.api.dao.mongo.VoucherDAO;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +36,7 @@ import com.epickur.api.utils.email.EmailUtils;
 public class CancelOrderJobTest {
 
 	@Mock
-	private VoucherService voucherBusiness;
+	private VoucherDAO voucherDAO;
 	@Mock
 	private EmailUtils emailUtils;
 	@Mock
@@ -68,6 +70,7 @@ public class CancelOrderJobTest {
 		when(orderDAO.read(order.getId().toHexString())).thenReturn(order);
 		when(orderDAO.update(order)).thenReturn(order);
 		when(userDAO.read(user.getId().toHexString())).thenReturn(user);
+		when(voucherDAO.read(anyString())).thenReturn(voucher);
 
 		orderJob.execute(context);
 
@@ -79,7 +82,7 @@ public class CancelOrderJobTest {
 		verify(order, times(1)).setCreatedAt(null);
 		verify(order, times(1)).setUpdatedAt(any(DateTime.class));
 		verify(order, times(1)).prepareForUpdateIntoDB();
-		verify(voucherBusiness, times(1)).revertVoucher(voucher.getCode());
+		//verify(voucherBusiness, times(1)).revertVoucher(voucher.getCode());
 	}
 	
 	@Test
@@ -110,6 +113,5 @@ public class CancelOrderJobTest {
 		verify(order, never()).setCreatedAt(anyObject());
 		verify(order, never()).setUpdatedAt(anyObject());
 		verify(order, never()).prepareForUpdateIntoDB();
-		verify(voucherBusiness, never()).revertVoucher(voucher.getCode());
 	}
 }

@@ -1,6 +1,6 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.aop.ValidateRequest;
+import com.epickur.api.aop.ValidateSimpleAccessRights;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.message.DeletedMessage;
@@ -98,7 +98,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = CREATE, endpoint = USER)
+	@ValidateSimpleAccessRights(operation = CREATE, endpoint = USER)
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(
 			@RequestHeader(value = "validate-agent", defaultValue = "false") final boolean autoValidate,
@@ -151,7 +151,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = READ, endpoint = USER)
+	@ValidateSimpleAccessRights(operation = READ, endpoint = USER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		User user = userService.read(id);
@@ -202,7 +202,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = UPDATE, endpoint = USER)
+	@ValidateSimpleAccessRights(operation = UPDATE, endpoint = USER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(
 			@PathVariable("id") final String id,
@@ -248,7 +248,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = DELETE, endpoint = USER)
+	@ValidateSimpleAccessRights(operation = DELETE, endpoint = USER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(@PathVariable("id") final String id) throws EpickurException {
 		boolean isDeleted = userService.delete(id);
@@ -297,7 +297,7 @@ public class UserController {
 	 * @return A list of User.
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
-	@ValidateRequest(operation = READ_ALL, endpoint = USER)
+	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = USER)
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
 		List<User> users = userService.readAll();
@@ -357,7 +357,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = READ, endpoint = ORDER)
+	@ValidateSimpleAccessRights(operation = READ, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readOneOrder(
 			@PathVariable("id") final String id,
@@ -437,7 +437,7 @@ public class UserController {
 	 * @return The list of Order for this User.
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
-	@ValidateRequest(operation = READ_ALL, endpoint = ORDER)
+	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAllOrders(@PathVariable("id") final String id) throws EpickurException {
 		List<Order> orders = orderService.readAllWithUserId(id);
@@ -506,7 +506,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = CREATE, endpoint = ORDER)
+	@ValidateSimpleAccessRights(operation = CREATE, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> createOneOrder(
 			@PathVariable("id") final String userId,
@@ -572,7 +572,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = UPDATE, endpoint = ORDER)
+	@ValidateSimpleAccessRights(operation = UPDATE, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updateOneOrder(
 			@PathVariable("id") final String id,
@@ -615,7 +615,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = DELETE, endpoint = ORDER)
+	@ValidateSimpleAccessRights(operation = DELETE, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> deleteOneOrder(
 			@PathVariable("id") final String id,
@@ -654,7 +654,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = RESET_PASSWORD, endpoint = USER)
+	@ValidateSimpleAccessRights(operation = RESET_PASSWORD, endpoint = USER)
 	@RequestMapping(value = "/reset", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> resetPasswordFirstStep(final ObjectNode node) throws EpickurException {
 		String email = node.get("email").asText();

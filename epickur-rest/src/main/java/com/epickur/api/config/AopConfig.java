@@ -1,6 +1,7 @@
 package com.epickur.api.config;
 
-import com.epickur.api.aop.ValidateRequestAspect;
+import com.epickur.api.aop.ComplexAccessRightsAspect;
+import com.epickur.api.aop.SimpleAccessRightsAspect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,7 +9,12 @@ import org.springframework.context.annotation.Configuration;
 public class AopConfig {
 
 	@Bean
-	public ValidateRequestAspect validateRequestAspect() {
-		return new ValidateRequestAspect();
+	public SimpleAccessRightsAspect simpleAccessRights() {
+		return new SimpleAccessRightsAspect();
+	}
+
+	@Bean
+	public ComplexAccessRightsAspect complexAccessRights() {
+		return new ComplexAccessRightsAspect();
 	}
 }

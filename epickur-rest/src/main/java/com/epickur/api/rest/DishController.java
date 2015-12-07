@@ -1,7 +1,6 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.web.ResponseError;
-import com.epickur.api.aop.ValidateRequest;
+import com.epickur.api.aop.ValidateSimpleAccessRights;
 import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
@@ -12,6 +11,7 @@ import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.utils.ErrorUtils;
 import com.epickur.api.utils.Utils;
+import com.epickur.api.web.ResponseError;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +145,7 @@ public class DishController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = CREATE, endpoint = DISH)
+	@ValidateSimpleAccessRights(operation = CREATE, endpoint = DISH)
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(@RequestBody final Dish dish) throws EpickurException {
 		Dish result = dishService.create(dish);
@@ -244,7 +244,7 @@ public class DishController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = READ, endpoint = DISH)
+	@ValidateSimpleAccessRights(operation = READ, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		Dish dish = dishService.read(id);
@@ -366,7 +366,7 @@ public class DishController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = UPDATE, endpoint = DISH)
+	@ValidateSimpleAccessRights(operation = UPDATE, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(
 			@PathVariable("id") final String id,
@@ -403,7 +403,7 @@ public class DishController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = DELETE, endpoint = DISH)
+	@ValidateSimpleAccessRights(operation = DELETE, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(@PathVariable("id") final String id) throws EpickurException {
 		boolean isDeleted = dishService.delete(id);
@@ -521,7 +521,7 @@ public class DishController {
 	 * @return The response.
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
-	@ValidateRequest(operation = SEARCH_DISH, endpoint = DISH)
+	@ValidateSimpleAccessRights(operation = SEARCH_DISH, endpoint = DISH)
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> search(
 			@RequestParam("pickupdate") @NotBlank(message = "{dish.search.pickupdate}") final String pickupdate,

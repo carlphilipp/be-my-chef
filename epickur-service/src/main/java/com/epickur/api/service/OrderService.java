@@ -1,6 +1,6 @@
 package com.epickur.api.service;
 
-import com.epickur.api.aop.ValidateRequestBefore;
+import com.epickur.api.aop.ValidateComplexAccessRights;
 import com.epickur.api.cron.Jobs;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.SequenceDAO;
@@ -129,7 +129,7 @@ public class OrderService {
 	 * @return An Order
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
-	@ValidateRequestBefore(operation = READ, type = ORDER)
+	@ValidateComplexAccessRights(operation = READ, type = ORDER)
 	public Order readOrder(final String id) throws EpickurException {
 		return orderDAO.read(id);
 
@@ -160,7 +160,7 @@ public class OrderService {
 	 * @return The updated Order
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
-	@ValidateRequestBefore(operation = UPDATE, type = ORDER)
+	@ValidateComplexAccessRights(operation = UPDATE, type = ORDER)
 	public Order update(final Order order) throws EpickurException {
 		order.prepareForUpdateIntoDB();
 		return orderDAO.update(order);

@@ -11,8 +11,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ComponentScan(basePackages = "com.epickur.api")
 @EnableAspectJAutoProxy
 @Import({
-		AopConfig.class,
-		ValidatorConfig.class
-})
+				AopConfig.class,
+				ValidatorConfig.class
+		})
 public class ApplicationConfig {
 }

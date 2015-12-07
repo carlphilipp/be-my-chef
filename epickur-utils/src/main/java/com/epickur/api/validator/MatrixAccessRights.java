@@ -14,10 +14,10 @@ import com.epickur.api.exception.EpickurWrongAccessRights;
  * @version 1.0
  *
  */
-public final class AccessRights {
+public final class MatrixAccessRights {
 
 	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(AccessRights.class.getSimpleName());
+	private static final Logger LOG = LogManager.getLogger(MatrixAccessRights.class.getSimpleName());
 
 	/**
 	 * The access rights matrix
@@ -39,7 +39,7 @@ public final class AccessRights {
 	/**
 	 * Avoid constuction.
 	 */
-	private AccessRights() {
+	private MatrixAccessRights() {
 	}
 
 	/**

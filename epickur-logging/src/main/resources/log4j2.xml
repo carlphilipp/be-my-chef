@@ -10,7 +10,10 @@
 		<Logger name="com.epickur.api" level="info">
 			<AppenderRef ref="Console" />
 		</Logger>
-		<Logger name="com.cribbstechnologies.clients.mandrill" level="debug">
+		<Logger name="com.cribbstechnologies.clients.mandrill" level="warn">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="com.google.i18n.phonenumbers" level="warn">
 			<AppenderRef ref="Console" />
 		</Logger>
 		<Logger name="org.mongodb.driver" level="warn">

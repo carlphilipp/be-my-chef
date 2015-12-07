@@ -23,107 +23,107 @@ public class AccessRightsDishTest {
 
 	@Test
 	public void adminCreateTest() {
-		AccessRights.check(Role.ADMIN, Operation.CREATE, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.CREATE, endpoint);
 	}
 
 	@Test
 	public void adminReadTest() {
-		AccessRights.check(Role.ADMIN, Operation.READ, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.READ, endpoint);
 	}
 
 	@Test
 	public void adminUpdateTest() {
-		AccessRights.check(Role.ADMIN, Operation.UPDATE, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.UPDATE, endpoint);
 	}
 
 	@Test
 	public void adminDeleteTest() {
-		AccessRights.check(Role.ADMIN, Operation.DELETE, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.DELETE, endpoint);
 	}
 
 	@Test
 	public void adminSearchTest() {
-		AccessRights.check(Role.ADMIN, Operation.SEARCH_DISH, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.SEARCH_DISH, endpoint);
 	}
 
 	@Test
 	public void sUserCreateTest() {
-		AccessRights.check(Role.SUPER_USER, Operation.CREATE, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.CREATE, endpoint);
 	}
 
 	@Test
 	public void sUserReadTest() {
-		AccessRights.check(Role.SUPER_USER, Operation.READ, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.READ, endpoint);
 	}
 
 	@Test
 	public void sUserUpdateTest() {
-		AccessRights.check(Role.SUPER_USER, Operation.UPDATE, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.UPDATE, endpoint);
 	}
 
 	@Test
 	public void sUserDeleteTest() {
-		AccessRights.check(Role.SUPER_USER, Operation.DELETE, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.DELETE, endpoint);
 	}
 
 	@Test
 	public void sUserSearchTest() {
-		AccessRights.check(Role.SUPER_USER, Operation.SEARCH_DISH, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.SEARCH_DISH, endpoint);
 	}
 
 	@Test
 	public void userCreateTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.USER, Operation.CREATE, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.CREATE, endpoint);
 	}
 
 	@Test
 	public void userReadTest() {
-		AccessRights.check(Role.USER, Operation.READ, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.READ, endpoint);
 	}
 
 	@Test
 	public void userUpdateTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.USER, Operation.UPDATE, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.UPDATE, endpoint);
 	}
 
 	@Test
 	public void userDeleteTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.USER, Operation.DELETE, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.DELETE, endpoint);
 	}
 
 	@Test
 	public void userSearchTest() {
-		AccessRights.check(Role.USER, Operation.SEARCH_DISH, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.SEARCH_DISH, endpoint);
 	}
 
 	@Test
 	public void webCreateTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.EPICKUR_WEB, Operation.CREATE, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.CREATE, endpoint);
 	}
 
 	@Test
 	public void webReadTest() {
-		AccessRights.check(Role.EPICKUR_WEB, Operation.READ, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.READ, endpoint);
 	}
 
 	@Test
 	public void webUpdateTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.EPICKUR_WEB, Operation.UPDATE, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.UPDATE, endpoint);
 	}
 
 	@Test
 	public void webDeleteTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.EPICKUR_WEB, Operation.DELETE, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.DELETE, endpoint);
 	}
 
 	@Test
 	public void webSearchTest() {
-		AccessRights.check(Role.EPICKUR_WEB, Operation.SEARCH_DISH, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.SEARCH_DISH, endpoint);
 	}
 }

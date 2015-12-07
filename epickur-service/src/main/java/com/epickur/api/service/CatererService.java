@@ -1,6 +1,6 @@
 package com.epickur.api.service;
 
-import com.epickur.api.aop.ValidateRequestBefore;
+import com.epickur.api.aop.ValidateComplexAccessRights;
 import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Order;
@@ -67,7 +67,7 @@ public class CatererService {
 	 * @return The updated {@link Caterer}
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
-	@ValidateRequestBefore(operation = UPDATE, type = CATERER)
+	@ValidateComplexAccessRights(operation = UPDATE, type = CATERER)
 	public Caterer update(final Caterer caterer) throws EpickurException {
 		caterer.prepareForUpdateIntoDB();
 		return dao.update(caterer);

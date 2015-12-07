@@ -1,6 +1,6 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.aop.ValidateRequest;
+import com.epickur.api.aop.ValidateSimpleAccessRights;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
@@ -83,7 +83,7 @@ public class VoucherController {
 	 * @return A response
 	 * @throws EpickurException If an EpickurException occured
 	 */
-	@ValidateRequest(operation = READ, endpoint = VOUCHER)
+	@ValidateSimpleAccessRights(operation = READ, endpoint = VOUCHER)
 	@RequestMapping(value = "/{code}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("code") final String code) throws EpickurException {
 		Voucher voucher = voucherService.read(code);
@@ -151,7 +151,7 @@ public class VoucherController {
 	 * @return The response
 	 * @throws EpickurException If an EpickurException occured
 	 */
-	@ValidateRequest(operation = GENERATE_VOUCHER, endpoint = VOUCHER)
+	@ValidateSimpleAccessRights(operation = GENERATE_VOUCHER, endpoint = VOUCHER)
 	@RequestMapping(value = "/generate", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> generate(
 			@RequestParam("count") @NotBlank(message = "{voucher.generate.count.blank}") @Min(value = 0, message = "{voucher.generate.count.positive}") final Integer count,

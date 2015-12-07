@@ -130,7 +130,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler({ EpickurForbiddenException.class })
 	public ResponseEntity<?> handleEpickurForbiddenException(final EpickurForbiddenException exception) {
 		Key key = (Key) context.getAttribute("key");
-		LOG.warn("Forbidden : {} {}", exception.getLocalizedMessage(), key.getId() != null ? " - User Id " + key.getId().toHexString() : "");
+		LOG.warn("Forbidden : {} {}", exception.getMessage(), key.getId() != null ? " - User Id " + key.getId().toHexString() : "");
 		return ResponseError.error(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 	}
 
@@ -146,7 +146,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		message.setError(status.value());
 		message.setMessage(status.getReasonPhrase());
 		Key key = (Key) context.getAttribute("key");
-		LOG.warn("{} {} {}", ex.getClass().getSimpleName(), ex.getLocalizedMessage(), key.toString());
+		LOG.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getLocalizedMessage(), key.getKey(), key.getUserId(), key.getRole());
 		return new ResponseEntity<>(message, headers, status);
 	}
 

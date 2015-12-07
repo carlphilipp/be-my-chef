@@ -23,133 +23,133 @@ public class AccessRightsUserTest {
 
 	@Test
 	public void adminCreateTest() {
-		AccessRights.check(Role.ADMIN, Operation.CREATE, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.CREATE, endpoint);
 	}
 
 	@Test
 	public void adminReadTest() {
-		AccessRights.check(Role.ADMIN, Operation.READ, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.READ, endpoint);
 	}
 
 	@Test
 	public void adminUpdateTest() {
-		AccessRights.check(Role.ADMIN, Operation.UPDATE, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.UPDATE, endpoint);
 	}
 
 	@Test
 	public void adminDeleteTest() {
-		AccessRights.check(Role.ADMIN, Operation.DELETE, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.DELETE, endpoint);
 	}
 
 	@Test
 	public void adminReadAllTest() {
-		AccessRights.check(Role.ADMIN, Operation.READ_ALL, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.READ_ALL, endpoint);
 	}
 
 	@Test
 	public void adminResetPasswordTest() {
-		AccessRights.check(Role.ADMIN, Operation.RESET_PASSWORD, endpoint);
+		MatrixAccessRights.check(Role.ADMIN, Operation.RESET_PASSWORD, endpoint);
 	}
 
 	@Test
 	public void sUserCreateTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.SUPER_USER, Operation.CREATE, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.CREATE, endpoint);
 	}
 
 	@Test
 	public void sUserReadTest() {
-		AccessRights.check(Role.SUPER_USER, Operation.READ, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.READ, endpoint);
 	}
 
 	@Test
 	public void sUserUpdateTest() {
-		AccessRights.check(Role.SUPER_USER, Operation.UPDATE, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.UPDATE, endpoint);
 	}
 
 	@Test
 	public void sUserDeleteTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.SUPER_USER, Operation.DELETE, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.DELETE, endpoint);
 	}
 
 	@Test
 	public void sUserReadAllTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.SUPER_USER, Operation.READ_ALL, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.READ_ALL, endpoint);
 	}
 
 	@Test
 	public void sUserResetPasswordTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.SUPER_USER, Operation.RESET_PASSWORD, endpoint);
+		MatrixAccessRights.check(Role.SUPER_USER, Operation.RESET_PASSWORD, endpoint);
 	}
 
 	@Test
 	public void userCreateTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.USER, Operation.CREATE, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.CREATE, endpoint);
 	}
 
 	@Test
 	public void userReadTest() {
-		AccessRights.check(Role.USER, Operation.READ, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.READ, endpoint);
 	}
 
 	@Test
 	public void userUpdateTest() {
-		AccessRights.check(Role.USER, Operation.UPDATE, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.UPDATE, endpoint);
 	}
 
 	@Test
 	public void userDeleteTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.USER, Operation.DELETE, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.DELETE, endpoint);
 	}
 
 	@Test
 	public void userReadAllTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.USER, Operation.READ_ALL, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.READ_ALL, endpoint);
 	}
 
 	@Test
 	public void userResetPasswordTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.USER, Operation.RESET_PASSWORD, endpoint);
+		MatrixAccessRights.check(Role.USER, Operation.RESET_PASSWORD, endpoint);
 	}
 
 	@Test
 	public void webCreateTest() {
-		AccessRights.check(Role.EPICKUR_WEB, Operation.CREATE, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.CREATE, endpoint);
 	}
 
 	@Test
 	public void webReadTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.EPICKUR_WEB, Operation.READ, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.READ, endpoint);
 	}
 
 	@Test
 	public void webUpdateTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.EPICKUR_WEB, Operation.UPDATE, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.UPDATE, endpoint);
 	}
 
 	@Test
 	public void webDeleteTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.EPICKUR_WEB, Operation.DELETE, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.DELETE, endpoint);
 	}
 
 	@Test
 	public void webReadAllTest() {
 		thrown.expect(EpickurForbiddenException.class);
-		AccessRights.check(Role.EPICKUR_WEB, Operation.READ_ALL, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.READ_ALL, endpoint);
 	}
 
 	@Test
 	public void webResetPasswordTest() {
-		AccessRights.check(Role.EPICKUR_WEB, Operation.RESET_PASSWORD, endpoint);
+		MatrixAccessRights.check(Role.EPICKUR_WEB, Operation.RESET_PASSWORD, endpoint);
 	}
 }

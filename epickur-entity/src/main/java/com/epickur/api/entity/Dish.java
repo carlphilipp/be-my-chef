@@ -38,6 +38,7 @@ import lombok.ToString;
  * @author cph
  * @version 1.0
  */
+//@DishValidate(groups = Create.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "description", "type", "price", "cookingTime", "difficultyLevel", "videoUrl", "nutritionFacts",
 		"ingredients", "condiments", "steps", "utensils", "caterer", "createdAt", "updatedAt" })

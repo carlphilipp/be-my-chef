@@ -1,6 +1,6 @@
 package com.epickur.api.service;
 
-import com.epickur.api.aop.ValidateRequestBefore;
+import com.epickur.api.aop.ValidateComplexAccessRights;
 import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
@@ -72,7 +72,7 @@ public class DishService {
 	 * @return the updated {@link Dish}
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
-	@ValidateRequestBefore(operation = UPDATE, type = DISH)
+	@ValidateComplexAccessRights(operation = UPDATE, type = DISH)
 	public Dish update(final Dish dish) throws EpickurException {
 		dish.prepareForUpdateIntoDB();
 		return dao.update(dish);
@@ -85,7 +85,7 @@ public class DishService {
 	 * @return true if the {@link Dish} has been deleted
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
-	@ValidateRequestBefore(operation = DELETE, type = DISH)
+	@ValidateComplexAccessRights(operation = DELETE, type = DISH)
 	public boolean delete(final String id) throws EpickurException {
 		return dao.delete(id);
 	}

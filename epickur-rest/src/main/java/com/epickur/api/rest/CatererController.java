@@ -1,6 +1,6 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.aop.ValidateRequest;
+import com.epickur.api.aop.ValidateSimpleAccessRights;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
@@ -127,7 +127,7 @@ public class CatererController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = CREATE, endpoint = CATERER)
+	@ValidateSimpleAccessRights(operation = CREATE, endpoint = CATERER)
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(@RequestBody final Caterer caterer) throws EpickurException {
 		Key key = (Key) request.getAttribute("key");
@@ -196,7 +196,7 @@ public class CatererController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = READ, endpoint = CATERER)
+	@ValidateSimpleAccessRights(operation = READ, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		Caterer caterer = catererService.read(id);
@@ -276,7 +276,7 @@ public class CatererController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = UPDATE, endpoint = CATERER)
+	@ValidateSimpleAccessRights(operation = UPDATE, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(
 			@PathVariable("id") final String id,
@@ -317,7 +317,7 @@ public class CatererController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = DELETE, endpoint = CATERER)
+	@ValidateSimpleAccessRights(operation = DELETE, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(
 			@PathVariable("id") final String id) throws EpickurException {
@@ -391,7 +391,7 @@ public class CatererController {
 	 * @return The response.
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
-	@ValidateRequest(operation = READ_ALL, endpoint = CATERER)
+	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = CATERER)
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
 		List<Caterer> caterers = catererService.readAll();
@@ -507,7 +507,7 @@ public class CatererController {
 	 * @return The response.
 	 * @throws EpickurException If an Epickur exception occurred.
 	 */
-	@ValidateRequest(operation = READ_DISHES, endpoint = CATERER)
+	@ValidateSimpleAccessRights(operation = READ_DISHES, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/dishes", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readDishes(@PathVariable("id") final String catererId) throws EpickurException {
 		List<Dish> dishes = dishService.searchDishesForOneCaterer(catererId);
@@ -550,7 +550,7 @@ public class CatererController {
 	 * @return A Response
 	 * @throws EpickurException If an EpickurException occured
 	 */
-	@ValidateRequest(operation = PAYEMENT_INFO, endpoint = CATERER)
+	@ValidateSimpleAccessRights(operation = PAYEMENT_INFO, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/paymentInfo", method = RequestMethod.GET, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			"application/pdf" }, produces = { MediaType.APPLICATION_JSON_VALUE, "application/pdf" })
 	public ResponseEntity<?> paymentInfo(

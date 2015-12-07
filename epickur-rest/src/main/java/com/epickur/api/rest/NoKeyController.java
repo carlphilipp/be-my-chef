@@ -1,6 +1,6 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.aop.ValidateRequest;
+import com.epickur.api.aop.ValidateSimpleAccessRights;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
@@ -209,7 +209,7 @@ public class NoKeyController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@ValidateRequest(operation = RESET_PASSWORD, endpoint = NO_KEY)
+	@ValidateSimpleAccessRights(operation = RESET_PASSWORD, endpoint = NO_KEY)
 	@RequestMapping(value = "/reset/users/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> resetPasswordSecondStep(
 			@PathVariable("id") final String id,
