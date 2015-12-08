@@ -10,7 +10,7 @@ import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.epickur.api.validator.Create;
 import com.epickur.api.validator.Update;
 import com.epickur.api.validator.UserUpdateValidate;
-import com.epickur.api.validator.UserValidate;
+import com.epickur.api.validator.UserCreateValidate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -35,7 +35,7 @@ import java.io.IOException;
  * @author cph
  * @version 1.0
  */
-@UserValidate(groups = Create.class)
+@UserCreateValidate(groups = Create.class)
 @UserUpdateValidate(groups = Update.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "role", "phoneNumber", "zipcode", "state", "country", "allow",
