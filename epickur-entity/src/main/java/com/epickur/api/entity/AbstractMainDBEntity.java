@@ -1,13 +1,5 @@
 package com.epickur.api.entity;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Map.Entry;
-
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-
 import com.epickur.api.entity.deserialize.DateDeserializer;
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.serialize.DateSerializer;
@@ -16,12 +8,14 @@ import com.epickur.api.exception.EpickurParsingException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.*;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -30,11 +24,17 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 public abstract class AbstractMainDBEntity extends AbstractEntity {
 
-	/** Id */
+	/**
+	 * Id
+	 */
 	private ObjectId id;
-	/** Created at */
+	/**
+	 * Created at
+	 */
 	private DateTime createdAt;
-	/** Updated at */
+	/**
+	 * Updated at
+	 */
 	private DateTime updatedAt;
 
 	/**
@@ -46,8 +46,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	}
 
 	/**
-	 * @param id
-	 *            An ObjectId
+	 * @param id An ObjectId
 	 */
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public final void setId(final ObjectId id) {
@@ -63,8 +62,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	}
 
 	/**
-	 * @param createdAt
-	 *            The creation date
+	 * @param createdAt The creation date
 	 */
 	@JsonDeserialize(using = DateDeserializer.class)
 	public void setCreatedAt(final DateTime createdAt) {
@@ -80,8 +78,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	}
 
 	/**
-	 * @param updatedAt
-	 *            The updated date
+	 * @param updatedAt The updated date
 	 */
 	@JsonDeserialize(using = DateDeserializer.class)
 	public void setUpdatedAt(final DateTime updatedAt) {
@@ -107,11 +104,10 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 		this.setCreatedAt(null);
 		this.setUpdatedAt(time);
 	}
-	
+
 	/**
 	 * @return a Document
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	@JsonIgnore
 	public Document getUpdateQuery() throws EpickurParsingException {

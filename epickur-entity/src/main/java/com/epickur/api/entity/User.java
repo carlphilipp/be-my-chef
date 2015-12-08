@@ -7,10 +7,6 @@ import com.epickur.api.entity.serialize.RoleSerializer;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
-import com.epickur.api.validator.Create;
-import com.epickur.api.validator.Update;
-import com.epickur.api.validator.UserUpdateValidate;
-import com.epickur.api.validator.UserCreateValidate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -26,7 +22,9 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
+import org.hibernate.validator.constraints.Email;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 /**
@@ -35,8 +33,8 @@ import java.io.IOException;
  * @author cph
  * @version 1.0
  */
-@UserCreateValidate(groups = Create.class)
-@UserUpdateValidate(groups = Update.class)
+//@UserCreateValidate(groups = Create.class)
+//@UserUpdateValidate(groups = Update.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "role", "phoneNumber", "zipcode", "state", "country", "allow",
 		"key", "allow", "createdAt", "updatedAt" })
@@ -52,22 +50,28 @@ public class User extends AbstractMainDBEntity {
 	/**
 	 * Name
 	 */
+	@NotNull(message = "{user.name.null}")
 	private String name;
 	/**
 	 * First
 	 */
+	@NotNull(message = "{user.first.null}")
 	private String first;
 	/**
 	 * Last
 	 */
+	@NotNull(message = "{user.last.null}")
 	private String last;
 	/**
 	 * Password
 	 */
+	@NotNull(message = "{user.password.null}")
 	private String password;
 	/**
 	 * Email
 	 */
+	@NotNull(message = "{user.email.null}")
+	@Email
 	private String email;
 	/**
 	 * Phone number
@@ -76,15 +80,19 @@ public class User extends AbstractMainDBEntity {
 	/**
 	 * Zip code
 	 */
+	@NotNull(message = "{user.zipcode.null}")
 	private String zipcode;
 	/**
 	 * State
 	 */
+	@NotNull(message = "{user.state.null}")
 	private String state;
 	/**
 	 * Country
 	 */
+	@NotNull(message = "{user.country.null}")
 	private String country;
+
 	/**
 	 * Indicate if allowed to login
 	 */
