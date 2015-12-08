@@ -270,10 +270,8 @@
 								</goals>
 								<configuration>
 									<target>
-										<delete file="Delete ${env.CATALINA_BASE}/webapps/${war.name}.war"/>
-										<!--
+										<delete file="${env.CATALINA_BASE}/webapps/${war.name}.war"/>
 										<delete dir="${env.CATALINA_BASE}/webapps/${war.name}"/>
-										-->
 										<copy file="target/${war.name}.war" todir="${env.CATALINA_BASE}/webapps/"/>
 									</target>
 								</configuration>

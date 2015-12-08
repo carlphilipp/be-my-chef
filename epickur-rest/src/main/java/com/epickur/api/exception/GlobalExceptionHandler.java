@@ -1,9 +1,9 @@
 package com.epickur.api.exception;
 
-import com.epickur.api.web.ResponseError;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.web.ResponseError;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,12 +12,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +42,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	 */
 	@Autowired
 	private HttpServletRequest context;
+
+	@Override
+	protected ResponseEntity handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+		ErrorMessage errorMessage = new ErrorMessage();
+		errorMessage.setError(HttpStatus.BAD_REQUEST.value());
+		errorMessage.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
+		LOG.warn("Fatal Error: {} {}", ex.getMessage(), ex.getClass(), ex);
+		return new ResponseEntity<Object>(errorMessage, getHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 	@ExceptionHandler({ Throwable.class, Exception.class })
 	public ResponseEntity<?> handleThrowable(final Throwable throwable) {
@@ -164,5 +175,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		Key key = (Key) context.getAttribute("key");
 		LOG.warn("MethodArgumentNotValidException {} {}", message.getDescriptions(), key.toString());
 		return new ResponseEntity<>(message, getHeaders(), HttpStatus.BAD_REQUEST);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status,
+			WebRequest request) {
+		ErrorMessage message = new ErrorMessage();
+		message.setError(status.value());
+		message.setMessage(status.getReasonPhrase());
+		message.addDescription("Required request body is probably  missing");
+		Key key = (Key) context.getAttribute("key");
+		LOG.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getMessage(), key.getKey(), key.getUserId(), key.getRole());
+		return new ResponseEntity<>(message, headers, status);
 	}
 }

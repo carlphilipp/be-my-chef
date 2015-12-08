@@ -13,6 +13,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 
 public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
@@ -53,6 +54,11 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 		servletContext.addListener(QuartzInitializerListener.class);
 		startupJobs();
 		super.onStartup(servletContext);
+	}
+
+	@Override
+	protected void customizeRegistration(final ServletRegistration.Dynamic registration) {
+		registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
 	}
 
 	private void startupJobs() {

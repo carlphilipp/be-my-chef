@@ -20,60 +20,6 @@ public class UserValidatorTest {
 	public ExpectedException thrown = ExpectedException.none();
 
 	@Test
-	public void testCheckUpdateUser3() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field user.password is mandatory when a new password is provided");
-
-		UserValidator validator = new UserValidator();
-		User user = EntityGenerator.generateRandomUser();
-		user.setNewPassword("test");
-		user.setPassword(null);
-		validator.checkUpdateUser(new ObjectId().toHexString(), user);
-	}
-
-	@Test
-	public void testCheckUpdateUser5() {
-		UserValidator validator = new UserValidator();
-		User user = EntityGenerator.generateRandomUser();
-		ObjectId id = new ObjectId();
-		user.setId(id);
-		user.setRole(null);
-		validator.checkUpdateUser(id.toHexString(), user);
-	}
-
-	@Test
-	public void testCheckUpdateUser7() {
-		UserValidator validator = new UserValidator();
-		User user = EntityGenerator.generateRandomUser();
-		user.setId(new ObjectId());
-		user.setNewPassword("password");
-		user.setPassword("password");
-		user.setAllow(null);
-		validator.checkUpdateUser(user.getId().toHexString(), user);
-	}
-
-	@Test
-	public void testCheckUpdateUser8() {
-		UserValidator validator = new UserValidator();
-		User user = EntityGenerator.generateRandomUser();
-		ObjectId id = new ObjectId();
-		user.setId(id);
-		user.setRole(Role.ADMIN);
-		validator.checkUpdateUser(id.toHexString(), user);
-	}
-
-	@Test
-	public void testCheckUpdateUser9() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The parameter id and the field user.id should match");
-
-		UserValidator validator = new UserValidator();
-		User user = EntityGenerator.generateRandomUser();
-		user.setId(new ObjectId());
-		validator.checkUpdateUser(new ObjectId().toHexString(), user);
-	}
-
-	@Test
 	public void testCheckUpdateOneOrder() {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage("The field order.id is not allowed to be null or empty");

@@ -5,6 +5,7 @@ import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.serialize.DateSerializer;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.exception.EpickurParsingException;
+import com.epickur.api.validator.operation.Update;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -13,6 +14,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
+import javax.validation.constraints.NotNull;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -27,6 +29,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	/**
 	 * Id
 	 */
+	@NotNull(message = "{id.null}", groups = { Update.class })
 	private ObjectId id;
 	/**
 	 * Created at

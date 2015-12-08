@@ -7,6 +7,7 @@ import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
+import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.validator.*;
@@ -146,7 +147,9 @@ public class SimpleAccessRightsAspect {
 		if (operation == UPDATE) {
 			String id = (String) args[0];
 			User user = (User) args[1];
-			userValidator.checkUpdateUser(id, user);
+			if (!user.getId().toHexString().equals(id)) {
+				throw new EpickurIllegalArgument("The parameter id and the field user.id should match");
+			}
 		} else if (operation == RESET_PASSWORD) {
 			ObjectNode node = (ObjectNode) args[0];
 			userValidator.checkResetPasswordData(node);

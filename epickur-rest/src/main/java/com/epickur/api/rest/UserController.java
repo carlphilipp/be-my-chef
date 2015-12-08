@@ -7,7 +7,8 @@ import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import com.epickur.api.validator.Update;
+import com.epickur.api.validator.operation.Create;
+import com.epickur.api.validator.operation.Update;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +102,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(
 			@RequestHeader(value = "validate-agent", defaultValue = "false") final boolean autoValidate,
-			@RequestBody @Validated final User user)
+			@RequestBody @Validated(Create.class) final User user)
 			throws EpickurException {
 		User result = userService.create(user, autoValidate);
 		// We add to the header the check code. Can be useful for tests or developers.
@@ -214,6 +215,10 @@ public class UserController {
 			// whatever irrelevant value that could have been sent in request
 			// field "password".
 			user.setPassword(null);
+		}
+		// TODO to move in service or User
+		if (user.getAllow() != null) {
+			user.setAllow(null);
 		}
 		User result = userService.update(user);
 		return new ResponseEntity<>(result, HttpStatus.OK);
