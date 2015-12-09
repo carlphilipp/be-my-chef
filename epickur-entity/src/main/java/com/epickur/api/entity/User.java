@@ -8,8 +8,8 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.epickur.api.validator.annotation.ChangePasswordValidate;
-import com.epickur.api.validator.operation.Create;
 import com.epickur.api.validator.annotation.PhoneNumberValidate;
+import com.epickur.api.validator.operation.Create;
 import com.epickur.api.validator.operation.Update;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,8 +26,8 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
+import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 /**
@@ -52,7 +52,7 @@ public class User extends AbstractMainDBEntity {
 	/**
 	 * Name
 	 */
-	@NotNull(message = "{user.name.null}", groups = { Create.class })
+	@NotBlank(message = "{user.name.null}", groups = { Create.class })
 	private String name;
 	/**
 	 * First
@@ -65,12 +65,12 @@ public class User extends AbstractMainDBEntity {
 	/**
 	 * Password
 	 */
-	@NotNull(message = "{user.password.null}", groups = { Create.class })
+	@NotBlank(message = "{user.password.null}", groups = { Create.class })
 	private String password;
 	/**
 	 * Email
 	 */
-	@NotNull(message = "{user.email.null}", groups = { Create.class })
+	@NotBlank(message = "{user.email.null}", groups = { Create.class })
 	private String email;
 	/**
 	 * Phone number
@@ -80,17 +80,17 @@ public class User extends AbstractMainDBEntity {
 	/**
 	 * Zip code
 	 */
-	@NotNull(message = "{user.zipcode.null}", groups = { Create.class })
+	@NotBlank(message = "{user.zipcode.null}", groups = { Create.class })
 	private String zipcode;
 	/**
 	 * State
 	 */
-	@NotNull(message = "{user.state.null}", groups = { Create.class })
+	@NotBlank(message = "{user.state.null}", groups = { Create.class })
 	private String state;
 	/**
 	 * Country
 	 */
-	@NotNull(message = "{user.country.null}", groups = { Create.class })
+	@NotBlank(message = "{user.country.null}", groups = { Create.class })
 	private String country;
 
 	/**

@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 import static com.epickur.api.enumeration.EndpointType.ORDER;
@@ -366,7 +367,6 @@ public class UserController {
 	public ResponseEntity<?> readOneOrder(
 			@PathVariable("id") final String id,
 			@PathVariable("orderId") final String orderId) throws EpickurException {
-		// FIXME Check why id is not used and probably check stuff around users
 		Order order = orderService.readOrder(orderId);
 		return new ResponseEntity<>(order, HttpStatus.OK);
 	}
@@ -514,7 +514,7 @@ public class UserController {
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> createOneOrder(
 			@PathVariable("id") final String userId,
-			@RequestBody final Order order) throws EpickurException {
+			@RequestBody @Validated(Create.class) final Order order) throws EpickurException {
 		Order result = orderService.create(userId, order);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
@@ -581,7 +581,7 @@ public class UserController {
 	public ResponseEntity<?> updateOneOrder(
 			@PathVariable("id") final String id,
 			@PathVariable("orderId") final String orderId,
-			@RequestBody final Order order) throws EpickurException {
+			@RequestBody @Validated(Update.class) final Order order) throws EpickurException {
 		Order result = orderService.update(order);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}

@@ -1,17 +1,5 @@
 package com.epickur.api.entity;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.json.JsonMode;
-import org.bson.json.JsonWriterSettings;
-import org.bson.types.ObjectId;
-
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.deserialize.OrderStatusDeserializer;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
@@ -22,60 +10,112 @@ import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
+import com.epickur.api.validator.annotation.PickupdateValidate;
+import com.epickur.api.validator.operation.Create;
+import com.epickur.api.validator.operation.Update;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
+import org.bson.types.ObjectId;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Order entity
- * 
+ *
  * @author cph
  * @version 1.0
  */
+@PickupdateValidate(groups = { Create.class, Update.class })
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "readableId", "userId", "description", "quantity", "amount", "status", "currency", "pickupdate", "cardToken", "chargeId",
-		"paid", "dish", "voucher", "createdBy", "createdAt", "updatedAt" })
+@JsonPropertyOrder(value = { "id", "readableId", "userId", "description", "quantity", "amount", "status", "currency", "pickupdate", "cardToken",
+		"chargeId", "paid", "dish", "voucher", "createdBy", "createdAt", "updatedAt" })
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Order extends AbstractMainDBEntity {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(Order.class.getSimpleName());
-	/** Readable Id */
+	/**
+	 * Readable Id
+	 */
 	private String readableId;
-	/** Description */
+	/**
+	 * Description
+	 */
+	@NotBlank(message = "{order.description.null}", groups = { Create.class })
 	private String description;
-	/** Quantity */
+	/**
+	 * Quantity
+	 */
+	@NotNull(message = "{order.quantity.null}", groups = { Create.class })
 	private Integer quantity;
-	/** Amount */
+	/**
+	 * Amount
+	 */
+	@NotNull(message = "{order.amount.null}", groups = { Create.class })
 	private Integer amount;
-	/** Amount */
+	/**
+	 * Amount
+	 */
 	private OrderStatus status;
-	/** Currency */
+	/**
+	 * Currency
+	 */
+	@NotNull(message = "{order.currency.null}", groups = { Create.class })
 	private Currency currency;
-	/** Pickupdate */
+	/**
+	 * Pickupdate
+	 */
+	@NotBlank(message = "{order.pickupdate.null}", groups = { Create.class })
 	private String pickupdate;
-	/** Dish */
+	/**
+	 * Dish
+	 */
 	private Dish dish;
-	/** Voucher */
+	/**
+	 * Voucher
+	 */
 	private Voucher voucher;
-	/** Stripe Card Token */
+	/**
+	 * Stripe Card Token
+	 */
+	@NotBlank(message = "{order.cardToken.null}", groups = { Create.class })
 	private String cardToken;
-	/** ChargeId from Stripe */
+	/**
+	 * ChargeId from Stripe
+	 */
 	private String chargeId;
-	/** Indicate if paid */
+	/**
+	 * Indicate if paid
+	 */
 	private Boolean paid;
-	/** Order mode */
+	/**
+	 * Order mode
+	 */
 	private OrderMode mode;
-	/** Owner id */
+	/**
+	 * Owner id
+	 */
 	private ObjectId createdBy;
 
 	/**
@@ -87,8 +127,7 @@ public class Order extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param status
-	 *            The order status
+	 * @param status The order status
 	 */
 	@JsonDeserialize(using = OrderStatusDeserializer.class)
 	public void setStatus(final OrderStatus status) {
@@ -104,14 +143,13 @@ public class Order extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param createdBy
-	 *            The user id
+	 * @param createdBy The user id
 	 */
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setCreatedBy(final ObjectId createdBy) {
 		this.createdBy = createdBy;
 	}
-	
+
 	@Override
 	public void prepareForInsertionIntoDB() {
 		super.prepareForInsertionIntoDB();
@@ -147,8 +185,7 @@ public class Order extends AbstractMainDBEntity {
 
 	/**
 	 * @return The Document
-	 * @throws EpickurParsingException
-	 *             If a parsing exception occured
+	 * @throws EpickurParsingException If a parsing exception occured
 	 */
 	@JsonIgnore
 	@Override
@@ -217,22 +254,18 @@ public class Order extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param obj
-	 *            The Document
+	 * @param obj The Document
 	 * @return An Order
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	public static Order getDocumentAsOrder(final Document obj) throws EpickurParsingException {
 		return Order.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
-	 * @param json
-	 *            The json to convert
+	 * @param json The json to convert
 	 * @return An Order
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	private static Order getObject(final String json) throws EpickurParsingException {
 		Order user = null;

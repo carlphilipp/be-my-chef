@@ -19,27 +19,27 @@ public class UserValidatorTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	@Test
-	public void testCheckUpdateOneOrder() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field order.id is not allowed to be null or empty");
+//	@Test
+//	public void testCheckUpdateOneOrder() {
+//		thrown.expect(EpickurIllegalArgument.class);
+//		thrown.expectMessage("The field order.id is not allowed to be null or empty");
+//
+//		Order order = EntityGenerator.generateRandomOrder();
+//		order.setId(null);
+//		UserValidator validator = new UserValidator();
+//		validator.checkUpdateOneOrder(new ObjectId().toHexString(), order);
+//	}
 
-		Order order = EntityGenerator.generateRandomOrder();
-		order.setId(null);
-		UserValidator validator = new UserValidator();
-		validator.checkUpdateOneOrder(new ObjectId().toHexString(), order);
-	}
-
-	@Test
-	public void testCheckUpdateOneOrder2() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The parameter orderId and the field order.id should match");
-
-		Order order = EntityGenerator.generateRandomOrder();
-		order.setId(new ObjectId());
-		UserValidator validator = new UserValidator();
-		validator.checkUpdateOneOrder(new ObjectId().toHexString(), order);
-	}
+//	@Test
+//	public void testCheckUpdateOneOrder2() {
+//		thrown.expect(EpickurIllegalArgument.class);
+//		thrown.expectMessage("The parameter orderId and the field order.id should match");
+//
+//		Order order = EntityGenerator.generateRandomOrder();
+//		order.setId(new ObjectId());
+//		UserValidator validator = new UserValidator();
+//		validator.checkUpdateOneOrder(new ObjectId().toHexString(), order);
+//	}
 
 	@Test
 	public void testCheckCheckUser() {
@@ -50,91 +50,91 @@ public class UserValidatorTest {
 		validator.checkCheckUser("id", null);
 	}
 
-	@Test
-	public void testCheckCreateOneOrder() {
-		UserValidator validator = new UserValidator();
-		Order order = EntityGenerator.generateRandomOrder();
-		validator.checkCreateOneOrder(order);
-	}
+//	@Test
+//	public void testCheckCreateOneOrder() {
+//		UserValidator validator = new UserValidator();
+//		Order order = EntityGenerator.generateRandomOrder();
+//		validator.checkCreateOneOrder(order);
+//	}
+//
+//	@Test
+//	public void testCheckCreateOneOrder2() {
+//		thrown.expect(EpickurIllegalArgument.class);
+//		thrown.expectMessage(Validator.NO_ORDER_PROVIDED);
+//
+//		UserValidator validator = new UserValidator();
+//		Order order = null;
+//		validator.checkCreateOneOrder(order);
+//	}
 
-	@Test
-	public void testCheckCreateOneOrder2() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage(Validator.NO_ORDER_PROVIDED);
+//	@Test
+//	public void testCheckCreateOneOrder3() {
+//		thrown.expect(EpickurIllegalArgument.class);
+//		thrown.expectMessage("The field order.cardToken is not allowed to be null or empty");
+//
+//		UserValidator validator = new UserValidator();
+//		Order order = EntityGenerator.generateRandomOrder();
+//		order.setCardToken(null);
+//		validator.checkCreateOneOrder(order);
+//	}
+//
+//	@Test
+//	public void testCheckCreateOneOrder4() {
+//		thrown.expect(EpickurIllegalArgument.class);
+//		thrown.expectMessage("The field order.description is not allowed to be null or empty");
+//
+//		UserValidator validator = new UserValidator();
+//		Order order = EntityGenerator.generateRandomOrder();
+//		order.setDescription(null);
+//		validator.checkCreateOneOrder(order);
+//	}
+//
+//	@Test
+//	public void testCheckCreateOneOrder5() {
+//		thrown.expect(EpickurIllegalArgument.class);
+//		thrown.expectMessage("The field order.amount is not allowed to be null or empty");
+//
+//		UserValidator validator = new UserValidator();
+//		Order order = EntityGenerator.generateRandomOrder();
+//		order.setAmount(null);
+//		validator.checkCreateOneOrder(order);
+//	}
+//
+//	@Test
+//	public void testCheckCreateOneOrder6() {
+//		thrown.expect(EpickurIllegalArgument.class);
+//		thrown.expectMessage("The field order.currency is not allowed to be null or empty");
+//
+//		UserValidator validator = new UserValidator();
+//		Order order = EntityGenerator.generateRandomOrder();
+//		order.setCurrency(null);
+//		validator.checkCreateOneOrder(order);
+//
+//	}
+//
+//	@Test
+//	public void testCheckCreateOneOrder7() {
+//		thrown.expect(EpickurIllegalArgument.class);
+//		thrown.expectMessage("The field order.pickupdate is not allowed to be null or empty");
+//
+//		UserValidator validator = new UserValidator();
+//		Order order = EntityGenerator.generateRandomOrder();
+//		order.setPickupdate(null);
+//		validator.checkCreateOneOrder(order);
+//
+//	}
 
-		UserValidator validator = new UserValidator();
-		Order order = null;
-		validator.checkCreateOneOrder(order);
-	}
-
-	@Test
-	public void testCheckCreateOneOrder3() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field order.cardToken is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = EntityGenerator.generateRandomOrder();
-		order.setCardToken(null);
-		validator.checkCreateOneOrder(order);
-	}
-
-	@Test
-	public void testCheckCreateOneOrder4() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field order.description is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = EntityGenerator.generateRandomOrder();
-		order.setDescription(null);
-		validator.checkCreateOneOrder(order);
-	}
-
-	@Test
-	public void testCheckCreateOneOrder5() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field order.amount is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = EntityGenerator.generateRandomOrder();
-		order.setAmount(null);
-		validator.checkCreateOneOrder(order);
-	}
-
-	@Test
-	public void testCheckCreateOneOrder6() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field order.currency is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = EntityGenerator.generateRandomOrder();
-		order.setCurrency(null);
-		validator.checkCreateOneOrder(order);
-
-	}
-
-	@Test
-	public void testCheckCreateOneOrder7() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field order.pickupdate is not allowed to be null or empty");
-
-		UserValidator validator = new UserValidator();
-		Order order = EntityGenerator.generateRandomOrder();
-		order.setPickupdate(null);
-		validator.checkCreateOneOrder(order);
-
-	}
-
-	@Test
-	public void testCheckCreateOneOrder8() {
-		thrown.expect(EpickurIllegalArgument.class);
-		thrown.expectMessage("The field order.paid can not be true");
-
-		UserValidator validator = new UserValidator();
-		Order order = EntityGenerator.generateRandomOrder();
-		order.setPaid(true);
-		validator.checkCreateOneOrder(order);
-
-	}
+//	@Test
+//	public void testCheckCreateOneOrder8() {
+//		thrown.expect(EpickurIllegalArgument.class);
+//		thrown.expectMessage("The field order.paid can not be true");
+//
+//		UserValidator validator = new UserValidator();
+//		Order order = EntityGenerator.generateRandomOrder();
+//		order.setPaid(true);
+//		validator.checkCreateOneOrder(order);
+//
+//	}
 
 	@Test
 	public void testCheckRightsAfter() throws EpickurException {

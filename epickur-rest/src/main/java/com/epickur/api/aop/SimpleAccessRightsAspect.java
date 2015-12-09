@@ -157,13 +157,16 @@ public class SimpleAccessRightsAspect {
 	}
 
 	private void handleOrder(final Operation operation, final Object[] args) throws EpickurException {
-		if (operation == CREATE) {
-			Order order = (Order) args[1];
-			userValidator.checkCreateOneOrder(order);
-		} else if (operation == UPDATE) {
-			String id = (String) args[1];
+		if (operation == UPDATE) {
+			String orderId = (String) args[1];
 			Order order = (Order) args[2];
-			userValidator.checkUpdateOneOrder(id, order);
+			if (!order.getId().toHexString().equals(orderId)) {
+				throw new EpickurIllegalArgument("The parameter orderId and the field order.id should match");
+			}
+		} else if (operation == READ){
+			String userId = (String) args[0];
+			String orderId = (String) args[1];
+			userValidator.checkReadOneOrder(userId, orderId);
 		}
 	}
 }

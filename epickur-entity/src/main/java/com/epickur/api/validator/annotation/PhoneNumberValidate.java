@@ -21,7 +21,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface PhoneNumberValidate {
 
-	String message() default "{phoneNumber.default}";
+	String message() default "{user.phoneNumber}";
 
 	Class<?>[] groups() default {};
 
@@ -31,7 +31,6 @@ public @interface PhoneNumberValidate {
 	public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberValidate, PhoneNumber> {
 		@Override
 		public void initialize(PhoneNumberValidate constraintAnnotation) {
-
 		}
 
 		@Override

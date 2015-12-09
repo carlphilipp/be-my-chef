@@ -46,61 +46,54 @@ public class UserValidator extends Validator {
 		checkId(orderId);
 	}
 
-	/**
-	 * @param order The Order
-	 */
-	public void checkCreateOneOrder(final Order order) {
-		if (order == null) {
-			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
-		} else {
-			DishValidator validator = new DishValidator();
-			validator.checkCreateData(order.getDish());
-			if (StringUtils.isBlank(order.getCardToken())) {
-				throw new EpickurIllegalArgument(fieldNull("order", "cardToken"));
-			}
-			if (StringUtils.isBlank(order.getDescription())) {
-				throw new EpickurIllegalArgument(fieldNull("order", "description"));
-			}
-			if (order.getQuantity() == null) {
-				throw new EpickurIllegalArgument(fieldNull("order", "quantity"));
-			}
-			if (order.getAmount() == null) {
-				throw new EpickurIllegalArgument(fieldNull("order", "amount"));
-			}
-			if (order.getCurrency() == null) {
-				throw new EpickurIllegalArgument(fieldNull("order", "currency"));
-			}
-			if (StringUtils.isBlank(order.getPickupdate())) {
-				throw new EpickurIllegalArgument(fieldNull("order", "pickupdate"));
-			} else {
-				Object[] result = CommonsUtil.parsePickupdate(order.getPickupdate());
-				if (result == null) {
-					throw new EpickurIllegalArgument(
-							"The field order.pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
-									+ order.getPickupdate());
-				} else {
-					Caterer caterer = order.getDish().getCaterer();
-					WorkingTimes workingTimes = caterer.getWorkingTimes();
-					if (!workingTimes.canBePickup((String) result[0], (Integer) result[1])) {
-						LOG.info("1: " + (String) result[0]);
-						LOG.info("2: " + result[1]);
-						try {
-							LOG.info("Hours: " + workingTimes.getHours().toStringAPIView());
-						} catch (EpickurParsingException e) {
-							LOG.error(e.getLocalizedMessage(), e);
-						}
-						throw new EpickurIllegalArgument("The order has a wrong pickupdate");
-					}
-				}
-			}
-			if (order.getPaid() != null && order.getPaid()) {
-				throw new EpickurIllegalArgument("The field order.paid can not be true");
-			}
-			if (order.getVoucher() != null) {
-				checkVoucherData(order.getVoucher());
-			}
-		}
-	}
+//	/**
+//	 * @param order The Order
+//	 */
+//	public void checkCreateOneOrder(final Order order) {
+//		if (order == null) {
+//			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
+//		} else {
+//			DishValidator validator = new DishValidator();
+//			validator.checkCreateData(order.getDish());
+//			if (StringUtils.isBlank(order.getCardToken())) {
+//				throw new EpickurIllegalArgument(fieldNull("order", "cardToken"));
+//			}
+//			if (StringUtils.isBlank(order.getDescription())) {
+//				throw new EpickurIllegalArgument(fieldNull("order", "description"));
+//			}
+//			if (order.getQuantity() == null) {
+//				throw new EpickurIllegalArgument(fieldNull("order", "quantity"));
+//			}
+//			if (order.getAmount() == null) {
+//				throw new EpickurIllegalArgument(fieldNull("order", "amount"));
+//			}
+//			if (order.getCurrency() == null) {
+//				throw new EpickurIllegalArgument(fieldNull("order", "currency"));
+//			}
+//			if (StringUtils.isBlank(order.getPickupdate())) {
+//				throw new EpickurIllegalArgument(fieldNull("order", "pickupdate"));
+//			} else {
+//				Object[] result = CommonsUtil.parsePickupdate(order.getPickupdate());
+//				if (result == null) {
+//					throw new EpickurIllegalArgument(
+//							"The field order.pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
+//									+ order.getPickupdate());
+//				} else {
+//					Caterer caterer = order.getDish().getCaterer();
+//					WorkingTimes workingTimes = caterer.getWorkingTimes();
+//					if (!workingTimes.canBePickup((String) result[0], (Integer) result[1])) {
+//						throw new EpickurIllegalArgument("The order has a wrong pickupdate");
+//					}
+//				}
+//			}
+//			if (order.getPaid() != null && order.getPaid()) {
+//				throw new EpickurIllegalArgument("The field order.paid can not be true");
+//			}
+//			if (order.getVoucher() != null) {
+//				checkVoucherData(order.getVoucher());
+//			}
+//		}
+//	}
 
 	/**
 	 * @param voucher The voucher
@@ -114,17 +107,14 @@ public class UserValidator extends Validator {
 	 * @param orderId The Order id
 	 * @param order   The Order
 	 */
-	public void checkUpdateOneOrder(final String orderId, final Order order) {
-		if (order == null) {
-			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
-		}
-		if (order.getId() == null) {
-			throw new EpickurIllegalArgument(fieldNull("order", "id"));
-		}
-		if (!order.getId().toHexString().equals(orderId)) {
-			throw new EpickurIllegalArgument("The parameter orderId and the field order.id should match");
-		}
-	}
+//	public void checkUpdateOneOrder(final String orderId, final Order order) {
+//		if (order == null) {
+//			throw new EpickurIllegalArgument(NO_ORDER_PROVIDED);
+//		}
+//		if (!order.getId().toHexString().equals(orderId)) {
+//			throw new EpickurIllegalArgument("The parameter orderId and the field order.id should match");
+//		}
+//	}
 
 	/**
 	 * @param email The user email
