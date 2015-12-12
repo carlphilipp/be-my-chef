@@ -45,6 +45,8 @@ public class CancelOrderJobTest {
 	private JobExecutionContext context;
 	@Mock
 	private Scheduler scheduler;
+	@Mock
+	private VoucherService voucherService;
 	@InjectMocks
 	private CancelOrderJob orderJob;
 	

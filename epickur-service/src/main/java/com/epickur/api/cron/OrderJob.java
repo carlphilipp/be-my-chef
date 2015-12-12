@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
@@ -24,6 +25,8 @@ public class OrderJob {
 
 	@Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
+	@Value("${cron.order.timelimit}")
+	private Integer timeLimit;
 	/**
 	 * Order max time
 	 */
@@ -39,7 +42,7 @@ public class OrderJob {
 		String userId = user.getId().toHexString();
 		String orderId = order.getId().toHexString();
 		DateTime orderDate = order.getCreatedAt();
-		DateTime scheduleCancelDate = orderDate.plusMinutes(10);
+		DateTime scheduleCancelDate = orderDate.plusMinutes(timeLimit);
 		String identity = "cancelOrder_" + orderId;
 		JobDetail cancelOrder = JobBuilder.newJob(CancelOrderJob.class)
 				.withIdentity(identity)
