@@ -8,14 +8,10 @@ import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
-import com.epickur.api.payment.stripe.StripeTestUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,8 +20,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 /**
  * Utils class
@@ -36,10 +30,6 @@ import java.util.Properties;
 @Component
 public class Utils {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(Utils.class.getSimpleName());
 	@Autowired
 	public EpickurProperties properties;
 
@@ -62,55 +52,6 @@ public class Utils {
 			res = false;
 		}
 		return res;
-	}
-
-	/**
-	 * Get properties from a property file
-	 *
-	 * @return A properties file
-	 */
-	public Properties getEpickurProperties() {
-		Properties prop = new Properties();
-		try {
-			prop.load(Utils.class.getClassLoader().getResourceAsStream("epickur.properties"));
-			if (prop.getProperty("address").equals("${address}")) {
-				LOG.trace("Loading local properties...");
-				prop = loadLocal(prop);
-			}
-		} catch (IOException e) {
-			LOG.error(e.getLocalizedMessage(), e);
-		}
-		return prop;
-	}
-
-	/**
-	 * Get properties from a the local file. Used only to inject param at run time for eclipse. Not needed for Maven
-	 *
-	 * @param properties The properties we want to inject some new properties in.
-	 * @return The new properties
-	 */
-	private Properties loadLocal(final Properties properties) {
-		final Properties prop = new Properties();
-		InputStream in = null;
-		try {
-			in = Utils.class.getResource("/env/local.properties").openStream();
-			prop.load(in);
-			for (final Entry<Object, Object> e : prop.entrySet()) {
-				properties.put(e.getKey(), e.getValue());
-			}
-			injectStripeInProperties(properties);
-		} catch (final Exception e) {
-			LOG.error("Can't load resource env/local.properties. Please create it and put the right value in it.", e);
-		} finally {
-			IOUtils.closeQuietly(in);
-		}
-		return properties;
-	}
-
-	private void injectStripeInProperties(final Properties properties) {
-		final String stripeKey = StripeTestUtils.getStripeTestKey();
-		LOG.trace("Injecting stripe key into property file: {}", stripeKey);
-		properties.put("stripe.key", stripeKey);
 	}
 
 	/**

@@ -32,9 +32,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * Order entity
@@ -228,7 +226,7 @@ public class Order extends AbstractMainDBEntity {
 				final Document v = new Document();
 				resultSet.put("voucher", v);
 				final Document voucherDoc = (Document) found.get("voucher");
-				for (final Entry<String, Object> entry :  voucherDoc.entrySet()) {
+				for (final Entry<String, Object> entry : voucherDoc.entrySet()) {
 					final String key2 = entry.getKey();
 					if (key2.equals("id")) {
 						v.put("_id", voucherDoc.get("id"));

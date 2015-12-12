@@ -14,7 +14,6 @@ import com.epickur.api.exception.EpickurIllegalArgument;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 

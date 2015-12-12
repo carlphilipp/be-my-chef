@@ -2,7 +2,6 @@ package com.epickur.api.validator;
 
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
-import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.enumeration.Role;
@@ -45,10 +44,10 @@ public class UserValidator extends Validator {
 	/**
 	 * @param voucher The voucher
 	 */
-//	private void checkVoucherData(final Voucher voucher) {
-//		VoucherValidator validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
-//		validator.checkVoucher(voucher, "order");
-//	}
+	//	private void checkVoucherData(final Voucher voucher) {
+	//		VoucherValidator validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
+	//		validator.checkVoucher(voucher, "order");
+	//	}
 
 	/**
 	 * @param email The user email

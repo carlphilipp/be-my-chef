@@ -38,7 +38,7 @@ public class MongoDBDumpJob {
 			final List<String> list = mongoDBDump.getListFiles();
 			CommonsUtil.createTarGz(list, mongoDBDump.getCurrentFullPathName());
 			LOG.info("tar.gz generated: " + mongoDBDump.getCurrentFullPathName());
-			
+
 			aws.deleteOldFile();
 			aws.uploadFile(mongoDBDump.getCurrentFullPathName());
 

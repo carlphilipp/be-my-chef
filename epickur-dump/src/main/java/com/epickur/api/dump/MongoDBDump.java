@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -17,7 +16,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Create a MongoDB dump.
@@ -74,7 +72,7 @@ public final class MongoDBDump {
 	}
 
 	@PostConstruct
-	public void postConstruct(){
+	public void postConstruct() {
 		this.backupFolder = new File(properties.getMongoBackupPath());
 		this.dumpFile = new File(getCurrentFullPathName());
 		this.dumpDirectory = new File(properties.getMongoBackupPath() + FILE_SEPARATOR + properties.getMongoDbName());
@@ -157,7 +155,9 @@ public final class MongoDBDump {
 
 	protected String buildDumpCommand() {
 		final StringBuilder dumpCommand = new StringBuilder();
-		dumpCommand.append(properties.getMongodPath() + " -d " + properties.getMongoDbName() + " -h " + properties.getMongoAddress() + ":" + properties.getMongoPort());
+		dumpCommand
+				.append(properties.getMongodPath() + " -d " + properties.getMongoDbName() + " -h " + properties.getMongoAddress() + ":" + properties
+						.getMongoPort());
 		if (StringUtils.isNotBlank(properties.getMongoLogin())) {
 			dumpCommand.append(" -u " + properties.getMongoLogin() + " -p" + properties.getMongoPassword());
 		}
