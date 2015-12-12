@@ -146,6 +146,12 @@
 
 	<profiles>
 		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
 			<id>aws</id>
 			<build>
 				<plugins>

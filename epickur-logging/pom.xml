@@ -45,12 +45,30 @@
 
 	<profiles>
 		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<!-- Remove resources env and log4j.xml -->
+				<resources>
+					<resource>
+						<directory>${project.basedir}/src/main/resources</directory>
+						<filtering>true</filtering>
+						<excludes>
+							<exclude>env/**</exclude>
+						</excludes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		<profile>
 			<id>aws</id>
 			<build>
 				<!-- Remove resources env and log4j.xml -->
 				<resources>
 					<resource>
-						<directory>${project.basedir}\src\main\resources</directory>
+						<directory>${project.basedir}/src/main/resources</directory>
 						<filtering>true</filtering>
 						<excludes>
 							<exclude>env/**</exclude>
