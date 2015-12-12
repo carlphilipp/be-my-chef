@@ -28,7 +28,7 @@ public @interface ChangePasswordValidate {
 	Class<? extends Payload>[] payload() default {};
 
 	@Component
-	public class ChangePasswordConstraint implements ConstraintValidator<ChangePasswordValidate, User> {
+	class ChangePasswordConstraint implements ConstraintValidator<ChangePasswordValidate, User> {
 
 		@Override public void initialize(ChangePasswordValidate constraintAnnotation) {
 		}

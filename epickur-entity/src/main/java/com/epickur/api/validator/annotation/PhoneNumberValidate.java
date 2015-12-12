@@ -28,7 +28,7 @@ public @interface PhoneNumberValidate {
 	Class<? extends Payload>[] payload() default {};
 
 	@Component
-	public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberValidate, PhoneNumber> {
+	class PhoneNumberValidator implements ConstraintValidator<PhoneNumberValidate, PhoneNumber> {
 		@Override
 		public void initialize(PhoneNumberValidate constraintAnnotation) {
 		}

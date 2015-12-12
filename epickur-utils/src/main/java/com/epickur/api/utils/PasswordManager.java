@@ -23,7 +23,7 @@ public final class PasswordManager {
 	 * @return The encrypted password
 	 * @throws EpickurException If something went bad
 	 */
-	public String createDBPassword() throws EpickurException {
+	public String createDBPassword() {
 		return this.saltHashed + this.cryptedPasswordSalt;
 	}
 

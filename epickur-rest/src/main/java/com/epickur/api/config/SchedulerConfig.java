@@ -15,9 +15,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
-/**
- * Created by carl on 12/9/2015.
- */
 @Configuration
 public class SchedulerConfig {
 

@@ -173,7 +173,7 @@ public final class MongoDBDump {
 		return dumpCommand.toString();
 	}
 
-	protected void logExportResult(final Process process) throws InterruptedException, IOException {
+	protected void logExportResult(final Process process) throws IOException {
 		String output = IOUtils.toString(process.getInputStream());
 		String errorOutput = IOUtils.toString(process.getErrorStream());
 		if (StringUtils.isNotBlank(output)) {

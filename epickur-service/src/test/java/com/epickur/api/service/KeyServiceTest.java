@@ -39,7 +39,7 @@ public class KeyServiceTest {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterCreate = EntityGenerator.mockKeyAfterCreate(key);
 
-		when(keyDAOMock.create((Key) anyObject())).thenReturn(keyAfterCreate);
+		when(keyDAOMock.create(anyObject())).thenReturn(keyAfterCreate);
 
 		Key actual = keyBusiness.create(key);
 		assertNotNull(actual.getId());

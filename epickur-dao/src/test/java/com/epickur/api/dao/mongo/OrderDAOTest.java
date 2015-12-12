@@ -125,25 +125,25 @@ public class OrderDAOTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Document document = order.getDocumentDBView();
 
-		when(collMock.findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject()))
+		when(collMock.findOneAndUpdate(anyObject(), anyObject(), anyObject()))
 				.thenReturn(document);
 
 		Order actual = dao.update(order);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject());
+		verify(collMock, times(1)).findOneAndUpdate(anyObject(), anyObject(), anyObject());
 	}
 
 	@Test
 	public void testUpdateNotFound() throws EpickurException {
 		Order order = EntityGenerator.generateRandomOrder();
 
-		when(collMock.findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject())).thenReturn(null);
+		when(collMock.findOneAndUpdate( anyObject(), anyObject(), anyObject())).thenReturn(null);
 
 		Order actual = dao.update(order);
 
 		assertNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject());
+		verify(collMock, times(1)).findOneAndUpdate(anyObject(), anyObject(), anyObject());
 	}
 
 	@Test
@@ -151,8 +151,7 @@ public class OrderDAOTest {
 		thrown.expect(EpickurDBException.class);
 		Order order = EntityGenerator.generateRandomOrder();
 
-		when(collMock.findOneAndUpdate((Document) anyObject(), (Document) anyObject(), (FindOneAndUpdateOptions) anyObject()))
-				.thenThrow(new MongoException(""));
+		when(collMock.findOneAndUpdate(anyObject(), anyObject(), anyObject())).thenThrow(new MongoException(""));
 
 		dao.update(order);
 

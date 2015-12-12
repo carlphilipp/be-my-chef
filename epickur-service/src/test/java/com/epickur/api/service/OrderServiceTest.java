@@ -314,7 +314,7 @@ public class OrderServiceTest {
 
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
-		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
+		when(orderDAOMock.update(anyObject())).thenReturn(orderAfterCreate);
 		when(chargeMock.getPaid()).thenReturn(true);
 		when(stripePayementMock.chargeCard(orderAfterCreate.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
 				.thenReturn(chargeMock);
@@ -353,7 +353,7 @@ public class OrderServiceTest {
 
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
-		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
+		when(orderDAOMock.update(anyObject())).thenReturn(orderAfterCreate);
 
 		Order actual = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, false, orderCode);
 		assertEquals(OrderStatus.DECLINED, actual.getStatus());
@@ -383,7 +383,7 @@ public class OrderServiceTest {
 
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.read(anyString())).thenReturn(orderAfterCreate);
-		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterCreate);
+		when(orderDAOMock.update(anyObject())).thenReturn(orderAfterCreate);
 		try {
 			orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		} finally {
@@ -407,7 +407,7 @@ public class OrderServiceTest {
 
 		when(userDAOMock.read(anyString())).thenReturn(user);
 		when(orderDAOMock.read(anyString())).thenReturn(orderAfterRead);
-		when(orderDAOMock.update((Order) anyObject())).thenReturn(orderAfterRead);
+		when(orderDAOMock.update(anyObject())).thenReturn(orderAfterRead);
 		when(chargeMock.getPaid()).thenReturn(true);
 		when(stripePayementMock.chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
 				.thenThrow(new APIConnectionException(""));

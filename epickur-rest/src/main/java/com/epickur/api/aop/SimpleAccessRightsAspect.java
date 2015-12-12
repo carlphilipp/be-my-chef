@@ -143,7 +143,7 @@ public class SimpleAccessRightsAspect {
 		}
 	}
 
-	private void handleUser(final Operation operation, final Object[] args) throws EpickurException {
+	private void handleUser(final Operation operation, final Object[] args) {
 		if (operation == UPDATE) {
 			String id = (String) args[0];
 			User user = (User) args[1];
@@ -156,7 +156,7 @@ public class SimpleAccessRightsAspect {
 		}
 	}
 
-	private void handleOrder(final Operation operation, final Object[] args) throws EpickurException {
+	private void handleOrder(final Operation operation, final Object[] args) {
 		if (operation == UPDATE) {
 			String orderId = (String) args[1];
 			Order order = (Order) args[2];

@@ -73,7 +73,7 @@ public class StripePaymentTest {
 	public void setUp() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException{
 		PowerMockito.mockStatic(Charge.class);
 		
-		when(Charge.create((HashMap<String, Object>) anyObject())).thenReturn(charge);
+		when(Charge.create(anyObject())).thenReturn(charge);
 		stripePayment = new StripePayment();
 	}
 
@@ -93,7 +93,7 @@ public class StripePaymentTest {
 	public void testChargeCardInvalidRequestExceptionFail() throws StripeException {
 		thrown.expect(InvalidRequestException.class);
 		
-		when(Charge.create((HashMap<String, Object>) anyObject())).thenThrow(invalidReqException);
+		when(Charge.create(anyObject())).thenThrow(invalidReqException);
 		
 		Integer value = Integer.valueOf(-1500);
 		
@@ -105,7 +105,7 @@ public class StripePaymentTest {
 	public void testChargeCardAuthenticationExceptionFail() throws StripeException {
 		thrown.expect(AuthenticationException.class);
 		
-		when(Charge.create((HashMap<String, Object>) anyObject())).thenThrow(authenticationException);
+		when(Charge.create(anyObject())).thenThrow(authenticationException);
 		
 		Integer value = Integer.valueOf(-1500);
 		
@@ -117,7 +117,7 @@ public class StripePaymentTest {
 	public void testChargeCardAPIConnectionExceptionFail() throws StripeException {
 		thrown.expect(APIConnectionException.class);
 		
-		when(Charge.create((HashMap<String, Object>) anyObject())).thenThrow(apiConnectionException);
+		when(Charge.create(anyObject())).thenThrow(apiConnectionException);
 		
 		Integer value = Integer.valueOf(-1500);
 		
@@ -129,7 +129,7 @@ public class StripePaymentTest {
 	public void testChargeCardStripeExceptionFail() throws StripeException {
 		thrown.expect(StripeException.class);
 		
-		when(Charge.create((HashMap<String, Object>) anyObject())).thenThrow(apiConnectionException);
+		when(Charge.create(anyObject())).thenThrow(apiConnectionException);
 		
 		Integer value = Integer.valueOf(-1500);
 		

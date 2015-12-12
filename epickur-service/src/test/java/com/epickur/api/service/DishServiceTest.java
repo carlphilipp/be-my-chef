@@ -68,7 +68,7 @@ public class DishServiceTest {
 		Dish dish = EntityGenerator.generateRandomDish();
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 
-		when(dishDAOMock.create((Dish) anyObject())).thenReturn(dishAfterCreate);
+		when(dishDAOMock.create(anyObject())).thenReturn(dishAfterCreate);
 
 		Dish actual = dishService.create(dish);
 		assertNotNull("Dish is null", actual);

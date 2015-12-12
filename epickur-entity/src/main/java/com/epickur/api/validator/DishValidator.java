@@ -13,6 +13,8 @@ import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -23,6 +25,9 @@ import java.util.List;
  * @version 1.0
  */
 public class DishValidator extends Validator {
+
+	@Autowired
+	private CatererValidator catererValidator;
 
 	/**
 	 * Constructor
@@ -103,8 +108,7 @@ public class DishValidator extends Validator {
 	 * @param caterer The Caterer
 	 */
 	private void checkCatererData(final Caterer caterer) {
-		CatererValidator validator = (CatererValidator) FactoryValidator.getValidator("caterer");
-		validator.checkCaterer(caterer, "dish");
+		catererValidator.checkCaterer(caterer, "dish");
 		if (caterer.getId() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "caterer.id"));
 		}
@@ -117,8 +121,7 @@ public class DishValidator extends Validator {
 	 * @param key       The Key
 	 * @throws EpickurException If an EpickurExeption occured
 	 */
-	public void checkRightsBefore(final Role role, final Operation action, final Caterer catererDB, final Key key)
-			throws EpickurException {
+	public void checkRightsBefore(final Role role, final Operation action, final Caterer catererDB, final Key key) {
 		if (role == Role.SUPER_USER && action == Operation.CREATE && !key.getUserId().equals(catererDB.getCreatedBy())) {
 			throw new EpickurForbiddenException();
 		}

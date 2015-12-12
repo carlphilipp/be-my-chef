@@ -170,7 +170,7 @@ public class EntityGenerator {
 		}
 	}
 
-	public static List<NutritionFact> getListObject(final String json) throws EpickurException {
+	public static List<NutritionFact> getListObject(final String json) {
 		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
 		try {
 			return mapper.readValue(json, new TypeReference<List<NutritionFact>>() {

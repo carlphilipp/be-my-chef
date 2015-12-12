@@ -30,7 +30,7 @@ public @interface PickupdateValidate {
 	Class<? extends Payload>[] payload() default {};
 
 	@Component
-	public class PickupdateValidator implements ConstraintValidator<PickupdateValidate, Order> {
+	class PickupdateValidator implements ConstraintValidator<PickupdateValidate, Order> {
 
 		@Override
 		public void initialize(final PickupdateValidate constraintAnnotation) {

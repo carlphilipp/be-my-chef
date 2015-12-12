@@ -50,21 +50,11 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 		servletContext.setInitParameter("quartz:wait-on-shutdown", "true");
 		servletContext.setInitParameter("quartz:start-scheduler-on-load", "true");
 		servletContext.addListener(QuartzInitializerListener.class);
-		startupJobs();
 		super.onStartup(servletContext);
 	}
 
 	@Override
 	protected void customizeRegistration(final ServletRegistration.Dynamic registration) {
 		registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
-	}
-
-	private void startupJobs() {
-//		try {
-//			Jobs jobs = Jobs.getInstance();
-//			jobs.run();
-//		} catch (SchedulerException e) {
-//			LOG.error(e.getLocalizedMessage(), e);
-//		}
 	}
 }
