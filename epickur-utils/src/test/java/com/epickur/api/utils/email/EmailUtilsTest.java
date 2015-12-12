@@ -3,6 +3,7 @@ package com.epickur.api.utils.email;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -16,21 +17,28 @@ import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.utils.Security;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.inject.Inject;
 
 public class EmailUtilsTest {
 
 	private static final String EMAIL_TEST = "example@example.com";
-
-	private EmailUtils emailUtils;
+	@Mock
+	private Email email;
+	@Inject
+	private String[] admins = new String [0];
 	@Mock
 	private MandrillMessagesRequest messagesRequest;
+	@Mock
+	private EmailTemplate emailTemplate;
+	@InjectMocks
+	private EmailUtils emailUtils;
 
 	@Before
 	public void setUp() throws EpickurDBException {
 		MockitoAnnotations.initMocks(this);
-
-		Email email = new Email(messagesRequest, false);
-		this.emailUtils = new EmailUtils(email);
 	}
 
 	@Test

@@ -9,6 +9,7 @@ import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.VoucherService;
+import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.VoucherValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +37,8 @@ public class VoucherControllerTest {
 	private HttpServletRequest context;
 	@Mock
 	private VoucherValidator validator;
+	@Mock
+	private Utils utils;
 	@InjectMocks
 	private VoucherController controller;
 

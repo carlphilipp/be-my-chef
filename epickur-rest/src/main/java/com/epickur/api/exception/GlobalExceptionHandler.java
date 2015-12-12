@@ -44,12 +44,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private HttpServletRequest context;
 
 	@Override
-	protected ResponseEntity handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		ErrorMessage errorMessage = new ErrorMessage();
 		errorMessage.setError(HttpStatus.BAD_REQUEST.value());
 		errorMessage.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
 		LOG.warn("Fatal Error: {} {}", ex.getMessage(), ex.getClass(), ex);
-		return new ResponseEntity<Object>(errorMessage, getHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(errorMessage, getHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler({ Throwable.class, Exception.class })

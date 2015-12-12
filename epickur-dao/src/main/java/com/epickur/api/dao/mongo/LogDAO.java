@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -24,12 +25,9 @@ public final class LogDAO extends CrudDAO<Log> {
 	 */
 	private static final Logger LOG = LogManager.getLogger(Log.class.getSimpleName());
 
-	/**
-	 * Constructor
-	 */
-	public LogDAO() {
-		super();
-		initCollection("logs");
+	@PostConstruct
+	protected void initCollection() {
+		setColl(getDb().getCollection("logs"));
 	}
 
 	@Override

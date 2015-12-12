@@ -1,0 +1,32 @@
+address               = http://localhost:8180
+folder                = /epickur/api
+admins                = cp.harmant@gmail.com
+
+#local dev or prod
+server.type           = local
+
+mongo.address         = localhost
+mongo.port            = 27017
+mongo.db.name         = epickur
+mongo.user.login      = 
+mongo.user.password   = 
+
+mongod.path           = mongod
+mongo.backup.path     = C:\\Temp\\mongodump
+
+email.mandrill.key    = iFS42LDT1NH6W9V1E2b6Yg
+email.mandrill.from   = sys@bemychef.com.au
+email.send            = false
+
+cron.order.timelimit  = 3
+
+epickur.web.address   = https://beta.bemychef.com.au
+
+here.app.id           = jCZrpe59WjQkH2mCGz3L
+here.app.code         = uMeIWCGXbXo-IO92WANtNA
+
+aws.accessKeyId       = AKIAJEMDV5IQPP5PXPNQ
+aws.secretKey         = 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
+
+# Stripe
+stripe.key            = sk_test_CtxDAjL5Eeqne2rHw2auZObh

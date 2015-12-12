@@ -46,6 +46,8 @@ public class VoucherController {
 	 */
 	@Autowired
 	private VoucherService voucherService;
+	@Autowired
+	private Utils utils;
 
 	// @formatter:off
 	/**
@@ -162,7 +164,7 @@ public class VoucherController {
 			@RequestParam(value = "formatDate", required = false, defaultValue = "MM/dd/yyyy") final String format) throws EpickurException {
 		DateTime date = null;
 		if (expiration != null) {
-			date = Utils.parseDate(expiration, format);
+			date = utils.parseDate(expiration, format);
 		}
 		Set<Voucher> vouchers = voucherService.generate(count, discountType, discount, expirationType, date);
 		return new ResponseEntity<>(vouchers, HttpStatus.OK);

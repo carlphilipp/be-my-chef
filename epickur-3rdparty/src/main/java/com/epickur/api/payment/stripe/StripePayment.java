@@ -1,50 +1,35 @@
 package com.epickur.api.payment.stripe;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
+import com.epickur.api.enumeration.Currency;
+import com.stripe.exception.*;
+import com.stripe.model.Charge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.epickur.api.enumeration.Currency;
-import com.epickur.api.utils.Utils;
-import com.stripe.Stripe;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Charge;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Make a payment to Stripe.
- * 
+ *
  * @author cph
  * @version 1.0
  */
 public class StripePayment {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(StripePayment.class.getSimpleName());
-
-	static {
-		Properties prop = Utils.getEpickurProperties();
-		Stripe.apiKey = prop.getProperty("stripe.key");
-	}
 
 	/**
 	 * Charge card
-	 * 
-	 * @param cardToken
-	 *            the card token
-	 * @param amount
-	 *            the amount
-	 * @param currency
-	 *            the currency
+	 *
+	 * @param cardToken the card token
+	 * @param amount    the amount
+	 * @param currency  the currency
 	 * @return a charge
-	 * @throws StripeException
-	 *             If a StripException occured
+	 * @throws StripeException If a StripException occured
 	 */
 	public Charge chargeCard(final String cardToken, final int amount, final Currency currency) throws StripeException {
 		Charge charge = null;

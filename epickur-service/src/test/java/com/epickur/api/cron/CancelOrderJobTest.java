@@ -14,13 +14,11 @@ import com.epickur.api.dao.mongo.VoucherDAO;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.quartz.*;
 
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.UserDAO;
@@ -45,6 +43,8 @@ public class CancelOrderJobTest {
 	private OrderDAO orderDAO;
 	@Mock
 	private JobExecutionContext context;
+	@Mock
+	private Scheduler scheduler;
 	@InjectMocks
 	private CancelOrderJob orderJob;
 	
@@ -64,6 +64,7 @@ public class CancelOrderJobTest {
 		JobDetail jobDetail = mock(JobDetail.class);
 		JobDataMap jobDataMap = mock(JobDataMap.class);
 		when(context.getJobDetail()).thenReturn(jobDetail);
+		when(context.getScheduler()).thenReturn(scheduler);
 		when(jobDetail.getJobDataMap()).thenReturn(jobDataMap);
 		when(jobDataMap.getString("orderId")).thenReturn(order.getId().toHexString());
 		when(jobDataMap.getString("userId")).thenReturn(user.getId().toHexString());
@@ -96,6 +97,7 @@ public class CancelOrderJobTest {
 		JobDetail jobDetail = mock(JobDetail.class);
 		JobDataMap jobDataMap = mock(JobDataMap.class);
 		when(context.getJobDetail()).thenReturn(jobDetail);
+		when(context.getScheduler()).thenReturn(scheduler);
 		when(jobDetail.getJobDataMap()).thenReturn(jobDataMap);
 		when(jobDataMap.getString("orderId")).thenReturn(order.getId().toHexString());
 		when(jobDataMap.getString("userId")).thenReturn(user.getId().toHexString());

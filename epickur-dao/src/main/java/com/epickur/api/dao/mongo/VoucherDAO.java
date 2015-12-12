@@ -16,6 +16,7 @@ import org.bson.conversions.Bson;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,12 +41,9 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 	 */
 	private static final String NOT_IMPLEMENTED = "Not implemented";
 
-	/**
-	 * Constructor
-	 */
-	public VoucherDAO() {
-		super();
-		initCollection(VOUCHER_COLL);
+	@PostConstruct
+	protected void initCollection() {
+		setColl(getDb().getCollection(VOUCHER_COLL));
 	}
 
 	@Override

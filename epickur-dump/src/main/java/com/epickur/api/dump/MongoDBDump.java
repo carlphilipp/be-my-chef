@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.epickur.api.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Create a MongoDB dump.
@@ -27,6 +28,8 @@ public final class MongoDBDump {
 
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(MongoDBDump.class.getSimpleName());
+	@Autowired
+	private Utils utils;
 	/** File separator */
 	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	/** Mongod */
@@ -64,7 +67,7 @@ public final class MongoDBDump {
 	 */
 	public MongoDBDump(final String date) {
 		this.date = date;
-		Properties prop = Utils.getEpickurProperties();
+		Properties prop = utils.getEpickurProperties();
 		this.mongod = prop.getProperty("mongod.path");
 		this.ip = prop.getProperty("mongo.address");
 		this.port = prop.getProperty("mongo.port");

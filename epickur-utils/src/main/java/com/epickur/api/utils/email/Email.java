@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Carl-Philipp Harmant
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,17 +15,6 @@
  */
 
 package com.epickur.api.utils.email;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.cribbstechnologies.clients.mandrill.exception.RequestFailedException;
 import com.cribbstechnologies.clients.mandrill.model.MandrillHtmlMessage;
@@ -36,43 +25,56 @@ import com.cribbstechnologies.clients.mandrill.request.MandrillRESTRequest;
 import com.cribbstechnologies.clients.mandrill.util.MandrillConfiguration;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This class is used to send emails
- * 
+ *
  * @author cph
- * 
+ *
  */
-public final class Email {
+@Component
+public class Email {
 
 	/** The logger */
 	private static final Logger LOG = LogManager.getLogger(Email.class.getSimpleName());
 
-	private final boolean send;
 	/** The request */
 	private MandrillRESTRequest request;
-	/** The message request */
-	private MandrillMessagesRequest messagesRequest;
 	/** The email address */
+	@Value("${email.mandrill.from}")
 	private String fromEmail;
 	/** The name of the sender */
+	@Value("${email.mandrill.from.username}")
 	private String fromName;
 	/** The subject */
+	@Value("${email.send}")
 	private String subject;
 	/** The message in HTML format */
 	private String message;
 	/** The list of sender */
 	private String[] sendTo;
-
-	public Email() {
-		this.messagesRequest = new MandrillMessagesRequest();
-		this.send = Boolean.valueOf(Utils.getEpickurProperties().getProperty("email.send"));
-	}
-
-	public Email(final MandrillMessagesRequest messagesRequest, final boolean send) {
-		this.messagesRequest = messagesRequest;
-		this.send = send;
-	}
+	@Autowired
+	private EmailTemplate emailTemplate;
+	@Value("${email.send}")
+	private boolean send;
+	@Autowired
+	private Utils utils;
+	@Autowired
+	private MandrillMessagesRequest messagesRequest;
+	@Autowired
+	private MandrillConfiguration mandrillConfiguration;
 
 	/**
 	 * @param emailSubjectTxt
@@ -86,16 +88,9 @@ public final class Email {
 		this.subject = emailSubjectTxt;
 		this.message = emailMsgTxt;
 		this.sendTo = sendTo;
-		Properties props = Utils.getEpickurProperties();
-		this.fromEmail = props.getProperty("email.mandrill.from");
-		this.fromName = props.getProperty("email.mandrill.from.username");
 		this.request = new MandrillRESTRequest();
 		ObjectMapper mapper = new ObjectMapper();
-		MandrillConfiguration config = new MandrillConfiguration();
-		config.setApiKey(props.getProperty("email.mandrill.key"));
-		config.setApiVersion(props.getProperty("email.mandrill.version"));
-		config.setBaseURL(props.getProperty("email.mandrill.url"));
-		this.request.setConfig(config);
+		this.request.setConfig(mandrillConfiguration);
 		this.request.setObjectMapper(mapper);
 		this.messagesRequest.setRequest(request);
 	}
@@ -134,7 +129,7 @@ public final class Email {
 
 	/**
 	 * Send emails
-	 * 
+	 *
 	 * @param emailType
 	 *            The Email Type
 	 * @param data
@@ -143,7 +138,6 @@ public final class Email {
 	 *            An array of email
 	 */
 	protected void sendMail(final EmailType emailType, final Map<String, String> data, final String[] sendTo) {
-		EmailTemplate emailTemplate = EmailTemplate.getInstance();
 		Map<String, String> template = emailTemplate.getTemplate(emailType);
 		if (!template.isEmpty()) {
 			String subject = template.get("subject");

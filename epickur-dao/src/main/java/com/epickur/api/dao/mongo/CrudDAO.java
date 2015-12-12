@@ -1,12 +1,6 @@
 package com.epickur.api.dao.mongo;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.types.ObjectId;
-
 import com.epickur.api.dao.ICrudDAO;
-import com.epickur.api.dao.MongoDb;
 import com.epickur.api.entity.AbstractEntity;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
@@ -16,40 +10,34 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.result.DeleteResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstract class that helps the manipulation of Documents.
- * 
+ *
+ * @param <T> Must be an AbstractEntity
  * @author cph
  * @version 1.0
- * @param <T>
- *            Must be an AbstractEntity
  */
 public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(CrudDAO.class.getSimpleName());
-	/** Database */
+	/**
+	 * Database
+	 */
+	@Autowired
 	private MongoDatabase db;
-	/** Database collection */
+	/**
+	 * Database collection
+	 */
 	private MongoCollection<Document> coll;
-
-	/**
-	 * Constructor.
-	 */
-	public CrudDAO() {
-		this.db = MongoDb.getInstance();
-	}
-
-	/**
-	 * Initialize the collection.
-	 * 
-	 * @param collection
-	 *            The collection.
-	 */
-	protected void initCollection(final String collection) {
-		this.coll = getDb().getCollection(collection);
-	}
 
 	@Override
 	public abstract T create(final T obj) throws EpickurException;
@@ -68,10 +56,8 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	}
 
 	/**
-	 * @param document
-	 *            The document
-	 * @throws EpickurDBException
-	 *             If an EpickurDBException occurred.
+	 * @param document The document
+	 * @throws EpickurDBException If an EpickurDBException occurred.
 	 */
 	protected final void insertDocument(final Document document) throws EpickurDBException {
 		try {
@@ -82,11 +68,9 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	}
 
 	/**
-	 * @param query
-	 *            The document query.
+	 * @param query The document query.
 	 * @return The document.
-	 * @throws EpickurDBException
-	 *             If an EpickurDBException occurred.
+	 * @throws EpickurDBException If an EpickurDBException occurred.
 	 */
 	protected final Document findDocument(final Document query) throws EpickurDBException {
 		try {
@@ -97,13 +81,10 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	}
 
 	/**
-	 * @param filter
-	 *            The filter document.
-	 * @param update
-	 *            The update document.
+	 * @param filter The filter document.
+	 * @param update The update document.
 	 * @return The document.
-	 * @throws EpickurDBException
-	 *             If an EpickurDBException occurred.
+	 * @throws EpickurDBException If an EpickurDBException occurred.
 	 */
 	protected final Document updateDocument(final Document filter, final Document update) throws EpickurDBException {
 		try {
@@ -114,11 +95,9 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	}
 
 	/**
-	 * @param filter
-	 *            The document filter
+	 * @param filter The document filter
 	 * @return A boolean
-	 * @throws EpickurDBException
-	 *             If an EpickurException occurred.
+	 * @throws EpickurDBException If an EpickurException occurred.
 	 */
 	protected final boolean deleteDocument(final Document filter) throws EpickurDBException {
 		try {
@@ -130,11 +109,9 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 
 	/**
 	 * Check if the query is a success
-	 * 
-	 * @param deleteResult
-	 *            The result of the query
-	 * @param type
-	 *            The type of the query
+	 *
+	 * @param deleteResult The result of the query
+	 * @param type         The type of the query
 	 * @return True if the query is a success
 	 */
 	private boolean isDeleted(final DeleteResult deleteResult) {
@@ -142,10 +119,8 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	}
 
 	/**
-	 * @param attributeName
-	 *            The attribute name
-	 * @param attributeValue
-	 *            The attribute value
+	 * @param attributeName  The attribute name
+	 * @param attributeValue The attribute value
 	 * @return A document
 	 */
 	protected final Document convertAttributeToDocument(final String attributeName, final Object attributeValue) {
@@ -154,7 +129,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 
 	/**
 	 * Getter
-	 * 
+	 *
 	 * @return The DB object
 	 */
 	protected final MongoDatabase getDb() {
@@ -163,10 +138,14 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 
 	/**
 	 * Getter
-	 * 
+	 *
 	 * @return The DBCollection
 	 */
 	protected final MongoCollection<Document> getColl() {
 		return coll;
+	}
+
+	protected final void setColl(final MongoCollection<Document> coll) {
+		this.coll = coll;
 	}
 }

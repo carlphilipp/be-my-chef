@@ -1,46 +1,45 @@
 package com.epickur.api.entity.times;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.bson.Document;
-import org.bson.json.JsonMode;
-import org.bson.json.JsonWriterSettings;
-
 import com.epickur.api.entity.AbstractEntity;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Working times
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 public final class WorkingTimes extends AbstractEntity {
 
-	/** Hours */
+	/**
+	 * Hours
+	 */
 	private Hours hours;
-	/** Minimum preparation time in minutes */
+	/**
+	 * Minimum preparation time in minutes
+	 */
 	private int minimumPreparationTime;
 
 	/**
-	 * @param day
-	 *            The day
-	 * @param pickupdateMinutes
-	 *            The pickup date in minutes
+	 * @param day               The day
+	 * @param pickupdateMinutes The pickup date in minutes
 	 * @return true or false
 	 */
 	@JsonIgnore
@@ -66,22 +65,18 @@ public final class WorkingTimes extends AbstractEntity {
 	}
 
 	/**
-	 * @param obj
-	 *            The document
+	 * @param obj The document
 	 * @return The working times
-	 * @throws EpickurParsingException
-	 *             If a parsing exception occured
+	 * @throws EpickurParsingException If a parsing exception occured
 	 */
 	public static WorkingTimes getObject(final Document obj) throws EpickurParsingException {
 		return WorkingTimes.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
-	 * @param json
-	 *            The json
+	 * @param json The json
 	 * @return The working times
-	 * @throws EpickurParsingException
-	 *             If a parsing exception occured
+	 * @throws EpickurParsingException If a parsing exception occured
 	 */
 	public static WorkingTimes getObject(final String json) throws EpickurParsingException {
 		WorkingTimes wt = null;
@@ -95,8 +90,7 @@ public final class WorkingTimes extends AbstractEntity {
 	}
 
 	/**
-	 * @param prefix
-	 *            The prifix
+	 * @param prefix The prifix
 	 * @return The updated map
 	 */
 	public Map<String, Object> getUpdateMapObject(final String prefix) {
@@ -110,9 +104,8 @@ public final class WorkingTimes extends AbstractEntity {
 
 	/**
 	 * Setter
-	 * 
-	 * @param minimumPreparationTime
-	 *            The minimun preparation time
+	 *
+	 * @param minimumPreparationTime The minimun preparation time
 	 */
 	public void setMinimumPreparationTime(final int minimumPreparationTime) {
 		this.minimumPreparationTime = minimumPreparationTime;

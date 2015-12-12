@@ -13,6 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +31,8 @@ import java.util.Properties;
  * @author cph
  * @version 1.0
  */
-public final class Utils {
+@Component
+public class Utils {
 
 	/**
 	 * Logger
@@ -38,18 +41,8 @@ public final class Utils {
 	/**
 	 * Session timeout
 	 */
-	public static final Integer SESSION_TIMEOUT;
-
-	/**
-	 * Private Constructor
-	 */
-	private Utils() {
-	}
-
-	static {
-		Properties prop = Utils.getEpickurProperties();
-		SESSION_TIMEOUT = Integer.valueOf(prop.getProperty("session.timeout"));
-	}
+	@Value("${session.timeout}")
+	public Integer sessionTimeout;
 
 	/**
 	 * Check is the User password is correct
@@ -59,7 +52,7 @@ public final class Utils {
 	 * @return True if the password is correct
 	 * @throws EpickurException If someting went bad
 	 */
-	public static boolean isPasswordCorrect(final String password, final User user) throws EpickurException {
+	public boolean isPasswordCorrect(final String password, final User user) throws EpickurException {
 		boolean res = true;
 		final int sixtyFour = 64;
 		String passwordHashed = Security.encodeToSha256(password);
@@ -77,7 +70,7 @@ public final class Utils {
 	 *
 	 * @return A properties file
 	 */
-	public static Properties getEpickurProperties() {
+	public Properties getEpickurProperties() {
 		Properties prop = new Properties();
 		try {
 			prop.load(Utils.class.getClassLoader().getResourceAsStream("epickur.properties"));
@@ -97,7 +90,7 @@ public final class Utils {
 	 * @param properties The properties we want to inject some new properties in.
 	 * @return The new properties
 	 */
-	private static Properties loadLocal(final Properties properties) {
+	private Properties loadLocal(final Properties properties) {
 		Properties prop = new Properties();
 		InputStream in = null;
 		try {
@@ -115,7 +108,7 @@ public final class Utils {
 		return properties;
 	}
 
-	private static void injectStripeInProperties(final Properties properties) {
+	private void injectStripeInProperties(final Properties properties) {
 		String stripeKey = StripeTestUtils.getStripeTestKey();
 		LOG.trace("Injecting stripe key into property file: {}", stripeKey);
 		properties.put("stripe.key", stripeKey);
@@ -125,7 +118,7 @@ public final class Utils {
 	 * @param file The file
 	 * @return An InputStream of the file
 	 */
-	public static InputStream getResource(final String file) {
+	public InputStream getResource(final String file) {
 		return Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
 	}
 
@@ -135,7 +128,7 @@ public final class Utils {
 	 * @return The API Key.
 	 * @throws IOException If something went wrong
 	 */
-	public static String getAPIKey() throws IOException {
+	public String getAPIKey() throws IOException {
 		InputStreamReader in = null;
 		String apiKey = null;
 		try {
@@ -154,13 +147,13 @@ public final class Utils {
 	 * @param key The Key
 	 * @return True if the Key is valid
 	 */
-	public static boolean isValid(final Key key) {
+	public boolean isValid(final Key key) {
 		if (key == null) {
 			return false;
 		} else {
 			DateTime currentTime = new DateTime();
 			int daysBetween = Math.abs(Days.daysBetween(key.getCreatedAt(), currentTime).getDays());
-			if (daysBetween > SESSION_TIMEOUT) {
+			if (daysBetween > sessionTimeout) {
 				return false;
 			}
 		}
@@ -173,7 +166,7 @@ public final class Utils {
 	 * @return A DateTime
 	 * @throws EpickurParsingException If a parsing exception occured
 	 */
-	public static DateTime parseDate(final String date, final String format) throws EpickurParsingException {
+	public DateTime parseDate(final String date, final String format) throws EpickurParsingException {
 		try {
 			return CommonsUtil.parseDate(date, format);
 		} catch (Exception e) {
@@ -187,7 +180,7 @@ public final class Utils {
 	 * @param types The String to convert
 	 * @return The list of DishType created
 	 */
-	public static List<DishType> stringToListDishType(final String types) {
+	public List<DishType> stringToListDishType(final String types) {
 		List<DishType> res = new ArrayList<>();
 		String[] typesArray = types.split(",");
 		for (String temp : typesArray) {
@@ -202,7 +195,7 @@ public final class Utils {
 	 * @param str the string
 	 * @return A Geo object
 	 */
-	public static Geo stringToGeo(final String str) {
+	public Geo stringToGeo(final String str) {
 		Geo geo = new Geo();
 		String[] geoArray = str.split(",");
 		// TODO Not sure about 0 or 1, check which one is correct

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +35,9 @@ public class KeyDAO extends CrudDAO<Key> {
 	 */
 	private static final String NOT_IMPLEMENTED = "Not implemented";
 
-	/**
-	 * Constructor
-	 */
-	public KeyDAO() {
-		super();
-		initCollection(KEY_COLL);
+	@PostConstruct
+	protected void initCollection() {
+		setColl(getDb().getCollection(KEY_COLL));
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package com.epickur.api.service;
 
 import com.epickur.api.aop.ValidateComplexAccessRights;
-import com.epickur.api.cron.Jobs;
+import com.epickur.api.cron.OrderJob;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.SequenceDAO;
 import com.epickur.api.dao.mongo.UserDAO;
@@ -59,17 +59,15 @@ public class OrderService {
 	 */
 	@Autowired
 	private VoucherService voucherService;
+	@Autowired
+	private OrderJob jobs;
 	/**
 	 * User Email utils
 	 */
+	@Autowired
 	private EmailUtils emailUtils;
-
-	/**
-	 * The constructor
-	 */
-	public OrderService() {
-		this.emailUtils = new EmailUtils();
-	}
+	@Autowired
+	private StripePayment stripePayment;
 
 	/**
 	 * Create an Order
@@ -108,7 +106,7 @@ public class OrderService {
 	protected void postCreation(final Order order, final User user) throws EpickurException {
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 		emailUtils.emailNewOrder(user, order, orderCode);
-		Jobs.getInstance().addTemporaryOrderJob(user, order);
+		jobs.addTemporaryOrderJob(user, order);
 	}
 
 	protected void addSequenceIdToOrder(final Order order) throws EpickurDBException {
@@ -209,14 +207,13 @@ public class OrderService {
 			order.setStatus(OrderStatus.DECLINED);
 			order = orderDAO.update(order);
 		}
-		Jobs.getInstance().removeTemporaryOrderJob(orderId);
+		jobs.removeTemporaryOrderJob(orderId);
 		return order;
 	}
 
 	protected Order chargeUser(Order order, final User user) throws EpickurException {
 		try {
-			StripePayment stripe = new StripePayment();
-			Charge charge = stripe.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
+			Charge charge = stripePayment.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
 			if (charge == null || !charge.getPaid()) {
 				handleOrderFail(order, user);
 			} else {

@@ -12,6 +12,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +32,9 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	 */
 	private static final Logger LOG = LogManager.getLogger(CatererDAO.class.getSimpleName());
 
-	/**
-	 * Constructor
-	 */
-	public CatererDAO() {
-		super();
-		initCollection(CATERER_COLL);
+	@PostConstruct
+	protected void initCollection() {
+		setColl(getDb().getCollection(CATERER_COLL));
 	}
 
 	@Override

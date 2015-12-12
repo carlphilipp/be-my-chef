@@ -6,9 +6,9 @@ import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -18,7 +18,8 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
-public final class CleanVouchersJob implements Job {
+@Component
+public final class CleanVouchersJob {
 
 	/**
 	 * Logger
@@ -27,17 +28,11 @@ public final class CleanVouchersJob implements Job {
 	/**
 	 * Voucher business
 	 */
+	@Autowired
 	private VoucherDAO voucherDAO;
 
-	/**
-	 * Constructor
-	 */
-	public CleanVouchersJob() {
-		voucherDAO = new VoucherDAO();
-	}
-
-	@Override
-	public void execute(final JobExecutionContext context) throws JobExecutionException {
+	@Scheduled(cron = "0 0 12 * * ?")
+	public void execute() {
 		LOG.info("Clean vouchers job starting...");
 		try {
 			List<Voucher> vouchers = voucherDAO.readToClean();

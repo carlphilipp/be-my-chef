@@ -1,6 +1,5 @@
 package com.epickur.api.dao.mongo;
 
-import com.epickur.api.dao.MongoDb;
 import com.epickur.api.exception.EpickurDBException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
@@ -9,7 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.BsonInt32;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Sequence DAO access with CRUD operations.
@@ -24,23 +26,18 @@ public class SequenceDAO {
 	 * Logger
 	 */
 	private static final Logger LOG = LogManager.getLogger(SequenceDAO.class.getSimpleName());
+	@Autowired
+	private MongoDatabase db;
 	/**
 	 * Database collection
 	 */
 	private MongoCollection<Document> coll;
 
 	/**
-	 * Construct a Order sequence DAO
+	 * Post construct
 	 */
-	public SequenceDAO() {
-		init();
-	}
-
-	/**
-	 * Init function
-	 */
-	private void init() {
-		MongoDatabase db = MongoDb.getInstance();
+	@PostConstruct
+	public void postConstruct() {
 		this.coll = db.getCollection("seq");
 	}
 

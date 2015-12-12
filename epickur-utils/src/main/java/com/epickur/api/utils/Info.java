@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Carl-Philipp Harmant
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,14 +16,9 @@
 
 package com.epickur.api.utils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
 /**
  * This class get the general info from a property file
- * 
+ *
  * @author cph
  * @version 1.0
  */
@@ -33,40 +28,19 @@ public final class Info {
 	private Info() {
 	}
 
-	/** Access in a static way to the property file */
-	static {
-		Properties prop = Utils.getEpickurProperties();
-		NAME = prop.getProperty("name");
-		ADDRESS = prop.getProperty("address");
-		FOLDER = prop.getProperty("folder");
-		WEB_ADDRESS = prop.getProperty("epickur.web.address");
-		admins = Collections.unmodifiableList(Arrays.asList(prop.getProperty("admins").split(";")));
-	}
-
-	/** Name of the webapp */
-	public static final String NAME;
-	/** Current address of the webapp */
-	public static final String ADDRESS;
-	/** Current folder after the address */
-	public static final String FOLDER;
-	/** Web address */
-	public static final String WEB_ADDRESS;
-	/** Administrators */
-	public static List<String> admins;
-	
 	public static String ORDER_COLL = "orders";
-	
+
 	public static String USER_COLL = "users";
-	
+
 	public static String DISH_COLL = "dishes";
-	
+
 	public static String CATERER_COLL = "caterers";
-	
+
 	public static String VOUCHER_COLL = "vouchers";
-	
+
 	public static String KEY_COLL = "keys";
-	
+
 	public static String LOG_COLL = "logs";
-	
+
 	public static String SEQUENCE_COLL = "seq";
 }

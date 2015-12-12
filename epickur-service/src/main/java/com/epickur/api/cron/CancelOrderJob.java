@@ -13,9 +13,10 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.email.EmailUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
  * This class represents a process to cancel orders when it's been too long time it was not accepted.
@@ -23,7 +24,7 @@ import org.quartz.JobExecutionException;
  * @author cph
  * @version 1.0
  */
-public class CancelOrderJob implements Job {
+public class CancelOrderJob extends QuartzJobBean {
 
 	/**
 	 * Logger
@@ -32,14 +33,17 @@ public class CancelOrderJob implements Job {
 	/**
 	 * Order dao
 	 */
+	@Autowired
 	private OrderDAO orderDAO;
 	/**
 	 * User dao
 	 */
+	@Autowired
 	private UserDAO userDAO;
 	/**
 	 * Voucher Business
 	 */
+	@Autowired
 	private VoucherDAO voucherDAO;
 	/**
 	 * Email utils
@@ -50,14 +54,11 @@ public class CancelOrderJob implements Job {
 	 * Constructs a Cancel Order Job
 	 */
 	public CancelOrderJob() {
-		userDAO = new UserDAO();
-		voucherDAO = new VoucherDAO();
-		orderDAO = new OrderDAO();
 		emailUtils = new EmailUtils();
 	}
 
 	@Override
-	public void execute(final JobExecutionContext context) throws JobExecutionException {
+	protected void executeInternal(final JobExecutionContext context) throws JobExecutionException {
 		try {
 			String orderId = context.getJobDetail().getJobDataMap().getString("orderId");
 			Order order = orderDAO.read(orderId);

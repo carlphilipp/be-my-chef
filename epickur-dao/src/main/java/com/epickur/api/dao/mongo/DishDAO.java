@@ -16,6 +16,7 @@ import org.bson.*;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +41,13 @@ public class DishDAO extends CrudDAO<Dish> {
 	 */
 	public DishDAO() {
 		super();
-		initCollection(DISH_COLL);
 	}
+
+	@PostConstruct
+	protected void initCollection() {
+		setColl(getDb().getCollection(DISH_COLL));
+	}
+
 
 	@Override
 	public Dish create(final Dish dish) throws EpickurException {

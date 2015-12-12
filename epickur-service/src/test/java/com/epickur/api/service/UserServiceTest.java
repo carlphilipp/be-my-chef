@@ -13,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.epickur.api.utils.Utils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -45,6 +46,8 @@ public class UserServiceTest {
 	private KeyService keyBusinessMock;
 	@Mock
 	private EmailUtils emailUtilsMock;
+	@Mock
+	private Utils utilsMock;
 	@InjectMocks
 	private UserService service;
 
@@ -117,6 +120,7 @@ public class UserServiceTest {
 
 		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(userAfterRead);
 		when(keyBusinessMock.readWithName(user.getName())).thenReturn(keyMock);
+		when(utilsMock.isPasswordCorrect(user.getPassword(), userAfterRead)).thenReturn(true);
 
 		User actual = service.login(user.getEmail(), user.getPassword());
 
@@ -181,6 +185,7 @@ public class UserServiceTest {
 		String dbPassword = PasswordManager.createPasswordManager(user.getPassword()).createDBPassword();
 		userAfterRead.setPassword(dbPassword);
 
+		when(utilsMock.isPasswordCorrect(user.getPassword(), userAfterRead)).thenReturn(true);
 		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(userAfterRead);
 
 		try {
@@ -201,6 +206,7 @@ public class UserServiceTest {
 		userAfterRead.setPassword(dbPassword);
 
 		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(userAfterRead);
+		when(utilsMock.isPasswordCorrect(user.getPassword(), userAfterRead)).thenReturn(true);
 
 		try {
 			User modified = service.injectNewPassword(user);

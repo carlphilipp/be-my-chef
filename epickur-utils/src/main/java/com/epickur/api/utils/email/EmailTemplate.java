@@ -1,5 +1,19 @@
 package com.epickur.api.utils.email;
 
+import com.epickur.api.entity.Order;
+import com.epickur.api.entity.User;
+import com.epickur.api.utils.Utils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,56 +24,45 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.epickur.api.entity.Order;
-import com.epickur.api.entity.User;
-import com.epickur.api.utils.Info;
-import com.epickur.api.utils.Utils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * @author cph
- *
  */
-public final class EmailTemplate {
-
-	/** The logger */
-	private static final Logger LOG = LogManager.getLogger(EmailTemplate.class.getSimpleName());
-	/** The templates */
-	private Map<String, Map<String, String>> templates;
-	/** The templates? */
-	private static EmailTemplate emailTemplate = null;
-	/** Delay max for a caterer to answer */
-	private static String delay;
-
-	static {
-		delay = Utils.getEpickurProperties().getProperty("cron.order.timelimit");
-	}
-
-	/** The constructor */
-	private EmailTemplate() {
-		this.templates = new HashMap<>();
-		loadTemplates();
-	}
+@Component
+public class EmailTemplate {
 
 	/**
-	 * @return An EmailTemplate
+	 * The logger
 	 */
-	public static EmailTemplate getInstance() {
-		if (emailTemplate == null) {
-			emailTemplate = new EmailTemplate();
-		}
-		return emailTemplate;
+	private final static Logger LOG = LogManager.getLogger(EmailTemplate.class.getSimpleName());
+	/**
+	 * The templates
+	 */
+	private Map<String, Map<String, String>> templates;
+	/**
+	 * Delay max for a caterer to answer
+	 */
+	@Value("{name}")
+	private String name;
+	@Value("{epickur.web.address}")
+	private String webAddress;
+	@Value("{cron.order.timelimit}")
+	private String delay;
+	@Value("{folder}")
+	private String folder;
+	@Autowired
+	private Utils utils;
+
+	/**
+	 * The constructor
+	 */
+	public EmailTemplate() {
+		this.templates = new HashMap<>();
 	}
 
 	/**
 	 * Load template into HashMap
 	 */
+	@PostConstruct
 	private void loadTemplates() {
 		String base = getBaseTemplate();
 		InputStream is = null;
@@ -67,7 +70,7 @@ public final class EmailTemplate {
 		Reader in = null;
 		try {
 			Charset charset = Charset.forName("UTF-8");
-			is = Utils.getResource("email-template.json");
+			is = utils.getResource("email-template.json");
 			in = new InputStreamReader(is, charset);
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode obj = mapper.readTree(in);
@@ -78,7 +81,7 @@ public final class EmailTemplate {
 				String subject = node.get("subject").asText();
 				String folder = node.get("folder").asText();
 				String file = node.get("file").asText();
-				is2 = Utils.getResource("templates/" + folder + "/" + file);
+				is2 = utils.getResource("templates/" + folder + "/" + file);
 				String content = IOUtils.toString(is2);
 				String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
 				Map<String, String> res = new HashMap<>();
@@ -97,7 +100,7 @@ public final class EmailTemplate {
 
 	/**
 	 * Load in memory the base template.
-	 * 
+	 *
 	 * @return The base template.
 	 */
 	private String getBaseTemplate() {
@@ -106,7 +109,7 @@ public final class EmailTemplate {
 		Reader in = null;
 		try {
 			Charset charset = Charset.forName("UTF-8");
-			is = Utils.getResource("templates/base.html");
+			is = utils.getResource("templates/base.html");
 			in = new InputStreamReader(is, charset);
 			base = IOUtils.toString(in);
 		} catch (IOException e) {
@@ -120,9 +123,8 @@ public final class EmailTemplate {
 
 	/**
 	 * Get a template from map
-	 * 
-	 * @param type
-	 *            The type of template
+	 *
+	 * @param type The type of template
 	 * @return A map containing the data of the template
 	 */
 	public Map<String, String> getTemplate(final EmailType type) {
@@ -135,55 +137,49 @@ public final class EmailTemplate {
 	}
 
 	// Registration
+
 	/**
-	 * @param user
-	 *            The user.
-	 * @param code
-	 *            The code.
+	 * @param user The user.
+	 * @param code The code.
 	 * @return The map.
 	 */
-	public static Map<String, String> convertToDataNewRegistrationUser(final User user, String code) {
+	public Map<String, String> convertToDataNewRegistrationUser(final User user, String code) {
 		Map<String, String> data = getData(user, null);
-		data.put("@@FOLDER@@", Info.FOLDER);
+		data.put("@@FOLDER@@", folder);
 		data.put("@@CHECK@@", code);
 		return data;
 	}
 
 	/**
-	 * @param user
-	 *            The user.
+	 * @param user The user.
 	 * @return A map
 	 */
-	public static Map<String, String> convertToDataNewRegistrationAdmins(final User user) {
+	public Map<String, String> convertToDataNewRegistrationAdmins(final User user) {
 		return getData(user, null);
 	}
 
 	// ORDER: case 1 - New order
+
 	/**
 	 * Convert data to order user
-	 * 
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 *
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataNewOrderUser(final User user, final Order order) {
+	public Map<String, String> convertToDataNewOrderUser(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	/**
 	 * Convert data to Order Caterer
-	 * 
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
-	 * @param orderCode
-	 *            The order code
+	 *
+	 * @param user      The user
+	 * @param order     The order
+	 * @param orderCode The order code
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataNewOrderCaterer(final User user, final Order order, final String orderCode) {
+	public Map<String, String> convertToDataNewOrderCaterer(final User user, final Order order, final String orderCode) {
 		Map<String, String> data = getData(user, order);
 		data.put("@@ORDER_CODE@@", orderCode);
 		return data;
@@ -191,163 +187,141 @@ public final class EmailTemplate {
 
 	/**
 	 * Convert data to Order admins
-	 * 
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 *
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataNewOrderAdmins(final User user, final Order order) {
+	public Map<String, String> convertToDataNewOrderAdmins(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	// ORDER: case 2 - Caterer declined the order
+
 	/**
 	 * Convert data for decline order user.
-	 * 
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 *
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataDeclineOrderUser(final User user, final Order order) {
+	public Map<String, String> convertToDataDeclineOrderUser(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	/**
 	 * Convert data for decline order admins.
-	 * 
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 *
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataDeclineOrderAdmins(final User user, final Order order) {
+	public Map<String, String> convertToDataDeclineOrderAdmins(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	// ORDER: case 3 - The order is a success
+
 	/**
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataSuccessOrderUser(final User user, final Order order) {
+	public Map<String, String> convertToDataSuccessOrderUser(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	/**
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataSuccessOrderCaterer(final User user, final Order order) {
+	public Map<String, String> convertToDataSuccessOrderCaterer(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	/**
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataSuccessOrderAdmins(final User user, final Order order) {
+	public Map<String, String> convertToDataSuccessOrderAdmins(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	// ORDER: case 4 - The order has been accepted but the payment failed
+
 	/**
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataFailOrderUser(final User user, final Order order) {
+	public Map<String, String> convertToDataFailOrderUser(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	/**
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataFailOrderCaterer(final User user, final Order order) {
+	public Map<String, String> convertToDataFailOrderCaterer(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	/**
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataFailOrderAdmins(final User user, final Order order) {
+	public Map<String, String> convertToDataFailOrderAdmins(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	// ORDER: case 5 - The order has been received by the Caterer, but he did not answer it on time.
+
 	/**
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataCancelOrderUser(final User user, final Order order) {
+	public Map<String, String> convertToDataCancelOrderUser(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	/**
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataCancelOrderCaterer(final User user, final Order order) {
+	public Map<String, String> convertToDataCancelOrderCaterer(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	/**
-	 * @param user
-	 *            The user
-	 * @param order
-	 *            The order
+	 * @param user  The user
+	 * @param order The order
 	 * @return A Map
 	 */
-	public static Map<String, String> convertToDataCancelOrderAdmins(final User user, final Order order) {
+	public Map<String, String> convertToDataCancelOrderAdmins(final User user, final Order order) {
 		return getData(user, order);
 	}
 
 	/**
-	 * @param user
-	 *            The user.
-	 * @param resetCode
-	 *            The code.
+	 * @param user      The user.
+	 * @param resetCode The code.
 	 * @return The map.
 	 */
-	public static Map<String, String> convertToDataResetUserPassword(final User user, final String resetCode) {
+	public Map<String, String> convertToDataResetUserPassword(final User user, final String resetCode) {
 		Map<String, String> data = getData(user, null);
 		data.put("@@RESET_CODE@@", resetCode);
 		return data;
 	}
 
-	private static Map<String, String> getData(final User user, final Order order) {
+	private Map<String, String> getData(final User user, final Order order) {
 		Map<String, String> data = new HashMap<>();
-		data.put("@@TEAM_NAME@@", Info.NAME);
-		data.put("@@WEB_ADDRESS@@", Info.WEB_ADDRESS);
+		data.put("@@TEAM_NAME@@", name);
+		data.put("@@WEB_ADDRESS@@", webAddress);
 		data.put("@@DELAY@@", delay);
 
 		data.put("@@USER_ID@@", user.getId().toHexString());

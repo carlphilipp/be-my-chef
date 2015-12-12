@@ -6,9 +6,8 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
-public final class CleanKeysJob implements Job {
+public final class CleanKeysJob {
 
 	/**
 	 * Logger
@@ -27,22 +26,19 @@ public final class CleanKeysJob implements Job {
 	/**
 	 * Key dao
 	 */
+	@Autowired
 	private KeyDAO keyDao;
+	@Autowired
+	private Utils utils;
 
-	/**
-	 * Constructor
-	 */
-	public CleanKeysJob() {
-		keyDao = new KeyDAO();
-	}
-
-	@Override
-	public void execute(final JobExecutionContext context) throws JobExecutionException {
+	// TODO load properties for cron value
+	@Scheduled(cron = "0 0/5 * * * ?")
+	public void execute() {
 		LOG.info("Clean keys job starting...");
 		try {
 			List<Key> keys = keyDao.readAll();
 			for (Key key : keys) {
-				if (!Utils.isValid(key)) {
+				if (!utils.isValid(key)) {
 					keyDao.delete(key.getId().toHexString());
 				}
 			}

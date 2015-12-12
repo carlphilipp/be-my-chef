@@ -14,6 +14,7 @@ import com.epickur.api.report.Report;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
+import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.CatererValidator;
 import com.stripe.exception.*;
 import org.junit.AfterClass;
@@ -56,6 +57,8 @@ public class CatererControllerTest {
 	private Report report;
 	@Mock
 	private CatererValidator validator;
+	@Mock
+	private Utils utils;
 	@InjectMocks
 	private CatererController controller;
 

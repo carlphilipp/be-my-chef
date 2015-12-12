@@ -1,11 +1,8 @@
 package com.epickur.api;
 
 import com.epickur.api.commons.CommonsUtil;
-import org.bson.types.ObjectId;
-
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.times.WorkingTimes;
@@ -16,57 +13,24 @@ import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import com.epickur.api.utils.Utils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 @Component
 public class IntegrationTestUtils {
-	// TODO remove trick to inject into static members.
-
-	private static IntegrationTestUtils instance;
-
-	private static CatererService catererService;
-
-	private static UserService userService;
-
-	private static DishService dishService;
-
-	private static OrderService orderService;
 
 	@Autowired
-	private CatererService mCatererService;
+	private CatererService catererService;
 
 	@Autowired
-	private UserService mUserService;
+	private UserService userService;
 
 	@Autowired
-	private DishService mDishService;
+	private DishService dishService;
 
 	@Autowired
-	private OrderService mOrderService;
-
-	@PostConstruct
-	public void init() {
-		IntegrationTestUtils.catererService = mCatererService;
-		IntegrationTestUtils.userService = mUserService;
-		IntegrationTestUtils.dishService = mDishService;
-		IntegrationTestUtils.orderService = mOrderService;
-	}
-
-	private IntegrationTestUtils(){
-	}
-
-	public static IntegrationTestUtils getInstance(){
-		if(instance == null){
-			instance = new IntegrationTestUtils();
-		}
-		return instance;
-	}
-
+	private OrderService orderService;
 
 	public User createAdminAndLogin() throws EpickurException {
 		User user = EntityGenerator.generateRandomUser();

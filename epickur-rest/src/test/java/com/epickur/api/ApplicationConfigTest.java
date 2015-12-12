@@ -1,21 +1,33 @@
 package com.epickur.api;
 
-import com.epickur.api.config.ValidatorConfig;
+import com.epickur.api.config.*;
 import com.epickur.api.dao.mongo.*;
+import com.epickur.api.geocoder.here.GeocoderHereImpl;
+import com.epickur.api.geocoder.here.Here;
 import com.epickur.api.service.*;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import com.epickur.api.utils.Utils;
+import com.epickur.api.utils.email.Email;
+import com.epickur.api.utils.email.EmailTemplate;
+import com.epickur.api.utils.email.EmailUtils;
+import org.springframework.context.annotation.*;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
+@PropertySource("classpath:epickur-dev.properties")
 @ComponentScan(value = { "CatererService", "CatererDAO", "IntegrationTestUtils", "UserDAO", "UserService", "KeyService" })
-@Import({ ValidatorConfig.class })
+@Import({ SchedulerConfig.class, MongoConfig.class, ValidatorConfig.class, GeoCoder.class, AmazonWSConfig.class, StripeConfig.class,
+				EmailConfig.class })
 public class ApplicationConfigTest {
 
 	@Bean
+	public static PropertySourcesPlaceholderConfigurer properties() throws Exception {
+		final PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
+		return pspc;
+	}
+
+	@Bean
 	public IntegrationTestUtils integrationTestUtils() {
-		return IntegrationTestUtils.getInstance();
+		return new IntegrationTestUtils();
 	}
 
 	@Bean
@@ -86,5 +98,35 @@ public class ApplicationConfigTest {
 	@Bean
 	public VoucherService voucherService() {
 		return new VoucherService();
+	}
+
+	@Bean
+	public Utils utils() {
+		return new Utils();
+	}
+
+	@Bean
+	public GeocoderHereImpl geocoderHere() {
+		return new GeocoderHereImpl();
+	}
+
+	@Bean
+	public Here here() {
+		return new Here();
+	}
+
+	@Bean
+	public EmailUtils emailUtils() {
+		return new EmailUtils();
+	}
+
+	@Bean
+	public EmailTemplate emailTemplate() {
+		return new EmailTemplate();
+	}
+
+	@Bean
+	public Email email() {
+		return new Email();
 	}
 }

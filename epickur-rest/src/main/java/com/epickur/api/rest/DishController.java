@@ -52,6 +52,8 @@ public class DishController {
 	 */
 	@Autowired
 	private CatererService catererService;
+	@Autowired
+	private Utils utils;
 
 	// @formatter:off
 	/**
@@ -531,10 +533,10 @@ public class DishController {
 			@RequestParam("searchtext") final String searchtext,
 			@RequestParam(value = "distance", defaultValue = "500") @Min(value = 50, message = "{dish.search.distance}") final Integer distance)
 			throws EpickurException {
-		List<DishType> dishTypes = Utils.stringToListDishType(types);
+		List<DishType> dishTypes = utils.stringToListDishType(types);
 		Geo geo = null;
 		if (!StringUtils.isBlank(at)) {
-			geo = Utils.stringToGeo(at);
+			geo = utils.stringToGeo(at);
 		}
 		Object[] result = CommonsUtil.parsePickupdate(pickupdate);
 		String day = (String) result[0];

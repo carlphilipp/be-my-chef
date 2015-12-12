@@ -7,7 +7,6 @@ import com.epickur.api.entity.Geo;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.geocoder.IGeocoder;
-import com.epickur.api.geocoder.here.GeocoderHereImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +25,8 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
 @Service
 public class DishService {
 
+	@Autowired
+	private IGeocoder geocoder;
 	/**
 	 * The DAO {@link DishDAO}.
 	 */
@@ -117,7 +118,6 @@ public class DishService {
 	public List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
 			final String searchtext, final int distance) throws EpickurException {
 		if (geo == null) {
-			IGeocoder geocoder = new GeocoderHereImpl();
 			Geo geoFound = geocoder.getPosition(searchtext);
 			return dao.search(day, minutes, type, limit, geoFound, distance);
 		} else {

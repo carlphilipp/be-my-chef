@@ -51,6 +51,8 @@ public class OrderDAOIT {
 
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
+	@Autowired
+	private OrderDAO dao;
 
 	@Mock
 	private OrderService orderService;
@@ -87,9 +89,8 @@ public class OrderDAOIT {
 
 		Order order = integrationTestUtils.createOrder(user.getId());
 		ObjectId catererId = order.getDish().getCaterer().getId();
-		Order order2 = integrationTestUtils.createOrder(user.getId(), catererId);
+		integrationTestUtils.createOrder(user.getId(), catererId);
 
-		OrderDAO dao = new OrderDAO();
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), null, null);
 		assertNotNull(orders);
 		assertEquals(2, orders.size());
@@ -103,7 +104,6 @@ public class OrderDAOIT {
 		ObjectId catererId = order.getDish().getCaterer().getId();
 		Order order2 = integrationTestUtils.createOrder(user.getId(), catererId);
 
-		OrderDAO dao = new OrderDAO();
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt(), order2.getCreatedAt());
 		assertNotNull(orders);
 		assertEquals(2, orders.size());
@@ -117,7 +117,6 @@ public class OrderDAOIT {
 		ObjectId catererId = order.getDish().getCaterer().getId();
 		Order order2 = integrationTestUtils.createOrder(user.getId(), catererId);
 
-		OrderDAO dao = new OrderDAO();
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt().plus(1), order2.getCreatedAt());
 		assertNotNull(orders);
 		assertEquals(1, orders.size());
@@ -131,7 +130,6 @@ public class OrderDAOIT {
 		ObjectId catererId = order.getDish().getCaterer().getId();
 		Order order2 = integrationTestUtils.createOrder(user.getId(), catererId);
 
-		OrderDAO dao = new OrderDAO();
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt(), order2.getCreatedAt().minus(1));
 		assertNotNull(orders);
 		assertEquals(1, orders.size());
@@ -146,7 +144,6 @@ public class OrderDAOIT {
 		Order order2 = integrationTestUtils.createOrder(user.getId(), catererId);
 
 		// Test
-		OrderDAO dao = new OrderDAO();
 		List<Order> orders = dao.readAllWithCatererId(catererId.toHexString(), order.getCreatedAt().plus(1), order2.getCreatedAt().minus(1));
 		assertNotNull(orders);
 		assertEquals(0, orders.size());

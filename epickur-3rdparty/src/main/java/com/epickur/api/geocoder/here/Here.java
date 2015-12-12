@@ -1,5 +1,17 @@
 package com.epickur.api.geocoder.here;
 
+import com.epickur.api.entity.Geo;
+import com.epickur.api.exception.HereException;
+import com.epickur.api.utils.Utils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -9,17 +21,6 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.epickur.api.entity.Geo;
-import com.epickur.api.exception.HereException;
-import com.epickur.api.utils.Utils;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Access to Here APIs.
@@ -27,9 +28,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author cph
  * @version 1.0
  */
+@Component
 public class Here {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(Here.class.getSimpleName());
+	@Autowired
+	private Utils utils;
 	/** Url base */
 	private static final String URL_BASE = "http://geocoder.api.here.com";
 	/** Url option */
@@ -53,27 +57,22 @@ public class Here {
 	/** Url option */
 	private static final double RELEVANCE_THRESHOLD = 0.85;
 	/** Here App Id */
+	@Value("${here.app.id}")
 	private String appId;
 	/** Here App Code */
+	@Value("${here.app.code}")
 	private String appCode;
 	/** Here App Resource */
+	@Value("${here.api.resource}")
 	private String resource;
 	/** Here App Version */
+	@Value("${here.api.version}")
 	private String version;
 	/** The adress to find */
 	private String text;
 
-	/**
-	 * @param text
-	 *            The address to find
-	 */
-	public Here(final String text) {
+	public void setSearchText(final String text) {
 		this.text = text;
-		Properties properties = Utils.getEpickurProperties();
-		this.appId = properties.getProperty("here.app.id");
-		this.appCode = properties.getProperty("here.app.code");
-		this.resource = properties.getProperty("here.api.resource");
-		this.version = properties.getProperty("here.api.version");
 	}
 
 	/**
@@ -156,11 +155,11 @@ public class Here {
 				if (response.containsKey("view")) {
 					List<Map<String, Object>> views = (List<Map<String, Object>>) response.get("view");
 					if (views.size() > 0) {
-						Map<String, Object> view = (Map<String, Object>) views.get(0);
+						Map<String, Object> view = views.get(0);
 						if (view.containsKey("result")) {
 							List<Map<String, Object>> results = (List<Map<String, Object>>) view.get("result");
 							if (results.size() > 0) {
-								Map<String, Object> result = (Map<String, Object>) results.get(0);
+								Map<String, Object> result = results.get(0);
 								double relevance = (double) result.get("relevance");
 								if (relevance >= RELEVANCE_THRESHOLD) {
 									if (result.containsKey("location")) {

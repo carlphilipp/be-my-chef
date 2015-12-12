@@ -41,6 +41,12 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 	 */
 	@Autowired
 	private KeyDAO keyDAO;
+	@Autowired
+	private Utils utils;
+
+	public KeyRequestFilter() {
+		super();
+	}
 
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
@@ -81,7 +87,7 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 
 	protected void handleKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain,
 			final String paramKey) throws EpickurException, IOException, ServletException {
-		String apiKey = Utils.getAPIKey();
+		String apiKey = utils.getAPIKey();
 		if (paramKey.equals(apiKey)) {
 			handleAPIKey(request, response, filterChain);
 		} else {
@@ -100,7 +106,7 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 	protected void handlePrivateKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain,
 			final String paramKey) throws EpickurException, IOException, ServletException {
 		Key key = keyDAO.read(paramKey);
-		if (!Utils.isValid(key)) {
+		if (!utils.isValid(key)) {
 			abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorUtils.INVALID_KEY);
 		} else {
 			request.setAttribute("key", key);

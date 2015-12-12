@@ -9,6 +9,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
+import com.epickur.api.utils.Utils;
 import com.epickur.api.validator.DishValidator;
 import org.bson.types.ObjectId;
 import org.junit.Before;
@@ -37,6 +38,8 @@ public class DishControllerTest {
 	private HttpServletRequest context;
 	@Mock
 	private DishValidator validator;
+	@Mock
+	private Utils utils;
 	@InjectMocks
 	private DishController controller;
 

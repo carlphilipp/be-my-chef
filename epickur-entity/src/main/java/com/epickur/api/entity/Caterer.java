@@ -1,19 +1,5 @@
 package com.epickur.api.entity;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.json.JsonMode;
-import org.bson.json.JsonWriterSettings;
-import org.bson.types.ObjectId;
-
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.entity.times.WorkingTimes;
@@ -27,14 +13,26 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
+import org.bson.types.ObjectId;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Caterer entity
- * 
+ *
  * @author cph
  * @version 1.0
  */
@@ -46,23 +44,41 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class Caterer extends AbstractMainDBEntity {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(Caterer.class.getSimpleName());
-	/** Name */
+	/**
+	 * Name
+	 */
 	private String name;
-	/** Description */
+	/**
+	 * Description
+	 */
 	private String description;
-	/** Manager name */
+	/**
+	 * Manager name
+	 */
 	private String manager;
-	/** Manager email */
+	/**
+	 * Manager email
+	 */
 	private String email;
-	/** Phone */
+	/**
+	 * Phone
+	 */
 	private String phone;
-	/** Location */
+	/**
+	 * Location
+	 */
 	private Location location;
-	/** Working times */
+	/**
+	 * Working times
+	 */
 	private WorkingTimes workingTimes;
-	/** Owner id */
+	/**
+	 * Owner id
+	 */
 	private ObjectId createdBy;
 
 	/**
@@ -74,8 +90,7 @@ public class Caterer extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param ownerId
-	 *            The user id
+	 * @param ownerId The user id
 	 */
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setCreatedBy(final ObjectId ownerId) {
@@ -83,12 +98,9 @@ public class Caterer extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param prefix
-	 *            The prefix
+	 * @param prefix The prefix
 	 * @return A map
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
-	 * 
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) throws EpickurParsingException {
@@ -120,35 +132,28 @@ public class Caterer extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param obj
-	 *            The Document
+	 * @param obj The Document
 	 * @return the Caterer
-	 * @throws EpickurParsingException
-	 *             If an EpickurParsingException exception occurred
+	 * @throws EpickurParsingException If an EpickurParsingException exception occurred
 	 */
 	public static Caterer getDocumentAsCatererDBView(final Document obj) throws EpickurParsingException {
 		return Caterer.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)), View.DB);
 	}
 
 	/**
-	 * @param obj
-	 *            The Document
+	 * @param obj The Document
 	 * @return the Caterer
-	 * @throws EpickurParsingException
-	 *             If an EpickurParsingException exception occurred
+	 * @throws EpickurParsingException If an EpickurParsingException exception occurred
 	 */
 	public static Caterer getDocumentAsCatererAPIView(final Document obj) throws EpickurParsingException {
 		return Caterer.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)), View.API);
 	}
 
 	/**
-	 * @param json
-	 *            The json string
-	 * @param view
-	 *            The View
+	 * @param json The json string
+	 * @param view The View
 	 * @return the Caterer
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	private static Caterer getObject(final String json, final View view) throws EpickurParsingException {
 		Caterer caterer = null;

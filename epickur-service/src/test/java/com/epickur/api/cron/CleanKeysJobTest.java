@@ -1,47 +1,52 @@
 package com.epickur.api.cron;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
+import com.epickur.api.config.ServiceConfigTest;
 import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.utils.Utils;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(MockitoJUnitRunner.class)
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.*;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ServiceConfigTest.class)
 public class CleanKeysJobTest {
 
-	public static Integer SESSION_TIMEOUT;
+	@Value("${session.timeout}")
+	public Integer sessionTimeout;
 	@Mock
 	private JobExecutionContext context;
 	@Mock
 	private KeyDAO keyDao;
+	@Mock
+	private Utils utils;
 	@InjectMocks
 	private CleanKeysJob keyJob;
 
-	@BeforeClass
-	public static void beforeSetUp() {
-		Properties prop = Utils.getEpickurProperties();
-		SESSION_TIMEOUT = Integer.valueOf(prop.getProperty("session.timeout"));
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
 	}
 
 	@Test
@@ -52,8 +57,9 @@ public class CleanKeysJobTest {
 		key.setCreatedAt(now);
 		keys.add(key);
 		when(keyDao.readAll()).thenReturn(keys);
+		when(utils.isValid(key)).thenReturn(true);
 
-		keyJob.execute(context);
+		keyJob.execute();
 
 		verify(keyDao, times(1)).readAll();
 		verify(keyDao, never()).delete(anyObject());
@@ -65,12 +71,12 @@ public class CleanKeysJobTest {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		key.setId(new ObjectId());
 		DateTime now = new DateTime();
-		now = now.plusDays(SESSION_TIMEOUT + 10);
+		now = now.plusDays(sessionTimeout + 10);
 		key.setCreatedAt(now);
 		keys.add(key);
 		when(keyDao.readAll()).thenReturn(keys);
 
-		keyJob.execute(context);
+		keyJob.execute();
 
 		verify(keyDao, times(1)).readAll();
 		verify(keyDao, times(1)).delete(key.getId().toHexString());
@@ -80,7 +86,7 @@ public class CleanKeysJobTest {
 	public void testExecuteEpickurException() throws JobExecutionException, EpickurException {
 		when(keyDao.readAll()).thenThrow(new EpickurException());
 		try {
-			keyJob.execute(context);
+			keyJob.execute();
 		} finally {
 			verify(keyDao, times(1)).readAll();
 			verify(keyDao, never()).delete(anyObject());

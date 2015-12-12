@@ -1,22 +1,20 @@
 package com.epickur.api.dump;
 
-import java.io.File;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.epickur.api.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Class that communicates with Amazon S3 server. It connects and sends the DB dump to it.
@@ -25,27 +23,16 @@ import com.epickur.api.utils.Utils;
  * @version 1.0
  *
  */
+@Component
 public final class AmazonWebServices {
 	/** Logger */
 	private static final Logger LOG = LogManager.getLogger(AmazonWebServices.class.getSimpleName());
 	/** Maximum amount of dump we keep on S3 */
 	private static final int MAX_DUMP_KEPT = 20;
-	/** Amazon S3 client */
-	private AmazonS3 s3client;
-	/** Amazon Bucket name */
+	@Value("${aws.bucket}")
 	private String bucketName;
-
-	/**
-	 * Construct a Amazon Web Services
-	 */
-	public AmazonWebServices() {
-		Properties prop = Utils.getEpickurProperties();
-		String accessKeyId = prop.getProperty("aws.access.KeyId");
-		String secretKey = prop.getProperty("aws.secretKey");
-		bucketName = prop.getProperty("aws.bucket");
-		BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKeyId, secretKey);
-		s3client = new AmazonS3Client(awsCreds);
-	}
+	@Autowired
+	private AmazonS3 s3client;
 
 	/**
 	 * @param filePath

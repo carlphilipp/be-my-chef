@@ -59,6 +59,8 @@ public class CatererController {
 	 */
 	@Autowired
 	private DishService dishService;
+	@Autowired
+	private Utils utils;
 
 	// @formatter:off
 	/**
@@ -561,10 +563,10 @@ public class CatererController {
 		DateTime startDate = null;
 		DateTime endDate = null;
 		if (start != null) {
-			startDate = Utils.parseDate(start, format);
+			startDate = utils.parseDate(start, format);
 		}
 		if (end != null) {
-			endDate = Utils.parseDate(start, format);
+			endDate = utils.parseDate(start, format);
 		}
 		Caterer caterer = catererService.read(id);
 		List<Order> orders = orderService.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);

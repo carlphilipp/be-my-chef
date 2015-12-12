@@ -1,5 +1,6 @@
 package com.epickur.api.service;
 
+import com.epickur.api.cron.OrderJob;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.SequenceDAO;
 import com.epickur.api.dao.mongo.UserDAO;
@@ -64,6 +65,8 @@ public class OrderServiceTest {
 	private Token tokenMock;
 	@Mock
 	private EmailUtils emailUtilsMock;
+	@Mock
+	private OrderJob jobs;
 	@Mock
 	private UserValidator validator;
 	@InjectMocks

@@ -55,14 +55,10 @@ public class UserService {
 	/**
 	 * User Email utils
 	 */
+	@Autowired
 	private EmailUtils emailUtils;
-
-	/**
-	 * The constructor
-	 */
-	public UserService() {
-		this.emailUtils = new EmailUtils();
-	}
+	@Autowired
+	private Utils utils;
 
 	/**
 	 * Create a User
@@ -185,7 +181,7 @@ public class UserService {
 	public User login(final String email, final String password) throws EpickurException {
 		User userFound = readWithEmail(email);
 		if (userFound != null) {
-			if (!Utils.isPasswordCorrect(password, userFound)) {
+			if (!utils.isPasswordCorrect(password, userFound)) {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 			} else if (userFound.getAllow() == 1) {
 				String tempKey = Security.generateRandomMd5();
@@ -223,7 +219,7 @@ public class UserService {
 		if (userFound == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getEmail());
 		} else {
-			if (!Utils.isPasswordCorrect(user.getPassword(), userFound)) {
+			if (!utils.isPasswordCorrect(user.getPassword(), userFound)) {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getEmail());
 			} else {
 				String newEnryptedPassword = PasswordManager.createPasswordManager(user.getNewPassword()).createDBPassword();

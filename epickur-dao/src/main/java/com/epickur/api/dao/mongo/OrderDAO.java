@@ -14,6 +14,7 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,12 +34,9 @@ public class OrderDAO extends CrudDAO<Order> {
 	 */
 	private static final Logger LOG = LogManager.getLogger(OrderDAO.class.getSimpleName());
 
-	/**
-	 * Constructor
-	 */
-	public OrderDAO() {
-		super();
-		initCollection(ORDER_COLL);
+	@PostConstruct
+	protected void initCollection() {
+		setColl(getDb().getCollection(ORDER_COLL));
 	}
 
 	@Override

@@ -5,26 +5,25 @@ import com.epickur.api.dump.AmazonWebServices;
 import com.epickur.api.dump.MongoDBDump;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
 /**
  * Job that creat a dump of MongoDB and send it to Amazon servers.
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
-public final class MongoDBDumpJob implements Job {
+public class MongoDBDumpJob {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(MongoDBDumpJob.class.getSimpleName());
 
-	@Override
-	public void execute(final JobExecutionContext context) throws JobExecutionException {
+	@Scheduled(cron = "0 0 0/2 * * ?")
+	public void execute() {
 		LOG.info("Start DB dump...");
 		MongoDBDump mongoDBDump = new MongoDBDump(CommonsUtil.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
 		boolean exported = mongoDBDump.exportMongo();

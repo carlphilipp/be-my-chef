@@ -1,11 +1,9 @@
 package com.epickur.api;
 
 import com.epickur.api.config.ApplicationConfig;
-import com.epickur.api.cron.Jobs;
 import com.epickur.api.filter.HeaderResponseFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quartz.SchedulerException;
 import org.quartz.ee.servlet.QuartzInitializerListener;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -62,11 +60,11 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 	}
 
 	private void startupJobs() {
-		try {
-			Jobs jobs = Jobs.getInstance();
-			jobs.run();
-		} catch (SchedulerException e) {
-			LOG.error(e.getLocalizedMessage(), e);
-		}
+//		try {
+//			Jobs jobs = Jobs.getInstance();
+//			jobs.run();
+//		} catch (SchedulerException e) {
+//			LOG.error(e.getLocalizedMessage(), e);
+//		}
 	}
 }

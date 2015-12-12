@@ -15,6 +15,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +35,9 @@ public class UserDAO extends CrudDAO<User> {
 	 */
 	private static final Logger LOG = LogManager.getLogger(UserDAO.class.getSimpleName());
 
-	/**
-	 * Constructor
-	 */
-	public UserDAO() {
-		super();
-		initCollection(USER_COLL);
+	@PostConstruct
+	protected void initCollection() {
+		setColl(getDb().getCollection(USER_COLL));
 	}
 
 	@Override
