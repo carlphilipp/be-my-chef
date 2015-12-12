@@ -1,13 +1,7 @@
 package com.epickur.api.utils.email;
 
-import org.bson.types.ObjectId;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import com.cribbstechnologies.clients.mandrill.request.MandrillMessagesRequest;
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Order;
@@ -17,8 +11,12 @@ import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.utils.Security;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.bson.types.ObjectId;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import javax.inject.Inject;
 
@@ -28,11 +26,13 @@ public class EmailUtilsTest {
 	@Mock
 	private Email email;
 	@Inject
-	private String[] admins = new String [0];
+	private String[] admins = new String[0];
 	@Mock
 	private MandrillMessagesRequest messagesRequest;
 	@Mock
 	private EmailTemplate emailTemplate;
+	@Mock
+	private EpickurProperties epickurProperties;
 	@InjectMocks
 	private EmailUtils emailUtils;
 
@@ -154,7 +154,7 @@ public class EmailUtilsTest {
 		user.setName("carl");
 		user.setEmail(EMAIL_TEST);
 		user.setId(new ObjectId());
-		
+
 		emailUtils.resetPassword(user, Security.generateRandomMd5());
 	}
 }

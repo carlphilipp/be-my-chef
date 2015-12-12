@@ -32,7 +32,7 @@ public class StripePayment {
 	 * @throws StripeException If a StripException occured
 	 */
 	public Charge chargeCard(final String cardToken, final int amount, final Currency currency) throws StripeException {
-		Charge charge = null;
+		Charge charge;
 		Map<String, Object> chargeMap = null;
 		try {
 			chargeMap = new HashMap<>();

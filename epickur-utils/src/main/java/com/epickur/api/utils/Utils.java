@@ -1,6 +1,7 @@
 package com.epickur.api.utils;
 
 import com.epickur.api.commons.CommonsUtil;
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -38,11 +40,8 @@ public class Utils {
 	 * Logger
 	 */
 	private static final Logger LOG = LogManager.getLogger(Utils.class.getSimpleName());
-	/**
-	 * Session timeout
-	 */
-	@Value("${session.timeout}")
-	public Integer sessionTimeout;
+	@Autowired
+	public EpickurProperties properties;
 
 	/**
 	 * Check is the User password is correct
@@ -153,7 +152,7 @@ public class Utils {
 		} else {
 			DateTime currentTime = new DateTime();
 			int daysBetween = Math.abs(Days.daysBetween(key.getCreatedAt(), currentTime).getDays());
-			if (daysBetween > sessionTimeout) {
+			if (daysBetween > properties.getSessionTimeout()) {
 				return false;
 			}
 		}

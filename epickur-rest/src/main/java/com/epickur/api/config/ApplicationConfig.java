@@ -16,6 +16,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 				EmailConfig.class,
 				GeoCoder.class,
 				MongoConfig.class,
+				PropertySourcesConfig.class,
 				StripeConfig.class,
 				SchedulerConfig.class,
 				ValidatorConfig.class

@@ -23,6 +23,7 @@
 	<modules>
 		<module>epickur-3rdparty</module>
 		<module>epickur-commons</module>
+		<module>epickur-config</module>
 		<module>epickur-dao</module>
 		<module>epickur-dump</module>
 		<module>epickur-entity</module>
@@ -479,6 +480,11 @@
 			<dependency>
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-commons</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.epickur.api</groupId>
+				<artifactId>epickur-config</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

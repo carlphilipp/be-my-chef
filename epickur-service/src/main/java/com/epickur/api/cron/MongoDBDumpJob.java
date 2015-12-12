@@ -5,6 +5,7 @@ import com.epickur.api.dump.AmazonWebServices;
 import com.epickur.api.dump.MongoDBDump;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
@@ -16,6 +17,9 @@ import java.util.List;
  * @version 1.0
  */
 public class MongoDBDumpJob {
+
+	@Autowired
+	private AmazonWebServices aws;
 
 	/**
 	 * Logger
@@ -33,8 +37,7 @@ public class MongoDBDumpJob {
 			List<String> list = mongoDBDump.getListFiles();
 			CommonsUtil.createTarGz(list, mongoDBDump.getCurrentFullPathName());
 			LOG.info("tar.gz generated: " + mongoDBDump.getCurrentFullPathName());
-
-			AmazonWebServices aws = new AmazonWebServices();
+			
 			aws.deleteOldFile();
 			aws.uploadFile(mongoDBDump.getCurrentFullPathName());
 

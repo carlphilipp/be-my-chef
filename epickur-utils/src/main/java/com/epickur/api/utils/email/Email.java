@@ -23,6 +23,7 @@ import com.cribbstechnologies.clients.mandrill.model.MandrillRecipient;
 import com.cribbstechnologies.clients.mandrill.request.MandrillMessagesRequest;
 import com.cribbstechnologies.clients.mandrill.request.MandrillRESTRequest;
 import com.cribbstechnologies.clients.mandrill.util.MandrillConfiguration;
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -42,33 +42,32 @@ import java.util.Map.Entry;
  * This class is used to send emails
  *
  * @author cph
- *
  */
 @Component
 public class Email {
 
-	/** The logger */
+	/**
+	 * The logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(Email.class.getSimpleName());
 
-	/** The request */
+	/**
+	 * The request
+	 */
 	private MandrillRESTRequest request;
-	/** The email address */
-	@Value("${email.mandrill.from}")
-	private String fromEmail;
-	/** The name of the sender */
-	@Value("${email.mandrill.from.username}")
-	private String fromName;
-	/** The subject */
-	@Value("${email.send}")
 	private String subject;
-	/** The message in HTML format */
+	/**
+	 * The message in HTML format
+	 */
 	private String message;
-	/** The list of sender */
+	/**
+	 * The list of sender
+	 */
 	private String[] sendTo;
 	@Autowired
 	private EmailTemplate emailTemplate;
-	@Value("${email.send}")
-	private boolean send;
+	@Autowired
+	public EpickurProperties properties;
 	@Autowired
 	private Utils utils;
 	@Autowired
@@ -77,12 +76,9 @@ public class Email {
 	private MandrillConfiguration mandrillConfiguration;
 
 	/**
-	 * @param emailSubjectTxt
-	 *            The subject
-	 * @param emailMsgTxt
-	 *            The content of the message in HTML
-	 * @param sendTo
-	 *            The list of email to send to
+	 * @param emailSubjectTxt The subject
+	 * @param emailMsgTxt     The content of the message in HTML
+	 * @param sendTo          The list of email to send to
 	 */
 	protected void configure(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
 		this.subject = emailSubjectTxt;
@@ -104,8 +100,8 @@ public class Email {
 		MandrillMessageRequest mmr = new MandrillMessageRequest();
 		MandrillHtmlMessage mess = new MandrillHtmlMessage();
 		Map<String, String> headers = new HashMap<>();
-		mess.setFrom_email(fromEmail);
-		mess.setFrom_name(fromName);
+		mess.setFrom_email(properties.getMandrillFrom());
+		mess.setFrom_name(properties.getMandrillFromUsername());
 		mess.setHeaders(headers);
 		mess.setHtml(this.message);
 		mess.setSubject(this.subject);
@@ -118,7 +114,7 @@ public class Email {
 		String[] tags = new String[] { "bmc", "bemychef", "be my chef" };
 		mess.setTags(tags);
 		mmr.setMessage(mess);
-		if (send) {
+		if (properties.getSend()) {
 			try {
 				messagesRequest.sendMessage(mmr);
 			} catch (RequestFailedException e) {
@@ -130,12 +126,9 @@ public class Email {
 	/**
 	 * Send emails
 	 *
-	 * @param emailType
-	 *            The Email Type
-	 * @param data
-	 *            The data
-	 * @param sendTo
-	 *            An array of email
+	 * @param emailType The Email Type
+	 * @param data      The data
+	 * @param sendTo    An array of email
 	 */
 	protected void sendMail(final EmailType emailType, final Map<String, String> data, final String[] sendTo) {
 		Map<String, String> template = emailTemplate.getTemplate(emailType);

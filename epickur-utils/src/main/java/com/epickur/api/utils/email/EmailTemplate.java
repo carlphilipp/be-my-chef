@@ -1,5 +1,6 @@
 package com.epickur.api.utils.email;
 
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.utils.Utils;
@@ -38,17 +39,8 @@ public class EmailTemplate {
 	 * The templates
 	 */
 	private Map<String, Map<String, String>> templates;
-	/**
-	 * Delay max for a caterer to answer
-	 */
-	@Value("{name}")
-	private String name;
-	@Value("{epickur.web.address}")
-	private String webAddress;
-	@Value("{cron.order.timelimit}")
-	private String delay;
-	@Value("{folder}")
-	private String folder;
+	@Autowired
+	public EpickurProperties properties;
 	@Autowired
 	private Utils utils;
 
@@ -145,7 +137,7 @@ public class EmailTemplate {
 	 */
 	public Map<String, String> convertToDataNewRegistrationUser(final User user, String code) {
 		Map<String, String> data = getData(user, null);
-		data.put("@@FOLDER@@", folder);
+		data.put("@@FOLDER@@", properties.getFolder());
 		data.put("@@CHECK@@", code);
 		return data;
 	}
@@ -320,9 +312,9 @@ public class EmailTemplate {
 
 	private Map<String, String> getData(final User user, final Order order) {
 		Map<String, String> data = new HashMap<>();
-		data.put("@@TEAM_NAME@@", name);
-		data.put("@@WEB_ADDRESS@@", webAddress);
-		data.put("@@DELAY@@", delay);
+		data.put("@@TEAM_NAME@@", properties.getName());
+		data.put("@@WEB_ADDRESS@@", properties.getWebAddress());
+		data.put("@@DELAY@@", properties.getOrderTimeLimit().toString());
 
 		data.put("@@USER_ID@@", user.getId().toHexString());
 		data.put("@@USER_EMAIL@@", user.getEmail());

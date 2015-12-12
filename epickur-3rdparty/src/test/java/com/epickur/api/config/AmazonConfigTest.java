@@ -4,24 +4,21 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.epickur.api.dump.AmazonWebServices;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-
-import java.util.Properties;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 
 import static org.mockito.Mockito.mock;
 
 @Configuration
+@PropertySource("classpath:epickur-dev.properties")
+@Import(
+		PropertySourcesConfig.class
+)
 public class AmazonConfigTest {
 
 	@Bean
-	public static PropertySourcesPlaceholderConfigurer properties() throws Exception {
-		final PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
-		Properties properties = new Properties();
-
-		properties.setProperty("aws.bucket", "epickur-dbdump");
-
-		pspc.setProperties(properties);
-		return pspc;
+	public AmazonS3 s3clientMock() {
+		return mock(AmazonS3.class);
 	}
 
 	@Bean
@@ -30,7 +27,7 @@ public class AmazonConfigTest {
 	}
 
 	@Bean
-	public AmazonS3 s3clientMock() {
-		return mock(AmazonS3.class);
+	public EpickurProperties epickurProperties() {
+		return new EpickurProperties();
 	}
 }

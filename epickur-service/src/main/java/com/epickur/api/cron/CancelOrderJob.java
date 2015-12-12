@@ -14,6 +14,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.springframework.stereotype.Component;
 
 /**
  * This class represents a process to cancel orders when it's been too long time it was not accepted.
@@ -21,6 +22,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
  * @author cph
  * @version 1.0
  */
+@Component
 public class CancelOrderJob extends QuartzJobBean {
 
 	/**

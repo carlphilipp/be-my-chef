@@ -1,5 +1,6 @@
 package com.epickur.api.geocoder.here;
 
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.exception.HereException;
 import com.epickur.api.utils.Utils;
@@ -9,7 +10,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,51 +24,67 @@ import java.util.Map;
 
 /**
  * Access to Here APIs.
- * 
+ *
  * @author cph
  * @version 1.0
  */
 @Component
 public class Here {
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(Here.class.getSimpleName());
 	@Autowired
 	private Utils utils;
-	/** Url base */
+	@Autowired
+	public EpickurProperties properties;
+	/**
+	 * Url base
+	 */
 	private static final String URL_BASE = "http://geocoder.api.here.com";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final String URL_APP_CODE = "app_code=";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final String URL_APP_ID = "&app_id=";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final String URL_APP_GEN = "&gen=8";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final String URL_SEARCH_TEXT = "&searchtext=";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final String URL_MAX_RESULTS = "&maxresults=1";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final String URL_RESPONSE_ATTRIBUTES = "&responseattributes=none";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final String URL_LOCATION_ATTRIBUTES = "&locationattributes=none,ar";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final String URL_ADDRESS_ATTRIBUTES = "&addressattributes=none";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final String URL_JSON_ATTRIBUTES = "&jsonattributes=1";
-	/** Url option */
+	/**
+	 * Url option
+	 */
 	private static final double RELEVANCE_THRESHOLD = 0.85;
-	/** Here App Id */
-	@Value("${here.app.id}")
-	private String appId;
-	/** Here App Code */
-	@Value("${here.app.code}")
-	private String appCode;
-	/** Here App Resource */
-	@Value("${here.api.resource}")
-	private String resource;
-	/** Here App Version */
-	@Value("${here.api.version}")
-	private String version;
-	/** The adress to find */
+	/**
+	 * The adress to find
+	 */
 	private String text;
 
 	public void setSearchText(final String text) {
@@ -77,18 +93,17 @@ public class Here {
 
 	/**
 	 * This function build the URL.
-	 * 
+	 *
 	 * @return a url The URL
-	 * @throws HereException
-	 *             If we could not access the coordinates
+	 * @throws HereException If we could not access the coordinates
 	 */
 	protected final String urlBuilder() throws HereException {
 		final StringBuilder stb = new StringBuilder();
 		stb.append(URL_BASE);
-		stb.append('/').append(this.version);
-		stb.append('/').append(this.resource).append('?');
-		stb.append(URL_APP_CODE).append(this.appCode);
-		stb.append(URL_APP_ID).append(this.appId);
+		stb.append('/').append(properties.getHereApiVersion());
+		stb.append('/').append(properties.getHereApiResource()).append('?');
+		stb.append(URL_APP_CODE).append(properties.getHereAppCode());
+		stb.append(URL_APP_ID).append(properties.getHereAppId());
 		stb.append(URL_APP_GEN);
 		stb.append(URL_RESPONSE_ATTRIBUTES);
 		stb.append(URL_LOCATION_ATTRIBUTES);
@@ -105,12 +120,10 @@ public class Here {
 
 	/**
 	 * This function connect to the given address and return in a string the content of the page
-	 * 
-	 * @param address
-	 *            the address
+	 *
+	 * @param address the address
 	 * @return the content of the page
-	 * @throws HereException
-	 *             If we could not access the coordinates
+	 * @throws HereException If we could not access the coordinates
 	 */
 	protected final String connectUrl(final String address) throws HereException {
 		LOG.debug("URL: " + address);
@@ -133,12 +146,10 @@ public class Here {
 
 	/**
 	 * Parse the data and put them in a Geo object
-	 * 
-	 * @param data
-	 *            The data
+	 *
+	 * @param data The data
 	 * @return Geo containing the data
-	 * @throws HereException
-	 *             If we could not access the coordinates
+	 * @throws HereException If we could not access the coordinates
 	 */
 	@SuppressWarnings("unchecked")
 	private Geo getGeoFromStr(final String data) throws HereException {
@@ -191,10 +202,9 @@ public class Here {
 
 	/**
 	 * Run the search of the coordinates
-	 * 
+	 *
 	 * @return A Geo
-	 * @throws HereException
-	 *             If we could not access the coordinates
+	 * @throws HereException If we could not access the coordinates
 	 */
 	public final Geo getGeolocation() throws HereException {
 		String data = connectUrl(urlBuilder());

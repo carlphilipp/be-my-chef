@@ -82,6 +82,11 @@
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.epickur.api</groupId>
+			<artifactId>epickur-config</artifactId>
+			<version>3.0.0-SNAPSHOT</version>
+		</dependency>
 
 	</dependencies>
 

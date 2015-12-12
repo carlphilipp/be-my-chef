@@ -1,5 +1,6 @@
 package com.epickur.api.cron;
 
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.config.ServiceConfigTest;
 import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
@@ -18,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,8 +35,8 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = ServiceConfigTest.class)
 public class CleanKeysJobTest {
 
-	@Value("${session.timeout}")
-	public Integer sessionTimeout;
+	@Autowired
+	public EpickurProperties epickurProperties;
 	@Mock
 	private JobExecutionContext context;
 	@Mock
@@ -71,7 +73,7 @@ public class CleanKeysJobTest {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		key.setId(new ObjectId());
 		DateTime now = new DateTime();
-		now = now.plusDays(sessionTimeout + 10);
+		now = now.plusDays(epickurProperties.getSessionTimeout() + 10);
 		key.setCreatedAt(now);
 		keys.add(key);
 		when(keyDao.readAll()).thenReturn(keys);

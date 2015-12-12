@@ -5,6 +5,7 @@ import com.epickur.api.dao.mongo.*;
 import com.epickur.api.geocoder.here.GeocoderHereImpl;
 import com.epickur.api.geocoder.here.Here;
 import com.epickur.api.service.*;
+import com.epickur.api.utils.EpickurPriorities;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.Email;
 import com.epickur.api.utils.email.EmailTemplate;
@@ -128,5 +129,9 @@ public class ApplicationConfigTest {
 	@Bean
 	public Email email() {
 		return new Email();
+	}
+	@Bean
+	public EpickurProperties epickurProperties(){
+		return new EpickurProperties();
 	}
 }
