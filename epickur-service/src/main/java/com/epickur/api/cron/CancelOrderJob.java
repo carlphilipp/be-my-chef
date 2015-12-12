@@ -53,10 +53,10 @@ public class CancelOrderJob extends QuartzJobBean {
 	@Override
 	protected void executeInternal(final JobExecutionContext context) throws JobExecutionException {
 		try {
-			String orderId = context.getJobDetail().getJobDataMap().getString("orderId");
+			final String orderId = context.getJobDetail().getJobDataMap().getString("orderId");
 			Order order = orderDAO.read(orderId);
-			String userId = context.getJobDetail().getJobDataMap().getString("userId");
-			User user = userDAO.read(userId);
+			final String userId = context.getJobDetail().getJobDataMap().getString("userId");
+			final User user = userDAO.read(userId);
 			if (user != null && order != null) {
 				LOG.info("Cancel order id: " + orderId + " with user id: " + userId);
 				order.setStatus(OrderStatus.CANCELED);

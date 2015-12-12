@@ -150,7 +150,7 @@ public class DishController {
 	@ValidateSimpleAccessRights(operation = CREATE, endpoint = DISH)
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(@RequestBody final Dish dish) throws EpickurException {
-		Dish result = dishService.create(dish);
+		final Dish result = dishService.create(dish);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -249,7 +249,7 @@ public class DishController {
 	@ValidateSimpleAccessRights(operation = READ, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
-		Dish dish = dishService.read(id);
+		final Dish dish = dishService.read(id);
 		if (dish == null) {
 			return ResponseError.notFound(ErrorUtils.DISH_NOT_FOUND, id);
 		} else {
@@ -259,7 +259,7 @@ public class DishController {
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
-		List<Dish> dishes = dishService.readAll();
+		final List<Dish> dishes = dishService.readAll();
 		return new ResponseEntity<>(dishes, HttpStatus.OK);
 	}
 
@@ -373,7 +373,7 @@ public class DishController {
 	public ResponseEntity<?> update(
 			@PathVariable("id") final String id,
 			@RequestBody final Dish dish) throws EpickurException {
-		Dish result = dishService.update(dish);
+		final Dish result = dishService.update(dish);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -408,9 +408,9 @@ public class DishController {
 	@ValidateSimpleAccessRights(operation = DELETE, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(@PathVariable("id") final String id) throws EpickurException {
-		boolean isDeleted = dishService.delete(id);
+		final boolean isDeleted = dishService.delete(id);
 		if (isDeleted) {
-			DeletedMessage message = new DeletedMessage();
+			final DeletedMessage message = new DeletedMessage();
 			message.setId(id);
 			message.setDeleted(true);
 			return new ResponseEntity<>(message, HttpStatus.OK);
@@ -533,15 +533,15 @@ public class DishController {
 			@RequestParam("searchtext") final String searchtext,
 			@RequestParam(value = "distance", defaultValue = "500") @Min(value = 50, message = "{dish.search.distance}") final Integer distance)
 			throws EpickurException {
-		List<DishType> dishTypes = utils.stringToListDishType(types);
+		final List<DishType> dishTypes = utils.stringToListDishType(types);
 		Geo geo = null;
 		if (!StringUtils.isBlank(at)) {
 			geo = utils.stringToGeo(at);
 		}
-		Object[] result = CommonsUtil.parsePickupdate(pickupdate);
-		String day = (String) result[0];
-		Integer minutes = (Integer) result[1];
-		List<Dish> dishes = dishService.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
+		final Object[] result = CommonsUtil.parsePickupdate(pickupdate);
+		final String day = (String) result[0];
+		final Integer minutes = (Integer) result[1];
+		final List<Dish> dishes = dishService.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
 		return new ResponseEntity<>(dishes, HttpStatus.OK);
 	}
 }

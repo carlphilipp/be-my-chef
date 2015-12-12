@@ -57,9 +57,9 @@ public class Report {
 		InputStream inputStream = null;
 		try {
 			inputStream = Report.class.getClassLoader().getResourceAsStream("report.jrxml");
-			JasperDesign jasperDesign = JRXmlLoader.load(inputStream);
-			JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
+			final JasperDesign jasperDesign = JRXmlLoader.load(inputStream);
+			final JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+			final JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
 			return JasperExportManager.exportReportToPdf(jasperPrint);
 		} catch (Exception e) {
 			throw new EpickurException("Error while generating the pdf report", e);

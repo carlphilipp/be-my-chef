@@ -43,13 +43,13 @@ public final class Security {
 	 *             If an exception occurred while encoding the password
 	 */
 	public static String encodeToSha256(final String str) throws EpickurException {
-		String encoded = null;
+		String encoded;
 		try {
-			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			Charset charset = Charset.forName("UTF8");
-			byte[] hash = digest.digest(str.getBytes(charset));
+			final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			final Charset charset = Charset.forName("UTF8");
+			final byte[] hash = digest.digest(str.getBytes(charset));
 			encoded = Hex.encodeHexString(hash);
-		} catch (NoSuchAlgorithmException e) {
+		} catch (final NoSuchAlgorithmException e) {
 			throw new EpickurException("Error while encoding string: " + e.getMessage(), e);
 		}
 		return encoded;
@@ -66,13 +66,13 @@ public final class Security {
 	 *             If an exception occurred while encoding the password
 	 */
 	public static String encodeToMd5(final String str) throws EpickurException {
-		String encoded = null;
+		String encoded;
 		try {
-			MessageDigest digest = MessageDigest.getInstance("MD5");
-			Charset charset = Charset.forName("UTF8");
-			byte[] hash = digest.digest(str.getBytes(charset));
+			final MessageDigest digest = MessageDigest.getInstance("MD5");
+			final Charset charset = Charset.forName("UTF8");
+			final byte[] hash = digest.digest(str.getBytes(charset));
 			encoded = Hex.encodeHexString(hash);
-		} catch (NoSuchAlgorithmException e) {
+		} catch (final NoSuchAlgorithmException e) {
 			throw new EpickurException("Error while encoding string: " + e.getMessage(), e);
 		}
 		return encoded;
@@ -86,7 +86,7 @@ public final class Security {
 	 *             If an exception occurred while encoding the password
 	 */
 	public static String generateSalt() throws EpickurException {
-		SecureRandom random = new SecureRandom();
+		final SecureRandom random = new SecureRandom();
 		return Security.encodeToSha256(random.toString());
 	}
 
@@ -98,7 +98,7 @@ public final class Security {
 	 *             If an exception occurred while encoding the password
 	 */
 	public static String generateRandomMd5() throws EpickurException {
-		SecureRandom random = new SecureRandom();
+		final SecureRandom random = new SecureRandom();
 		return Security.encodeToMd5(random.toString());
 	}
 
@@ -113,10 +113,10 @@ public final class Security {
 	 */
 	public static String getUserCode(final User user) throws EpickurException {
 		final int sixtyFour = 64;
-		String email = user.getEmail();
-		String saltHashed = user.getPassword().substring(0, sixtyFour);
-		String cryptedPasswordSalt = user.getPassword().substring(sixtyFour, user.getPassword().length());
-		String checkFound = Security.createUserCode(user.getName(), saltHashed, cryptedPasswordSalt, email);
+		final String email = user.getEmail();
+		final String saltHashed = user.getPassword().substring(0, sixtyFour);
+		final String cryptedPasswordSalt = user.getPassword().substring(sixtyFour, user.getPassword().length());
+		final String checkFound = Security.createUserCode(user.getName(), saltHashed, cryptedPasswordSalt, email);
 		return checkFound;
 	}
 

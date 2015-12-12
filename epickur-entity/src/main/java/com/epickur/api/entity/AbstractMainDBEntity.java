@@ -15,7 +15,6 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.NotNull;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -92,7 +91,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	 * Prepare the entity to be inserted into DB.
 	 */
 	public void prepareForInsertionIntoDB() {
-		DateTime time = new DateTime();
+		final DateTime time = new DateTime();
 		setCreatedAt(time);
 		setUpdatedAt(time);
 
@@ -103,7 +102,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	 * Prepare the entity to be updated into DB.
 	 */
 	public void prepareForUpdateIntoDB() {
-		DateTime time = new DateTime();
+		final DateTime time = new DateTime();
 		this.setCreatedAt(null);
 		this.setUpdatedAt(time);
 	}
@@ -114,14 +113,12 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	 */
 	@JsonIgnore
 	public Document getUpdateQuery() throws EpickurParsingException {
-		String apiView = toStringAPIView();
-		Document found = Document.parse(apiView);
-		Document args = new Document();
-		Document result = new Document().append("$set", args);
-		Set<Entry<String, Object>> set = found.entrySet();
-		Iterator<Entry<String, Object>> iterator = set.iterator();
-		while (iterator.hasNext()) {
-			Entry<String, Object> entry = iterator.next();
+		final String apiView = toStringAPIView();
+		final Document found = Document.parse(apiView);
+		final Document args = new Document();
+		final Document result = new Document().append("$set", args);
+		final Set<Entry<String, Object>> set = found.entrySet();
+		for (Entry<String, Object> entry : set) {
 			String k = entry.getKey();
 			if (!k.equals("id")) {
 				args.put(k, found.get(k));

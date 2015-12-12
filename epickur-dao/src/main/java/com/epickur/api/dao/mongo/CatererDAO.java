@@ -40,7 +40,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	@Override
 	public Caterer create(final Caterer caterer) throws EpickurException {
 		LOG.debug("Create caterer: " + caterer);
-		Document doc = caterer.getDocumentDBView();
+		final Document doc = caterer.getDocumentDBView();
 		insertDocument(doc);
 		return Caterer.getDocumentAsCatererDBView(doc);
 	}
@@ -48,17 +48,17 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	@Override
 	public Caterer read(final String id) throws EpickurException {
 		LOG.debug("Read caterer: " + id);
-		Document query = convertAttributeToDocument("_id", new ObjectId(id));
-		Document find = findDocument(query);
+		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
+		final Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
 	@Override
 	public Caterer update(final Caterer caterer) throws EpickurException {
 		LOG.debug("Update caterer: " + caterer);
-		Document filter = convertAttributeToDocument("_id", caterer.getId());
-		Document update = caterer.getUpdateQuery();
-		Document updated = updateDocument(filter, update);
+		final Document filter = convertAttributeToDocument("_id", caterer.getId());
+		final Document update = caterer.getUpdateQuery();
+		final Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -77,7 +77,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 
 	@Override
 	public List<Caterer> readAll() throws EpickurException {
-		List<Caterer> caterers = new ArrayList<>();
+		final List<Caterer> caterers = new ArrayList<>();
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find().iterator();
@@ -85,7 +85,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 				Caterer user = Caterer.getDocumentAsCatererDBView(cursor.next());
 				caterers.add(user);
 			}
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("readAll", e.getLocalizedMessage(), e);
 		} finally {
 			if (cursor != null) {

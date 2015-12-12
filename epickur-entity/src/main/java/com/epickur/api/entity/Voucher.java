@@ -151,9 +151,9 @@ public final class Voucher extends AbstractMainDBEntity {
 	 *             If an epickur exception occurred
 	 */
 	private static Voucher getObject(final String json) throws EpickurParsingException {
-		Voucher user = null;
+		Voucher user;
 		try {
-			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
+			final ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
 			user = mapper.readValue(json, Voucher.class);
 		} catch (IOException e) {
 			throw new EpickurParsingException("Can not convert string to Voucher: " + json, e);

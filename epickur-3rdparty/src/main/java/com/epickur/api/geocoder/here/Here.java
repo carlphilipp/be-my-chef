@@ -112,7 +112,7 @@ public class Here {
 		stb.append(URL_JSON_ATTRIBUTES);
 		try {
 			stb.append(URL_SEARCH_TEXT + URLEncoder.encode(text, "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
+		} catch (final UnsupportedEncodingException e) {
 			throw new HereException("Encoding Exception", e);
 		}
 		return stb.toString();
@@ -130,13 +130,13 @@ public class Here {
 		String toreturn = null;
 		InputStreamReader in = null;
 		try {
-			URL url = new URL(address);
-			URLConnection uc = url.openConnection();
+			final URL url = new URL(address);
+			final URLConnection uc = url.openConnection();
 			uc.setConnectTimeout(1000);
-			Charset charset = Charset.forName("UTF8");
+			final Charset charset = Charset.forName("UTF8");
 			in = new InputStreamReader(uc.getInputStream(), charset);
 			toreturn = IOUtils.toString(in);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new HereException("Error: " + HereException.CONNECT_ERROR, e);
 		} finally {
 			IOUtils.closeQuietly(in);
@@ -156,25 +156,24 @@ public class Here {
 		Geo geo = null;
 		try {
 			LOG.info(data);
-			ObjectMapper mapper = new ObjectMapper();
-			Map<String, Object> mapObject = null;
-			mapObject = mapper.readValue(data, new TypeReference<Map<String, Object>>() {
+			final ObjectMapper mapper = new ObjectMapper();
+			final Map<String, Object> mapObject = mapper.readValue(data, new TypeReference<Map<String, Object>>() {
 			});
 
 			if (mapObject.containsKey("response")) {
-				Map<String, Object> response = (Map<String, Object>) mapObject.get("response");
+				final Map<String, Object> response = (Map<String, Object>) mapObject.get("response");
 				if (response.containsKey("view")) {
-					List<Map<String, Object>> views = (List<Map<String, Object>>) response.get("view");
+					final List<Map<String, Object>> views = (List<Map<String, Object>>) response.get("view");
 					if (views.size() > 0) {
-						Map<String, Object> view = views.get(0);
+						final Map<String, Object> view = views.get(0);
 						if (view.containsKey("result")) {
-							List<Map<String, Object>> results = (List<Map<String, Object>>) view.get("result");
+							final List<Map<String, Object>> results = (List<Map<String, Object>>) view.get("result");
 							if (results.size() > 0) {
-								Map<String, Object> result = results.get(0);
+								final Map<String, Object> result = results.get(0);
 								double relevance = (double) result.get("relevance");
 								if (relevance >= RELEVANCE_THRESHOLD) {
 									if (result.containsKey("location")) {
-										Map<String, Object> location = (Map<String, Object>) result.get("location");
+										final Map<String, Object> location = (Map<String, Object>) result.get("location");
 										if (location.containsKey("displayPosition")) {
 											Map<String, Object> displayPosition = (Map<String, Object>) location.get("displayPosition");
 											geo = new Geo();
@@ -183,7 +182,7 @@ public class Here {
 										}
 									}
 								} else {
-									String message = String.format("Could not geocode accurately '%s'", this.text);
+									final String message = String.format("Could not geocode accurately '%s'", this.text);
 									throw new HereException(message);
 								}
 							}
@@ -191,7 +190,7 @@ public class Here {
 					}
 				}
 			}
-		} catch (IndexOutOfBoundsException | IOException e) {
+		} catch (final IndexOutOfBoundsException | IOException e) {
 			throw new HereException("Geolocation error", e);
 		}
 		if (geo == null) {
@@ -207,7 +206,7 @@ public class Here {
 	 * @throws HereException If we could not access the coordinates
 	 */
 	public final Geo getGeolocation() throws HereException {
-		String data = connectUrl(urlBuilder());
+		final String data = connectUrl(urlBuilder());
 		return getGeoFromStr(data);
 	}
 }

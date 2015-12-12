@@ -15,8 +15,8 @@ public class AmazonWSConfig {
 
 	@Bean
 	public AmazonS3 amazonS3() {
-		BasicAWSCredentials awsCreds = new BasicAWSCredentials(properties.getAwsAccessKeyId(), properties.getAwsSecretKey());
-		AmazonS3 amazonS3 = new AmazonS3Client(awsCreds);
+		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(properties.getAwsAccessKeyId(), properties.getAwsSecretKey());
+		final AmazonS3 amazonS3 = new AmazonS3Client(awsCreds);
 		return amazonS3;
 	}
 }

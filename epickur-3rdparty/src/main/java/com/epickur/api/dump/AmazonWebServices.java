@@ -42,12 +42,12 @@ public final class AmazonWebServices {
 	 */
 	public void uploadFile(final String filePath) {
 		LOG.info("Uploading file on AWS...");
-		File file = new File(filePath);
+		final File file = new File(filePath);
 		try {
 			s3client.putObject(new PutObjectRequest(properties.getAwsBucket(), file.getName(), file));
 			LOG.info("Upload done");
 		} catch (AmazonServiceException ase) {
-			StringBuilder stb = new StringBuilder();
+			final StringBuilder stb = new StringBuilder();
 			stb.append(
 					"Caught an AmazonServiceException, which means your request made it to Amazon S3, but was rejected with an error response for some reason.");
 			stb.append("\nError Message:    " + ase.getMessage());
@@ -68,7 +68,7 @@ public final class AmazonWebServices {
 	public void deleteOldFile() {
 		LOG.info("Deleting old file in AWS...");
 		ObjectListing listing = s3client.listObjects(properties.getAwsBucket());
-		List<S3ObjectSummary> summaries = listing.getObjectSummaries();
+		final List<S3ObjectSummary> summaries = listing.getObjectSummaries();
 		// Get absolutly all items
 		while (listing.isTruncated()) {
 			listing = s3client.listNextBatchOfObjects(listing);

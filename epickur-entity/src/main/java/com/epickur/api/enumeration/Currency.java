@@ -64,7 +64,7 @@ public enum Currency {
 		if (value == null) {
 			throw new IllegalArgumentException();
 		}
-		for (Currency c : values()) {
+		for (final Currency c : values()) {
 			if (value.equalsIgnoreCase(c.getCode())) {
 				return c;
 			}

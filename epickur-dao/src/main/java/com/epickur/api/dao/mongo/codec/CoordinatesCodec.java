@@ -24,7 +24,7 @@ public final class CoordinatesCodec implements Codec<Double[]> {
 
 	@Override
 	public Double[] decode(final BsonReader reader, final DecoderContext decoderContext) {
-		Double[] res = new Double[2];
+		final Double[] res = new Double[2];
 		reader.readStartArray();
 		res[0] = reader.readDouble();
 		res[1] = reader.readDouble();

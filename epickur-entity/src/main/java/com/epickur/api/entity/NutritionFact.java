@@ -30,7 +30,7 @@ public final class NutritionFact implements Cloneable {
 
 	@Override
 	public NutritionFact clone() throws CloneNotSupportedException {
-		NutritionFact nutritionFact = new NutritionFact();
+		final NutritionFact nutritionFact = new NutritionFact();
 		nutritionFact.setName(this.name);
 		nutritionFact.setUnit(this.unit);
 		nutritionFact.setValue(this.value);

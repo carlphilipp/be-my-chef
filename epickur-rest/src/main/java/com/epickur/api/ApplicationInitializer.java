@@ -39,8 +39,8 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 
 	@Override
 	protected Filter[] getServletFilters() {
-		DelegatingFilterProxy keyRequestFilter = new DelegatingFilterProxy("keyRequestFilter");
-		DelegatingFilterProxy logRequestFilter = new DelegatingFilterProxy("logRequestFilter");
+		final DelegatingFilterProxy keyRequestFilter = new DelegatingFilterProxy("keyRequestFilter");
+		final DelegatingFilterProxy logRequestFilter = new DelegatingFilterProxy("logRequestFilter");
 		return new Filter[] { new HeaderResponseFilter(), logRequestFilter, keyRequestFilter };
 	}
 

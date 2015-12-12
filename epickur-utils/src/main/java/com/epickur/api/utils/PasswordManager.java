@@ -9,7 +9,7 @@ public final class PasswordManager {
 
 	PasswordManager(final String password) throws EpickurException {
 		this.saltHashed = Security.generateSalt();
-		String passwordHashed = Security.encodeToSha256(password);
+		final String passwordHashed = Security.encodeToSha256(password);
 		this.cryptedPasswordSalt = Security.encodeToSha256(passwordHashed + saltHashed);
 	}
 

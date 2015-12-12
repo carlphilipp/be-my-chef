@@ -88,7 +88,7 @@ public class VoucherController {
 	@ValidateSimpleAccessRights(operation = READ, endpoint = VOUCHER)
 	@RequestMapping(value = "/{code}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("code") final String code) throws EpickurException {
-		Voucher voucher = voucherService.read(code);
+		final Voucher voucher = voucherService.read(code);
 		if (voucher == null) {
 			return ResponseError.notFound(ErrorUtils.VOUCHER_NOT_FOUND, code);
 		} else {
@@ -166,7 +166,7 @@ public class VoucherController {
 		if (expiration != null) {
 			date = utils.parseDate(expiration, format);
 		}
-		Set<Voucher> vouchers = voucherService.generate(count, discountType, discount, expirationType, date);
+		final Set<Voucher> vouchers = voucherService.generate(count, discountType, discount, expirationType, date);
 		return new ResponseEntity<>(vouchers, HttpStatus.OK);
 	}
 }

@@ -42,7 +42,7 @@ public class OrderDAO extends CrudDAO<Order> {
 	@Override
 	public Order create(final Order order) throws EpickurException {
 		LOG.debug("Create order: " + order);
-		Document doc = order.getDocumentDBView();
+		final Document doc = order.getDocumentDBView();
 		insertDocument(doc);
 		return Order.getDocumentAsOrder(doc);
 	}
@@ -50,17 +50,17 @@ public class OrderDAO extends CrudDAO<Order> {
 	@Override
 	public Order read(final String id) throws EpickurException {
 		LOG.debug("Read order with id: " + id);
-		Document query = convertAttributeToDocument("_id", new ObjectId(id));
-		Document find = findDocument(query);
+		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
+		final Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
 	@Override
 	public Order update(final Order order) throws EpickurException {
 		LOG.debug("Update order: " + order);
-		Document filter = convertAttributeToDocument("_id", order.getId());
-		Document update = order.getUpdateQuery();
-		Document updated = updateDocument(filter, update);
+		final Document filter = convertAttributeToDocument("_id", order.getId());
+		final Document update = order.getUpdateQuery();
+		final Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -85,8 +85,8 @@ public class OrderDAO extends CrudDAO<Order> {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public List<Order> readAllWithUserId(final String userId) throws EpickurException {
-		List<Order> orders = new ArrayList<>();
-		Document query = new Document().append("createdBy", userId);
+		final List<Order> orders = new ArrayList<>();
+		final Document query = new Document().append("createdBy", userId);
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find(query).iterator();
@@ -94,7 +94,7 @@ public class OrderDAO extends CrudDAO<Order> {
 				Order user = Order.getDocumentAsOrder(cursor.next());
 				orders.add(user);
 			}
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("readAllWithUserId", e.getMessage(), userId, e);
 		} finally {
 			if (cursor != null) {
@@ -112,9 +112,9 @@ public class OrderDAO extends CrudDAO<Order> {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public List<Order> readAllWithCatererId(final String catererId, final DateTime start, final DateTime end) throws EpickurException {
-		List<Order> orders = new ArrayList<>();
-		Document query = new Document().append("dish.caterer._id", catererId);
-		Document filter = new Document();
+		final List<Order> orders = new ArrayList<>();
+		final Document query = new Document().append("dish.caterer._id", catererId);
+		final Document filter = new Document();
 		if (start != null) {
 			filter.put("$gte", start.getMillis());
 		}
@@ -131,7 +131,7 @@ public class OrderDAO extends CrudDAO<Order> {
 				Order user = Order.getDocumentAsOrder(cursor.next());
 				orders.add(user);
 			}
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("readAllWithCatererId", e.getMessage(), catererId, e);
 		} finally {
 			if (cursor != null) {

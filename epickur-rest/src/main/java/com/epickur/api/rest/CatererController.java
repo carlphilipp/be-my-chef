@@ -132,9 +132,9 @@ public class CatererController {
 	@ValidateSimpleAccessRights(operation = CREATE, endpoint = CATERER)
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(@RequestBody final Caterer caterer) throws EpickurException {
-		Key key = (Key) request.getAttribute("key");
+		final Key key = (Key) request.getAttribute("key");
 		caterer.setCreatedBy(key.getUserId());
-		Caterer result = catererService.create(caterer);
+		final Caterer result = catererService.create(caterer);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -201,7 +201,7 @@ public class CatererController {
 	@ValidateSimpleAccessRights(operation = READ, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
-		Caterer caterer = catererService.read(id);
+		final Caterer caterer = catererService.read(id);
 		if (caterer == null) {
 			return ResponseError.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
 		} else {
@@ -283,7 +283,7 @@ public class CatererController {
 	public ResponseEntity<?> update(
 			@PathVariable("id") final String id,
 			@RequestBody final Caterer caterer) throws EpickurException {
-		Caterer result = catererService.update(caterer);
+		final Caterer result = catererService.update(caterer);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -323,9 +323,9 @@ public class CatererController {
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(
 			@PathVariable("id") final String id) throws EpickurException {
-		boolean resBool = catererService.delete(id);
+		final boolean resBool = catererService.delete(id);
 		if (resBool) {
-			DeletedMessage deletedMessage = new DeletedMessage();
+			final DeletedMessage deletedMessage = new DeletedMessage();
 			deletedMessage.setId(id);
 			deletedMessage.setDeleted(true);
 			return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
@@ -396,7 +396,7 @@ public class CatererController {
 	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = CATERER)
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
-		List<Caterer> caterers = catererService.readAll();
+		final List<Caterer> caterers = catererService.readAll();
 		return new ResponseEntity<>(caterers, HttpStatus.OK);
 	}
 
@@ -512,7 +512,7 @@ public class CatererController {
 	@ValidateSimpleAccessRights(operation = READ_DISHES, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/dishes", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readDishes(@PathVariable("id") final String catererId) throws EpickurException {
-		List<Dish> dishes = dishService.searchDishesForOneCaterer(catererId);
+		final List<Dish> dishes = dishService.searchDishesForOneCaterer(catererId);
 		return new ResponseEntity<>(dishes, HttpStatus.OK);
 	}
 
@@ -568,11 +568,11 @@ public class CatererController {
 		if (end != null) {
 			endDate = utils.parseDate(start, format);
 		}
-		Caterer caterer = catererService.read(id);
-		List<Order> orders = orderService.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
-		Integer amount = catererService.getTotalAmountSuccessful(orders);
+		final Caterer caterer = catererService.read(id);
+		final List<Order> orders = orderService.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
+		final Integer amount = catererService.getTotalAmountSuccessful(orders);
 		if (request.getContentType() != null && request.getContentType().equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
-			PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
+			final PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
 			payementInfoMessage.setId(caterer.getId().toHexString());
 			payementInfoMessage.setName(caterer.getName());
 			payementInfoMessage.setAmount(amount);
@@ -584,17 +584,17 @@ public class CatererController {
 			//					order.setDish(null);
 			//					list.add(order.getDocumentAPIView().toJson());
 			//				}
-			HttpHeaders headers = new HttpHeaders();
+			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			return new ResponseEntity<>(payementInfoMessage, headers, HttpStatus.OK);
 			//return Response.ok().entity(payementInfoMessage).type(MediaType.APPLICATION_JSON).build();
 		} else {
-			Report report = new Report();
+			final Report report = new Report();
 			report.addParam("caterer", caterer);
 			report.addParam("orders", orders);
 			report.addParam("amount", amount);
 
-			HttpHeaders headers = new HttpHeaders();
+			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.parseMediaType("application/pdf"));
 			headers.add("content-disposition", "attachment; filename =" + caterer.getId().toHexString() + ".pdf");
 			return new ResponseEntity<>(report.getReport(), headers, HttpStatus.OK);

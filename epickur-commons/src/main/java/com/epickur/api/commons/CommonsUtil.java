@@ -33,8 +33,8 @@ public class CommonsUtil {
 	public static Object[] parsePickupdate(final String pickupdate) {
 		Object[] result = null;
 		if (pickupdate != null) {
-			Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):(([0-5][0-9])))$");
-			Matcher matcher = pattern.matcher(pickupdate);
+			final Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):(([0-5][0-9])))$");
+			final Matcher matcher = pattern.matcher(pickupdate);
 			if (matcher.matches()) {
 				result = new Object[2];
 				// Extract the day of the week
@@ -52,7 +52,7 @@ public class CommonsUtil {
 	 * @return A DateTime
 	 */
 	public static DateTime parseDate(final String date, final String format) {
-		DateTimeFormatter fmt = DateTimeFormat.forPattern(format);
+		final DateTimeFormatter fmt = DateTimeFormat.forPattern(format);
 		return fmt.parseDateTime(date);
 	}
 
@@ -61,8 +61,8 @@ public class CommonsUtil {
 	 * @return A string
 	 */
 	public static String getCurrentDateInFormat(final String format) {
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Australia/Melbourne"));
-		DateFormat formatter = new SimpleDateFormat(format);
+		final Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Australia/Melbourne"));
+		final DateFormat formatter = new SimpleDateFormat(format);
 		formatter.setTimeZone(cal.getTimeZone());
 		return formatter.format(cal.getTime());
 	}
@@ -85,7 +85,7 @@ public class CommonsUtil {
 			out = new TarOutputStream(new BufferedOutputStream(dest));
 
 			for (String input : inputs) {
-				File f = new File(input);
+				final File f = new File(input);
 				out.putNextEntry(new TarEntry(f, f.getName()));
 				origin = new BufferedInputStream(new FileInputStream(f));
 				int count;
@@ -98,7 +98,7 @@ public class CommonsUtil {
 			}
 			out.close();
 			dest.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			LOG.error("Error while creating tar.gz: " + e.getLocalizedMessage(), e);
 		} finally {
 			IOUtils.closeQuietly(dest);
@@ -111,7 +111,7 @@ public class CommonsUtil {
 	 * @return A random voucher code.
 	 */
 	public static String generateRandomCode() {
-		StringBuilder stb = new StringBuilder();
+		final StringBuilder stb = new StringBuilder();
 		stb.append(getRandomConsonants(3));
 		stb.append(getRandomNumber());
 		stb.append(getRandomConsonants(3));
@@ -123,7 +123,7 @@ public class CommonsUtil {
 	 * @return A random number between 2 and 9
 	 */
 	private static int getRandomNumber() {
-		RandomDataGenerator randomData = new RandomDataGenerator();
+		final RandomDataGenerator randomData = new RandomDataGenerator();
 		// Removed 0 and 1
 		return randomData.nextInt(2, 9);
 	}
@@ -134,9 +134,9 @@ public class CommonsUtil {
 	 */
 	private static String getRandomConsonants(final int size) {
 		// Removed l
-		String[] consonants = { "q", "w", "r", "t", "p", "s", "d", "f", "g", "h", "j", "k", "z", "x", "c", "v", "b", "n", "m" };
-		StringBuilder res = new StringBuilder();
-		RandomDataGenerator randomData = new RandomDataGenerator();
+		final String[] consonants = { "q", "w", "r", "t", "p", "s", "d", "f", "g", "h", "j", "k", "z", "x", "c", "v", "b", "n", "m" };
+		final StringBuilder res = new StringBuilder();
+		final RandomDataGenerator randomData = new RandomDataGenerator();
 		for (int i = 0; i < size; i++) {
 			res.append(consonants[randomData.nextInt(0, consonants.length - 1)]);
 		}

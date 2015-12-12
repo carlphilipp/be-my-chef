@@ -101,9 +101,9 @@ public class Key extends AbstractMainDBEntity {
 	 *             If an epickur exception occurred
 	 */
 	private static Key getObject(final String json) throws EpickurParsingException {
-		Key key = null;
+		Key key;
 		try {
-			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
+			final ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
 			key = mapper.readValue(json, Key.class);
 		} catch (IOException e) {
 			throw new EpickurParsingException("Can not convert string to Key: " + json, e);

@@ -25,7 +25,6 @@ import org.bson.types.ObjectId;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -104,24 +103,22 @@ public class Caterer extends AbstractMainDBEntity {
 	 */
 	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) throws EpickurParsingException {
-		String apiView = toStringAPIView();
-		Document found = Document.parse(apiView);
-		Map<String, Object> result = new HashMap<>();
-		Set<Entry<String, Object>> entrySet = found.entrySet();
-		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
-		while (iterator.hasNext()) {
-			Entry<String, Object> en = iterator.next();
-			String key = en.getKey();
+		final String apiView = toStringAPIView();
+		final Document found = Document.parse(apiView);
+		final Map<String, Object> result = new HashMap<>();
+		final Set<Entry<String, Object>> entrySet = found.entrySet();
+		for (Entry<String, Object> en : entrySet) {
+			final String key = en.getKey();
 			if (!key.equals("id")) {
 				if (key.equals("location")) {
-					Location loc = Location.getObject((Document) found.get(key));
-					Map<String, Object> locations = loc.getUpdateMap(prefix + ".location");
-					for (Entry<String, Object> entry : locations.entrySet()) {
+					final Location loc = Location.getObject((Document) found.get(key));
+					final Map<String, Object> locations = loc.getUpdateMap(prefix + ".location");
+					for (final Entry<String, Object> entry : locations.entrySet()) {
 						result.put(entry.getKey(), entry.getValue());
 					}
 				} else if (key.equals("workingTimes")) {
-					WorkingTimes wt = WorkingTimes.getObject((Document) found.get(key));
-					Map<String, Object> workingTimesMap = wt.getUpdateMapObject(prefix + ".workingTimes");
+					final WorkingTimes wt = WorkingTimes.getObject((Document) found.get(key));
+					final Map<String, Object> workingTimesMap = wt.getUpdateMapObject(prefix + ".workingTimes");
 					result.putAll(workingTimesMap);
 				} else {
 					result.put("caterer." + key, found.get(key).toString());
@@ -156,9 +153,9 @@ public class Caterer extends AbstractMainDBEntity {
 	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	private static Caterer getObject(final String json, final View view) throws EpickurParsingException {
-		Caterer caterer = null;
+		Caterer caterer;
 		try {
-			ObjectMapper om = null;
+			ObjectMapper om;
 			if (view == View.API) {
 				om = ObjectMapperWrapperAPI.getInstance();
 			} else {

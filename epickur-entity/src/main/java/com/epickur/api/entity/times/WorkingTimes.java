@@ -46,8 +46,8 @@ public final class WorkingTimes extends AbstractEntity {
 	public boolean canBePickup(final String day, final Integer pickupdateMinutes) {
 		// Removed preparation time #API-76
 		//Integer openTime = null;
-		List<TimeFrame> timeFrames = getHours().get(day);
-		for (TimeFrame tf : timeFrames) {
+		final List<TimeFrame> timeFrames = getHours().get(day);
+		for (final TimeFrame tf : timeFrames) {
 			// If the pickup date is in the current timeframe.
 			if (tf.getOpen() <= pickupdateMinutes && tf.getClose() >= pickupdateMinutes) {
 				//openTime = tf.getOpen();
@@ -79,11 +79,11 @@ public final class WorkingTimes extends AbstractEntity {
 	 * @throws EpickurParsingException If a parsing exception occured
 	 */
 	public static WorkingTimes getObject(final String json) throws EpickurParsingException {
-		WorkingTimes wt = null;
+		WorkingTimes wt;
 		try {
-			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
+			final ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
 			wt = mapper.readValue(json, WorkingTimes.class);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new EpickurParsingException("Can not convert string to WorkingTimes: " + json, e);
 		}
 		return wt;

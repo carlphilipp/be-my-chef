@@ -113,7 +113,7 @@ public class Geo extends AbstractEntity {
 	 */
 	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) {
-		Map<String, Object> res = new HashMap<>();
+		final Map<String, Object> res = new HashMap<>();
 		if (this.type != null) {
 			res.put(prefix + ".type", this.type);
 		}
@@ -131,9 +131,9 @@ public class Geo extends AbstractEntity {
 	 * @return a Document
 	 */
 	public Document getSearch(final Integer minDistance, final Integer maxDistance) {
-		Document nearSphere = new Document();
-		Document geometry = new Document();
-		BsonArray coord = new BsonArray(Arrays.asList(new BsonDouble(this.coordinates[0]), new BsonDouble(this.coordinates[1])));
+		final Document nearSphere = new Document();
+		final Document geometry = new Document();
+		final BsonArray coord = new BsonArray(Arrays.asList(new BsonDouble(this.coordinates[0]), new BsonDouble(this.coordinates[1])));
 		geometry.append("type", "Point");
 		geometry.append("coordinates", coord);
 		nearSphere.append("$nearSphere", geometry);

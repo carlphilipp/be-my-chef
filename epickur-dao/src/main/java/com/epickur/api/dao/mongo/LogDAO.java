@@ -38,7 +38,7 @@ public final class LogDAO extends CrudDAO<Log> {
 	@Override
 	public Log create(final Log obj) throws EpickurException {
 		LOG.trace("Create log: " + obj);
-		Document doc = obj.getDocumentDBView();
+		final Document doc = obj.getDocumentDBView();
 		insertDocument(doc);
 		return null;
 	}

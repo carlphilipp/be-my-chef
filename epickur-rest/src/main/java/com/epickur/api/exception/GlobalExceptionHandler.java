@@ -45,7 +45,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@Override
 	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		ErrorMessage errorMessage = new ErrorMessage();
+		final ErrorMessage errorMessage = new ErrorMessage();
 		errorMessage.setError(HttpStatus.BAD_REQUEST.value());
 		errorMessage.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
 		LOG.warn("Fatal Error: {} {}", ex.getMessage(), ex.getClass(), ex);
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler({ Throwable.class, Exception.class })
 	public ResponseEntity<?> handleThrowable(final Throwable throwable) {
-		ErrorMessage errorMessage = new ErrorMessage();
+		final ErrorMessage errorMessage = new ErrorMessage();
 		errorMessage.setError(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		errorMessage.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 		LOG.error("Fatal Error: {} {}", throwable.getLocalizedMessage(), throwable.getClass(), throwable);
@@ -63,7 +63,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(EpickurException.class)
 	public ResponseEntity<?> handleEpickurException(final EpickurException exception) {
-		HttpHeaders headers = new HttpHeaders();
+		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		if (exception instanceof EpickurNotFoundException) {
 			ErrorMessage errorMessage = new ErrorMessage();
@@ -79,8 +79,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		} else if (exception instanceof EpickurDuplicateKeyException) {
 			return ResponseError.error(HttpStatus.CONFLICT, exception.getLocalizedMessage());
 		} else if (exception instanceof EpickurDBException) {
-			EpickurDBException ex = (EpickurDBException) exception;
-			StringBuilder stb = new StringBuilder();
+			final EpickurDBException ex = (EpickurDBException) exception;
+			final StringBuilder stb = new StringBuilder();
 			stb.append("Request " + ex.getOperation() + " failed");
 
 			if (ex.getDocument() != null) {
@@ -98,7 +98,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			LOG.error("Here exception: {}", exception.getLocalizedMessage(), exception);
 			return ResponseError.error(HttpStatus.INTERNAL_SERVER_ERROR, exception.getLocalizedMessage());
 		} else if (exception instanceof OrderStatusException) {
-			ErrorMessage errorMessage = new ErrorMessage();
+			final ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setError(HttpStatus.BAD_REQUEST.value());
 			errorMessage.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
 			if (!StringUtils.isBlank(exception.getMessage())) {

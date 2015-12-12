@@ -57,7 +57,7 @@ public class LogoutController {
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> logout(@RequestParam("key") @NotBlank(message = "{logout.key}") final String key) throws EpickurException {
 		keyService.deleteWithKey(key);
-		SuccessMessage successMessage = new SuccessMessage();
+		final SuccessMessage successMessage = new SuccessMessage();
 		return new ResponseEntity<>(successMessage, HttpStatus.OK);
 	}
 }

@@ -108,7 +108,7 @@ public class CatererValidator extends Validator {
 		if (caterer.getLocation() == null) {
 			throw new EpickurIllegalArgument(fieldNull(entity, "location"));
 		} else {
-			Location location = caterer.getLocation();
+			final Location location = caterer.getLocation();
 			if (location.getGeo() == null) {
 				throw new EpickurIllegalArgument(fieldNull(entity, "location.geo"));
 			} else {
@@ -123,7 +123,7 @@ public class CatererValidator extends Validator {
 			if (location.getAddress() == null) {
 				throw new EpickurIllegalArgument(fieldNull(entity, "location.address"));
 			} else {
-				Address address = location.getAddress();
+				final Address address = location.getAddress();
 				if (StringUtils.isBlank(address.getCity())) {
 					throw new EpickurIllegalArgument(fieldNull(entity, "location.address.city"));
 				}
@@ -161,14 +161,14 @@ public class CatererValidator extends Validator {
 			if (workingTimes.getHours() == null) {
 				throw new EpickurIllegalArgument(fieldNull(entity, "workingTimes.hours"));
 			} else {
-				Hours hours = workingTimes.getHours();
-				List<TimeFrame> mon = hours.getMon();
-				List<TimeFrame> tue = hours.getTue();
-				List<TimeFrame> wed = hours.getWed();
-				List<TimeFrame> thu = hours.getThu();
-				List<TimeFrame> fri = hours.getFri();
-				List<TimeFrame> sat = hours.getSat();
-				List<TimeFrame> sun = hours.getSun();
+				final Hours hours = workingTimes.getHours();
+				final List<TimeFrame> mon = hours.getMon();
+				final List<TimeFrame> tue = hours.getTue();
+				final List<TimeFrame> wed = hours.getWed();
+				final List<TimeFrame> thu = hours.getThu();
+				final List<TimeFrame> fri = hours.getFri();
+				final List<TimeFrame> sat = hours.getSat();
+				final List<TimeFrame> sun = hours.getSun();
 				if (mon != null || tue != null || wed != null || thu != null || fri != null || sat != null || sun != null) {
 					if (mon != null) {
 						checkTimeFrames(entity, ".mon", mon);

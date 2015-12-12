@@ -35,8 +35,8 @@ public final class CleanVouchersJob {
 	public void execute() {
 		LOG.info("Clean vouchers job starting...");
 		try {
-			List<Voucher> vouchers = voucherDAO.readToClean();
-			for (Voucher voucher : vouchers) {
+			final List<Voucher> vouchers = voucherDAO.readToClean();
+			for (final Voucher voucher : vouchers) {
 				LOG.info("Expire voucher " + voucher.getCode() + " " + voucher.getExpiration());
 				voucher.setStatus(Status.EXPIRED);
 				voucher.prepareForUpdateIntoDB();

@@ -54,10 +54,10 @@ public class Utils {
 	public boolean isPasswordCorrect(final String password, final User user) throws EpickurException {
 		boolean res = true;
 		final int sixtyFour = 64;
-		String passwordHashed = Security.encodeToSha256(password);
-		String saltHashed = user.getPassword().substring(0, sixtyFour);
-		String encryptedPasswordSalt = user.getPassword().substring(sixtyFour, user.getPassword().length());
-		String encryptedPasswordSaltToTest = Security.encodeToSha256(passwordHashed + saltHashed);
+		final String passwordHashed = Security.encodeToSha256(password);
+		final String saltHashed = user.getPassword().substring(0, sixtyFour);
+		final String encryptedPasswordSalt = user.getPassword().substring(sixtyFour, user.getPassword().length());
+		final String encryptedPasswordSaltToTest = Security.encodeToSha256(passwordHashed + saltHashed);
 		if (!encryptedPasswordSalt.equals(encryptedPasswordSaltToTest)) {
 			res = false;
 		}
@@ -90,16 +90,16 @@ public class Utils {
 	 * @return The new properties
 	 */
 	private Properties loadLocal(final Properties properties) {
-		Properties prop = new Properties();
+		final Properties prop = new Properties();
 		InputStream in = null;
 		try {
 			in = Utils.class.getResource("/env/local.properties").openStream();
 			prop.load(in);
-			for (Entry<Object, Object> e : prop.entrySet()) {
+			for (final Entry<Object, Object> e : prop.entrySet()) {
 				properties.put(e.getKey(), e.getValue());
 			}
 			injectStripeInProperties(properties);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			LOG.error("Can't load resource env/local.properties. Please create it and put the right value in it.", e);
 		} finally {
 			IOUtils.closeQuietly(in);
@@ -108,7 +108,7 @@ public class Utils {
 	}
 
 	private void injectStripeInProperties(final Properties properties) {
-		String stripeKey = StripeTestUtils.getStripeTestKey();
+		final String stripeKey = StripeTestUtils.getStripeTestKey();
 		LOG.trace("Injecting stripe key into property file: {}", stripeKey);
 		properties.put("stripe.key", stripeKey);
 	}
@@ -131,7 +131,7 @@ public class Utils {
 		InputStreamReader in = null;
 		String apiKey = null;
 		try {
-			Charset charset = Charset.forName("UTF8");
+			final Charset charset = Charset.forName("UTF8");
 			in = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("api.key"), charset);
 			apiKey = IOUtils.toString(in);
 		} finally {
@@ -150,7 +150,7 @@ public class Utils {
 		if (key == null) {
 			return false;
 		} else {
-			DateTime currentTime = new DateTime();
+			final DateTime currentTime = new DateTime();
 			int daysBetween = Math.abs(Days.daysBetween(key.getCreatedAt(), currentTime).getDays());
 			if (daysBetween > properties.getSessionTimeout()) {
 				return false;
@@ -168,7 +168,7 @@ public class Utils {
 	public DateTime parseDate(final String date, final String format) throws EpickurParsingException {
 		try {
 			return CommonsUtil.parseDate(date, format);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new EpickurParsingException("Error while parsing date '" + date + "' with format '" + format + "'", e);
 		}
 	}
@@ -180,9 +180,9 @@ public class Utils {
 	 * @return The list of DishType created
 	 */
 	public List<DishType> stringToListDishType(final String types) {
-		List<DishType> res = new ArrayList<>();
-		String[] typesArray = types.split(",");
-		for (String temp : typesArray) {
+		final List<DishType> res = new ArrayList<>();
+		final String[] typesArray = types.split(",");
+		for (final String temp : typesArray) {
 			res.add(DishType.fromString(temp));
 		}
 		return res;
@@ -195,8 +195,8 @@ public class Utils {
 	 * @return A Geo object
 	 */
 	public Geo stringToGeo(final String str) {
-		Geo geo = new Geo();
-		String[] geoArray = str.split(",");
+		final Geo geo = new Geo();
+		final String[] geoArray = str.split(",");
 		// TODO Not sure about 0 or 1, check which one is correct
 		geo.setLatitude(Double.valueOf(geoArray[0]));
 		geo.setLongitude(Double.valueOf(geoArray[1]));

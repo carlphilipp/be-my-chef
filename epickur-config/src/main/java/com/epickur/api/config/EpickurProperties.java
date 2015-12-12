@@ -52,7 +52,7 @@ public class EpickurProperties {
 	@Value("${mongod.path}")
 	private String mongodPath;
 	@Value("${mongo.backup.path}")
-	private String mongoBackUoPath;
+	private String mongoBackupPath;
 
 	// Schedule
 	@Value("${cron.cleankeys.interval}")

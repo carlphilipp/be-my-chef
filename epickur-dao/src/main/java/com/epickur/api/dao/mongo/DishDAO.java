@@ -52,7 +52,7 @@ public class DishDAO extends CrudDAO<Dish> {
 	@Override
 	public Dish create(final Dish dish) throws EpickurException {
 		LOG.debug("Create dish: " + dish);
-		Document doc = dish.getDocumentDBView();
+		final Document doc = dish.getDocumentDBView();
 		insertDocument(doc);
 		return Dish.getDocumentAsDish(doc);
 	}
@@ -60,17 +60,17 @@ public class DishDAO extends CrudDAO<Dish> {
 	@Override
 	public Dish read(final String id) throws EpickurException {
 		LOG.debug("Read dish with id: " + id);
-		Document query = convertAttributeToDocument("_id", new ObjectId(id));
-		Document find = findDocument(query);
+		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
+		final Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
 	@Override
 	public Dish update(final Dish dish) throws EpickurException {
 		LOG.debug("Update dish: " + dish);
-		Document filter = convertAttributeToDocument("_id", dish.getId());
-		Document update = dish.getUpdateQuery();
-		Document updated = updateDocument(filter, update);
+		final Document filter = convertAttributeToDocument("_id", dish.getId());
+		final Document update = dish.getUpdateQuery();
+		final Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -90,14 +90,14 @@ public class DishDAO extends CrudDAO<Dish> {
 	@Override
 	public List<Dish> readAll() throws EpickurException {
 		MongoCursor<Document> cursor = null;
-		List<Dish> dishes = new ArrayList<>();
+		final List<Dish> dishes = new ArrayList<>();
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
 				Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("readAll", e.getMessage(), e);
 		} finally {
 			if (cursor != null) {
@@ -121,13 +121,13 @@ public class DishDAO extends CrudDAO<Dish> {
 	 */
 	public List<Dish> search(final String day, final Integer pickupdateMinutes, final List<DishType> types, final Integer limit, final Geo geo,
 			final Integer distance) throws EpickurException {
-		Document find = new Document();
+		final Document find = new Document();
 		if (types.size() == 1) {
 			find.append("type", types.get(0).getType());
 		} else {
 			// db.dishes.find({$or: [{type:'meat'},{type:'fish'}]})
-			BsonArray or = new BsonArray();
-			for (DishType type : types) {
+			final BsonArray or = new BsonArray();
+			for (final DishType type : types) {
 				BsonDocument content = new BsonDocument();
 				content.append("type", new BsonString(type.getType()));
 				or.add(content);
@@ -135,26 +135,26 @@ public class DishDAO extends CrudDAO<Dish> {
 			find.append("$or", or);
 		}
 		find.put("caterer.location.geo", geo.getSearch(0, distance));
-		Document openClose = new Document();
-		Document elementMatch = new Document();
-		Document open = new Document();
+		final Document openClose = new Document();
+		final Document elementMatch = new Document();
+		final Document open = new Document();
 		open.put("$lt", new BsonInt32(pickupdateMinutes));
-		Document close = new Document();
+		final Document close = new Document();
 		close.put("$gt", new BsonInt32(pickupdateMinutes));
 		elementMatch.append("open", open);
 		elementMatch.append("close", close);
 		openClose.put("$elemMatch", elementMatch);
 		find.put("caterer.workingTimes.hours." + day, openClose);
-		List<Dish> dishes = new ArrayList<>();
+		final List<Dish> dishes = new ArrayList<>();
 		MongoCursor<Document> cursor = null;
 		LOG.debug("Searching: " + find);
 		try {
 			cursor = getColl().find(find).limit(limit).iterator();
 			while (cursor.hasNext()) {
-				Dish dish = Dish.getDocumentAsDish(cursor.next());
+				final Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("search", e.getMessage(), find, e);
 		} finally {
 			if (cursor != null) {
@@ -163,8 +163,8 @@ public class DishDAO extends CrudDAO<Dish> {
 		}
 		// TODO See how to optimize that and avoid doing that here.
 		// Should be doable in MongoDB.
-		List<Dish> res = new ArrayList<>();
-		for (Dish dish : dishes) {
+		final List<Dish> res = new ArrayList<>();
+		for (final Dish dish : dishes) {
 			Caterer cat = dish.getCaterer();
 			WorkingTimes workingTimes = cat.getWorkingTimes();
 			if (workingTimes.canBePickup(day, pickupdateMinutes)) {
@@ -181,8 +181,8 @@ public class DishDAO extends CrudDAO<Dish> {
 	 */
 	public List<Dish> searchWithCatererId(final String catererId) throws EpickurException {
 		MongoCursor<Document> cursor = null;
-		List<Dish> dishes = new ArrayList<>();
-		Document find = new Document();
+		final List<Dish> dishes = new ArrayList<>();
+		final Document find = new Document();
 		find.append("caterer._id", new ObjectId(catererId));
 		try {
 			cursor = getColl().find(find).iterator();
@@ -190,7 +190,7 @@ public class DishDAO extends CrudDAO<Dish> {
 				Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("readAllForOneCaterer", e.getMessage(), find, e);
 		} finally {
 			if (cursor != null) {

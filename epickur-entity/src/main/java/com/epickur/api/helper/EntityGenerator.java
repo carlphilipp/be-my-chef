@@ -1,46 +1,12 @@
 package com.epickur.api.helper;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-
-import com.epickur.api.entity.Address;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Geo;
-import com.epickur.api.entity.Ingredient;
-import com.epickur.api.entity.Key;
-import com.epickur.api.entity.Location;
-import com.epickur.api.entity.NutritionFact;
-import com.epickur.api.entity.Order;
-import com.epickur.api.entity.User;
-import com.epickur.api.entity.Voucher;
+import com.epickur.api.commons.CommonsUtil;
+import com.epickur.api.entity.*;
 import com.epickur.api.entity.times.Hours;
 import com.epickur.api.entity.times.TimeFrame;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.Currency;
-import com.epickur.api.enumeration.DishType;
-import com.epickur.api.enumeration.MeasurementUnit;
-import com.epickur.api.enumeration.OrderStatus;
-import com.epickur.api.enumeration.Role;
+import com.epickur.api.enumeration.*;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
@@ -48,15 +14,22 @@ import com.epickur.api.utils.ObjectMapperWrapperAPI;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
+import com.stripe.exception.*;
 import com.stripe.model.Token;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+
+import java.io.*;
+import java.text.DecimalFormat;
+import java.util.*;
 
 public class EntityGenerator {
-	/** Logger **/
+	/**
+	 * Logger
+	 **/
 	private static final Logger LOG = LogManager.getLogger(EntityGenerator.class.getSimpleName());
 
 	public static final String STRIPE_MESSAGE = "Fail while acquiring Stripe token. Internet issue?";
@@ -64,41 +37,41 @@ public class EntityGenerator {
 	private static final String[] pickupdateDays = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
 
 	public static void setupDB() throws IOException {
-		InputStreamReader in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
+		final InputStreamReader in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
+		final Properties prop = new Properties();
 		prop.load(in);
 		in.close();
 
-		String mongoPath = prop.getProperty("mongo.path");
-		String mongoAddress = prop.getProperty("mongo.address");
-		String mongoPort = prop.getProperty("mongo.port");
-		String mongoDbName = prop.getProperty("mongo.db.name");
-		String scriptSetupPath = prop.getProperty("script.setup");
+		final String mongoPath = prop.getProperty("mongo.path");
+		final String mongoAddress = prop.getProperty("mongo.address");
+		final String mongoPort = prop.getProperty("mongo.port");
+		final String mongoDbName = prop.getProperty("mongo.db.name");
+		final String scriptSetupPath = prop.getProperty("script.setup");
 
-		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptSetupPath;
+		final String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptSetupPath;
 		EntityGenerator.runShellCommand(cmd);
 	}
 
 	public static void cleanDB() throws IOException {
-		InputStreamReader in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
+		final InputStreamReader in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
+		final Properties prop = new Properties();
 		prop.load(in);
 		in.close();
 
-		String mongoPath = prop.getProperty("mongo.path");
-		String mongoAddress = prop.getProperty("mongo.address");
-		String mongoPort = prop.getProperty("mongo.port");
-		String mongoDbName = prop.getProperty("mongo.db.name");
-		String scriptCleanPath = prop.getProperty("script.clean");
+		final String mongoPath = prop.getProperty("mongo.path");
+		final String mongoAddress = prop.getProperty("mongo.address");
+		final String mongoPort = prop.getProperty("mongo.port");
+		final String mongoDbName = prop.getProperty("mongo.db.name");
+		final String scriptCleanPath = prop.getProperty("script.clean");
 
-		String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
+		final String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
 		EntityGenerator.runShellCommand(cmd);
 	}
 
 	public static Caterer getCaererObject(final String json) throws EpickurException {
-		Caterer caterer = null;
+		Caterer caterer;
 		try {
-			ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
+			final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
 			caterer = mapper.readValue(json, Caterer.class);
 		} catch (IOException e) {
 			LOG.error("Error: " + e.getLocalizedMessage(), e);
@@ -148,8 +121,8 @@ public class EntityGenerator {
 
 	public static void runShellCommand(final String cmd) throws IOException {
 		LOG.debug("Executing: " + cmd);
-		Process p = Runtime.getRuntime().exec(cmd);
-		InputStream is = p.getInputStream();
+		final Process p = Runtime.getRuntime().exec(cmd);
+		final InputStream is = p.getInputStream();
 		BufferedReader br = null;
 		String line;
 		try {
@@ -469,7 +442,7 @@ public class EntityGenerator {
 		order.setDescription(generateRandomString());
 		order.setDish(generateRandomDish());
 		order.setCreatedBy(new ObjectId());
-		
+
 		order.setCardToken(generateRandomString());
 
 		String pickupdate = generateRandomPickupDate();
@@ -495,19 +468,7 @@ public class EntityGenerator {
 	}
 
 	public static Object[] parsePickupdate(final String pickupdate) {
-		Object[] result = null;
-		if (pickupdate != null) {
-			Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):(([0-5][0-9])))$");
-			Matcher matcher = pattern.matcher(pickupdate);
-			if (matcher.matches()) {
-				result = new Object[2];
-				// Extract the day of the week
-				result[0] = matcher.group(1).toLowerCase();
-				// Convert in minutes the given time
-				result[1] = Integer.parseInt(matcher.group(3)) * 60 + Integer.parseInt(matcher.group(4));
-			}
-		}
-		return result;
+		return CommonsUtil.parsePickupdate(pickupdate);
 	}
 
 	public static Order generateRandomOrderWithId() {

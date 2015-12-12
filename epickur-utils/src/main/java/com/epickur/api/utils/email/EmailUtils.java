@@ -40,7 +40,7 @@ public class EmailUtils {
 	 */
 	private void emailNewRegistrationUser(final User user, String code) {
 		// Convert data to use email template
-		Map<String, String> emailData = emailTemplate.convertToDataNewRegistrationUser(user, code);
+		final Map<String, String> emailData = emailTemplate.convertToDataNewRegistrationUser(user, code);
 		// Send an email to the user
 		this.email.sendMail(EmailType.REGISTRATION_USER, emailData, new String[] { user.getEmail() });
 	}
@@ -50,7 +50,7 @@ public class EmailUtils {
 	 */
 	private void emailNewRegistrationAdmin(final User user) {
 		// Convert data to use email template
-		Map<String, String> emailDataAdmin = emailTemplate.convertToDataNewRegistrationAdmins(user);
+		final Map<String, String> emailDataAdmin = emailTemplate.convertToDataNewRegistrationAdmins(user);
 		// Send an email to admins
 		this.email.sendMail(EmailType.REGISTRATION_ADMIN, emailDataAdmin, properties.getAdmins());
 	}
@@ -73,7 +73,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailNewOrderUser(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataNewOrderUser(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataNewOrderUser(user, order);
 		this.email.sendMail(EmailType.ORDER_USER_NEW, emailData, new String[] { user.getEmail() });
 	}
 
@@ -83,7 +83,7 @@ public class EmailUtils {
 	 * @param orderCode The order code
 	 */
 	private void emailNewOrderCaterer(final User user, final Order order, final String orderCode) {
-		Map<String, String> emailData = emailTemplate.convertToDataNewOrderCaterer(user, order, orderCode);
+		final Map<String, String> emailData = emailTemplate.convertToDataNewOrderCaterer(user, order, orderCode);
 		this.email.sendMail(EmailType.ORDER_CATERER_NEW, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
 
@@ -92,7 +92,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailNewOrderAdmin(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataNewOrderAdmins(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataNewOrderAdmins(user, order);
 		this.email.sendMail(EmailType.ORDER_ADMINS_NEW, emailData, properties.getAdmins());
 	}
 
@@ -112,7 +112,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailDeclineOrderUser(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataDeclineOrderUser(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataDeclineOrderUser(user, order);
 		this.email.sendMail(EmailType.ORDER_USER_DECLINED, emailData, new String[] { user.getEmail() });
 	}
 
@@ -121,7 +121,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailDeclineOrderAdmins(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataDeclineOrderAdmins(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataDeclineOrderAdmins(user, order);
 		this.email.sendMail(EmailType.ORDER_ADMINS_DECLINED, emailData, properties.getAdmins());
 	}
 
@@ -142,7 +142,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailSuccessOrderUser(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataSuccessOrderUser(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataSuccessOrderUser(user, order);
 		this.email.sendMail(EmailType.ORDER_USER_SUCCESS, emailData, new String[] { user.getEmail() });
 	}
 
@@ -151,7 +151,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailSuccessOrderCaterer(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataSuccessOrderCaterer(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataSuccessOrderCaterer(user, order);
 		this.email.sendMail(EmailType.ORDER_CATERER_SUCCESS, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
 
@@ -181,7 +181,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailFailOrderUser(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataDeclineOrderUser(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataDeclineOrderUser(user, order);
 		this.email.sendMail(EmailType.ORDER_USER_FAIL, emailData, new String[] { user.getEmail() });
 	}
 
@@ -190,7 +190,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailFailOrderCaterer(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataFailOrderCaterer(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataFailOrderCaterer(user, order);
 		this.email.sendMail(EmailType.ORDER_CATERER_FAIL, emailData, new String[] { order.getDish().getCaterer().getEmail() });
 	}
 
@@ -199,7 +199,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailFailOrderAdmins(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataFailOrderAdmins(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataFailOrderAdmins(user, order);
 		this.email.sendMail(EmailType.ORDER_ADMINS_FAIL, emailData, properties.getAdmins());
 	}
 
@@ -220,7 +220,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailCancelOrderUser(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataCancelOrderUser(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataCancelOrderUser(user, order);
 		this.email.sendMail(EmailType.ORDER_USER_CANCEL, emailData, new String[] { user.getEmail() });
 	}
 
@@ -238,7 +238,7 @@ public class EmailUtils {
 	 * @param order The order
 	 */
 	private void emailCancelOrderAdmins(final User user, final Order order) {
-		Map<String, String> emailData = emailTemplate.convertToDataCancelOrderAdmins(user, order);
+		final Map<String, String> emailData = emailTemplate.convertToDataCancelOrderAdmins(user, order);
 		this.email.sendMail(EmailType.ORDER_ADMINS_CANCEL, emailData, properties.getAdmins());
 	}
 
@@ -247,7 +247,7 @@ public class EmailUtils {
 	 * @param resetCode The reset code.
 	 */
 	public void resetPassword(final User user, final String resetCode) {
-		Map<String, String> emailData = emailTemplate.convertToDataResetUserPassword(user, resetCode);
+		final Map<String, String> emailData = emailTemplate.convertToDataResetUserPassword(user, resetCode);
 		this.email.sendMail(EmailType.RESET_USER_PASSWORD, emailData, new String[] { user.getEmail() });
 	}
 }

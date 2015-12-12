@@ -25,7 +25,7 @@ public class ResponseError {
 	 * @return A response
 	 */
 	public static ResponseEntity error(final HttpStatus status, final String message) {
-		ErrorMessage error = new ErrorMessage();
+		final ErrorMessage error = new ErrorMessage();
 		error.setError(status.value());
 		error.setMessage(message);
 		return new ResponseEntity<>(error, headers, status);
@@ -41,7 +41,7 @@ public class ResponseError {
 	 * @return The Response
 	 */
 	public static ResponseEntity notFound(final String message, final String id) {
-		ErrorMessage error = new ErrorMessage();
+		final ErrorMessage error = new ErrorMessage();
 		error.setError(HttpStatus.NOT_FOUND.value());
 		error.setMessage(HttpStatus.NOT_FOUND.getReasonPhrase());
 		error.addDescription(message + ": " + id);
@@ -52,7 +52,7 @@ public class ResponseError {
 	 * @return The response
 	 */
 	public static ResponseEntity noResult() {
-		ErrorMessage error = new ErrorMessage();
+		final ErrorMessage error = new ErrorMessage();
 		error.setError(HttpStatus.BAD_REQUEST.value());
 		error.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
 		return new ResponseEntity<>(error, headers, HttpStatus.BAD_REQUEST);

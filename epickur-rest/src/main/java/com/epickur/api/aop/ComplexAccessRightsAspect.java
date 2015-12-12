@@ -50,14 +50,14 @@ public class ComplexAccessRightsAspect {
 
 	@Before("execution(* com.epickur.api.service.*.*(..)) && @annotation(com.epickur.api.aop.ValidateComplexAccessRights)")
 	public void checkUserAccessRightsBefore(final JoinPoint joinPoint) throws Throwable {
-		Method method = getMethodFromJointPoint(joinPoint);
+		final Method method = getMethodFromJointPoint(joinPoint);
 
-		ValidateComplexAccessRights validateRequestBefore = method.getAnnotation(ValidateComplexAccessRights.class);
-		Operation operation = validateRequestBefore.operation();
-		EndpointType type = validateRequestBefore.type();
+		final ValidateComplexAccessRights validateRequestBefore = method.getAnnotation(ValidateComplexAccessRights.class);
+		final Operation operation = validateRequestBefore.operation();
+		final EndpointType type = validateRequestBefore.type();
 
-		Object[] objects = joinPoint.getArgs();
-		Key key = (Key) request.getAttribute("key");
+		final Object[] objects = joinPoint.getArgs();
+		final Key key = (Key) request.getAttribute("key");
 
 		if (type == USER) {
 			handleUser(operation, objects, key);
@@ -71,18 +71,18 @@ public class ComplexAccessRightsAspect {
 	}
 
 	private Method getMethodFromJointPoint(final JoinPoint joinPoint) {
-		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+		final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		return signature.getMethod();
 	}
 
 	private void handleUser(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
-		String userId;
+		final String userId;
 		if (operation == READ) {
 			userId = (String) objects[0];
 		} else {
 			userId = ((User) objects[0]).getId().toHexString();
 		}
-		User user = userDAO.read(userId);
+		final User user = userDAO.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(USER_NOT_FOUND, userId);
 		}
@@ -90,9 +90,9 @@ public class ComplexAccessRightsAspect {
 	}
 
 	private void handleCaterer(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
-		Caterer caterer = (Caterer) objects[0];
-		String catererId = caterer.getId().toHexString();
-		Caterer read = catererDAO.read(catererId);
+		final Caterer caterer = (Caterer) objects[0];
+		final String catererId = caterer.getId().toHexString();
+		final Caterer read = catererDAO.read(catererId);
 		if (read == null) {
 			throw new EpickurNotFoundException(CATERER_NOT_FOUND, catererId);
 		}
@@ -100,13 +100,13 @@ public class ComplexAccessRightsAspect {
 	}
 
 	private void handleDish(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
-		String dishId;
+		final String dishId;
 		if (operation == UPDATE) {
 			dishId = ((Dish) objects[0]).getId().toHexString();
 		} else {
 			dishId = (String) objects[0];
 		}
-		Dish read = dishDAO.read(dishId);
+		final Dish read = dishDAO.read(dishId);
 		if (read == null) {
 			throw new EpickurNotFoundException(DISH_NOT_FOUND, dishId);
 		}
@@ -114,13 +114,13 @@ public class ComplexAccessRightsAspect {
 	}
 
 	private void handleOrder(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
-		String orderId;
+		final String orderId;
 		if (operation == READ) {
 			orderId = (String) objects[0];
 		} else {
 			orderId = ((Order) objects[0]).getId().toHexString();
 		}
-		Order read = orderDAO.read(orderId);
+		final Order read = orderDAO.read(orderId);
 		if (read == null) {
 			throw new EpickurNotFoundException(ORDER_NOT_FOUND, orderId);
 		}

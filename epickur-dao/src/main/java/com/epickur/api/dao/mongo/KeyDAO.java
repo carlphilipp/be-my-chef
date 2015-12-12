@@ -43,7 +43,7 @@ public class KeyDAO extends CrudDAO<Key> {
 	@Override
 	public Key create(final Key key) throws EpickurException {
 		LOG.debug("Create key: " + key);
-		Document doc = key.getDocumentDBView();
+		final Document doc = key.getDocumentDBView();
 		insertDocument(doc);
 		return Key.getDocumentAsKey(doc);
 	}
@@ -51,8 +51,8 @@ public class KeyDAO extends CrudDAO<Key> {
 	@Override
 	public Key read(final String key) throws EpickurException {
 		LOG.debug("Read key: " + key);
-		Document query = convertAttributeToDocument("key", key);
-		Document find = findDocument(query);
+		final Document query = convertAttributeToDocument("key", key);
+		final Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -65,8 +65,8 @@ public class KeyDAO extends CrudDAO<Key> {
 	 */
 	public Key readWithName(final String userName) throws EpickurException {
 		LOG.debug("Read key with name: " + userName);
-		Document query = convertAttributeToDocument("userName", userName);
-		Document find = findDocument(query);
+		final Document query = convertAttributeToDocument("userName", userName);
+		final Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -95,21 +95,21 @@ public class KeyDAO extends CrudDAO<Key> {
 	 */
 	public boolean deleteWithKey(final String key) throws EpickurException {
 		LOG.debug("Delete key: " + key);
-		Document filter = convertAttributeToDocument("key", key);
+		final Document filter = convertAttributeToDocument("key", key);
 		return deleteDocument(filter);
 	}
 
 	@Override
 	public List<Key> readAll() throws EpickurException {
-		List<Key> keys = new ArrayList<>();
+		final List<Key> keys = new ArrayList<>();
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
-				Key key = Key.getDocumentAsKey(cursor.next());
+				final Key key = Key.getDocumentAsKey(cursor.next());
 				keys.add(key);
 			}
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("readAll", e.getMessage(), e);
 		} finally {
 			if (cursor != null) {

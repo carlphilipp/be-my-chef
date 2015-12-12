@@ -51,9 +51,9 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
 			throws IOException, ServletException {
-		String urlPath = request.getRequestURI();
+		final String urlPath = request.getRequestURI();
 		if (urlPath != null && !StringUtils.contains(urlPath, "/nokey/")) {
-			String paramKey = request.getParameter("key");
+			final String paramKey = request.getParameter("key");
 			if (paramKey == null) {
 				abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorUtils.MISSING_KEY);
 			} else {
@@ -65,13 +65,13 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 	}
 
 	protected void abortRequest(final HttpServletResponse response, final HttpStatus status, final String errorType) throws IOException {
-		ErrorMessage error = new ErrorMessage();
+		final ErrorMessage error = new ErrorMessage();
 		error.setError(status.value());
 		error.setMessage(status.getReasonPhrase());
 		error.addDescription(errorType);
 		response.setStatus(status.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		ObjectMapper mapper = new ObjectMapper();
+		final ObjectMapper mapper = new ObjectMapper();
 		response.getWriter().write(mapper.writeValueAsString(error));
 	}
 

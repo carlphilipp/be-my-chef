@@ -56,30 +56,30 @@ public class EmailTemplate {
 	 */
 	@PostConstruct
 	private void loadTemplates() {
-		String base = getBaseTemplate();
+		final String base = getBaseTemplate();
 		InputStream is = null;
 		InputStream is2 = null;
 		Reader in = null;
 		try {
-			Charset charset = Charset.forName("UTF-8");
+			final Charset charset = Charset.forName("UTF-8");
 			is = utils.getResource("email-template.json");
 			in = new InputStreamReader(is, charset);
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode obj = mapper.readTree(in);
-			Iterator<Entry<String, JsonNode>> iterator = obj.fields();
+			final ObjectMapper mapper = new ObjectMapper();
+			final JsonNode obj = mapper.readTree(in);
+			final Iterator<Entry<String, JsonNode>> iterator = obj.fields();
 			while (iterator.hasNext()) {
-				Entry<String, JsonNode> entry = iterator.next();
-				JsonNode node = entry.getValue();
-				String subject = node.get("subject").asText();
-				String folder = node.get("folder").asText();
-				String file = node.get("file").asText();
+				final Entry<String, JsonNode> entry = iterator.next();
+				final JsonNode node = entry.getValue();
+				final String subject = node.get("subject").asText();
+				final String folder = node.get("folder").asText();
+				final String file = node.get("file").asText();
 				is2 = utils.getResource("templates/" + folder + "/" + file);
-				String content = IOUtils.toString(is2);
-				String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
-				Map<String, String> res = new HashMap<>();
+				final String content = IOUtils.toString(is2);
+				final String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
+				final Map<String, String> res = new HashMap<>();
 				res.put("subject", subject);
 				res.put("content", newContent);
-				this.templates.put(entry.getKey(), res);
+				templates.put(entry.getKey(), res);
 			}
 		} catch (IOException e) {
 			LOG.error("Error while trying to access the email templates", e);
@@ -100,7 +100,7 @@ public class EmailTemplate {
 		InputStream is = null;
 		Reader in = null;
 		try {
-			Charset charset = Charset.forName("UTF-8");
+			final Charset charset = Charset.forName("UTF-8");
 			is = utils.getResource("templates/base.html");
 			in = new InputStreamReader(is, charset);
 			base = IOUtils.toString(in);
@@ -120,7 +120,7 @@ public class EmailTemplate {
 	 * @return A map containing the data of the template
 	 */
 	public Map<String, String> getTemplate(final EmailType type) {
-		String typeStr = type.toString().toLowerCase();
+		final String typeStr = type.toString().toLowerCase();
 		if (this.templates.containsKey(typeStr)) {
 			return this.templates.get(typeStr);
 		} else {
@@ -136,7 +136,7 @@ public class EmailTemplate {
 	 * @return The map.
 	 */
 	public Map<String, String> convertToDataNewRegistrationUser(final User user, String code) {
-		Map<String, String> data = getData(user, null);
+		final Map<String, String> data = getData(user, null);
 		data.put("@@FOLDER@@", properties.getFolder());
 		data.put("@@CHECK@@", code);
 		return data;
@@ -311,7 +311,7 @@ public class EmailTemplate {
 	}
 
 	private Map<String, String> getData(final User user, final Order order) {
-		Map<String, String> data = new HashMap<>();
+		final Map<String, String> data = new HashMap<>();
 		data.put("@@TEAM_NAME@@", properties.getName());
 		data.put("@@WEB_ADDRESS@@", properties.getWebAddress());
 		data.put("@@DELAY@@", properties.getOrderTimeLimit().toString());

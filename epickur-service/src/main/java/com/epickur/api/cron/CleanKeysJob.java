@@ -36,8 +36,8 @@ public final class CleanKeysJob {
 	public void execute() {
 		LOG.info("Clean keys job starting...");
 		try {
-			List<Key> keys = keyDao.readAll();
-			for (Key key : keys) {
+			final List<Key> keys = keyDao.readAll();
+			for (final Key key : keys) {
 				if (!utils.isValid(key)) {
 					keyDao.delete(key.getId().toHexString());
 				}

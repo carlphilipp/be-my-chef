@@ -1,5 +1,16 @@
 package com.epickur.api.dump;
 
+import com.epickur.api.config.EpickurProperties;
+import com.epickur.api.utils.Utils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -8,112 +19,91 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.epickur.api.utils.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  * Create a MongoDB dump.
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
 public final class MongoDBDump {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(MongoDBDump.class.getSimpleName());
 	@Autowired
 	private Utils utils;
-	/** File separator */
+	@Autowired
+	private EpickurProperties properties;
+	/**
+	 * File separator
+	 */
 	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
-	/** Mongod */
-	private String mongod;
-	/** Ip */
-	private String ip;
-	/** Port */
-	private String port;
-	/** Database */
-	private String database;
-	/** Database user */
-	private String username;
-	/** Database password */
-	private String password;
-	/** Backup path */
-	private String backupPath;
-	/** Backup File */
+	/**
+	 * Backup File
+	 */
 	private File backupFolder;
-	/** Dump File */
+	/**
+	 * Dump File
+	 */
 	private File dumpFile;
-	/** Dump Directory */
+	/**
+	 * Dump Directory
+	 */
 	private File dumpDirectory;
-	/** Compression of the file */
+	/**
+	 * Compression of the file
+	 */
 	private static final String TARGZEXT = ".tar.gz";
-	/** Date */
+	/**
+	 * Date
+	 */
 	private String date;
-	/** Run time object for execute mongo */
+	/**
+	 * Run time object for execute mongo
+	 */
 	private Runtime rt;
 
 	/**
 	 * Construct a DB dump
-	 * 
-	 * @param date
-	 *            The date
+	 *
+	 * @param date The date
 	 */
 	public MongoDBDump(final String date) {
 		this.date = date;
-		Properties prop = utils.getEpickurProperties();
-		this.mongod = prop.getProperty("mongod.path");
-		this.ip = prop.getProperty("mongo.address");
-		this.port = prop.getProperty("mongo.port");
-		this.database = prop.getProperty("mongo.db.name");
-		this.username = prop.getProperty("mongo.user.login");
-		this.password = prop.getProperty("mongo.user.password");
-		this.backupPath = prop.getProperty("mongo.backup.path");
-		this.backupFolder = new File(backupPath);
+	}
+
+	@PostConstruct
+	public void postConstruct(){
+		this.backupFolder = new File(properties.getMongoBackupPath());
 		this.dumpFile = new File(getCurrentFullPathName());
-		this.dumpDirectory = new File(backupPath + FILE_SEPARATOR + database);
+		this.dumpDirectory = new File(properties.getMongoBackupPath() + FILE_SEPARATOR + properties.getMongoDbName());
 		this.rt = Runtime.getRuntime();
 	}
 
-	public MongoDBDump(final String date, final String mongod, final String ip, final String port, final String database, final String username,
-			final String password, String backupPath, final Runtime rt) {
-		this.date = date;
-		this.mongod = mongod;
-		this.ip = ip;
-		this.port = port;
-		this.database = database;
-		this.username = username;
-		this.password = password;
-		this.backupPath = backupPath;
-		this.backupFolder = new File(backupPath);
-		this.rt = rt;
-	}
-	
-	public void setBackupFolder(final File backupFolder){
+	public void setBackupFolder(final File backupFolder) {
 		this.backupFolder = backupFolder;
 	}
-	
-	public void setDumpFile(final File dumpFile){
+
+	public void setDumpFile(final File dumpFile) {
 		this.dumpFile = dumpFile;
 	}
-	
-	public void setDumpDirectory(final File dumpDirectory){
+
+	public void setRuntime(final Runtime runtime) {
+		this.rt = runtime;
+	}
+
+	public void setDumpDirectory(final File dumpDirectory) {
 		this.dumpDirectory = dumpDirectory;
 	}
 
 	/**
 	 * Get current file name
-	 * 
+	 *
 	 * @return the file name
 	 */
 	public String getCurrentNameFile() {
-		String computername = null;
+		String computername;
 		try {
 			computername = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
@@ -127,7 +117,7 @@ public final class MongoDBDump {
 	 * @return The current full path name
 	 */
 	public String getCurrentFullPathName() {
-		return backupPath + FILE_SEPARATOR + getCurrentNameFile();
+		return properties.getMongoBackupPath() + FILE_SEPARATOR + getCurrentNameFile();
 	}
 
 	/**
@@ -136,9 +126,11 @@ public final class MongoDBDump {
 	public List<String> getListFiles() {
 		List<String> files = new ArrayList<>();
 		File[] listOfFiles = dumpDirectory.listFiles();
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile()) {
-				files.add(listOfFiles[i].getAbsolutePath());
+		if (listOfFiles != null) {
+			for (File file : listOfFiles) {
+				if (file.isFile()) {
+					files.add(file.getAbsolutePath());
+				}
 			}
 		}
 		return files;
@@ -146,14 +138,14 @@ public final class MongoDBDump {
 
 	/**
 	 * Get the dump database
-	 * 
+	 *
 	 * @return The backup directory
 	 */
 	public boolean exportMongo() {
 		createFolderIfNotExists(backupFolder);
 		boolean success = false;
 		try {
-			Process process = rt.exec(buildDumpCommand());
+			final Process process = rt.exec(buildDumpCommand());
 			process.waitFor();
 			logExportResult(process);
 			success = true;
@@ -164,18 +156,18 @@ public final class MongoDBDump {
 	}
 
 	protected String buildDumpCommand() {
-		StringBuilder dumpCommand = new StringBuilder();
-		dumpCommand.append(mongod + " -d " + database + " -h " + ip + ":" + port);
-		if (StringUtils.isNotBlank(username)) {
-			dumpCommand.append(" -u " + username + " -p" + password);
+		final StringBuilder dumpCommand = new StringBuilder();
+		dumpCommand.append(properties.getMongodPath() + " -d " + properties.getMongoDbName() + " -h " + properties.getMongoAddress() + ":" + properties.getMongoPort());
+		if (StringUtils.isNotBlank(properties.getMongoLogin())) {
+			dumpCommand.append(" -u " + properties.getMongoLogin() + " -p" + properties.getMongoPassword());
 		}
-		dumpCommand.append(" -o " + backupPath);
+		dumpCommand.append(" -o " + properties.getMongoBackupPath());
 		return dumpCommand.toString();
 	}
 
 	protected void logExportResult(final Process process) throws IOException {
-		String output = IOUtils.toString(process.getInputStream());
-		String errorOutput = IOUtils.toString(process.getErrorStream());
+		final String output = IOUtils.toString(process.getInputStream());
+		final String errorOutput = IOUtils.toString(process.getErrorStream());
 		if (StringUtils.isNotBlank(output)) {
 			LOG.info("\n" + output);
 		}
@@ -185,7 +177,7 @@ public final class MongoDBDump {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createFolderIfNotExists(final File folder) {
 		if (!folder.exists()) {

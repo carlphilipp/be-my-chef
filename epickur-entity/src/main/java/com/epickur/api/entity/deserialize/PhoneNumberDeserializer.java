@@ -20,7 +20,7 @@ public final class PhoneNumberDeserializer extends JsonDeserializer<PhoneNumber>
 	@Override
 	public PhoneNumber deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
 		try {
-			JsonNode node = jp.readValueAsTree();
+			final JsonNode node = jp.readValueAsTree();
 			if (!node.has("nationalNumber")) {
 				return null;
 			} else {
@@ -41,7 +41,7 @@ public final class PhoneNumberDeserializer extends JsonDeserializer<PhoneNumber>
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

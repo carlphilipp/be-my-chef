@@ -57,9 +57,9 @@ public class VoucherService {
 	 */
 	public Set<Voucher> generate(final int count, final DiscountType discountType, final int discount, final ExpirationType expirationType,
 			final DateTime expiration) throws EpickurException {
-		Set<Voucher> result = new HashSet<>();
+		final Set<Voucher> result = new HashSet<>();
 		do {
-			Voucher voucher = new Voucher();
+			final Voucher voucher = new Voucher();
 			voucher.setCode(CommonsUtil.generateRandomCode());
 			voucher.setDiscount(discount);
 			voucher.setDiscountType(discountType);
@@ -89,7 +89,7 @@ public class VoucherService {
 	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public Voucher validateVoucher(final String code) throws EpickurException {
-		Voucher found = this.readAndThrowException(code);
+		final Voucher found = this.readAndThrowException(code);
 		if (found.getStatus() == Status.EXPIRED) {
 			throw new EpickurException("Voucher '" + code + "' expired");
 		}
@@ -112,7 +112,7 @@ public class VoucherService {
 	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public Voucher revertVoucher(final String code) throws EpickurException {
-		Voucher found = this.readAndThrowException(code);
+		final Voucher found = this.readAndThrowException(code);
 		if (found.getExpirationType() == ExpirationType.ONETIME) {
 			found.setStatus(Status.VALID);
 		} else if (found.getExpirationType() == ExpirationType.UNTIL) {
@@ -123,7 +123,7 @@ public class VoucherService {
 	}
 
 	protected Voucher readAndThrowException(final String code) throws EpickurException {
-		Voucher found = this.voucherDAO.read(code);
+		final Voucher found = this.voucherDAO.read(code);
 		if (found == null) {
 			throw new EpickurException("Voucher '" + code + "' not found");
 		}

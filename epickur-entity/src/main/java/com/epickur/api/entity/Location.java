@@ -60,9 +60,9 @@ public final class Location extends AbstractEntity {
 	 *             If an epickur exception occurred
 	 */
 	public static Location getObject(final String json) throws EpickurParsingException {
-		Location location = null;
+		Location location;
 		try {
-			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
+			final ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
 			location = mapper.readValue(json, Location.class);
 		} catch (IOException e) {
 			throw new EpickurParsingException("Can not convert string to Location: " + json, e);
@@ -77,7 +77,7 @@ public final class Location extends AbstractEntity {
 	 */
 	@JsonIgnore
 	public Map<String, Object> getUpdateMap(final String prefix) {
-		Map<String, Object> res = new HashMap<>();
+		final Map<String, Object> res = new HashMap<>();
 		if (address != null) {
 			res.putAll(address.getUpdateMap(prefix + ".address"));
 		}

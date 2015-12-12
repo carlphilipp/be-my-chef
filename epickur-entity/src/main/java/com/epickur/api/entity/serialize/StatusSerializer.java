@@ -21,7 +21,7 @@ public final class StatusSerializer extends JsonSerializer<Status> {
 			} else {
 				jgen.writeString(status.toString().toLowerCase());
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

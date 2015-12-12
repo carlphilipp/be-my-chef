@@ -85,7 +85,7 @@ public class Email {
 		this.message = emailMsgTxt;
 		this.sendTo = sendTo;
 		this.request = new MandrillRESTRequest();
-		ObjectMapper mapper = new ObjectMapper();
+		final ObjectMapper mapper = new ObjectMapper();
 		this.request.setConfig(mandrillConfiguration);
 		this.request.setObjectMapper(mapper);
 		this.messagesRequest.setRequest(request);
@@ -95,23 +95,23 @@ public class Email {
 	 * Actual send the email
 	 */
 	protected void send() {
-		HttpClient httpClient = HttpClientBuilder.create().build();
+		final HttpClient httpClient = HttpClientBuilder.create().build();
 		request.setHttpClient(httpClient);
-		MandrillMessageRequest mmr = new MandrillMessageRequest();
-		MandrillHtmlMessage mess = new MandrillHtmlMessage();
-		Map<String, String> headers = new HashMap<>();
+		final MandrillMessageRequest mmr = new MandrillMessageRequest();
+		final MandrillHtmlMessage mess = new MandrillHtmlMessage();
+		final Map<String, String> headers = new HashMap<>();
 		mess.setFrom_email(properties.getMandrillFrom());
 		mess.setFrom_name(properties.getMandrillFromUsername());
 		mess.setHeaders(headers);
 		mess.setHtml(this.message);
 		mess.setSubject(this.subject);
-		MandrillRecipient[] recipients = new MandrillRecipient[sendTo.length];
+		final MandrillRecipient[] recipients = new MandrillRecipient[sendTo.length];
 		for (int i = 0; i < sendTo.length; i++) {
 			recipients[i] = new MandrillRecipient(null, sendTo[i]);
 		}
 		mess.setTo(recipients);
 		mess.setTrack_clicks(true);
-		String[] tags = new String[] { "bmc", "bemychef", "be my chef" };
+		final String[] tags = new String[] { "bmc", "bemychef", "be my chef" };
 		mess.setTags(tags);
 		mmr.setMessage(mess);
 		if (properties.getSend()) {
@@ -131,11 +131,11 @@ public class Email {
 	 * @param sendTo    An array of email
 	 */
 	protected void sendMail(final EmailType emailType, final Map<String, String> data, final String[] sendTo) {
-		Map<String, String> template = emailTemplate.getTemplate(emailType);
+		final Map<String, String> template = emailTemplate.getTemplate(emailType);
 		if (!template.isEmpty()) {
 			String subject = template.get("subject");
 			String content = template.get("content");
-			for (Entry<String, String> entry : data.entrySet()) {
+			for (final Entry<String, String> entry : data.entrySet()) {
 				subject = StringUtils.replace(subject, entry.getKey(), entry.getValue());
 				content = StringUtils.replace(content, entry.getKey(), entry.getValue());
 			}

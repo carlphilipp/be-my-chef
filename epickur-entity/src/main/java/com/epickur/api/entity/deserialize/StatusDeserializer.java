@@ -18,9 +18,9 @@ public final class StatusDeserializer extends JsonDeserializer<Status> {
 	@Override
 	public Status deserialize(final JsonParser jp, final DeserializationContext context) throws IOException {
 		try {
-			JsonNode objId = jp.readValueAsTree();
+			final JsonNode objId = jp.readValueAsTree();
 			return Status.valueOf(objId.asText().toUpperCase());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

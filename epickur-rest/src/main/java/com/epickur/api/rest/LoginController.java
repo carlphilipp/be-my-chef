@@ -69,7 +69,7 @@ public class LoginController {
 			@RequestParam("email") @NotBlank(message = "{login.email}") final String email,
 			@RequestParam("password") @NotBlank(message = "{login.password}") final String password)
 			throws EpickurException {
-		User user = userService.login(email, password);
+		final User user = userService.login(email, password);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 }

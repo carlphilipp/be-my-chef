@@ -53,10 +53,10 @@ public final class Log extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param time
+	 * @param time The time
 	 */
 	@JsonDeserialize(using = DateDeserializer.class)
-	public void setTime(DateTime time) {
+	public void setTime(final DateTime time) {
 		this.time = time;
 	}
 

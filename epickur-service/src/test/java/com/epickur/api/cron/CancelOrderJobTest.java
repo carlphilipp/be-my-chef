@@ -1,27 +1,8 @@
 package com.epickur.api.cron;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
-
-import com.epickur.api.dao.mongo.VoucherDAO;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.quartz.*;
-
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.UserDAO;
+import com.epickur.api.dao.mongo.VoucherDAO;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.Voucher;
@@ -30,6 +11,18 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.email.EmailUtils;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.quartz.*;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 public class CancelOrderJobTest {
 
@@ -49,7 +42,7 @@ public class CancelOrderJobTest {
 	private VoucherService voucherService;
 	@InjectMocks
 	private CancelOrderJob orderJob;
-	
+
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
@@ -87,7 +80,7 @@ public class CancelOrderJobTest {
 		verify(order, times(1)).prepareForUpdateIntoDB();
 		//verify(voucherBusiness, times(1)).revertVoucher(voucher.getCode());
 	}
-	
+
 	@Test
 	public void testExecuteEpickurException() throws JobExecutionException, EpickurException {
 		Order order = EntityGenerator.generateRandomOrderWithId();

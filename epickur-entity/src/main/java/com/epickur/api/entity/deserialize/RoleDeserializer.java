@@ -17,9 +17,9 @@ public final class RoleDeserializer extends JsonDeserializer<Role> {
 	@Override
 	public Role deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
 		try {
-			JsonNode objId = jp.readValueAsTree();
+			final JsonNode objId = jp.readValueAsTree();
 			return Role.getEnum(objId.asText());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

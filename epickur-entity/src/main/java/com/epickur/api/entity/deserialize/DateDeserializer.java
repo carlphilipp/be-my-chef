@@ -20,18 +20,18 @@ public final class DateDeserializer extends JsonDeserializer<DateTime> {
 
 	@Override
 	public DateTime deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
-		JsonNode date = null;
+		final JsonNode date;
 		try {
 			date = jp.readValueAsTree();
 			if (date.size() == 1) {
-				JsonNode node = date.get("$numberLong");
+				final JsonNode node = date.get("$numberLong");
 				return getDateTime(node);
 			} else {
 				return getDateTime(date);
 			}
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

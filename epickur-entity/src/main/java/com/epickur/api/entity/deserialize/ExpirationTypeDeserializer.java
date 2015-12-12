@@ -18,9 +18,9 @@ public final class ExpirationTypeDeserializer extends JsonDeserializer<Expiratio
 	@Override
 	public ExpirationType deserialize(final JsonParser jp, final DeserializationContext context) throws IOException {
 		try {
-			JsonNode objId = jp.readValueAsTree();
+			final JsonNode objId = jp.readValueAsTree();
 			return ExpirationType.valueOf(objId.asText().toUpperCase());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

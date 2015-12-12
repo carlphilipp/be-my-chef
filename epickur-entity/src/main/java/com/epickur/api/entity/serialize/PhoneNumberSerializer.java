@@ -25,7 +25,7 @@ public final class PhoneNumberSerializer extends JsonSerializer<PhoneNumber> {
 				gen.writeNumberField("countryCode", value.getCountryCode());
 				gen.writeEndObject();
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

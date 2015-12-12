@@ -52,10 +52,10 @@ public class VoucherValidator extends Validator {
 		if (code.length() != 8) {
 			throw new EpickurIllegalArgument("The field " + getEntity() + ".code has a wrong format");
 		}
-		String consonants = "[QWRTPSDFGHJKZXCVBNM]{3}";
-		String regex = "^" + consonants + "[2-9]" + consonants + "[2-9]$";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(code);
+		final String consonants = "[QWRTPSDFGHJKZXCVBNM]{3}";
+		final String regex = "^" + consonants + "[2-9]" + consonants + "[2-9]$";
+		final Pattern pattern = Pattern.compile(regex);
+		final Matcher matcher = pattern.matcher(code);
 		if (!matcher.matches()) {
 			throw new EpickurIllegalArgument("The field " + getEntity() + ".code has a wrong format '" + code + "'");
 		}

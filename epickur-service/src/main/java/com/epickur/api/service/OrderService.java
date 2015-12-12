@@ -79,20 +79,20 @@ public class OrderService {
 	 */
 	public Order create(final String userId, final Order order)
 			throws EpickurException {
-		User user = readUser(userId);
+		final User user = readUser(userId);
 		handleVoucher(order);
 		prepareOrder(order, userId);
 
-		Order orderCreated = orderDAO.create(order);
+		final Order orderCreated = orderDAO.create(order);
 
 		postCreation(orderCreated, user);
 		return orderCreated;
 	}
 
 	protected void handleVoucher(final Order order) throws EpickurException {
-		Voucher voucher = order.getVoucher();
+		final Voucher voucher = order.getVoucher();
 		if (voucher != null) {
-			Voucher updated = voucherService.validateVoucher(voucher.getCode());
+			final Voucher updated = voucherService.validateVoucher(voucher.getCode());
 			order.setVoucher(updated);
 		}
 	}
@@ -104,18 +104,18 @@ public class OrderService {
 	}
 
 	protected void postCreation(final Order order, final User user) throws EpickurException {
-		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
+		final String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 		emailUtils.emailNewOrder(user, order, orderCode);
 		jobs.addTemporaryOrderJob(user, order);
 	}
 
 	protected void addSequenceIdToOrder(final Order order) throws EpickurDBException {
-		String sequence = seqDAO.getNextId();
+		final String sequence = seqDAO.getNextId();
 		order.setReadableId(sequence);
 	}
 
 	protected User readUser(final String userId) throws EpickurException {
-		User user = userDAO.read(userId);
+		final User user = userDAO.read(userId);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
 		}
@@ -190,7 +190,7 @@ public class OrderService {
 	 */
 	public Order executeOrder(final String userId, final String orderId, final boolean confirm,
 			final boolean shouldCharge, final String orderCode) throws EpickurException {
-		User user = readUser(userId);
+		final User user = readUser(userId);
 		Order order = read(orderId);
 		checkAutorization(orderCode, order);
 		if (confirm) {
@@ -213,7 +213,7 @@ public class OrderService {
 
 	protected Order chargeUser(Order order, final User user) throws EpickurException {
 		try {
-			Charge charge = stripePayment.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
+			final Charge charge = stripePayment.chargeCard(order.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
 			if (charge == null || !charge.getPaid()) {
 				handleOrderFail(order, user);
 			} else {
@@ -238,7 +238,7 @@ public class OrderService {
 	}
 
 	protected Order read(final String orderId) throws EpickurException {
-		Order order = orderDAO.read(orderId);
+		final Order order = orderDAO.read(orderId);
 		if (order == null) {
 			throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, orderId);
 		}
@@ -262,7 +262,7 @@ public class OrderService {
 		// Send email to User, Caterer and admins - Order failed
 		emailUtils.emailFailOrder(user, order);
 		if (order.getVoucher() != null) {
-			Voucher voucher = voucherService.revertVoucher(order.getVoucher().getCode());
+			final Voucher voucher = voucherService.revertVoucher(order.getVoucher().getCode());
 			order.setVoucher(voucher);
 		}
 	}

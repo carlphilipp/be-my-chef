@@ -75,9 +75,9 @@ public class UserService {
 		} else {
 			user.setAllow(0);
 		}
-		PasswordManager passwordManager = PasswordManager.createPasswordManager(user.getPassword());
-		String dbPassword = passwordManager.createDBPassword();
-		String code = passwordManager.getCode(user.getName(), user.getEmail());
+		final PasswordManager passwordManager = PasswordManager.createPasswordManager(user.getPassword());
+		final String dbPassword = passwordManager.createDBPassword();
+		final String code = passwordManager.getCode(user.getName(), user.getEmail());
 
 		user.setPassword(dbPassword);
 
@@ -107,7 +107,7 @@ public class UserService {
 	 */
 	@ValidateComplexAccessRights(operation = READ, type = USER)
 	public User read(final String id) throws EpickurException {
-		User user = userDAO.read(id);
+		final User user = userDAO.read(id);
 		user.setPassword(null);
 		user.setRole(null);
 		return user;
@@ -131,7 +131,7 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public List<User> readAll() throws EpickurException {
-		List<User> users = userDAO.readAll();
+		final List<User> users = userDAO.readAll();
 		for (User user : users) {
 			// We do not send back the password or the role
 			user.setPassword(null);
@@ -148,7 +148,7 @@ public class UserService {
 	@ValidateComplexAccessRights(operation = UPDATE, type = USER)
 	public User update(final User user) throws EpickurException {
 		user.prepareForUpdateIntoDB();
-		User res = userDAO.update(user);
+		final User res = userDAO.update(user);
 		// We do not send back the password or the role
 		res.setPassword(null);
 		res.setRole(null);
@@ -179,7 +179,7 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User login(final String email, final String password) throws EpickurException {
-		User userFound = readWithEmail(email);
+		final User userFound = readWithEmail(email);
 		if (userFound != null) {
 			if (!utils.isPasswordCorrect(password, userFound)) {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
@@ -215,7 +215,7 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User injectNewPassword(final User user) throws EpickurException {
-		User userFound = readWithEmail(user.getEmail());
+		final User userFound = readWithEmail(user.getEmail());
 		if (userFound == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getEmail());
 		} else {
@@ -240,7 +240,7 @@ public class UserService {
 	public User checkCode(final String email, final String code) throws EpickurException {
 		User userFound = readWithEmail(email);
 		if (userFound != null) {
-			String codeFound = Security.getUserCode(userFound);
+			final String codeFound = Security.getUserCode(userFound);
 			if (!codeFound.equals(code)) {
 				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 			} else {
@@ -261,7 +261,7 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public void resetPasswordFirstStep(final String email) throws EpickurException {
-		User user = readWithEmail(email);
+		final User user = readWithEmail(email);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
 		}
@@ -277,7 +277,7 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User resetPasswordSecondStep(final String id, final String newPassword, final String resetCode) throws EpickurException {
-		User user = userDAO.read(id);
+		final User user = userDAO.read(id);
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
 		}
@@ -285,10 +285,10 @@ public class UserService {
 		if (!resetCodeDB.equals(resetCode)) {
 			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
 		} else {
-			String newEncryptedPassword = PasswordManager.createPasswordManager(newPassword).createDBPassword();
+			final String newEncryptedPassword = PasswordManager.createPasswordManager(newPassword).createDBPassword();
 			user.setPassword(newEncryptedPassword);
 			user.prepareForUpdateIntoDB();
-			User res = userDAO.update(user);
+			final User res = userDAO.update(user);
 			res.setPassword(null);
 			res.setRole(null);
 			return res;
@@ -302,7 +302,7 @@ public class UserService {
 	 * @param user The user.
 	 */
 	public void suscribeToNewsletter(final User user) {
-		String url = buildNewsletterUrl(user);
+		final String url = buildNewsletterUrl(user);
 		suscribeUserToNewsletter(url, user.getEmail());
 	}
 
@@ -335,7 +335,7 @@ public class UserService {
 
 	protected void suscribeUserToNewsletter(final String url, final String email) {
 		try {
-			HttpPost request = new HttpPost(url);
+			final HttpPost request = new HttpPost(url);
 			HttpClientBuilder.create().build().execute(request);
 		} catch (IOException ioe) {
 			LOG.error("Could not suscribe " + email + " to our newsletter", ioe);

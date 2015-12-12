@@ -88,9 +88,8 @@ public class NoKeyController {
 			@RequestParam("email") @NotBlank(message = "{nokey.check.user.email}") final String email,
 			@RequestParam("check") @NotBlank(message = "{nokey.check.user.check}") final String check)
 			throws EpickurException {
-		// this.validator.checkCheckUser(email, check);
-		User user = this.userService.checkCode(email, check);
-		this.userService.suscribeToNewsletter(user);
+		final User user = userService.checkCode(email, check);
+		userService.suscribeToNewsletter(user);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
@@ -161,7 +160,7 @@ public class NoKeyController {
 			@RequestParam("confirm") @NotNull(message = "{nokey.execute.confirm}") final boolean confirm,
 			@RequestParam("ordercode") @NotBlank(message = "{nokey.execute.ordercode}") final String orderCode,
 			@RequestHeader(value = "charge-agent", defaultValue = "true") final boolean shouldCharge) throws EpickurException {
-		Order result = orderService.executeOrder(userId, orderId, confirm, shouldCharge, orderCode);
+		final Order result = orderService.executeOrder(userId, orderId, confirm, shouldCharge, orderCode);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -215,8 +214,8 @@ public class NoKeyController {
 			@PathVariable("id") final String id,
 			@RequestParam("token") @NotBlank(message = "{nokey.reset.token}") final String resetCode,
 			@RequestBody final ObjectNode node) throws EpickurException {
-		String newPassword = node.get("password").asText();
-		User user = userService.resetPasswordSecondStep(id, newPassword, resetCode);
+		final String newPassword = node.get("password").asText();
+		final User user = userService.resetPasswordSecondStep(id, newPassword, resetCode);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 }

@@ -42,22 +42,22 @@ public class OrderJob {
 	 * @param order The Order
 	 */
 	public void addTemporaryOrderJob(final User user, final Order order) {
-		String userId = user.getId().toHexString();
-		String orderId = order.getId().toHexString();
-		DateTime orderDate = order.getCreatedAt();
-		DateTime scheduleCancelDate = orderDate.plusMinutes(properties.getOrderTimeLimit());
-		String identity = "cancelOrder_" + orderId;
-		JobDetail cancelOrder = JobBuilder.newJob(CancelOrderJob.class)
+		final String userId = user.getId().toHexString();
+		final String orderId = order.getId().toHexString();
+		final DateTime orderDate = order.getCreatedAt();
+		final DateTime scheduleCancelDate = orderDate.plusMinutes(properties.getOrderTimeLimit());
+		final String identity = "cancelOrder_" + orderId;
+		final JobDetail cancelOrder = JobBuilder.newJob(CancelOrderJob.class)
 				.withIdentity(identity)
 				.usingJobData("orderId", orderId)
 				.usingJobData("userId", userId)
 				.build();
-		Trigger triggerCancelOrder = TriggerBuilder.newTrigger()
+		final Trigger triggerCancelOrder = TriggerBuilder.newTrigger()
 				.withIdentity(identity)
 				.startAt(scheduleCancelDate.toDate())
 				.build();
 		try {
-			Scheduler scheduler = schedulerFactoryBean.getObject();
+			final Scheduler scheduler = schedulerFactoryBean.getObject();
 			scheduler.scheduleJob(cancelOrder, triggerCancelOrder);
 			LOG.info("Added job '" + identity + "' to the scheduler with orderId " + orderId + " and userId " + userId);
 		} catch (SchedulerException se) {
@@ -71,11 +71,11 @@ public class OrderJob {
 	 * @param orderId The order Id
 	 */
 	public void removeTemporaryOrderJob(final String orderId) {
-		String identity = "cancelOrder_" + orderId;
+		final String identity = "cancelOrder_" + orderId;
 		LOG.info("Remove job '" + identity + "' from the scheduler");
-		JobKey jobKey = new JobKey(identity);
+		final JobKey jobKey = new JobKey(identity);
 		try {
-			Scheduler scheduler = schedulerFactoryBean.getObject();
+			final Scheduler scheduler = schedulerFactoryBean.getObject();
 			scheduler.deleteJob(jobKey);
 		} catch (SchedulerException se) {
 			LOG.error(se.getLocalizedMessage(), se);

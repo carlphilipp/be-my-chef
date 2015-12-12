@@ -24,7 +24,7 @@ public final class OrderStatusSerializer extends JsonSerializer<OrderStatus> {
 			} else {
 				jgen.writeString(status.toString());
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

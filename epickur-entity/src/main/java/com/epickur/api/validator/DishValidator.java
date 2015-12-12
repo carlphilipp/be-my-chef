@@ -166,12 +166,12 @@ public class DishValidator extends Validator {
 	 * @param searchtext The address to search
 	 */
 	public void checkSearch(final String pickupdate, final String types, final String at, final String searchtext) {
-		Object[] result = CommonsUtil.parsePickupdate(pickupdate);
+		final Object[] result = CommonsUtil.parsePickupdate(pickupdate);
 		if (result == null) {
 			throw new EpickurIllegalArgument(
 					"The parameter pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: " + pickupdate);
 		}
-		String[] typesArray = types.split(",");
+		final String[] typesArray = types.split(",");
 		for (String temp : typesArray) {
 			try {
 				DishType.fromString(temp);

@@ -1,9 +1,11 @@
 package com.epickur.api.config;
 
+import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.cron.CleanKeysJob;
 import com.epickur.api.cron.CleanVouchersJob;
 import com.epickur.api.cron.MongoDBDumpJob;
 import com.epickur.api.cron.OrderJob;
+import com.epickur.api.dump.MongoDBDump;
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -12,6 +14,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
@@ -35,6 +38,12 @@ public class SchedulerConfig {
 	@Bean
 	public MongoDBDumpJob databaseDump() {
 		return new MongoDBDumpJob();
+	}
+
+	@Bean
+	@Scope("prototype")
+	public MongoDBDump dbDump(){
+		return new MongoDBDump(CommonsUtil.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
 	}
 
 	@Bean

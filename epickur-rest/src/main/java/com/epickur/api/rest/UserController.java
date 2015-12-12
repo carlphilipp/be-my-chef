@@ -104,9 +104,9 @@ public class UserController {
 			@RequestHeader(value = "validate-agent", defaultValue = "false") final boolean autoValidate,
 			@RequestBody @Validated(Create.class) final User user)
 			throws EpickurException {
-		User result = userService.create(user, autoValidate);
+		final User result = userService.create(user, autoValidate);
 		// We add to the header the check code. Can be useful for tests or developers.
-		HttpHeaders headers = new HttpHeaders();
+		final HttpHeaders headers = new HttpHeaders();
 		headers.add("check", result.getCode());
 		return new ResponseEntity<>(result, headers, HttpStatus.OK);
 	}
@@ -154,7 +154,7 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = READ, endpoint = USER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
-		User user = userService.read(id);
+		final User user = userService.read(id);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
@@ -220,7 +220,7 @@ public class UserController {
 		if (user.getAllow() != null) {
 			user.setAllow(null);
 		}
-		User result = userService.update(user);
+		final User result = userService.update(user);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -255,8 +255,8 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = DELETE, endpoint = USER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(@PathVariable("id") final String id) throws EpickurException {
-		boolean isDeleted = userService.delete(id);
-		DeletedMessage deletedMessage = new DeletedMessage();
+		final boolean isDeleted = userService.delete(id);
+		final DeletedMessage deletedMessage = new DeletedMessage();
 		deletedMessage.setId(id);
 		deletedMessage.setDeleted(isDeleted);
 		return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
@@ -304,7 +304,7 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = USER)
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
-		List<User> users = userService.readAll();
+		final List<User> users = userService.readAll();
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
 
@@ -366,7 +366,7 @@ public class UserController {
 	public ResponseEntity<?> readOneOrder(
 			@PathVariable("id") final String id,
 			@PathVariable("orderId") final String orderId) throws EpickurException {
-		Order order = orderService.readOrder(orderId);
+		final Order order = orderService.readOrder(orderId);
 		return new ResponseEntity<>(order, HttpStatus.OK);
 	}
 
@@ -443,7 +443,7 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAllOrders(@PathVariable("id") final String id) throws EpickurException {
-		List<Order> orders = orderService.readAllWithUserId(id);
+		final List<Order> orders = orderService.readAllWithUserId(id);
 		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
 
@@ -514,7 +514,7 @@ public class UserController {
 	public ResponseEntity<?> createOneOrder(
 			@PathVariable("id") final String userId,
 			@RequestBody @Validated(Create.class) final Order order) throws EpickurException {
-		Order result = orderService.create(userId, order);
+		final Order result = orderService.create(userId, order);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -581,7 +581,7 @@ public class UserController {
 			@PathVariable("id") final String id,
 			@PathVariable("orderId") final String orderId,
 			@RequestBody @Validated(Update.class) final Order order) throws EpickurException {
-		Order result = orderService.update(order);
+		final Order result = orderService.update(order);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -623,8 +623,8 @@ public class UserController {
 	public ResponseEntity<?> deleteOneOrder(
 			@PathVariable("id") final String id,
 			@PathVariable("orderId") final String orderId) throws EpickurException {
-		boolean isDeleted = orderService.delete(orderId);
-		DeletedMessage deletedMessage = new DeletedMessage();
+		final boolean isDeleted = orderService.delete(orderId);
+		final DeletedMessage deletedMessage = new DeletedMessage();
 		deletedMessage.setId(id);
 		deletedMessage.setDeleted(isDeleted);
 		return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
@@ -660,7 +660,7 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = RESET_PASSWORD, endpoint = USER)
 	@RequestMapping(value = "/reset", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> resetPasswordFirstStep(final ObjectNode node) throws EpickurException {
-		String email = node.get("email").asText();
+		final String email = node.get("email").asText();
 		userService.resetPasswordFirstStep(email);
 		node.put("status", "email sent");
 		return new ResponseEntity<>(node, HttpStatus.OK);

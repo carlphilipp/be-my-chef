@@ -37,14 +37,14 @@ public final class LogRequestFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws
 			ServletException, IOException {
-		Log log = new Log();
+		final Log log = new Log();
 		log.setTime(new DateTime());
 		log.setUrl(request.getRequestURL().toString());
 		log.setMethod(request.getMethod());
 		log.setProtocol(request.getProtocol());
-		Enumeration<String> params = request.getParameterNames();
+		final Enumeration<String> params = request.getParameterNames();
 		while (params.hasMoreElements()) {
-			String param = params.nextElement();
+			final String param = params.nextElement();
 			log.getArgs().put(param, request.getParameter(param));
 		}
 		String ipAddress = request.getHeader("X-FORWARDED-FOR");

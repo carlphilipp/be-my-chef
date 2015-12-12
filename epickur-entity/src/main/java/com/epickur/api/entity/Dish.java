@@ -1,19 +1,5 @@
 package com.epickur.api.entity;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.json.JsonMode;
-import org.bson.json.JsonWriterSettings;
-import org.bson.types.ObjectId;
-
 import com.epickur.api.entity.deserialize.DishTypeDeserializer;
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.serialize.DishTypeSerializer;
@@ -27,14 +13,25 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
+import org.bson.types.ObjectId;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Dish entity
- * 
+ *
  * @author cph
  * @version 1.0
  */
@@ -47,37 +44,69 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public final class Dish extends AbstractMainDBEntity {
 
-	/** Logger */
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LogManager.getLogger(Dish.class.getSimpleName());
-	/** Name */
+	/**
+	 * Name
+	 */
 	private String name;
-	/** Description */
+	/**
+	 * Description
+	 */
 	private String description;
-	/** Type */
+	/**
+	 * Type
+	 */
 	private DishType type;
-	/** Price */
+	/**
+	 * Price
+	 */
 	private Integer price;
-	/** Cooking time */
+	/**
+	 * Cooking time
+	 */
 	private Integer cookingTime;
-	/** Difficulty level */
+	/**
+	 * Difficulty level
+	 */
 	private Integer difficultyLevel;
-	/** Image After URL */
+	/**
+	 * Image After URL
+	 */
 	private String imageAfterUrl;
-	/** Video URL */
+	/**
+	 * Video URL
+	 */
 	private String videoUrl;
-	/** Nutrition facts */
+	/**
+	 * Nutrition facts
+	 */
 	private List<NutritionFact> nutritionFacts;
-	/** Ingredients */
+	/**
+	 * Ingredients
+	 */
 	private List<Ingredient> ingredients;
-	/** Steps */
+	/**
+	 * Steps
+	 */
 	private List<String> steps;
-	/** Condiments */
+	/**
+	 * Condiments
+	 */
 	private List<String> condiments;
-	/** Utensils */
+	/**
+	 * Utensils
+	 */
 	private List<String> utensils;
-	/** Caterer */
+	/**
+	 * Caterer
+	 */
 	private Caterer caterer;
-	/** Owner id */
+	/**
+	 * Owner id
+	 */
 	private ObjectId createdBy;
 
 	/**
@@ -89,8 +118,7 @@ public final class Dish extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param type
-	 *            The type
+	 * @param type The type
 	 */
 	@JsonDeserialize(using = DishTypeDeserializer.class)
 	public void setType(final DishType type) {
@@ -106,8 +134,7 @@ public final class Dish extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param createdBy
-	 *            The user id
+	 * @param createdBy The user id
 	 */
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setCreatedBy(final ObjectId createdBy) {
@@ -116,26 +143,23 @@ public final class Dish extends AbstractMainDBEntity {
 
 	/**
 	 * @return a Document
-	 * @throws EpickurParsingException
-	 *             If a parsing exception happened
+	 * @throws EpickurParsingException If a parsing exception happened
 	 */
 	@JsonIgnore
 	@Override
 	public Document getUpdateQuery() throws EpickurParsingException {
-		String apiView = toStringAPIView();
-		Document found = Document.parse(apiView);
-		Document args = new Document();
-		Document result = new Document().append("$set", args);
-		Set<Entry<String, Object>> set = found.entrySet();
-		Iterator<Entry<String, Object>> iterator = set.iterator();
-		while (iterator.hasNext()) {
-			Entry<String, Object> en = iterator.next();
-			String key = en.getKey();
+		final String apiView = toStringAPIView();
+		final Document found = Document.parse(apiView);
+		final Document args = new Document();
+		final Document result = new Document().append("$set", args);
+		final Set<Entry<String, Object>> set = found.entrySet();
+		for (final Entry<String, Object> en : set) {
+			final String key = en.getKey();
 			if (!key.equals("id")) {
 				if (key.equals("caterer")) {
-					Caterer cat = Caterer.getDocumentAsCatererAPIView((Document) found.get(key));
-					Map<String, Object> caterers = cat.getUpdateMap("caterer");
-					for (Entry<String, Object> entry : caterers.entrySet()) {
+					final Caterer cat = Caterer.getDocumentAsCatererAPIView((Document) found.get(key));
+					final Map<String, Object> caterers = cat.getUpdateMap("caterer");
+					for (final Entry<String, Object> entry : caterers.entrySet()) {
 						args.put(entry.getKey(), entry.getValue());
 					}
 				} else {
@@ -147,27 +171,23 @@ public final class Dish extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param obj
-	 *            The Document
+	 * @param obj The Document
 	 * @return The Dish
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	public static Dish getDocumentAsDish(final Document obj) throws EpickurParsingException {
 		return Dish.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
-	 * @param json
-	 *            The json string
+	 * @param json The json string
 	 * @return The Dish
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	private static Dish getObject(final String json) throws EpickurParsingException {
-		Dish dish = null;
+		Dish dish;
 		try {
-			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
+			final ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
 			dish = mapper.readValue(json, Dish.class);
 		} catch (IOException e) {
 			throw new EpickurParsingException("Can not convert string to Dish: " + json, e);

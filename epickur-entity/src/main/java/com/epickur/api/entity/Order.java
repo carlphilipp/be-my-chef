@@ -166,9 +166,9 @@ public class Order extends AbstractMainDBEntity {
 	 * @return An integer.
 	 */
 	public Integer calculateTotalAmount() {
-		Integer totalAmout = 0;
+		Integer totalAmout;
 		if (this.getVoucher() != null) {
-			Voucher v = this.getVoucher();
+			final Voucher v = this.getVoucher();
 			if (v.getDiscountType() == DiscountType.AMOUNT) {
 				totalAmout = getAmount() - v.getDiscount();
 			} else {
@@ -190,37 +190,28 @@ public class Order extends AbstractMainDBEntity {
 	@JsonIgnore
 	@Override
 	public Document getUpdateQuery() throws EpickurParsingException {
-		String apiView = toStringAPIView();
-		Document found = Document.parse(apiView);
-		Document resultSet = new Document();
-		Document result = new Document().append("$set", resultSet);
-		Set<Entry<String, Object>> set = found.entrySet();
-		Iterator<Entry<String, Object>> iterator = set.iterator();
-		while (iterator.hasNext()) {
-			Entry<String, Object> en = iterator.next();
-			String key = en.getKey();
+		final String apiView = toStringAPIView();
+		final Document found = Document.parse(apiView);
+		final Document resultSet = new Document();
+		final Document result = new Document().append("$set", resultSet);
+		for (final Entry<String, Object> en : found.entrySet()) {
+			final String key = en.getKey();
 			if (!key.equals("id") && !key.equals("dish")) {
 				resultSet.put(key, found.get(key));
 			}
 			if (key.equals("dish")) {
-				Document dishDoc = new Document();
+				final Document dishDoc = new Document();
 				resultSet.put("dish", dishDoc);
-				Document dishStr = (Document) found.get("dish");
-				Set<Entry<String, Object>> setDish = dishStr.entrySet();
-				Iterator<Entry<String, Object>> iteratorDish = setDish.iterator();
-				while (iteratorDish.hasNext()) {
-					Entry<String, Object> entry = iteratorDish.next();
+				final Document dishStr = (Document) found.get("dish");
+				for (final Entry<String, Object> entry : dishStr.entrySet()) {
 					String key2 = entry.getKey();
 					if (key2.equals("id")) {
 						dishDoc.put("_id", dishStr.get("id"));
 					} else if (key2.equals("caterer")) {
-						Document catererDocument = new Document();
+						final Document catererDocument = new Document();
 						dishDoc.put("caterer", catererDocument);
-						Document caterer = (Document) dishStr.get("caterer");
-						Set<Entry<String, Object>> setCaterer = caterer.entrySet();
-						Iterator<Entry<String, Object>> iteratorCaterer = setCaterer.iterator();
-						while (iteratorCaterer.hasNext()) {
-							Entry<String, Object> entry2 = iteratorCaterer.next();
+						final Document caterer = (Document) dishStr.get("caterer");
+						for (final Entry<String, Object> entry2 : caterer.entrySet()) {
 							String key3 = entry2.getKey();
 							if (key3.equals("id")) {
 								catererDocument.put("_id", caterer.get("id"));
@@ -234,14 +225,11 @@ public class Order extends AbstractMainDBEntity {
 				}
 			}
 			if (key.equals("voucher")) {
-				Document v = new Document();
+				final Document v = new Document();
 				resultSet.put("voucher", v);
-				Document voucherDoc = (Document) found.get("voucher");
-				Set<Entry<String, Object>> setVoucher = voucherDoc.entrySet();
-				Iterator<Entry<String, Object>> iteratorVoucher = setVoucher.iterator();
-				while (iteratorVoucher.hasNext()) {
-					Entry<String, Object> entry = iteratorVoucher.next();
-					String key2 = entry.getKey();
+				final Document voucherDoc = (Document) found.get("voucher");
+				for (final Entry<String, Object> entry :  voucherDoc.entrySet()) {
+					final String key2 = entry.getKey();
 					if (key2.equals("id")) {
 						v.put("_id", voucherDoc.get("id"));
 					} else {
@@ -268,9 +256,9 @@ public class Order extends AbstractMainDBEntity {
 	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	private static Order getObject(final String json) throws EpickurParsingException {
-		Order user = null;
+		Order user;
 		try {
-			ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
+			final ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
 			user = mapper.readValue(json, Order.class);
 		} catch (IOException e) {
 			throw new EpickurParsingException("Can not convert string to Order: " + json, e);

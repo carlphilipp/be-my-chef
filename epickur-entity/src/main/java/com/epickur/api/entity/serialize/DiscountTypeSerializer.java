@@ -21,7 +21,7 @@ public final class DiscountTypeSerializer extends JsonSerializer<DiscountType> {
 			} else {
 				jgen.writeString(discountType.toString().toLowerCase());
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

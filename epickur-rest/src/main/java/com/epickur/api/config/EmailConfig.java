@@ -14,7 +14,7 @@ public class EmailConfig {
 
 	@Bean
 	public MandrillConfiguration mandrillConfiguration() {
-		MandrillConfiguration mandrillConfiguration = new MandrillConfiguration();
+		final MandrillConfiguration mandrillConfiguration = new MandrillConfiguration();
 		mandrillConfiguration.setApiKey(properties.getMandrillKey());
 		mandrillConfiguration.setApiVersion(properties.getMandrillVersion());
 		mandrillConfiguration.setBaseURL(properties.getMandrillUrl());

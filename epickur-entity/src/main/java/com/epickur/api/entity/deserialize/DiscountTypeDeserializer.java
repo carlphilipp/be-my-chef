@@ -18,9 +18,9 @@ public final class DiscountTypeDeserializer extends JsonDeserializer<DiscountTyp
 	@Override
 	public DiscountType deserialize(final JsonParser jp, final DeserializationContext context) throws IOException {
 		try {
-			JsonNode objId = jp.readValueAsTree();
+			final JsonNode objId = jp.readValueAsTree();
 			return DiscountType.valueOf(objId.asText().toUpperCase());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

@@ -21,7 +21,7 @@ public final class ExpirationTypeSerializer extends JsonSerializer<ExpirationTyp
 			} else {
 				jgen.writeString(expirationType.toString().toLowerCase());
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

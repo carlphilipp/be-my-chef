@@ -27,12 +27,12 @@ public class MongoConfig {
 
 	@Bean
 	public MongoDatabase database() {
-		CoordinatesCodec coordinatesCodec = new CoordinatesCodec();
-		DishTypeCodec dishTypeCodec = new DishTypeCodec();
-		ExpirationTypeCodec expirationTypeCodec = new ExpirationTypeCodec();
-		StatusCodec statusCodec = new StatusCodec();
+		final CoordinatesCodec coordinatesCodec = new CoordinatesCodec();
+		final DishTypeCodec dishTypeCodec = new DishTypeCodec();
+		final ExpirationTypeCodec expirationTypeCodec = new ExpirationTypeCodec();
+		final StatusCodec statusCodec = new StatusCodec();
 
-		CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
+		final CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
 				MongoClient.getDefaultCodecRegistry(),
 				CodecRegistries.fromCodecs(coordinatesCodec),
 				CodecRegistries.fromCodecs(dishTypeCodec),
@@ -40,12 +40,12 @@ public class MongoConfig {
 				CodecRegistries.fromCodecs(statusCodec)
 		);
 
-		MongoClientOptions options = MongoClientOptions.builder().serverSelectionTimeout(8000).codecRegistry(codecRegistry).build();
-		MongoClient mongoClient;
+		final MongoClientOptions options = MongoClientOptions.builder().serverSelectionTimeout(8000).codecRegistry(codecRegistry).build();
+		final MongoClient mongoClient;
 		if (!StringUtils.isBlank(properties.getMongoLogin()) && !StringUtils.isBlank(properties.getMongoPassword())) {
-			MongoCredential credential = MongoCredential
+			final MongoCredential credential = MongoCredential
 					.createCredential(properties.getMongoLogin(), properties.getMongoDbName(), properties.getMongoPassword().toCharArray());
-			List<MongoCredential> credentials = new ArrayList<>();
+			final List<MongoCredential> credentials = new ArrayList<>();
 			credentials.add(credential);
 			mongoClient = new MongoClient(new ServerAddress(properties.getMongoAddress(), properties.getMongoPort()), credentials, options);
 		} else {

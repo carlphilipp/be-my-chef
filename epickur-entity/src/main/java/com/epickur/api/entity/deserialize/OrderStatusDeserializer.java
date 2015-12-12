@@ -20,9 +20,9 @@ public final class OrderStatusDeserializer extends JsonDeserializer<OrderStatus>
 	@Override
 	public OrderStatus deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
 		try {
-			JsonNode objId = jp.readValueAsTree();
+			final JsonNode objId = jp.readValueAsTree();
 			return OrderStatus.fromString(objId.asText());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

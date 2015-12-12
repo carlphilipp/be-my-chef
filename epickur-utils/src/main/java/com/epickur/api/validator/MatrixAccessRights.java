@@ -53,8 +53,8 @@ public final class MatrixAccessRights {
 	 *            The Endpoint.
 	 */
 	public static void check(final Role role, final Operation operation, final EndpointType endpoint) {
-		int line = getLine(role);
-		int column = getColumn(operation, endpoint);
+		final int line = getLine(role);
+		final int column = getColumn(operation, endpoint);
 		LOG.trace("[LINE] Operation: " + role + " " + line);
 		LOG.trace("[COLUMN] Role: " + operation + " with " + endpoint + " " + column);
 		if (line == -1 || column == -1) {
@@ -102,7 +102,7 @@ public final class MatrixAccessRights {
 	 */
 	private static int getColumn(final Operation operation, final EndpointType endpoint) {
 		int line = -1;
-		int offset = getOffset(endpoint);
+		final int offset = getOffset(endpoint);
 		switch (operation) {
 		case CREATE:
 			line = offset;

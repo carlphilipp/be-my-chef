@@ -32,7 +32,7 @@ public class KeyService {
 	 */
 	public Key create(final Key key) throws EpickurException {
 		key.prepareForInsertionIntoDB();
-		return this.keyDao.create(key);
+		return keyDao.create(key);
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class KeyService {
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
 	public Key readWithName(final String name) throws EpickurException {
-		return this.keyDao.readWithName(name);
+		return keyDao.readWithName(name);
 	}
 
 	/**
@@ -54,11 +54,11 @@ public class KeyService {
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
-		return this.keyDao.delete(id);
+		return keyDao.delete(id);
 	}
 
 	public boolean deleteWithKey(final String key) throws EpickurException {
-		return this.keyDao.deleteWithKey(key);
+		return keyDao.deleteWithKey(key);
 	}
 
 	/**
@@ -66,6 +66,6 @@ public class KeyService {
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
 	public List<Key> readAll() throws EpickurException {
-		return this.keyDao.readAll();
+		return keyDao.readAll();
 	}
 }

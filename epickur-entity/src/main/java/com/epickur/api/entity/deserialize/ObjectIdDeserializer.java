@@ -36,7 +36,7 @@ public final class ObjectIdDeserializer extends JsonDeserializer<ObjectId> {
 			} else {
 				throw new EpickurIllegalArgument();
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

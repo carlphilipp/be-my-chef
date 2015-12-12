@@ -20,7 +20,7 @@ public final class DateSerializer extends JsonSerializer<DateTime> {
 	public void serialize(final DateTime date, final JsonGenerator jgen, final SerializerProvider provider) throws IOException {
 		try {
 			jgen.writeNumber(date.getMillis());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}

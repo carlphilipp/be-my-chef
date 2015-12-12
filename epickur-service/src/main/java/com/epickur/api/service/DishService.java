@@ -118,7 +118,7 @@ public class DishService {
 	public List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
 			final String searchtext, final int distance) throws EpickurException {
 		if (geo == null) {
-			Geo geoFound = geocoder.getPosition(searchtext);
+			final Geo geoFound = geocoder.getPosition(searchtext);
 			return dao.search(day, minutes, type, limit, geoFound, distance);
 		} else {
 			return dao.search(day, minutes, type, limit, geo, distance);

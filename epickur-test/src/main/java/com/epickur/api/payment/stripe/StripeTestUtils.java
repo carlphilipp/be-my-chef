@@ -40,7 +40,7 @@ public class StripeTestUtils {
 		InputStream in = null;
 		try {
 			in = StripeTestUtils.class.getResource("/stripe-test.properties").openStream();
-			Properties prop = new Properties();
+			final Properties prop = new Properties();
 			prop.load(in);
 			return prop.getProperty("stripe.key");
 		} finally {

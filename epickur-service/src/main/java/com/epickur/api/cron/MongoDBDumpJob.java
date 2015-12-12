@@ -20,6 +20,8 @@ public class MongoDBDumpJob {
 
 	@Autowired
 	private AmazonWebServices aws;
+	@Autowired
+	private MongoDBDump mongoDBDump;
 
 	/**
 	 * Logger
@@ -29,12 +31,11 @@ public class MongoDBDumpJob {
 	@Scheduled(cron = "0 0 0/2 * * ?")
 	public void execute() {
 		LOG.info("Start DB dump...");
-		MongoDBDump mongoDBDump = new MongoDBDump(CommonsUtil.getCurrentDateInFormat("ddMMyyyy-hhmmss"));
-		boolean exported = mongoDBDump.exportMongo();
+		final boolean exported = mongoDBDump.exportMongo();
 		LOG.info("DB dump done");
 		if (exported) {
 			LOG.info("Creating tar.gz...");
-			List<String> list = mongoDBDump.getListFiles();
+			final List<String> list = mongoDBDump.getListFiles();
 			CommonsUtil.createTarGz(list, mongoDBDump.getCurrentFullPathName());
 			LOG.info("tar.gz generated: " + mongoDBDump.getCurrentFullPathName());
 			

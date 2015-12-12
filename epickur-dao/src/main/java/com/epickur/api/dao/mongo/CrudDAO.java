@@ -51,7 +51,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	@Override
 	public boolean delete(final String id) throws EpickurException {
 		LOG.debug("Delete with id: " + id);
-		Document filter = convertAttributeToDocument("_id", new ObjectId(id));
+		final Document filter = convertAttributeToDocument("_id", new ObjectId(id));
 		return deleteDocument(filter);
 	}
 
@@ -62,7 +62,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	protected final void insertDocument(final Document document) throws EpickurDBException {
 		try {
 			getColl().insertOne(document);
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("create", e.getMessage(), document, e);
 		}
 	}
@@ -75,7 +75,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	protected final Document findDocument(final Document query) throws EpickurDBException {
 		try {
 			return getColl().find(query).first();
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("read", e.getMessage(), query, e);
 		}
 	}
@@ -89,7 +89,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	protected final Document updateDocument(final Document filter, final Document update) throws EpickurDBException {
 		try {
 			return getColl().findOneAndUpdate(filter, update, new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("update", e.getMessage(), filter, update, e);
 		}
 	}
@@ -102,7 +102,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	protected final boolean deleteDocument(final Document filter) throws EpickurDBException {
 		try {
 			return isDeleted(getColl().deleteOne(filter));
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("delete", e.getMessage(), filter, e);
 		}
 	}

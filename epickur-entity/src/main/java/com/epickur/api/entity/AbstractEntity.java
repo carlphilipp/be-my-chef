@@ -21,24 +21,21 @@ public abstract class AbstractEntity implements IEntity {
 	@JsonIgnore
 	@Override
 	public final Document getDocumentAPIView() throws EpickurParsingException {
-		String json = null;
-		try {
-			ObjectMapper om = ObjectMapperWrapperAPI.getInstance();
-			json = om.writeValueAsString(this);
-			return Document.parse(json);
-		} catch (JsonProcessingException e) {
-			throw new EpickurParsingException("Can not convert object to string", e);
-		} catch (JSONParseException e) {
-			throw new EpickurParsingException(json, e);
-		}
+		final ObjectMapper om = ObjectMapperWrapperAPI.getInstance();
+		return getDocumentView(om);
 	}
 
 	@JsonIgnore
 	@Override
 	public final Document getDocumentDBView() throws EpickurParsingException {
+		final ObjectMapper om = ObjectMapperWrapperDB.getInstance();
+		return getDocumentView(om);
+	}
+
+	@JsonIgnore
+	private Document getDocumentView(final ObjectMapper om) throws EpickurParsingException {
 		String json = null;
 		try {
-			ObjectMapper om = ObjectMapperWrapperDB.getInstance();
 			json = om.writeValueAsString(this);
 			return Document.parse(json);
 		} catch (JsonProcessingException e) {

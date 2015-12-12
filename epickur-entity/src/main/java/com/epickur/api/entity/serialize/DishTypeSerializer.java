@@ -23,7 +23,7 @@ public final class DishTypeSerializer extends JsonSerializer<DishType> {
 			} else {
 				jgen.writeString(type.toString());
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		}
 	}
