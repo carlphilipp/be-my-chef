@@ -29,6 +29,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public final class Log extends AbstractMainDBEntity {
+
 	/** Date */
 	private DateTime time;
 	/** Url */

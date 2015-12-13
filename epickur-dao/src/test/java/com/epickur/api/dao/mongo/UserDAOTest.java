@@ -1,6 +1,6 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.utils.Info.USER_COLL;
+import static com.epickur.api.dao.CollectionsName.USER_COLL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;

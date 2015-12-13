@@ -6,9 +6,8 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -18,7 +17,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epickur.api.utils.Info.ORDER_COLL;
+import static com.epickur.api.dao.CollectionsName.ORDER_COLL;
 
 /**
  * Order DAO access with CRUD operations.
@@ -26,13 +25,9 @@ import static com.epickur.api.utils.Info.ORDER_COLL;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Repository
 public class OrderDAO extends CrudDAO<Order> {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(OrderDAO.class.getSimpleName());
 
 	@PostConstruct
 	protected void initCollection() {
@@ -41,7 +36,7 @@ public class OrderDAO extends CrudDAO<Order> {
 
 	@Override
 	public Order create(final Order order) throws EpickurException {
-		LOG.debug("Create order: " + order);
+		log.debug("Create order: {}", order);
 		final Document doc = order.getDocumentDBView();
 		insertDocument(doc);
 		return Order.getDocumentAsOrder(doc);
@@ -49,7 +44,7 @@ public class OrderDAO extends CrudDAO<Order> {
 
 	@Override
 	public Order read(final String id) throws EpickurException {
-		LOG.debug("Read order with id: " + id);
+		log.debug("Read order with id: {}", id);
 		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
 		final Document find = findDocument(query);
 		return processAfterQuery(find);
@@ -57,7 +52,7 @@ public class OrderDAO extends CrudDAO<Order> {
 
 	@Override
 	public Order update(final Order order) throws EpickurException {
-		LOG.debug("Update order: " + order);
+		log.debug("Update order: {}", order);
 		final Document filter = convertAttributeToDocument("_id", order.getId());
 		final Document update = order.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);

@@ -1,14 +1,13 @@
-package com.epickur.api.geocoder.here;
+package com.epickur.api.here;
 
 import com.epickur.api.entity.Geo;
 import com.epickur.api.exception.GeoLocationException;
-import com.epickur.api.geocoder.IGeocoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Class that implement the access to external services of geocoding (Here).
- * 
+ *
  * @author cph
  * @version 1.0
  */

@@ -21,8 +21,7 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
@@ -36,6 +35,7 @@ import java.io.IOException;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @ChangePasswordValidate(groups = { Update.class })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "first", "last", "password", "email", "role", "phoneNumber", "zipcode", "state", "country", "allow",
@@ -45,10 +45,6 @@ import java.io.IOException;
 @EqualsAndHashCode(callSuper = true)
 public class User extends AbstractMainDBEntity {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(User.class.getSimpleName());
 	/**
 	 * Name
 	 */
@@ -188,7 +184,7 @@ public class User extends AbstractMainDBEntity {
 		try {
 			return (User) super.clone();
 		} catch (CloneNotSupportedException e) {
-			LOG.error("Error while cloning: " + e.getMessage(), e);
+			log.error("Error while cloning: {}", e.getMessage(), e);
 			throw new RuntimeException();
 		}
 	}

@@ -1,4 +1,4 @@
-package com.epickur.api.dump;
+package com.epickur.api.aws;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -7,8 +7,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.epickur.api.config.EpickurProperties;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,12 +21,10 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Component
 public final class AmazonWebServices {
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(AmazonWebServices.class.getSimpleName());
+
 	/**
 	 * Maximum amount of dump we keep on S3
 	 */
@@ -41,11 +38,11 @@ public final class AmazonWebServices {
 	 * @param filePath The file path
 	 */
 	public void uploadFile(final String filePath) {
-		LOG.info("Uploading file on AWS...");
+		log.info("Uploading file on AWS...");
 		final File file = new File(filePath);
 		try {
 			s3client.putObject(new PutObjectRequest(properties.getAwsBucket(), file.getName(), file));
-			LOG.info("Upload done");
+			log.info("Upload done");
 		} catch (AmazonServiceException ase) {
 			final StringBuilder stb = new StringBuilder();
 			stb.append(
@@ -55,10 +52,10 @@ public final class AmazonWebServices {
 			stb.append("\nAWS Error Code:   " + ase.getErrorCode());
 			stb.append("\nError Type:       " + ase.getErrorType());
 			stb.append("\nRequest ID:       " + ase.getRequestId());
-			LOG.error(stb.toString(), ase);
+			log.error(stb.toString(), ase);
 		} catch (AmazonClientException ace) {
 			String res = "Caught an AmazonClientException, which means the client encountered an internal error while trying to communicate with S3, such as not being able to access the network.";
-			LOG.error(res + " : " + ace.getLocalizedMessage(), ace);
+			log.error("{}: {}", res, ace.getLocalizedMessage(), ace);
 		}
 	}
 
@@ -66,7 +63,7 @@ public final class AmazonWebServices {
 	 * Delete an old file
 	 */
 	public void deleteOldFile() {
-		LOG.info("Deleting old file in AWS...");
+		log.info("Deleting old file in AWS...");
 		ObjectListing listing = s3client.listObjects(properties.getAwsBucket());
 		final List<S3ObjectSummary> summaries = listing.getObjectSummaries();
 		// Get absolutly all items
@@ -86,10 +83,10 @@ public final class AmazonWebServices {
 				}
 			}
 			if (entry != null && entry.getKey() != null) {
-				LOG.info("Deleting: " + entry.getKey() + ": " + entry.getLastModified());
+				log.info("Deleting: {}: {}", entry.getKey(), entry.getLastModified());
 				s3client.deleteObject(properties.getAwsBucket(), entry.getKey());
 			}
 		}
-		LOG.info("Delete done");
+		log.info("Delete done");
 	}
 }

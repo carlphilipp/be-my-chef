@@ -1,4 +1,4 @@
-package com.epickur.api.payment.stripe;
+package com.epickur.api.stripe;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -16,9 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stripe.exception.*;
 import com.stripe.model.Token;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
@@ -26,11 +25,8 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 
+@Slf4j
 public class EntityGenerator {
-	/**
-	 * Logger
-	 **/
-	private static final Logger LOG = LogManager.getLogger(EntityGenerator.class.getSimpleName());
 
 	public static final String STRIPE_MESSAGE = "Fail while acquiring Stripe token. Internet issue?";
 
@@ -74,7 +70,7 @@ public class EntityGenerator {
 			final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
 			caterer = mapper.readValue(json, Caterer.class);
 		} catch (IOException e) {
-			LOG.error("Error: " + e.getLocalizedMessage(), e);
+			log.error("Error: " + e.getLocalizedMessage(), e);
 			throw new EpickurException();
 		}
 		return caterer;
@@ -88,7 +84,7 @@ public class EntityGenerator {
 			final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
 			return new String(data);
 		} catch (IOException e) {
-			LOG.error("Error: " + e.getMessage(), e);
+			log.error("Error: " + e.getMessage(), e);
 		}
 		return null;
 	}
@@ -101,7 +97,7 @@ public class EntityGenerator {
 			final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
 			return new String(data);
 		} catch (IOException e) {
-			LOG.error("Error: " + e.getMessage(), e);
+			log.error("Error: " + e.getMessage(), e);
 		}
 		return null;
 	}
@@ -114,13 +110,13 @@ public class EntityGenerator {
 			final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
 			return new String(data);
 		} catch (IOException e) {
-			LOG.error("Error: " + e.getMessage(), e);
+			log.error("Error: " + e.getMessage(), e);
 		}
 		return null;
 	}
 
 	public static void runShellCommand(final String cmd) throws IOException {
-		LOG.debug("Executing: " + cmd);
+		log.debug("Executing: " + cmd);
 		final Process p = Runtime.getRuntime().exec(cmd);
 		final InputStream is = p.getInputStream();
 		BufferedReader br = null;
@@ -128,7 +124,7 @@ public class EntityGenerator {
 		try {
 			br = new BufferedReader(new InputStreamReader(is));
 			while ((line = br.readLine()) != null) {
-				LOG.debug(line);
+				log.debug(line);
 			}
 		} catch (IOException e) {
 			throw e;
@@ -137,7 +133,7 @@ public class EntityGenerator {
 				try {
 					br.close();
 				} catch (IOException e) {
-					LOG.error(e.getMessage(), e);
+					log.error(e.getMessage(), e);
 				}
 			}
 		}
@@ -149,7 +145,7 @@ public class EntityGenerator {
 			return mapper.readValue(json, new TypeReference<List<NutritionFact>>() {
 			});
 		} catch (IOException e) {
-			LOG.error(e.getLocalizedMessage(), e);
+			log.error(e.getLocalizedMessage(), e);
 		}
 		return null;
 	}

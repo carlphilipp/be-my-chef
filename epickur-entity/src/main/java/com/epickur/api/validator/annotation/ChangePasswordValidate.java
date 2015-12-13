@@ -21,7 +21,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface ChangePasswordValidate {
 
-	String message() default "derp";
+	String message() default "Default password validation error";
 
 	Class<?>[] groups() default {};
 

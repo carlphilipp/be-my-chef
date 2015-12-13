@@ -9,7 +9,7 @@ import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.payment.stripe.StripeTestUtils;
+import com.epickur.api.stripe.StripeTestUtils;
 import com.epickur.api.report.Report;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;

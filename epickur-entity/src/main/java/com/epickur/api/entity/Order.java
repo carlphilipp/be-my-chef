@@ -22,8 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
@@ -40,6 +39,7 @@ import java.util.Map.Entry;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @PickupdateValidate(groups = { Create.class, Update.class })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "readableId", "userId", "description", "quantity", "amount", "status", "currency", "pickupdate", "cardToken",
@@ -49,10 +49,6 @@ import java.util.Map.Entry;
 @EqualsAndHashCode(callSuper = true)
 public class Order extends AbstractMainDBEntity {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(Order.class.getSimpleName());
 	/**
 	 * Readable Id
 	 */
@@ -269,7 +265,7 @@ public class Order extends AbstractMainDBEntity {
 		try {
 			return (Order) super.clone();
 		} catch (CloneNotSupportedException e) {
-			LOG.error("Error while cloning: " + e.getMessage(), e);
+			log.error("Error while cloning: {}", e.getMessage(), e);
 			throw new RuntimeException();
 		}
 	}

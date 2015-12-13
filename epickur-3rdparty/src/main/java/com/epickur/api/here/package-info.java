@@ -4,4 +4,4 @@
  * @author cph
  * @version 1.0
  */
-package com.epickur.api.geocoder.here;
+package com.epickur.api.here;

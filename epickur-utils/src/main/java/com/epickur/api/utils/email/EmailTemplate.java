@@ -6,10 +6,9 @@ import com.epickur.api.entity.User;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,21 +26,16 @@ import java.util.Map.Entry;
 /**
  * @author cph
  */
+@Slf4j
 @Component
 public class EmailTemplate {
 
-	/**
-	 * The logger
-	 */
-	private final static Logger LOG = LogManager.getLogger(EmailTemplate.class.getSimpleName());
-	/**
-	 * The templates
-	 */
-	private Map<String, Map<String, String>> templates;
 	@Autowired
 	public EpickurProperties properties;
 	@Autowired
 	private Utils utils;
+
+	private Map<String, Map<String, String>> templates;
 
 	/**
 	 * The constructor
@@ -81,7 +75,7 @@ public class EmailTemplate {
 				templates.put(entry.getKey(), res);
 			}
 		} catch (IOException e) {
-			LOG.error("Error while trying to access the email templates", e);
+			log.error("Error while trying to access the email templates", e);
 		} finally {
 			IOUtils.closeQuietly(is);
 			IOUtils.closeQuietly(in);
@@ -104,7 +98,7 @@ public class EmailTemplate {
 			in = new InputStreamReader(is, charset);
 			base = IOUtils.toString(in);
 		} catch (IOException e) {
-			LOG.error("Error while trying to access the base template", e);
+			log.error("Error while trying to access the base template", e);
 		} finally {
 			IOUtils.closeQuietly(is);
 			IOUtils.closeQuietly(in);

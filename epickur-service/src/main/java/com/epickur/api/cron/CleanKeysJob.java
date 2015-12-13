@@ -4,8 +4,7 @@ import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.Utils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -17,12 +16,9 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 public final class CleanKeysJob {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(CleanKeysJob.class.getSimpleName());
 	/**
 	 * Key dao
 	 */
@@ -34,7 +30,7 @@ public final class CleanKeysJob {
 	// TODO load properties for cron value
 	@Scheduled(cron = "0 0/5 * * * ?")
 	public void execute() {
-		LOG.info("Clean keys job starting...");
+		log.info("Clean keys job starting...");
 		try {
 			final List<Key> keys = keyDao.readAll();
 			for (final Key key : keys) {
@@ -43,7 +39,7 @@ public final class CleanKeysJob {
 				}
 			}
 		} catch (EpickurException e) {
-			LOG.error(e.getLocalizedMessage() + e.getMessage(), e);
+			log.error(e.getLocalizedMessage(), e);
 		}
 	}
 }

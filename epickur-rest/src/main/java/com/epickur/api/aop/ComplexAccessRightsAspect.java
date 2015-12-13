@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import static com.epickur.api.enumeration.EndpointType.*;
 import static com.epickur.api.enumeration.Operation.READ;
 import static com.epickur.api.enumeration.Operation.UPDATE;
-import static com.epickur.api.utils.ErrorUtils.*;
+import static com.epickur.api.utils.ErrorConstants.*;
 
 @Aspect
 public class ComplexAccessRightsAspect {

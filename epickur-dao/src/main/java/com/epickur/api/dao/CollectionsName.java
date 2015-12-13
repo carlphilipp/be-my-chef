@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epickur.api.utils;
+package com.epickur.api.dao;
 
 /**
  * This class get the general info from a property file
@@ -22,10 +22,10 @@ package com.epickur.api.utils;
  * @author cph
  * @version 1.0
  */
-public final class Info {
+public final class CollectionsName {
 
 	/** Constructor */
-	private Info() {
+	private CollectionsName() {
 	}
 
 	public static String ORDER_COLL = "orders";

@@ -1,4 +1,4 @@
-package com.epickur.api.payment.stripe;
+package com.epickur.api.stripe;
 
 import org.junit.Test;
 import static org.junit.Assert.assertNotNull;

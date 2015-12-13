@@ -1,4 +1,4 @@
-package com.epickur.api.dump;
+package com.epickur.api.aws;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;

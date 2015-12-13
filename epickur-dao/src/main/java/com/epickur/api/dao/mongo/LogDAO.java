@@ -2,14 +2,15 @@ package com.epickur.api.dao.mongo;
 
 import com.epickur.api.entity.Log;
 import com.epickur.api.exception.EpickurException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+
+import static com.epickur.api.dao.CollectionsName.LOG_COLL;
 
 /**
  * Log DAO access with CRUD operations.
@@ -17,17 +18,13 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Repository
 public final class LogDAO extends CrudDAO<Log> {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(Log.class.getSimpleName());
-
 	@PostConstruct
 	protected void initCollection() {
-		setColl(getDb().getCollection("logs"));
+		setColl(getDb().getCollection(LOG_COLL));
 	}
 
 	@Override
@@ -37,7 +34,7 @@ public final class LogDAO extends CrudDAO<Log> {
 
 	@Override
 	public Log create(final Log obj) throws EpickurException {
-		LOG.trace("Create log: " + obj);
+		log.trace("Create log: {}", obj);
 		final Document doc = obj.getDocumentDBView();
 		insertDocument(doc);
 		return null;

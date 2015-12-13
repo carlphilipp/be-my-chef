@@ -1,32 +1,30 @@
 package com.epickur.api.entity;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.json.JsonMode;
-import org.bson.json.JsonWriterSettings;
-
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Location entity
- * 
+ *
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "address", "geo" })
 @Data
@@ -34,30 +32,28 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 public final class Location extends AbstractEntity {
 
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(Location.class.getSimpleName());
-	/** Address */
+	/**
+	 * Address
+	 */
 	private Address address;
-	/** Geo */
+	/**
+	 * Geo
+	 */
 	private Geo geo;
 
 	/**
-	 * @param obj
-	 *            The Document to convert to Location
+	 * @param obj The Document to convert to Location
 	 * @return The Location
-	 * @throws EpickurParsingException
-	 *             If a parsing exception occured
+	 * @throws EpickurParsingException If a parsing exception occured
 	 */
 	public static Location getObject(final Document obj) throws EpickurParsingException {
 		return Location.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
-	 * @param json
-	 *            The json string
+	 * @param json The json string
 	 * @return The Location
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	public static Location getObject(final String json) throws EpickurParsingException {
 		Location location;
@@ -71,8 +67,7 @@ public final class Location extends AbstractEntity {
 	}
 
 	/**
-	 * @param prefix
-	 *            The prefix
+	 * @param prefix The prefix
 	 * @return A map
 	 */
 	@JsonIgnore
@@ -86,13 +81,13 @@ public final class Location extends AbstractEntity {
 		}
 		return res;
 	}
-	
+
 	@Override
 	public Location clone() {
 		try {
 			return (Location) super.clone();
 		} catch (CloneNotSupportedException e) {
-			LOG.error("Error while cloning: " + e.getMessage(), e);
+			log.error("Error while cloning: {}", e.getMessage(), e);
 			throw new RuntimeException();
 		}
 	}

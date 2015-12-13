@@ -1,25 +1,23 @@
 package com.epickur.api.entity;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Address entity
- * 
+ *
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "label", "houseNumber", "street", "city", "postalCode", "state", "country" })
 @Data
@@ -27,26 +25,37 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 public final class Address extends AbstractEntity {
 
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(Address.class.getSimpleName());
-	/** Label */
+	/**
+	 * Label
+	 */
 	private String label;
-	/** House number */
+	/**
+	 * House number
+	 */
 	private String houseNumber;
-	/** Street */
+	/**
+	 * Street
+	 */
 	private String street;
-	/** City */
+	/**
+	 * City
+	 */
 	private String city;
-	/** Postal code */
+	/**
+	 * Postal code
+	 */
 	private Integer postalCode;
-	/** State */
+	/**
+	 * State
+	 */
 	private String state;
-	/** Country */
+	/**
+	 * Country
+	 */
 	private String country;
 
 	/**
-	 * @param prefix
-	 *            The prefix
+	 * @param prefix The prefix
 	 * @return A Map
 	 */
 	@JsonIgnore
@@ -81,7 +90,7 @@ public final class Address extends AbstractEntity {
 		try {
 			return (Address) super.clone();
 		} catch (CloneNotSupportedException e) {
-			LOG.error("Error while cloning: " + e.getMessage(), e);
+			log.error("Error while cloning: {}", e.getMessage(), e);
 			throw new RuntimeException();
 		}
 	}

@@ -2,8 +2,6 @@ package com.epickur.api;
 
 import com.epickur.api.config.ApplicationConfig;
 import com.epickur.api.filter.HeaderResponseFilter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.ee.servlet.QuartzInitializerListener;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -14,11 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(ApplicationInitializer.class.getSimpleName());
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {

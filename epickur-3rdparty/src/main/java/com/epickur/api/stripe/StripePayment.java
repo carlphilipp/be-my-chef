@@ -1,10 +1,9 @@
-package com.epickur.api.payment.stripe;
+package com.epickur.api.stripe;
 
 import com.epickur.api.enumeration.Currency;
 import com.stripe.exception.*;
 import com.stripe.model.Charge;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,12 +14,8 @@ import java.util.Map;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 public class StripePayment {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(StripePayment.class.getSimpleName());
 
 	/**
 	 * Charge card
@@ -32,7 +27,7 @@ public class StripePayment {
 	 * @throws StripeException If a StripException occured
 	 */
 	public Charge chargeCard(final String cardToken, final int amount, final Currency currency) throws StripeException {
-		Charge charge;
+		final Charge charge;
 		Map<String, Object> chargeMap = null;
 		try {
 			chargeMap = new HashMap<>();
@@ -40,31 +35,31 @@ public class StripePayment {
 			chargeMap.put("currency", currency.getCode());
 			chargeMap.put("card", cardToken);
 			charge = Charge.create(chargeMap);
-			LOG.debug(charge);
+			log.debug("Charge customer: " + charge.toString());
 		} catch (CardException e) {
 			// Since it's a decline, CardException will be caught
-			StringBuilder stb = new StringBuilder();
+			final StringBuilder stb = new StringBuilder();
 			stb.append("Card declined: " + chargeMap);
 			stb.append("\nStatus is: " + e.getCode());
 			stb.append("\nMessage is: " + e.getParam());
 			stb.append("\n" + e.getLocalizedMessage());
-			LOG.error(stb.toString(), e);
+			log.error(stb.toString(), e);
 			throw e;
 		} catch (InvalidRequestException e) {
 			// Invalid parameters were supplied to Stripe's API
-			LOG.error(e.getLocalizedMessage(), e);
+			log.error(e.getLocalizedMessage(), e);
 			throw e;
 		} catch (AuthenticationException e) {
 			// Authentication with Stripe's API failed (maybe you changed API keys recently)
-			LOG.error(e.getLocalizedMessage(), e);
+			log.error(e.getLocalizedMessage(), e);
 			throw e;
 		} catch (APIConnectionException e) {
 			// Network communication with Stripe failed
-			LOG.error(e.getLocalizedMessage(), e);
+			log.error(e.getLocalizedMessage(), e);
 			throw e;
 		} catch (StripeException e) {
 			// Display a very generic error to the user, and maybe send yourself an email
-			LOG.error(e.getLocalizedMessage(), e);
+			log.error(e.getLocalizedMessage(), e);
 			throw e;
 		}
 		return charge;

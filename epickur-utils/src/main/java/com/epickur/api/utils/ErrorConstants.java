@@ -6,7 +6,7 @@ package com.epickur.api.utils;
  * @author cph
  * @version 1.0
  */
-public final class ErrorUtils {
+public final class ErrorConstants {
 
 	/** Dish not found */
 	public static final String DISH_NOT_FOUND = "Dish not found";
@@ -28,6 +28,6 @@ public final class ErrorUtils {
 	/**
 	 * Private Constructor
 	 */
-	private ErrorUtils() {
+	private ErrorConstants() {
 	}
 }

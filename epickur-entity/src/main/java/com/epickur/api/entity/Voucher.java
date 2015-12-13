@@ -1,14 +1,5 @@
 package com.epickur.api.entity;
 
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.json.JsonMode;
-import org.bson.json.JsonWriterSettings;
-import org.joda.time.DateTime;
-
 import com.epickur.api.entity.deserialize.DateDeserializer;
 import com.epickur.api.entity.deserialize.DiscountTypeDeserializer;
 import com.epickur.api.entity.deserialize.ExpirationTypeDeserializer;
@@ -27,18 +18,24 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
+import org.joda.time.DateTime;
+
+import java.io.IOException;
 
 /**
  * Voucher entity.
- * 
+ *
  * @author cph
  * @version 1.0
- *
  */
+@Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "code", "discount", "discountType", "expirationType", "expiration", "status", "usedCount", "createdAt",
 		"updatedAt" })
@@ -47,21 +44,33 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public final class Voucher extends AbstractMainDBEntity {
 
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(Voucher.class.getSimpleName());
-	/** Code */
+	/**
+	 * Code
+	 */
 	private String code;
-	/** Discount */
+	/**
+	 * Discount
+	 */
 	private Integer discount;
-	/** Discount type */
+	/**
+	 * Discount type
+	 */
 	private DiscountType discountType;
-	/** Expiration type */
+	/**
+	 * Expiration type
+	 */
 	private ExpirationType expirationType;
-	/** Expiration Date */
+	/**
+	 * Expiration Date
+	 */
 	private DateTime expiration;
-	/** Status */
+	/**
+	 * Status
+	 */
 	private Status status;
-	/** Used count */
+	/**
+	 * Used count
+	 */
 	private Integer usedCount;
 
 	/**
@@ -73,8 +82,7 @@ public final class Voucher extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param discountType
-	 *            The discount type
+	 * @param discountType The discount type
 	 */
 	@JsonDeserialize(using = DiscountTypeDeserializer.class)
 	public void setDiscountType(final DiscountType discountType) {
@@ -90,8 +98,7 @@ public final class Voucher extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param expirationType
-	 *            The expiration type
+	 * @param expirationType The expiration type
 	 */
 	@JsonDeserialize(using = ExpirationTypeDeserializer.class)
 	public void setExpirationType(final ExpirationType expirationType) {
@@ -107,8 +114,7 @@ public final class Voucher extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param expiration
-	 *            The expiration date
+	 * @param expiration The expiration date
 	 */
 	@JsonDeserialize(using = DateDeserializer.class)
 	public void setExpiration(final DateTime expiration) {
@@ -124,8 +130,7 @@ public final class Voucher extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param status
-	 *            The status
+	 * @param status The status
 	 */
 	@JsonDeserialize(using = StatusDeserializer.class)
 	public void setStatus(final Status status) {
@@ -133,22 +138,18 @@ public final class Voucher extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param obj
-	 *            The Document
+	 * @param obj The Document
 	 * @return The User
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	public static Voucher getDocumentAsVoucher(final Document obj) throws EpickurParsingException {
 		return Voucher.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
-	 * @param json
-	 *            The json strng
+	 * @param json The json strng
 	 * @return The User
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	private static Voucher getObject(final String json) throws EpickurParsingException {
 		Voucher user;
@@ -160,13 +161,13 @@ public final class Voucher extends AbstractMainDBEntity {
 		}
 		return user;
 	}
-	
+
 	@Override
 	public Voucher clone() {
 		try {
 			return (Voucher) super.clone();
 		} catch (CloneNotSupportedException e) {
-			LOG.error("Error while cloning: " + e.getMessage(), e);
+			log.error("Error while cloning: {}", e.getMessage(), e);
 			throw new RuntimeException();
 		}
 	}

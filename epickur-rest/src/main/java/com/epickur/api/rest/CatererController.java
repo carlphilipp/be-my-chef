@@ -12,7 +12,7 @@ import com.epickur.api.report.Report;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
-import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.web.ResponseError;
 import org.joda.time.DateTime;
@@ -39,24 +39,12 @@ import static com.epickur.api.enumeration.Operation.*;
 @RequestMapping(value = "/api/caterers")
 public class CatererController {
 
-	/**
-	 * Context
-	 */
 	@Autowired
 	private HttpServletRequest request;
-	/**
-	 * Caterer Service
-	 */
 	@Autowired
 	private CatererService catererService;
-	/**
-	 * Order Service
-	 */
 	@Autowired
 	private OrderService orderService;
-	/**
-	 * Dish Service
-	 */
 	@Autowired
 	private DishService dishService;
 	@Autowired
@@ -203,7 +191,7 @@ public class CatererController {
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		final Caterer caterer = catererService.read(id);
 		if (caterer == null) {
-			return ResponseError.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
+			return ResponseError.notFound(ErrorConstants.CATERER_NOT_FOUND, id);
 		} else {
 			return new ResponseEntity<>(caterer, HttpStatus.OK);
 		}
@@ -330,7 +318,7 @@ public class CatererController {
 			deletedMessage.setDeleted(true);
 			return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
 		} else {
-			return ResponseError.notFound(ErrorUtils.CATERER_NOT_FOUND, id);
+			return ResponseError.notFound(ErrorConstants.CATERER_NOT_FOUND, id);
 		}
 	}
 

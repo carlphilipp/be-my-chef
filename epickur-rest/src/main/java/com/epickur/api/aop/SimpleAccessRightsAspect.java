@@ -12,8 +12,6 @@ import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.validator.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -25,13 +23,11 @@ import java.lang.reflect.Method;
 
 import static com.epickur.api.enumeration.EndpointType.*;
 import static com.epickur.api.enumeration.Operation.*;
-import static com.epickur.api.utils.ErrorUtils.CATERER_NOT_FOUND;
-import static com.epickur.api.utils.ErrorUtils.DISH_NOT_FOUND;
+import static com.epickur.api.utils.ErrorConstants.CATERER_NOT_FOUND;
+import static com.epickur.api.utils.ErrorConstants.DISH_NOT_FOUND;
 
 @Aspect
 public class SimpleAccessRightsAspect {
-
-	private static final Logger LOG = LogManager.getLogger(SimpleAccessRightsAspect.class.getSimpleName());
 
 	@Autowired
 	private HttpServletRequest request;
@@ -163,7 +159,7 @@ public class SimpleAccessRightsAspect {
 			if (!order.getId().toHexString().equals(orderId)) {
 				throw new EpickurIllegalArgument("The parameter orderId and the field order.id should match");
 			}
-		} else if (operation == READ){
+		} else if (operation == READ) {
 			final String userId = (String) args[0];
 			final String orderId = (String) args[1];
 			userValidator.checkReadOneOrder(userId, orderId);

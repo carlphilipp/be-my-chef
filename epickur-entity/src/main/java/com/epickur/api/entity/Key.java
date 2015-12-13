@@ -1,14 +1,5 @@
 package com.epickur.api.entity;
 
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.bson.json.JsonMode;
-import org.bson.json.JsonWriterSettings;
-import org.bson.types.ObjectId;
-
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.deserialize.RoleDeserializer;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
@@ -21,17 +12,24 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
+import org.bson.types.ObjectId;
+
+import java.io.IOException;
 
 /**
  * Key entity
- * 
+ *
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "key", "userId", "role", "createdAt", "updatedAt" })
 @Data
@@ -39,13 +37,17 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class Key extends AbstractMainDBEntity {
 
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(Key.class.getSimpleName());
-	/** Key */
+	/**
+	 * Key
+	 */
 	private String key;
-	/** User id */
+	/**
+	 * User id
+	 */
 	private ObjectId userId;
-	/** The role */
+	/**
+	 * The role
+	 */
 	private Role role;
 
 	/**
@@ -57,8 +59,7 @@ public class Key extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param userId
-	 *            The User id
+	 * @param userId The User id
 	 */
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	public void setUserId(final ObjectId userId) {
@@ -74,8 +75,7 @@ public class Key extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param role
-	 *            The User role
+	 * @param role The User role
 	 */
 	@JsonDeserialize(using = RoleDeserializer.class)
 	public void setRole(final Role role) {
@@ -83,22 +83,18 @@ public class Key extends AbstractMainDBEntity {
 	}
 
 	/**
-	 * @param obj
-	 *            The Document
+	 * @param obj The Document
 	 * @return The Key
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	public static Key getDocumentAsKey(final Document obj) throws EpickurParsingException {
 		return Key.getObject(obj.toJson(new JsonWriterSettings(JsonMode.STRICT)));
 	}
 
 	/**
-	 * @param json
-	 *            The json String
+	 * @param json The json String
 	 * @return The Key
-	 * @throws EpickurParsingException
-	 *             If an epickur exception occurred
+	 * @throws EpickurParsingException If an epickur exception occurred
 	 */
 	private static Key getObject(final String json) throws EpickurParsingException {
 		Key key;
@@ -116,7 +112,7 @@ public class Key extends AbstractMainDBEntity {
 		try {
 			return (Key) super.clone();
 		} catch (CloneNotSupportedException e) {
-			LOG.error("Error while cloning: " + e.getMessage(), e);
+			log.error("Error while cloning: {}", e.getMessage(), e);
 			throw new RuntimeException();
 		}
 	}

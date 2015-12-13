@@ -7,8 +7,6 @@ import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,10 +23,6 @@ import java.util.Set;
 @Service
 public class VoucherService {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(VoucherService.class.getSimpleName());
 	/**
 	 * User dao
 	 */

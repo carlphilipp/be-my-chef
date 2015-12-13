@@ -1,4 +1,4 @@
-package com.epickur.api.geocoder.here;
+package com.epickur.api.here;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

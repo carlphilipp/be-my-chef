@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/logout")
 public class LogoutController {
-
-	/**
-	 * Key Service
-	 */
+	
 	@Autowired
 	private KeyService keyService;
 

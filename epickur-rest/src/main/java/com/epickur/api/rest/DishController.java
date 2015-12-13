@@ -9,7 +9,7 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
-import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.web.ResponseError;
 import org.apache.commons.lang3.StringUtils;
@@ -37,19 +37,10 @@ import static com.epickur.api.enumeration.Operation.*;
 @RequestMapping(value = "/api/dishes")
 public class DishController {
 
-	/**
-	 * Context
-	 */
 	@Autowired
 	private HttpServletRequest request;
-	/**
-	 * Dish Service
-	 */
 	@Autowired
 	private DishService dishService;
-	/**
-	 * Dish Service
-	 */
 	@Autowired
 	private CatererService catererService;
 	@Autowired
@@ -251,7 +242,7 @@ public class DishController {
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		final Dish dish = dishService.read(id);
 		if (dish == null) {
-			return ResponseError.notFound(ErrorUtils.DISH_NOT_FOUND, id);
+			return ResponseError.notFound(ErrorConstants.DISH_NOT_FOUND, id);
 		} else {
 			return new ResponseEntity<>(dish, HttpStatus.OK);
 		}
@@ -415,7 +406,7 @@ public class DishController {
 			message.setDeleted(true);
 			return new ResponseEntity<>(message, HttpStatus.OK);
 		} else {
-			return ResponseError.notFound(ErrorUtils.DISH_NOT_FOUND, id);
+			return ResponseError.notFound(ErrorConstants.DISH_NOT_FOUND, id);
 		}
 	}
 

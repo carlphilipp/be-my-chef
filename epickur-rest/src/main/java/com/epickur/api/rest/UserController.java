@@ -36,19 +36,10 @@ import static com.epickur.api.enumeration.Operation.*;
 @RequestMapping(value = "/api/users")
 public class UserController {
 
-	/**
-	 * Request
-	 */
 	@Autowired
 	private HttpServletRequest request;
-	/**
-	 * User Service
-	 */
 	@Autowired
 	private UserService userService;
-	/**
-	 * Order Service
-	 */
 	@Autowired
 	private OrderService orderService;
 

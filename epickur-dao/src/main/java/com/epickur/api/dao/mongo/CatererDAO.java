@@ -6,8 +6,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
@@ -16,7 +15,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epickur.api.utils.Info.CATERER_COLL;
+import static com.epickur.api.dao.CollectionsName.CATERER_COLL;
 
 /**
  * Caterer DAO access with CRUD operations.
@@ -24,13 +23,9 @@ import static com.epickur.api.utils.Info.CATERER_COLL;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Repository
 public class CatererDAO extends CrudDAO<Caterer> {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(CatererDAO.class.getSimpleName());
 
 	@PostConstruct
 	protected void initCollection() {
@@ -39,7 +34,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 
 	@Override
 	public Caterer create(final Caterer caterer) throws EpickurException {
-		LOG.debug("Create caterer: " + caterer);
+		log.debug("Create caterer: {}", caterer);
 		final Document doc = caterer.getDocumentDBView();
 		insertDocument(doc);
 		return Caterer.getDocumentAsCatererDBView(doc);
@@ -47,7 +42,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 
 	@Override
 	public Caterer read(final String id) throws EpickurException {
-		LOG.debug("Read caterer: " + id);
+		log.debug("Read caterer: {}", id);
 		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
 		final Document find = findDocument(query);
 		return processAfterQuery(find);
@@ -55,7 +50,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 
 	@Override
 	public Caterer update(final Caterer caterer) throws EpickurException {
-		LOG.debug("Update caterer: " + caterer);
+		log.debug("Update caterer: {}", caterer);
 		final Document filter = convertAttributeToDocument("_id", caterer.getId());
 		final Document update = caterer.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);

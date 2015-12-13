@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.epickur.api.enumeration.Currency;
-import com.epickur.api.payment.stripe.StripePayment;
-import com.epickur.api.payment.stripe.StripeTestUtils;
+import com.epickur.api.stripe.StripePayment;
+import com.epickur.api.stripe.StripeTestUtils;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import com.stripe.model.Token;

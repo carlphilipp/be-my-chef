@@ -6,7 +6,7 @@ import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.VoucherService;
-import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.web.ResponseError;
 import org.hibernate.validator.constraints.NotBlank;
@@ -90,7 +90,7 @@ public class VoucherController {
 	public ResponseEntity<?> read(@PathVariable("code") final String code) throws EpickurException {
 		final Voucher voucher = voucherService.read(code);
 		if (voucher == null) {
-			return ResponseError.notFound(ErrorUtils.VOUCHER_NOT_FOUND, code);
+			return ResponseError.notFound(ErrorConstants.VOUCHER_NOT_FOUND, code);
 		} else {
 			return new ResponseEntity<>(voucher, HttpStatus.OK);
 		}

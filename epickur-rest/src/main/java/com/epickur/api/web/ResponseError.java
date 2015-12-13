@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Class that handles all the error responses
+ */
 public class ResponseError {
 
 	private static HttpHeaders headers;

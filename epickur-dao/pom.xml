@@ -20,6 +20,12 @@
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-utils</artifactId>
 		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
 	</dependencies>
 
 	<reporting>

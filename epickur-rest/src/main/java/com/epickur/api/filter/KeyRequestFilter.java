@@ -5,12 +5,11 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,16 +25,13 @@ import java.io.IOException;
 /**
  * Filter that check if the provided key is valid
  *
- * @author carl
+ * @author cph
  * @version 1.0
  */
+@Slf4j
 @Component("keyRequestFilter")
 public final class KeyRequestFilter extends OncePerRequestFilter {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(KeyRequestFilter.class.getSimpleName());
 	/**
 	 * Key dao
 	 */
@@ -44,10 +40,6 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 	@Autowired
 	private Utils utils;
 
-	public KeyRequestFilter() {
-		super();
-	}
-
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
 			throws IOException, ServletException {
@@ -55,7 +47,7 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 		if (urlPath != null && !StringUtils.contains(urlPath, "/nokey/")) {
 			final String paramKey = request.getParameter("key");
 			if (paramKey == null) {
-				abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorUtils.MISSING_KEY);
+				abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.MISSING_KEY);
 			} else {
 				processKey(request, response, filterChain, paramKey);
 			}
@@ -80,8 +72,8 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 		try {
 			handleKey(request, response, filterChain, paramKey);
 		} catch (EpickurException e) {
-			LOG.error(e.getLocalizedMessage(), e);
-			abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.INTERNAL_SERVER_ERROR);
+			log.error(e.getLocalizedMessage(), e);
+			abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -107,7 +99,7 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 			final String paramKey) throws EpickurException, IOException, ServletException {
 		Key key = keyDAO.read(paramKey);
 		if (!utils.isValid(key)) {
-			abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorUtils.INVALID_KEY);
+			abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.INVALID_KEY);
 		} else {
 			request.setAttribute("key", key);
 			filterChain.doFilter(request, response);

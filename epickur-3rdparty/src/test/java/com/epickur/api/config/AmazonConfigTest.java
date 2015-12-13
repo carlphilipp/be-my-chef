@@ -1,7 +1,7 @@
 package com.epickur.api.config;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.epickur.api.dump.AmazonWebServices;
+import com.epickur.api.aws.AmazonWebServices;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

@@ -1,10 +1,9 @@
 package com.epickur.api.cron;
 
+import com.epickur.api.aws.AmazonWebServices;
 import com.epickur.api.commons.CommonsUtil;
-import com.epickur.api.dump.AmazonWebServices;
 import com.epickur.api.dump.MongoDBDump;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -16,6 +15,7 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 public class MongoDBDumpJob {
 
 	@Autowired
@@ -23,21 +23,16 @@ public class MongoDBDumpJob {
 	@Autowired
 	private MongoDBDump mongoDBDump;
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(MongoDBDumpJob.class.getSimpleName());
-
 	@Scheduled(cron = "0 0 0/2 * * ?")
 	public void execute() {
-		LOG.info("Start DB dump...");
+		log.info("Start DB dump...");
 		final boolean exported = mongoDBDump.exportMongo();
-		LOG.info("DB dump done");
+		log.info("DB dump done");
 		if (exported) {
-			LOG.info("Creating tar.gz...");
+			log.info("Creating tar.gz...");
 			final List<String> list = mongoDBDump.getListFiles();
 			CommonsUtil.createTarGz(list, mongoDBDump.getCurrentFullPathName());
-			LOG.info("tar.gz generated: " + mongoDBDump.getCurrentFullPathName());
+			log.info("tar.gz generated: " + mongoDBDump.getCurrentFullPathName());
 
 			aws.deleteOldFile();
 			aws.uploadFile(mongoDBDump.getCurrentFullPathName());
@@ -46,7 +41,7 @@ public class MongoDBDumpJob {
 			mongoDBDump.cleanDumpDirectory();
 			mongoDBDump.deleteDumpFile();
 		} else {
-			LOG.info("DB dump failed...:(");
+			log.info("DB dump failed...:(");
 		}
 	}
 }

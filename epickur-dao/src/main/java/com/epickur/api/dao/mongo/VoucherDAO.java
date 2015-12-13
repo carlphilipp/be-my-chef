@@ -20,7 +20,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epickur.api.utils.Info.VOUCHER_COLL;
+import static com.epickur.api.dao.CollectionsName.VOUCHER_COLL;
 import static com.mongodb.client.model.Filters.*;
 
 /**

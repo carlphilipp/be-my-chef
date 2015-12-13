@@ -1,21 +1,18 @@
 package com.epickur.api.entity;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonArray;
 import org.bson.BsonDouble;
 import org.bson.Document;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Geo entity
@@ -23,14 +20,12 @@ import lombok.ToString;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "type", "coordinates" })
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 public class Geo extends AbstractEntity {
-
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(Geo.class.getSimpleName());
 
 	/** Type */
 	private String type = "Point";
@@ -147,7 +142,7 @@ public class Geo extends AbstractEntity {
 		try {
 			return (Geo) super.clone();
 		} catch (CloneNotSupportedException e) {
-			LOG.error("Error while cloning: " + e.getMessage(), e);
+			log.error("Error while cloning: {}", e.getMessage(), e);
 			throw new RuntimeException();
 		}
 	}

@@ -1,11 +1,9 @@
-package com.epickur.api.payment.stripe;
+package com.epickur.api.stripe;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
 
 import org.junit.AfterClass;
 import org.junit.Before;

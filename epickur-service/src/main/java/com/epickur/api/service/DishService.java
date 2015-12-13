@@ -6,7 +6,7 @@ import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.geocoder.IGeocoder;
+import com.epickur.api.here.IGeocoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

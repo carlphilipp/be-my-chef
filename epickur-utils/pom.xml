@@ -85,7 +85,12 @@
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-config</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 
 	</dependencies>

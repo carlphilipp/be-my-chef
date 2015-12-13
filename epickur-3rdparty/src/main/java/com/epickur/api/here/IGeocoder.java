@@ -1,4 +1,4 @@
-package com.epickur.api.geocoder;
+package com.epickur.api.here;
 
 import com.epickur.api.entity.Geo;
 import com.epickur.api.exception.GeoLocationException;

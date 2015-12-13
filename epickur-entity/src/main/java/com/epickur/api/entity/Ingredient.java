@@ -1,22 +1,20 @@
 package com.epickur.api.entity;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.epickur.api.enumeration.MeasurementUnit;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Ingredient entity
- * 
+ *
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "name", "sequence", "quantity", "measurementUnit" })
 @Data
@@ -24,15 +22,21 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 public final class Ingredient extends AbstractEntity {
 
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(Ingredient.class.getSimpleName());
-	/** Name */
+	/**
+	 * Name
+	 */
 	private String name;
-	/** Sequence */
+	/**
+	 * Sequence
+	 */
 	private int sequence;
-	/** Quantity */
+	/**
+	 * Quantity
+	 */
 	private double quantity;
-	/** Measurement Unit */
+	/**
+	 * Measurement Unit
+	 */
 	private MeasurementUnit measurementUnit;
 
 	@Override
@@ -40,7 +44,7 @@ public final class Ingredient extends AbstractEntity {
 		try {
 			return (Ingredient) super.clone();
 		} catch (CloneNotSupportedException e) {
-			LOG.error("Error while cloning: " + e.getMessage(), e);
+			log.error("Error while cloning: {}", e.getMessage(), e);
 			throw new RuntimeException();
 		}
 	}

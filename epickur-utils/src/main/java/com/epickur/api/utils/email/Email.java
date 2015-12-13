@@ -26,11 +26,10 @@ import com.cribbstechnologies.clients.mandrill.util.MandrillConfiguration;
 import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,27 +42,10 @@ import java.util.Map.Entry;
  *
  * @author cph
  */
+@Slf4j
 @Component
 public class Email {
 
-	/**
-	 * The logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(Email.class.getSimpleName());
-
-	/**
-	 * The request
-	 */
-	private MandrillRESTRequest request;
-	private String subject;
-	/**
-	 * The message in HTML format
-	 */
-	private String message;
-	/**
-	 * The list of sender
-	 */
-	private String[] sendTo;
 	@Autowired
 	private EmailTemplate emailTemplate;
 	@Autowired
@@ -74,6 +56,14 @@ public class Email {
 	private MandrillMessagesRequest messagesRequest;
 	@Autowired
 	private MandrillConfiguration mandrillConfiguration;
+
+	private MandrillRESTRequest request;
+
+	private String subject;
+
+	private String message;
+
+	private String[] sendTo;
 
 	/**
 	 * @param emailSubjectTxt The subject
@@ -118,7 +108,7 @@ public class Email {
 			try {
 				messagesRequest.sendMessage(mmr);
 			} catch (RequestFailedException e) {
-				LOG.error(e.getLocalizedMessage(), e);
+				log.error(e.getLocalizedMessage(), e);
 			}
 		}
 	}
@@ -142,7 +132,7 @@ public class Email {
 			configure(subject, content, sendTo);
 			send();
 		} else {
-			LOG.error("Error while trying to access the email templates for: " + emailType);
+			log.error("Error while trying to access the email templates for: {}", emailType);
 		}
 	}
 }

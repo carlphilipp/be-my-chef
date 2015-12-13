@@ -16,16 +16,6 @@ import com.epickur.api.exception.EpickurException;
  * @version 1.0
  */
 public final class Security {
-	/** Logger **/
-	// private static final Logger LOG = LogManager.getLogger(Security.class.getSimpleName());
-
-	/*
-	 * public static void main(final String[] args) throws EpickurException { try { String password = encodeToMd5("passwordAPI"); // Run this class to
-	 * generate a key in src/resources/api.key File file = new File("C:/Users/Carl-Philipp/git/epickur-api-java/epickur/src/main/resources/api.key");
-	 * BufferedWriter output = new BufferedWriter(new FileWriter(file)); output.write(password); output.close(); file = new
-	 * File("C:/Users/Carl-Philipp/git/epickur-api-java/epickur/src/test/resources/api.key"); output = new BufferedWriter(new FileWriter(file));
-	 * output.write(password); output.close(); } catch (IOException e) { e.printStackTrace(); } }
-	 */
 
 	/**
 	 * Constructor

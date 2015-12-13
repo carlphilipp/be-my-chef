@@ -1,9 +1,8 @@
 package com.epickur.api.commons;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -19,12 +18,12 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author cph
+ */
+@Slf4j
 public class CommonsUtil {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(CommonsUtil.class.getSimpleName());
+	// TODO create test class for all of them
 
 	/**
 	 * @param pickupdate The pickup date
@@ -99,7 +98,7 @@ public class CommonsUtil {
 			out.close();
 			dest.close();
 		} catch (final IOException e) {
-			LOG.error("Error while creating tar.gz: " + e.getLocalizedMessage(), e);
+			log.error("Error while creating tar.gz: {}", e.getLocalizedMessage(), e);
 		} finally {
 			IOUtils.closeQuietly(dest);
 			IOUtils.closeQuietly(out);

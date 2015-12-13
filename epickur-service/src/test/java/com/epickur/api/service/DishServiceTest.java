@@ -27,10 +27,9 @@ import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.Key;
-import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.geocoder.here.GeocoderHereImpl;
+import com.epickur.api.here.GeocoderHereImpl;
 import com.epickur.api.helper.EntityGenerator;
 
 @PowerMockIgnore("javax.management.*")

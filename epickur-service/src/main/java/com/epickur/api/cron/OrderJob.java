@@ -3,8 +3,7 @@ package com.epickur.api.cron;
 import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,23 +16,14 @@ import org.springframework.stereotype.Component;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Component
 public class OrderJob {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(OrderJob.class.getSimpleName());
 
 	@Autowired
 	public EpickurProperties properties;
 	@Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
-
-	/**
-	 * Order max time
-	 */
-	//private int orderMaxTime;
 
 	/**
 	 * Add a temporary order job
@@ -59,9 +49,9 @@ public class OrderJob {
 		try {
 			final Scheduler scheduler = schedulerFactoryBean.getObject();
 			scheduler.scheduleJob(cancelOrder, triggerCancelOrder);
-			LOG.info("Added job '" + identity + "' to the scheduler with orderId " + orderId + " and userId " + userId);
+			log.info("Added job '{}' to the scheduler with orderId {} and userId ", identity, orderId, userId);
 		} catch (SchedulerException se) {
-			LOG.error(se.getLocalizedMessage(), se);
+			log.error(se.getLocalizedMessage(), se);
 		}
 	}
 
@@ -72,13 +62,13 @@ public class OrderJob {
 	 */
 	public void removeTemporaryOrderJob(final String orderId) {
 		final String identity = "cancelOrder_" + orderId;
-		LOG.info("Remove job '" + identity + "' from the scheduler");
+		log.info("Remove job '{}' from the scheduler", identity);
 		final JobKey jobKey = new JobKey(identity);
 		try {
 			final Scheduler scheduler = schedulerFactoryBean.getObject();
 			scheduler.deleteJob(jobKey);
 		} catch (SchedulerException se) {
-			LOG.error(se.getLocalizedMessage(), se);
+			log.error(se.getLocalizedMessage(), se);
 		}
 	}
 }

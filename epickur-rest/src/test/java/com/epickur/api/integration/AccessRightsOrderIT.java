@@ -6,7 +6,7 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.payment.stripe.StripeTestUtils;
+import com.epickur.api.stripe.StripeTestUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.*;

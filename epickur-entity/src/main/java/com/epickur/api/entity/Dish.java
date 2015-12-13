@@ -16,8 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
@@ -35,7 +34,7 @@ import java.util.Set;
  * @author cph
  * @version 1.0
  */
-//@DishValidate(groups = Create.class)
+@Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "id", "name", "description", "type", "price", "cookingTime", "difficultyLevel", "videoUrl", "nutritionFacts",
 		"ingredients", "condiments", "steps", "utensils", "caterer", "createdAt", "updatedAt" })
@@ -44,10 +43,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public final class Dish extends AbstractMainDBEntity {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(Dish.class.getSimpleName());
 	/**
 	 * Name
 	 */
@@ -200,7 +195,7 @@ public final class Dish extends AbstractMainDBEntity {
 		try {
 			return (Dish) super.clone();
 		} catch (CloneNotSupportedException e) {
-			LOG.error("Error while cloning: " + e.getMessage(), e);
+			log.error("Error while cloning: {}", e.getMessage(), e);
 			throw new RuntimeException();
 		}
 	}

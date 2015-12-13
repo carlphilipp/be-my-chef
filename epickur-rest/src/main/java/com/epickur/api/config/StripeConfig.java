@@ -1,6 +1,6 @@
 package com.epickur.api.config;
 
-import com.epickur.api.payment.stripe.StripePayment;
+import com.epickur.api.stripe.StripePayment;
 import com.stripe.Stripe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

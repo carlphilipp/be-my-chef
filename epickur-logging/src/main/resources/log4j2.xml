@@ -1,29 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" shutdownHook="disable">
+	<Properties>
+		<Property name="logs_directory">$${env:CATALINA_BASE}/logs</Property>
+	</Properties>
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout
-				pattern="%d{dd/MM/yyyy HH:mm:ss}{America/Chicago} - %-5p [%c:%L] %m%n" />
+			<PatternLayout pattern="%d{dd/MM/yyyy HH:mm:ss}{America/Chicago} - %-5p [%c:%L] %m%n"/>
 		</Console>
+		<RollingRandomAccessFile name="File" fileName="${logs_directory}/epickur.log"
+								 filePattern="${logs_directory}/archive/epickur-%d{yyyy-MM-dd}-%i.log.gz">
+			<PatternLayout pattern="%d %p %c{1.} [%t] %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="100 MB"/>
+			</Policies>
+		</RollingRandomAccessFile>
 	</Appenders>
 	<Loggers>
-		<Logger name="com.epickur.api" level="info">
-			<AppenderRef ref="Console" />
+		<Logger name="com.epickur.api" level="debug">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="File"/>
 		</Logger>
 		<Logger name="com.cribbstechnologies.clients.mandrill" level="warn">
-			<AppenderRef ref="Console" />
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="File"/>
 		</Logger>
 		<Logger name="com.google.i18n.phonenumbers" level="warn">
-			<AppenderRef ref="Console" />
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="File"/>
 		</Logger>
 		<Logger name="org.mongodb.driver" level="warn">
-			<AppenderRef ref="Console" />
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="File"/>
 		</Logger>
 		<Logger name="org.quartz" level="warn">
-			<AppenderRef ref="Console" />
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="File"/>
 		</Logger>
-		<Root level="info">
-			<AppenderRef ref="Console" />
+		<Root level="debug">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="File"/>
 		</Root>
 	</Loggers>
 </Configuration>

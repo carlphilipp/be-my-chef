@@ -8,8 +8,7 @@ import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.email.EmailUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +21,10 @@ import org.springframework.stereotype.Component;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Component
 public class CancelOrderJob extends QuartzJobBean {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(CancelOrderJob.class.getSimpleName());
 	/**
 	 * Order dao
 	 */
@@ -58,7 +54,7 @@ public class CancelOrderJob extends QuartzJobBean {
 			final String userId = context.getJobDetail().getJobDataMap().getString("userId");
 			final User user = userDAO.read(userId);
 			if (user != null && order != null) {
-				LOG.info("Cancel order id: " + orderId + " with user id: " + userId);
+				log.info("Cancel order id: {} with user id: {}", orderId, userId);
 				order.setStatus(OrderStatus.CANCELED);
 				order.prepareForUpdateIntoDB();
 				order = orderDAO.update(order);
@@ -68,7 +64,7 @@ public class CancelOrderJob extends QuartzJobBean {
 				emailUtils.emailCancelOrder(user, order);
 			}
 		} catch (EpickurException e) {
-			LOG.error(e.getLocalizedMessage(), e);
+			log.error(e.getLocalizedMessage(), e);
 		}
 	}
 }

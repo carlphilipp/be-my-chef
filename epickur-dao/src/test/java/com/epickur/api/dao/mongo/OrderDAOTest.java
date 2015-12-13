@@ -1,6 +1,6 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.utils.Info.ORDER_COLL;
+import static com.epickur.api.dao.CollectionsName.ORDER_COLL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -34,7 +34,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
 
 public class OrderDAOTest {
 

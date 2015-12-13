@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epickur.api.utils.Info.USER_COLL;
+import static com.epickur.api.dao.CollectionsName.USER_COLL;
 
 /**
  * User DAO access with CRUD operations.

@@ -2,11 +2,10 @@ package com.epickur.api.dump;
 
 import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.utils.Utils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -23,12 +22,9 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 public final class MongoDBDump {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(MongoDBDump.class.getSimpleName());
 	@Autowired
 	private Utils utils;
 	@Autowired
@@ -105,7 +101,7 @@ public final class MongoDBDump {
 		try {
 			computername = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
-			LOG.warn("Host not found: " + e.getLocalizedMessage());
+			log.warn("Host not found: {}", e.getLocalizedMessage());
 			computername = "unknown";
 		}
 		return "epickur_" + computername + "_" + date + TARGZEXT;
@@ -148,7 +144,7 @@ public final class MongoDBDump {
 			logExportResult(process);
 			success = true;
 		} catch (Exception e) {
-			LOG.error("Error while trying to mongodump: " + e.getLocalizedMessage(), e);
+			log.error("Error while trying to mongodump: {}", e.getLocalizedMessage(), e);
 		}
 		return success;
 	}
@@ -169,10 +165,10 @@ public final class MongoDBDump {
 		final String output = IOUtils.toString(process.getInputStream());
 		final String errorOutput = IOUtils.toString(process.getErrorStream());
 		if (StringUtils.isNotBlank(output)) {
-			LOG.info("\n" + output);
+			log.info("\n" + output);
 		}
 		if (StringUtils.isNotBlank(errorOutput)) {
-			LOG.info("\n" + errorOutput);
+			log.info("\n" + errorOutput);
 		}
 	}
 
@@ -192,7 +188,7 @@ public final class MongoDBDump {
 		try {
 			FileUtils.deleteDirectory(dumpDirectory);
 		} catch (IOException e) {
-			LOG.error("Error while trying to delete dump directory: " + e.getLocalizedMessage(), e);
+			log.error("Error while trying to delete dump directory: {}", e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -202,7 +198,7 @@ public final class MongoDBDump {
 	public void deleteDumpFile() {
 		boolean deleted = dumpFile.delete();
 		if (!deleted) {
-			LOG.error("Could not delete dump file");
+			log.error("Could not delete dump file");
 		}
 	}
 }

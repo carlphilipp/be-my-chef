@@ -29,14 +29,8 @@ import static com.epickur.api.enumeration.Operation.RESET_PASSWORD;
 @RequestMapping(value = "/api/nokey")
 public class NoKeyController {
 
-	/**
-	 * User Service
-	 */
 	@Autowired
 	private UserService userService;
-	/**
-	 * Order Service
-	 */
 	@Autowired
 	private OrderService orderService;
 

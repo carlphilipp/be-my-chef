@@ -1,4 +1,4 @@
-package com.epickur.api.geocoder.here;
+package com.epickur.api.here;
 
 import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Geo;
@@ -6,9 +6,8 @@ import com.epickur.api.exception.HereException;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,12 +27,10 @@ import java.util.Map;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Component
 public class Here {
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(Here.class.getSimpleName());
+
 	@Autowired
 	private Utils utils;
 	@Autowired
@@ -126,7 +123,7 @@ public class Here {
 	 * @throws HereException If we could not access the coordinates
 	 */
 	protected final String connectUrl(final String address) throws HereException {
-		LOG.debug("URL: " + address);
+		log.debug("URL: " + address);
 		String toreturn = null;
 		InputStreamReader in = null;
 		try {
@@ -155,7 +152,7 @@ public class Here {
 	private Geo getGeoFromStr(final String data) throws HereException {
 		Geo geo = null;
 		try {
-			LOG.info(data);
+			log.info(data);
 			final ObjectMapper mapper = new ObjectMapper();
 			final Map<String, Object> mapObject = mapper.readValue(data, new TypeReference<Map<String, Object>>() {
 			});
@@ -175,7 +172,7 @@ public class Here {
 									if (result.containsKey("location")) {
 										final Map<String, Object> location = (Map<String, Object>) result.get("location");
 										if (location.containsKey("displayPosition")) {
-											Map<String, Object> displayPosition = (Map<String, Object>) location.get("displayPosition");
+											final Map<String, Object> displayPosition = (Map<String, Object>) location.get("displayPosition");
 											geo = new Geo();
 											geo.setLatitude((Double) displayPosition.get("latitude"));
 											geo.setLongitude((Double) displayPosition.get("longitude"));

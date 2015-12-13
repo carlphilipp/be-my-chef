@@ -13,8 +13,8 @@ import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurNotFoundException;
-import com.epickur.api.payment.stripe.StripePayment;
-import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.stripe.StripePayment;
+import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.email.EmailUtils;
 import com.stripe.exception.StripeException;
@@ -117,7 +117,7 @@ public class OrderService {
 	protected User readUser(final String userId) throws EpickurException {
 		final User user = userDAO.read(userId);
 		if (user == null) {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, userId);
+			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, userId);
 		}
 		return user;
 	}
@@ -172,7 +172,7 @@ public class OrderService {
 	public boolean delete(final String id) throws EpickurException {
 		boolean isDeleted = orderDAO.delete(id);
 		if (!isDeleted) {
-			throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, id);
+			throw new EpickurNotFoundException(ErrorConstants.ORDER_NOT_FOUND, id);
 		}
 		return isDeleted;
 	}
@@ -240,7 +240,7 @@ public class OrderService {
 	protected Order read(final String orderId) throws EpickurException {
 		final Order order = orderDAO.read(orderId);
 		if (order == null) {
-			throw new EpickurNotFoundException(ErrorUtils.ORDER_NOT_FOUND, orderId);
+			throw new EpickurNotFoundException(ErrorConstants.ORDER_NOT_FOUND, orderId);
 		}
 		return order;
 	}

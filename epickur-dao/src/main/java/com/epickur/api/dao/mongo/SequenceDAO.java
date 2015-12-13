@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 
+import static com.epickur.api.dao.CollectionsName.SEQUENCE_COLL;
+
 /**
  * Sequence DAO access with CRUD operations.
  *
@@ -38,7 +40,7 @@ public class SequenceDAO {
 	 */
 	@PostConstruct
 	public void postConstruct() {
-		this.coll = db.getCollection("seq");
+		this.coll = db.getCollection(SEQUENCE_COLL);
 	}
 
 	/**

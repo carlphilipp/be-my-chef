@@ -3,8 +3,7 @@ package com.epickur.api.filter;
 import com.epickur.api.dao.mongo.LogDAO;
 import com.epickur.api.entity.Log;
 import com.epickur.api.exception.EpickurException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,13 +22,9 @@ import java.util.Enumeration;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Component("logRequestFilter")
 public final class LogRequestFilter extends OncePerRequestFilter {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(LogRequestFilter.class.getSimpleName());
 
 	@Autowired
 	private LogDAO logDAO;
@@ -37,26 +32,26 @@ public final class LogRequestFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws
 			ServletException, IOException {
-		final Log log = new Log();
-		log.setTime(new DateTime());
-		log.setUrl(request.getRequestURL().toString());
-		log.setMethod(request.getMethod());
-		log.setProtocol(request.getProtocol());
+		final Log logEntity = new Log();
+		logEntity.setTime(new DateTime());
+		logEntity.setUrl(request.getRequestURL().toString());
+		logEntity.setMethod(request.getMethod());
+		logEntity.setProtocol(request.getProtocol());
 		final Enumeration<String> params = request.getParameterNames();
 		while (params.hasMoreElements()) {
 			final String param = params.nextElement();
-			log.getArgs().put(param, request.getParameter(param));
+			logEntity.getArgs().put(param, request.getParameter(param));
 		}
 		String ipAddress = request.getHeader("X-FORWARDED-FOR");
 		if (ipAddress == null) {
 			ipAddress = request.getRemoteAddr();
 		}
-		log.setRemoteAddr(ipAddress);
-		log.setUserAgent(request.getHeader("User-Agent"));
+		logEntity.setRemoteAddr(ipAddress);
+		logEntity.setUserAgent(request.getHeader("User-Agent"));
 		try {
-			logDAO.create(log);
+			logDAO.create(logEntity);
 		} catch (EpickurException e) {
-			LOG.warn("Can not put log into DB. " + e.getLocalizedMessage());
+			log.warn("Can not put log into DB. {}", e.getLocalizedMessage());
 		}
 		filterChain.doFilter(request, response);
 	}

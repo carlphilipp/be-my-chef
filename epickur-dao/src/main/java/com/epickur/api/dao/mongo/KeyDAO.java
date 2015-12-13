@@ -6,8 +6,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +14,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epickur.api.utils.Info.KEY_COLL;
+import static com.epickur.api.dao.CollectionsName.KEY_COLL;
 
 /**
  * Key DAO access with CRUD operations.
@@ -23,13 +22,10 @@ import static com.epickur.api.utils.Info.KEY_COLL;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Repository
 public class KeyDAO extends CrudDAO<Key> {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(KeyDAO.class.getSimpleName());
 	/**
 	 * Not implemented
 	 */
@@ -42,7 +38,7 @@ public class KeyDAO extends CrudDAO<Key> {
 
 	@Override
 	public Key create(final Key key) throws EpickurException {
-		LOG.debug("Create key: " + key);
+		log.debug("Create key: " + key);
 		final Document doc = key.getDocumentDBView();
 		insertDocument(doc);
 		return Key.getDocumentAsKey(doc);
@@ -50,7 +46,7 @@ public class KeyDAO extends CrudDAO<Key> {
 
 	@Override
 	public Key read(final String key) throws EpickurException {
-		LOG.debug("Read key: " + key);
+		log.debug("Read key: " + key);
 		final Document query = convertAttributeToDocument("key", key);
 		final Document find = findDocument(query);
 		return processAfterQuery(find);
@@ -64,7 +60,7 @@ public class KeyDAO extends CrudDAO<Key> {
 	 * @throws EpickurException if an epickur exception occurred
 	 */
 	public Key readWithName(final String userName) throws EpickurException {
-		LOG.debug("Read key with name: " + userName);
+		log.debug("Read key with name: " + userName);
 		final Document query = convertAttributeToDocument("userName", userName);
 		final Document find = findDocument(query);
 		return processAfterQuery(find);
@@ -94,7 +90,7 @@ public class KeyDAO extends CrudDAO<Key> {
 	 * @throws EpickurException If an EpickurException occurred.
 	 */
 	public boolean deleteWithKey(final String key) throws EpickurException {
-		LOG.debug("Delete key: " + key);
+		log.debug("Delete key: " + key);
 		final Document filter = convertAttributeToDocument("key", key);
 		return deleteDocument(filter);
 	}

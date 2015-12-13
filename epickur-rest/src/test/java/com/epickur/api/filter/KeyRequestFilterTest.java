@@ -1,28 +1,11 @@
 package com.epickur.api.filter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import com.epickur.api.dao.mongo.KeyDAO;
-import com.epickur.api.entity.Key;
-import com.epickur.api.enumeration.Role;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.utils.ErrorUtils;
-import com.epickur.api.utils.Utils;
 
 public class KeyRequestFilterTest {
 

@@ -5,15 +5,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import com.epickur.api.ApplicationConfigTest;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,7 +25,7 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.payment.stripe.StripeTestUtils;
+import com.epickur.api.stripe.StripeTestUtils;
 import com.epickur.api.rest.UserController;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;

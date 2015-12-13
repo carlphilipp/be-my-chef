@@ -1,7 +1,7 @@
 package com.epickur.api.config;
 
-import com.epickur.api.geocoder.here.GeocoderHereImpl;
-import com.epickur.api.geocoder.here.Here;
+import com.epickur.api.here.GeocoderHereImpl;
+import com.epickur.api.here.Here;
 import com.epickur.api.utils.Utils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

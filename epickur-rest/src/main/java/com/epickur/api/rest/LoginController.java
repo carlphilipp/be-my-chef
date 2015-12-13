@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/login")
 public class LoginController {
 
-	/** User Service */
 	@Autowired
 	private UserService userService;
 

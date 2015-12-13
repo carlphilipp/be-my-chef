@@ -8,16 +8,15 @@ import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurDuplicateKeyException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
-import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.PasswordManager;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.EmailUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,13 +34,10 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Service
 public class UserService {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(UserService.class.getSimpleName());
 	/**
 	 * User dao
 	 */
@@ -165,7 +161,7 @@ public class UserService {
 	public boolean delete(final String id) throws EpickurException {
 		boolean isDeleted = userDAO.delete(id);
 		if (!isDeleted) {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
+			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, id);
 		}
 		return isDeleted;
 	}
@@ -182,7 +178,7 @@ public class UserService {
 		final User userFound = readWithEmail(email);
 		if (userFound != null) {
 			if (!utils.isPasswordCorrect(password, userFound)) {
-				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
+				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 			} else if (userFound.getAllow() == 1) {
 				String tempKey = Security.generateRandomMd5();
 				userFound.setKey(tempKey);
@@ -199,10 +195,10 @@ public class UserService {
 				userFound.setPassword(null);
 				userFound.setRole(null);
 			} else {
-				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
+				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 			}
 		} else {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
+			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 		}
 		return userFound;
 	}
@@ -217,10 +213,10 @@ public class UserService {
 	public User injectNewPassword(final User user) throws EpickurException {
 		final User userFound = readWithEmail(user.getEmail());
 		if (userFound == null) {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getEmail());
+			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, user.getEmail());
 		} else {
 			if (!utils.isPasswordCorrect(user.getPassword(), userFound)) {
-				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, user.getEmail());
+				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, user.getEmail());
 			} else {
 				String newEnryptedPassword = PasswordManager.createPasswordManager(user.getNewPassword()).createDBPassword();
 				user.setPassword(newEnryptedPassword);
@@ -242,14 +238,14 @@ public class UserService {
 		if (userFound != null) {
 			final String codeFound = Security.getUserCode(userFound);
 			if (!codeFound.equals(code)) {
-				throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
+				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 			} else {
 				userFound.setAllow(1);
 				userFound.prepareForUpdateIntoDB();
 				userFound = userDAO.update(userFound);
 			}
 		} else {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
+			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 		}
 		userFound.setPassword(null);
 		userFound.setRole(null);
@@ -263,7 +259,7 @@ public class UserService {
 	public void resetPasswordFirstStep(final String email) throws EpickurException {
 		final User user = readWithEmail(email);
 		if (user == null) {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, email);
+			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 		}
 		String resetCode = Security.createResetCode(user.getId(), email);
 		emailUtils.resetPassword(user, resetCode);
@@ -279,11 +275,11 @@ public class UserService {
 	public User resetPasswordSecondStep(final String id, final String newPassword, final String resetCode) throws EpickurException {
 		final User user = userDAO.read(id);
 		if (user == null) {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
+			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, id);
 		}
 		String resetCodeDB = Security.createResetCode(user.getId(), user.getEmail());
 		if (!resetCodeDB.equals(resetCode)) {
-			throw new EpickurNotFoundException(ErrorUtils.USER_NOT_FOUND, id);
+			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, id);
 		} else {
 			final String newEncryptedPassword = PasswordManager.createPasswordManager(newPassword).createDBPassword();
 			user.setPassword(newEncryptedPassword);
@@ -338,7 +334,7 @@ public class UserService {
 			final HttpPost request = new HttpPost(url);
 			HttpClientBuilder.create().build().execute(request);
 		} catch (IOException ioe) {
-			LOG.error("Could not suscribe " + email + " to our newsletter", ioe);
+			log.error("Could not suscribe {} to our newsletter", email, ioe);
 		}
 	}
 }

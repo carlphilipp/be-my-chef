@@ -30,7 +30,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.utils.ErrorUtils;
+import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.PasswordManager;
 import com.epickur.api.utils.Security;
 import com.epickur.api.utils.email.EmailUtils;
@@ -156,7 +156,7 @@ public class UserServiceTest {
 	@Test
 	public void testLoginWrongPasswordFail() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
+		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		User user = EntityGenerator.generateRandomUser();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
@@ -177,7 +177,7 @@ public class UserServiceTest {
 	@Test
 	public void testLoginUserNotAllowedFail() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
+		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		User user = EntityGenerator.generateRandomUser();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
@@ -222,7 +222,7 @@ public class UserServiceTest {
 	@Test
 	public void testInjectNewPasswordUserNotFoundFail() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
+		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		User user = EntityGenerator.generateRandomUser();
 		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(null);
@@ -237,7 +237,7 @@ public class UserServiceTest {
 	@Test
 	public void testInjectNewPasswordWrongPasswordFail() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
+		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		User user = EntityGenerator.generateRandomUser();
 
@@ -287,7 +287,7 @@ public class UserServiceTest {
 	@Test
 	public void testCheckCodeUserNotFound() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
+		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		String email = EntityGenerator.generateRandomString();
 		String code = EntityGenerator.generateRandomString();
@@ -306,7 +306,7 @@ public class UserServiceTest {
 	@Test
 	public void testCheckCodeWrongCodeFail() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
+		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		User user = EntityGenerator.generateRandomUser();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
@@ -349,7 +349,7 @@ public class UserServiceTest {
 	@Test
 	public void testResetPasswordFirstStepUserNotFoundFail() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
+		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 		String email = EntityGenerator.generateRandomString();
 		try {
 			service.resetPasswordFirstStep(email);
@@ -382,7 +382,7 @@ public class UserServiceTest {
 	@Test
 	public void testResetPasswordSecondStepUserNotFoundFail() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
+		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
@@ -399,7 +399,7 @@ public class UserServiceTest {
 	@Test
 	public void testResetPasswordSecondWrongResetCodeFail() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		thrown.expectMessage(ErrorUtils.USER_NOT_FOUND);
+		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);

@@ -10,8 +10,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.result.DeleteResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(CrudDAO.class.getSimpleName());
 	/**
 	 * Database
 	 */
@@ -50,7 +46,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 
 	@Override
 	public boolean delete(final String id) throws EpickurException {
-		LOG.debug("Delete with id: " + id);
+		log.debug("Delete with id: " + id);
 		final Document filter = convertAttributeToDocument("_id", new ObjectId(id));
 		return deleteDocument(filter);
 	}
@@ -111,7 +107,6 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	 * Check if the query is a success
 	 *
 	 * @param deleteResult The result of the query
-	 * @param type         The type of the query
 	 * @return True if the query is a success
 	 */
 	private boolean isDeleted(final DeleteResult deleteResult) {

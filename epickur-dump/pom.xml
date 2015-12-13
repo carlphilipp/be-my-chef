@@ -20,10 +20,18 @@
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-utils</artifactId>
 		</dependency>
+
+		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<!-- Lomnok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
 

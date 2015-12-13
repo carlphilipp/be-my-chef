@@ -1,6 +1,6 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.utils.Info.LOG_COLL;
+import static com.epickur.api.dao.CollectionsName.LOG_COLL;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

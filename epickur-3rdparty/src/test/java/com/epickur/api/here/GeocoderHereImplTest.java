@@ -1,9 +1,8 @@
-package com.epickur.api.geocoder.here;
+package com.epickur.api.here;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import com.epickur.api.config.AmazonConfigTest;
 import com.epickur.api.config.GeocoderConfigTest;
 import org.junit.Test;
 
