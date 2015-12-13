@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-@PropertySource("classpath:epickur-dev.properties")
+@PropertySource("classpath:email-test-data.properties")
 @Configuration
 @Import(
 		PropertySourcesConfig.class
