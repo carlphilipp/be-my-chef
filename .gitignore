@@ -3,4 +3,5 @@
 .idea/
 *.classpath
 *.project
+/epickur-config/src/main/resources/epickur-dev.properties
 *.iml
