@@ -10,10 +10,26 @@ For full endpoint documentation please go [here](epickur-rest/apidoc/index.html)
 Dependency is designed that way:
 
 ```
-Rest -> Service -> DAO -> Utils -> Entity -> Logging
-	    \                
-	     `-> 3rd Party 
-	      `-> Database dump
+             Logging                        Config
+               |_____________________         |
+               |                     |        |
+             Commons                Test      |
+               |                     |        |
+               |                     |        |
+             Entity                  |        |
+               |                     |        |
+               |                     |        |
+             Utils                   |        |
+       ________|________             |        |
+      |        |        |            |        |
+ 3rd Party    DAO      Dump          |        |
+      |________|________|            |        |
+               |                     |        |
+            Service                  |        |
+               |_____________________|        |
+                          |___________________|
+                          |
+                         Rest
 ```
 
 The test module contains classes for test purpose and is used here and there. 
