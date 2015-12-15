@@ -42,14 +42,6 @@ public class UserValidator extends Validator {
 	}
 
 	/**
-	 * @param voucher The voucher
-	 */
-	//	private void checkVoucherData(final Voucher voucher) {
-	//		VoucherValidator validator = (VoucherValidator) FactoryValidator.getValidator("voucher");
-	//		validator.checkVoucher(voucher, "order");
-	//	}
-
-	/**
 	 * @param email The user email
 	 * @param check The check code
 	 */

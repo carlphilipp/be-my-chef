@@ -58,16 +58,16 @@ public class SimpleAccessRightsAspect {
 		validateLogicAccessRights(joinPoint, operation, endpointType, key);
 	}
 
-	private Method getMethodFromJointPoint(final JoinPoint joinPoint) {
+	protected Method getMethodFromJointPoint(final JoinPoint joinPoint) {
 		final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		return signature.getMethod();
 	}
 
-	private void validateMatrixAccessRights(final Role role, final Operation operation, final EndpointType endpointType) {
+	protected void validateMatrixAccessRights(final Role role, final Operation operation, final EndpointType endpointType) {
 		MatrixAccessRights.check(role, operation, endpointType);
 	}
 
-	private void validateLogicAccessRights(final JoinPoint joinPoint, final Operation operation, final EndpointType endpointType, final Key key)
+	protected void validateLogicAccessRights(final JoinPoint joinPoint, final Operation operation, final EndpointType endpointType, final Key key)
 			throws EpickurException {
 		final Object[] args = joinPoint.getArgs();
 		if (endpointType == DISH) {
@@ -86,14 +86,14 @@ public class SimpleAccessRightsAspect {
 		}
 	}
 
-	private void handleDish(final Operation operation, final Object[] args, final Key key) throws EpickurException {
+	protected void handleDish(final Operation operation, final Object[] args, final Key key) throws EpickurException {
 		if (operation == CREATE) {
 			final Dish dish = (Dish) args[0];
 			dishValidator.checkCreateData(dish);
 			final String catererId = dish.getCaterer().getId().toHexString();
 			final Caterer caterer = catererDAO.read(catererId);
 			if (caterer == null) {
-				throw new EpickurNotFoundException(DISH_NOT_FOUND, catererId);
+				throw new EpickurNotFoundException(CATERER_NOT_FOUND, catererId);
 			}
 			dishValidator.checkRightsBefore(key.getRole(), CREATE, caterer, key);
 		} else if (operation == UPDATE) {
@@ -109,7 +109,7 @@ public class SimpleAccessRightsAspect {
 		}
 	}
 
-	private void handleVoucher(final Operation operation, final Object[] args) throws EpickurParsingException {
+	protected void handleVoucher(final Operation operation, final Object[] args) throws EpickurParsingException {
 		if (operation == READ) {
 			final String code = (String) args[0];
 			voucherValidator.checkVoucherCode(code);
@@ -121,7 +121,7 @@ public class SimpleAccessRightsAspect {
 		}
 	}
 
-	private void handleCaterer(final Operation operation, final Object[] args) throws EpickurException {
+	protected void handleCaterer(final Operation operation, final Object[] args) throws EpickurException {
 		if (operation == CREATE) {
 			final Caterer caterer = (Caterer) args[0];
 			catererValidator.checkCreateCaterer(caterer);
@@ -139,7 +139,7 @@ public class SimpleAccessRightsAspect {
 		}
 	}
 
-	private void handleUser(final Operation operation, final Object[] args) {
+	protected void handleUser(final Operation operation, final Object[] args) {
 		if (operation == UPDATE) {
 			final String id = (String) args[0];
 			final User user = (User) args[1];
@@ -152,17 +152,13 @@ public class SimpleAccessRightsAspect {
 		}
 	}
 
-	private void handleOrder(final Operation operation, final Object[] args) {
+	protected void handleOrder(final Operation operation, final Object[] args) {
 		if (operation == UPDATE) {
 			final String orderId = (String) args[1];
 			final Order order = (Order) args[2];
 			if (!order.getId().toHexString().equals(orderId)) {
 				throw new EpickurIllegalArgument("The parameter orderId and the field order.id should match");
 			}
-		} else if (operation == READ) {
-			final String userId = (String) args[0];
-			final String orderId = (String) args[1];
-			userValidator.checkReadOneOrder(userId, orderId);
 		}
 	}
 }

@@ -19,6 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Commons Util. Collections of function that can be needed anywhere in the project and that have no dependencies on other libraries.
+ *
  * @author cph
  */
 @Slf4j
@@ -32,7 +34,7 @@ public class CommonsUtil {
 	public static Object[] parsePickupdate(final String pickupdate) {
 		Object[] result = null;
 		if (pickupdate != null) {
-			final Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):(([0-5][0-9])))$");
+			final Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):([0-5][0-9]))$");
 			final Matcher matcher = pattern.matcher(pickupdate);
 			if (matcher.matches()) {
 				result = new Object[2];
