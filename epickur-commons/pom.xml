@@ -11,7 +11,7 @@
 	<artifactId>epickur-commons</artifactId>
 	<packaging>jar</packaging>
 
-	<name>Common</name>
+	<name>Commons</name>
 	<description>Collection of function used anywhere in the application.</description>
 
 	<dependencies>

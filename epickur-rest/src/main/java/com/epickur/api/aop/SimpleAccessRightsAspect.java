@@ -24,7 +24,6 @@ import java.lang.reflect.Method;
 import static com.epickur.api.enumeration.EndpointType.*;
 import static com.epickur.api.enumeration.Operation.*;
 import static com.epickur.api.utils.ErrorConstants.CATERER_NOT_FOUND;
-import static com.epickur.api.utils.ErrorConstants.DISH_NOT_FOUND;
 
 @Aspect
 public class SimpleAccessRightsAspect {

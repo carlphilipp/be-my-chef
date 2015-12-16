@@ -10,26 +10,26 @@ For full endpoint documentation please go [here](epickur-rest/apidoc/index.html)
 ASCII dependency graph:
 
 ```
-             Logging                        Config
-               |_____________________         |
-               |                     |        |
-             Commons                Test      |
-               |                     |        |
-               |                     |        |
-             Entity                  |        |
-               |                     |        |
-               |                     |        |
-             Utils                   |        |
-       ________|________             |        |
-      |        |        |            |        |
- 3rd Party    DAO      Dump          |        |
-      |________|________|            |        |
-               |                     |        |
-            Service                  |        |
-               |_____________________|        |
-                          |___________________|
-                          |
-                         Rest
+                 Logging                        Config
+                   |_____________________         |
+                   |                     |        |
+                 Commons                Test      |
+                   |                     |        |
+                   |                     |        |
+                 Entity                  |        |
+                   |                     |        |
+                   |                     |        |
+                 Utils                   |        |
+           ________|________             |        |
+          |        |        |            |        |
+     3rd Party    DAO      Dump          |        |
+          |________|________|            |        |
+                   |                     |        |
+                Service                  |        |
+                   |_____________________|        |
+                              |___________________|
+                              |
+                             Rest
 ```
 
 The test module contains basic features for testing. It is used in the compile scope so other sub-modules can use during their tests.
@@ -79,11 +79,11 @@ to
 
 `epickur-rest/test/resources/test.properties`
 
-## Lombok
+####Lombok
 
 Lombok is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE.
 
-## Tomcat
+####Tomcat
 
 To be able to deploy with maven, you need to add to your computer a new environement variable:
 `CATALINA_BASE="/opt/tomcat"`
@@ -99,15 +99,6 @@ The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/co
 
 ###Test
 
-
-####From Eclipse:
-
-MongoDB and Tomcat8 must be started.
-
-~~Run as JUnit test `com.epickur.AllTests.java`. It will run the unit testing and integration testing.~~
-
-####From Maven:
-
 MongoDB must be started.
 
 Unit testing: `mvn test`
@@ -118,7 +109,11 @@ Integration testing: `mvn integration-test`
 ###Build
 ####From Maven:
 
-Generate war with Maven: `mvn package`. The generated jar will be in their respective project target directory. The final war in `epickur-rest/target`.
+Generate war with Maven: 
+
+`mvn clean package [-DskipTests] [-Dpmd.skip=true]` 
+
+The generated jar will be in their respective project target directory. The final war in `epickur-rest/target`.
 
 Generate documentation with Maven in local: `mvn site` and then `mvn site:stage` to aggregate all the website in one. Find the result in the parent project `target/stage`.
 
