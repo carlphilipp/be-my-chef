@@ -7,7 +7,7 @@ For full endpoint documentation please go [here](epickur-rest/apidoc/index.html)
 
 ### Multi module project
 
-Dependency is designed that way:
+ASCII dependency graph:
 
 ```
              Logging                        Config
@@ -32,7 +32,7 @@ Dependency is designed that way:
                          Rest
 ```
 
-The test module contains classes for test purpose and is used here and there. 
+The test module contains basic features for testing. It is used in the compile scope so other sub-modules can use during their tests.
 When adding new module, take care of cyclic dependency error: Two modules must not depends on each other.
 
 ###Prerequisites:
@@ -49,13 +49,15 @@ Clone the Git repository in working directory:
 Add Tomcat8 in Eclipse as a server.
 
 ###Configure
+
+## Project files
 Two files need to be duplicated and renamed:
 
-`epickur-utils/src/main/resources/env/local.template.properties`
+`epickur-config/src/main/resources/epickur-dev.template.properties`
 
 to
 
-`epickur-utils/src/main/resources/env/local.properties`
+`epickur-config/src/main/resources/epickur-dev.properties`
 
 
 This file contains all the properties of the application. Some are linked with your environment like:
@@ -67,7 +69,7 @@ This file contains all the properties of the application. Some are linked with y
   mongo.port            = 27017
 ```
 
-All those properties need to be updated to fit your environment.
+Some properties need to be updated to fit your environment.
 
 There is also the same things for the test file:
 
@@ -77,13 +79,19 @@ to
 
 `epickur-rest/test/resources/test.properties`
 
-Another notable file:
+## Lombok
 
-`epickur-rest/src/main/resources/epickur.properties`
+Lombok is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE.
 
-This file contains all the application properties. Maven will inject the value of your local.properties into this fiel. The properties of that file should not be modified.
+## Tomcat
 
-Lambock is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE.
+To be able to deploy with maven, you need to add to your computer a new environement variable:
+`CATALINA_BASE="/opt/tomcat"`
+
+The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/conf/catalina.properties`
+
+`spring.profiles.active=dev`
+
 
 ###Maven profiles
 * local: The default one that should be used in local
@@ -129,7 +137,7 @@ The ant plugin run several commands:
 * Stop tomcat
 * Clean webbapps directory
 * Clean other temp directory
-* Push ROOT.war (war generatered) to $TOMCAT/webapps
+* Push ROOT.war (war generatered) to $CATALINA_BASE/webapps
 * Start tomcat
 
 To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml`
@@ -152,11 +160,6 @@ To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml`
 Issue with Maven dependencies not deployed
 
 Bug in m2Clipse
-
-###Known issue with Jersey
-Some errors are not properly routed like #API-22.
-See ticket in Jersey Jira: https://java.net/jira/browse/JERSEY-2722
-It's not a big deal, the developer needs to pass a correctly formed request anyway.
 
 ###Credits
 
