@@ -24,7 +24,7 @@ import java.util.Enumeration;
  */
 @Slf4j
 @Component("logRequestFilter")
-public final class LogRequestFilter extends OncePerRequestFilter {
+public class LogRequestFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private LogDAO logDAO;

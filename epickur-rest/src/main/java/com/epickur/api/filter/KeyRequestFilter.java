@@ -30,7 +30,7 @@ import java.io.IOException;
  */
 @Slf4j
 @Component("keyRequestFilter")
-public final class KeyRequestFilter extends OncePerRequestFilter {
+public class KeyRequestFilter extends OncePerRequestFilter {
 
 	/**
 	 * Key dao
@@ -79,7 +79,7 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 
 	protected void handleKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain,
 			final String paramKey) throws EpickurException, IOException, ServletException {
-		String apiKey = utils.getAPIKey();
+		final String apiKey = utils.getAPIKey();
 		if (paramKey.equals(apiKey)) {
 			handleAPIKey(request, response, filterChain);
 		} else {
@@ -89,7 +89,7 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 
 	protected void handleAPIKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
 			throws IOException, ServletException {
-		Key readKey = new Key();
+		final Key readKey = new Key();
 		readKey.setRole(Role.EPICKUR_WEB);
 		request.setAttribute("key", readKey);
 		filterChain.doFilter(request, response);
@@ -97,7 +97,7 @@ public final class KeyRequestFilter extends OncePerRequestFilter {
 
 	protected void handlePrivateKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain,
 			final String paramKey) throws EpickurException, IOException, ServletException {
-		Key key = keyDAO.read(paramKey);
+		final Key key = keyDAO.read(paramKey);
 		if (!utils.isValid(key)) {
 			abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.INVALID_KEY);
 		} else {

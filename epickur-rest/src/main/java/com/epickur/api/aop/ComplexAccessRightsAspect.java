@@ -52,7 +52,7 @@ public class ComplexAccessRightsAspect extends AccesRightsAspect {
 		}
 	}
 
-	private void handleUser(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
+	protected void handleUser(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
 		final String userId;
 		if (operation == READ) {
 			userId = (String) objects[0];
@@ -66,7 +66,7 @@ public class ComplexAccessRightsAspect extends AccesRightsAspect {
 		userValidator.checkUserRightsAfter(key.getRole(), key.getUserId(), user, operation);
 	}
 
-	private void handleCaterer(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
+	protected void handleCaterer(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
 		final Caterer caterer = (Caterer) objects[0];
 		final String catererId = caterer.getId().toHexString();
 		final Caterer read = catererDAO.read(catererId);
@@ -76,7 +76,7 @@ public class ComplexAccessRightsAspect extends AccesRightsAspect {
 		catererValidator.checkRightsAfter(key.getRole(), key.getUserId(), read, operation);
 	}
 
-	private void handleDish(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
+	protected void handleDish(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
 		final String dishId;
 		if (operation == UPDATE) {
 			dishId = ((Dish) objects[0]).getId().toHexString();
@@ -90,7 +90,7 @@ public class ComplexAccessRightsAspect extends AccesRightsAspect {
 		dishValidator.checkRightsAfter(key.getRole(), key.getUserId(), read, operation);
 	}
 
-	private void handleOrder(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
+	protected void handleOrder(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
 		final String orderId;
 		if (operation == READ) {
 			orderId = (String) objects[0];

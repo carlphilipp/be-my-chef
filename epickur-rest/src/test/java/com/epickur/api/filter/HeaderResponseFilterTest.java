@@ -1,33 +1,22 @@
 package com.epickur.api.filter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.junit.Test;
-import org.mockito.Mockito;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+import static org.mockito.Mockito.*;
 
 public class HeaderResponseFilterTest {
-
-	// TODO create test
 	
 	@Test
-	public void testCreate() throws IOException {
-//		ContainerResponseContext responseContext = mock(ContainerResponseContext.class);
-//		MultivaluedMap<String, Object> map = new MultivaluedHashMap<>();
-//		Mockito.when(responseContext.getHeaders()).thenReturn(map);
-//
-//		HeaderResponseFilter filter = new HeaderResponseFilter();
-//		filter.filter(null, responseContext);
-//		assertTrue(!responseContext.getHeaders().isEmpty());
-//		MultivaluedMap<String, Object> headers = responseContext.getHeaders();
-//		List<Object> test = headers.get("Access-Control-Allow-Origin");
-//		assertEquals(1, test.size());
-//		String expected = "*";
-//		String actual = (String)test.get(0);
-//		assertEquals(expected, actual);
+	public void testCreate() throws IOException, ServletException {
+		HttpServletResponse response = mock(HttpServletResponse.class);
+		FilterChain filterChain = mock(FilterChain.class);
+		HeaderResponseFilter filter = new HeaderResponseFilter();
+		filter.doFilterInternal(null, response, filterChain);
+		verify(filterChain, times(1)).doFilter(null, response);
 	}
 }

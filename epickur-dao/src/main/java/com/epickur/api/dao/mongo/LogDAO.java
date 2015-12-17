@@ -20,7 +20,7 @@ import static com.epickur.api.dao.CollectionsName.LOG_COLL;
  */
 @Slf4j
 @Repository
-public final class LogDAO extends CrudDAO<Log> {
+public class LogDAO extends CrudDAO<Log> {
 
 	@PostConstruct
 	protected void initCollection() {
