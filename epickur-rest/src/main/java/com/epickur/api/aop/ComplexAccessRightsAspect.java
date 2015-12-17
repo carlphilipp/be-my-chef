@@ -1,6 +1,5 @@
 package com.epickur.api.aop;
 
-import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.UserDAO;
@@ -9,16 +8,11 @@ import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
-import com.epickur.api.validator.CatererValidator;
-import com.epickur.api.validator.DishValidator;
-import com.epickur.api.validator.UserValidator;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
 import static com.epickur.api.enumeration.EndpointType.*;
@@ -27,24 +21,12 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
 import static com.epickur.api.utils.ErrorConstants.*;
 
 @Aspect
-public class ComplexAccessRightsAspect {
-
-	@Autowired
-	private HttpServletRequest request;
-
-	@Autowired
-	private UserValidator userValidator;
-	@Autowired
-	private DishValidator dishValidator;
-	@Autowired
-	private CatererValidator catererValidator;
+public class ComplexAccessRightsAspect extends AccesRightsAspect {
 
 	@Autowired
 	private UserDAO userDAO;
 	@Autowired
 	private DishDAO dishDAO;
-	@Autowired
-	private CatererDAO catererDAO;
 	@Autowired
 	private OrderDAO orderDAO;
 
@@ -68,11 +50,6 @@ public class ComplexAccessRightsAspect {
 		} else if (type == ORDER) {
 			handleOrder(operation, objects, key);
 		}
-	}
-
-	private Method getMethodFromJointPoint(final JoinPoint joinPoint) {
-		final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		return signature.getMethod();
 	}
 
 	private void handleUser(final Operation operation, final Object[] objects, final Key key) throws EpickurException {

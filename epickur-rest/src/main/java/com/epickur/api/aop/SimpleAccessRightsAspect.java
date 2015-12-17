@@ -1,6 +1,5 @@
 package com.epickur.api.aop;
 
-import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.*;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
@@ -10,15 +9,14 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.exception.EpickurParsingException;
-import com.epickur.api.validator.*;
+import com.epickur.api.validator.MatrixAccessRights;
+import com.epickur.api.validator.VoucherValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
 import static com.epickur.api.enumeration.EndpointType.*;
@@ -26,22 +24,10 @@ import static com.epickur.api.enumeration.Operation.*;
 import static com.epickur.api.utils.ErrorConstants.CATERER_NOT_FOUND;
 
 @Aspect
-public class SimpleAccessRightsAspect {
+public class SimpleAccessRightsAspect extends AccesRightsAspect {
 
-	@Autowired
-	private HttpServletRequest request;
-
-	@Autowired
-	private UserValidator userValidator;
-	@Autowired
-	private DishValidator dishValidator;
-	@Autowired
-	private CatererValidator catererValidator;
 	@Autowired
 	private VoucherValidator voucherValidator;
-
-	@Autowired
-	private CatererDAO catererDAO;
 
 	@Before("execution(* com.epickur.api.rest.*.*(..)) && @annotation( com.epickur.api.aop.ValidateSimpleAccessRights)")
 	public void checkAccessRights(final JoinPoint joinPoint) throws Throwable {
@@ -55,11 +41,6 @@ public class SimpleAccessRightsAspect {
 
 		validateMatrixAccessRights(key.getRole(), operation, endpointType);
 		validateLogicAccessRights(joinPoint, operation, endpointType, key);
-	}
-
-	protected Method getMethodFromJointPoint(final JoinPoint joinPoint) {
-		final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		return signature.getMethod();
 	}
 
 	protected void validateMatrixAccessRights(final Role role, final Operation operation, final EndpointType endpointType) {

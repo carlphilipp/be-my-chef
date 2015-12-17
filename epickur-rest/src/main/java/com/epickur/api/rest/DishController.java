@@ -521,7 +521,7 @@ public class DishController {
 			@RequestParam("types") @NotBlank(message = "{dish.search.types}") final String types,
 			@RequestParam(value = "limit", defaultValue = "50") @Min(value = 1, message = "{dish.search.limit}") final Integer limit,
 			@RequestParam(value = "at", required = false) final String at,
-			@RequestParam("searchtext") final String searchtext,
+			@RequestParam(value = "searchtext", required = false) final String searchtext,
 			@RequestParam(value = "distance", defaultValue = "500") @Min(value = 50, message = "{dish.search.distance}") final Integer distance)
 			throws EpickurException {
 		final List<DishType> dishTypes = utils.stringToListDishType(types);

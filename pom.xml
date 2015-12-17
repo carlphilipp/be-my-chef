@@ -522,6 +522,7 @@
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-test</artifactId>
 				<version>${project.version}</version>
+				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
