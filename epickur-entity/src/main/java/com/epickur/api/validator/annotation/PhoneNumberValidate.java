@@ -44,6 +44,9 @@ public @interface PhoneNumberValidate {
 				constraintContext.buildConstraintViolationWithTemplate("{user.phoneNumber}").addConstraintViolation();
 				isValid = false;
 			}
+			if(!isValid){
+				constraintContext.disableDefaultConstraintViolation();
+			}
 			return isValid;
 		}
 	}

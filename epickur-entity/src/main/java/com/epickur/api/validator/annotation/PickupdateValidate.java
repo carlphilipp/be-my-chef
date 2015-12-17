@@ -47,8 +47,7 @@ public @interface PickupdateValidate {
 				if (result == null) {
 					constraintContext.buildConstraintViolationWithTemplate(
 							"The field order.pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
-									+ order
-									.getPickupdate()).addConstraintViolation();
+									+ order.getPickupdate()).addConstraintViolation();
 					isValid = false;
 				} else {
 					Caterer caterer = order.getDish().getCaterer();
@@ -58,6 +57,9 @@ public @interface PickupdateValidate {
 						isValid = false;
 					}
 				}
+			}
+			if(!isValid){
+				constraintContext.disableDefaultConstraintViolation();
 			}
 			return isValid;
 		}

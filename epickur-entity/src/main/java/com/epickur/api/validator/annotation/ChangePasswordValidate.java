@@ -40,6 +40,9 @@ public @interface ChangePasswordValidate {
 						.addConstraintViolation();
 				isValid = false;
 			}
+			if(!isValid){
+				constraintContext.disableDefaultConstraintViolation();
+			}
 			return isValid;
 		}
 	}
