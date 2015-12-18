@@ -7,6 +7,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Cleanup;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -47,20 +48,15 @@ public class AccessRightsUserIT {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
-		InputStreamReader in = null;
-		try {
-			in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
-			Properties prop = new Properties();
-			prop.load(in);
-			String address = prop.getProperty("address");
-			String path = prop.getProperty("api.path");
-			END_POINT = address + path;
-			jsonMimeType = "application/json";
-			mapper = new ObjectMapper();
-			EntityGenerator.setupDB();
-		} finally {
-			IOUtils.closeQuietly(in);
-		}
+		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
+		Properties prop = new Properties();
+		prop.load(in);
+		String address = prop.getProperty("address");
+		String path = prop.getProperty("api.path");
+		END_POINT = address + path;
+		jsonMimeType = "application/json";
+		mapper = new ObjectMapper();
+		EntityGenerator.setupDB();
 	}
 
 	@AfterClass
@@ -83,22 +79,16 @@ public class AccessRightsUserIT {
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
-			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
+		assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
+
 	}
 
 	@Test
@@ -112,19 +102,12 @@ public class AccessRightsUserIT {
 
 		HttpGet request = new HttpGet(URL);
 		request.addHeader("content-type", jsonMimeType);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
 
 	@Test
@@ -141,19 +124,12 @@ public class AccessRightsUserIT {
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
 
 	@Test
@@ -166,20 +142,13 @@ public class AccessRightsUserIT {
 
 		HttpDelete request = new HttpDelete(URL);
 		request.addHeader("content-type", jsonMimeType);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
 
 	// User Super_User
@@ -197,25 +166,18 @@ public class AccessRightsUserIT {
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		IOUtils.closeQuietly(br);
+		IOUtils.closeQuietly(in);
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
+		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
@@ -229,22 +191,15 @@ public class AccessRightsUserIT {
 
 		HttpGet request = new HttpGet(URL);
 		request.addHeader("content-type", jsonMimeType);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
+		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
@@ -259,22 +214,15 @@ public class AccessRightsUserIT {
 
 		HttpGet request = new HttpGet(URL);
 		request.addHeader("content-type", jsonMimeType);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
-			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
+		assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
@@ -293,22 +241,15 @@ public class AccessRightsUserIT {
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
-			assertNotEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		assertNotEquals("Wrong status code: " + statusCode + " with " + jsonResult, 403, statusCode);
 	}
 
 	@Test
@@ -328,22 +269,15 @@ public class AccessRightsUserIT {
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
+		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
@@ -355,19 +289,12 @@ public class AccessRightsUserIT {
 
 		HttpDelete request = new HttpDelete(URL);
 		request.addHeader("content-type", jsonMimeType);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
 
 	// User User
@@ -385,23 +312,16 @@ public class AccessRightsUserIT {
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
-			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
+		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
@@ -415,22 +335,15 @@ public class AccessRightsUserIT {
 
 		HttpGet request = new HttpGet(URL);
 		request.addHeader("content-type", jsonMimeType);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
+		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
@@ -445,22 +358,15 @@ public class AccessRightsUserIT {
 
 		HttpGet request = new HttpGet(URL);
 		request.addHeader("content-type", jsonMimeType);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-			assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
-			assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		assertFalse("Content error: " + jsonResult, jsonResult.has("error"));
+		assertFalse("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
@@ -479,19 +385,12 @@ public class AccessRightsUserIT {
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
 
 	@Test
@@ -511,22 +410,15 @@ public class AccessRightsUserIT {
 		HttpPut request = new HttpPut(URL);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
-			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
-			assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
-			assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
+		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		assertTrue("Content error: " + jsonResult, jsonResult.has("error"));
+		assertTrue("Content error: " + jsonResult, jsonResult.has("message"));
 	}
 
 	@Test
@@ -538,18 +430,11 @@ public class AccessRightsUserIT {
 
 		HttpDelete request = new HttpDelete(URL);
 		request.addHeader("content-type", jsonMimeType);
-		BufferedReader br = null;
-		InputStreamReader in = null;
-		try {
-			HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-			in = new InputStreamReader(httpResponse.getEntity().getContent());
-			br = new BufferedReader(in);
-			String obj = br.readLine();
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
-		} finally {
-			IOUtils.closeQuietly(br);
-			IOUtils.closeQuietly(in);
-		}
+		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
+		String obj = br.readLine();
+		int statusCode = httpResponse.getStatusLine().getStatusCode();
+		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
 }

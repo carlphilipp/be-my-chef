@@ -6,6 +6,7 @@ import com.epickur.api.exception.HereException;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,19 +125,16 @@ public class Here {
 	 */
 	protected final String connectUrl(final String address) throws HereException {
 		log.debug("URL: " + address);
-		String toreturn = null;
-		InputStreamReader in = null;
+		String toreturn;
 		try {
 			final URL url = new URL(address);
 			final URLConnection uc = url.openConnection();
 			uc.setConnectTimeout(1000);
 			final Charset charset = Charset.forName("UTF8");
-			in = new InputStreamReader(uc.getInputStream(), charset);
+			@Cleanup final InputStreamReader in = new InputStreamReader(uc.getInputStream(), charset);
 			toreturn = IOUtils.toString(in);
 		} catch (final IOException e) {
 			throw new HereException("Error: " + HereException.CONNECT_ERROR, e);
-		} finally {
-			IOUtils.closeQuietly(in);
 		}
 		return toreturn;
 	}

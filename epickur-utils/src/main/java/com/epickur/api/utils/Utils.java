@@ -8,6 +8,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
+import lombok.Cleanup;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -69,15 +70,9 @@ public class Utils {
 	 * @throws IOException If something went wrong
 	 */
 	public String getAPIKey() throws IOException {
-		InputStreamReader in = null;
-		String apiKey = null;
-		try {
-			final Charset charset = Charset.forName("UTF8");
-			in = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("api.key"), charset);
-			apiKey = IOUtils.toString(in);
-		} finally {
-			IOUtils.closeQuietly(in);
-		}
+		final Charset charset = Charset.forName("UTF8");
+		@Cleanup final InputStreamReader in = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("api.key"), charset);
+		final String apiKey = IOUtils.toString(in);
 		return apiKey;
 	}
 

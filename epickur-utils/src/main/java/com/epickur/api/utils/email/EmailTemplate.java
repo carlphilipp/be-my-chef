@@ -6,6 +6,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,13 +51,10 @@ public class EmailTemplate {
 	@PostConstruct
 	private void loadTemplates() {
 		final String base = getBaseTemplate();
-		InputStream is = null;
-		InputStream is2 = null;
-		Reader in = null;
 		try {
 			final Charset charset = Charset.forName("UTF-8");
-			is = utils.getResource("email-template.json");
-			in = new InputStreamReader(is, charset);
+			@Cleanup InputStream is = utils.getResource("email-template.json");
+			@Cleanup Reader in = new InputStreamReader(is, charset);
 			final ObjectMapper mapper = new ObjectMapper();
 			final JsonNode obj = mapper.readTree(in);
 			final Iterator<Entry<String, JsonNode>> iterator = obj.fields();
@@ -66,7 +64,7 @@ public class EmailTemplate {
 				final String subject = node.get("subject").asText();
 				final String folder = node.get("folder").asText();
 				final String file = node.get("file").asText();
-				is2 = utils.getResource("templates/" + folder + "/" + file);
+				@Cleanup InputStream is2 = utils.getResource("templates/" + folder + "/" + file);
 				final String content = IOUtils.toString(is2);
 				final String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
 				final Map<String, String> res = new HashMap<>();
@@ -76,10 +74,6 @@ public class EmailTemplate {
 			}
 		} catch (IOException e) {
 			log.error("Error while trying to access the email templates", e);
-		} finally {
-			IOUtils.closeQuietly(is);
-			IOUtils.closeQuietly(in);
-			IOUtils.closeQuietly(is2);
 		}
 	}
 
@@ -90,18 +84,13 @@ public class EmailTemplate {
 	 */
 	private String getBaseTemplate() {
 		String base = null;
-		InputStream is = null;
-		Reader in = null;
 		try {
 			final Charset charset = Charset.forName("UTF-8");
-			is = utils.getResource("templates/base.html");
-			in = new InputStreamReader(is, charset);
+			@Cleanup InputStream is = utils.getResource("templates/base.html");
+			@Cleanup Reader in = new InputStreamReader(is, charset);
 			base = IOUtils.toString(in);
 		} catch (IOException e) {
 			log.error("Error while trying to access the base template", e);
-		} finally {
-			IOUtils.closeQuietly(is);
-			IOUtils.closeQuietly(in);
 		}
 		return base;
 	}

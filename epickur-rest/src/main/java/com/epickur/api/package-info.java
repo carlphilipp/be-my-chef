@@ -1,5 +1,5 @@
 /**
- * Base package. It contains the resource configuration and starts all the cron jobs.
+ * Base package. Contains the Spring initialization classes.
  *
  * @author cph
  * @version 1.0
