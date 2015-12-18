@@ -1,29 +1,24 @@
 package com.epickur.api.validator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurWrongAccessRights;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author cph
  * @version 1.0
- *
  */
+@Slf4j
 public final class MatrixAccessRights {
-
-	/** Logger */
-	private static final Logger LOG = LogManager.getLogger(MatrixAccessRights.class.getSimpleName());
 
 	/**
 	 * The access rights matrix
 	 */
 	private static final boolean[][] MATRIX = new boolean[][] {
-// @formatter:off
+			// @formatter:off
 
 	// Endpoint	    // 	-------------------------- USER --------------------------|------------------ ORDER ------------------|------------------------------- CATERER -------------------------------|------------------ DISH ------------------|----------------- VOUCHER -----------------|
 	// Method		// 	create - read - update - delete - readAll - resetPassword - create - read - update - delete - readAll - create - read - update - delete - readAll - readDishes - payementInfo - create - read - update - delete - search - create - read - update - delete - generate 
@@ -44,21 +39,18 @@ public final class MatrixAccessRights {
 
 	/**
 	 * Check if the role/operation/endpoint is allowed to access the resource.
-	 * 
-	 * @param role
-	 *            The User Role.
-	 * @param operation
-	 *            The operation type.
-	 * @param endpoint
-	 *            The Endpoint.
+	 *
+	 * @param role      The User Role.
+	 * @param operation The operation type.
+	 * @param endpoint  The Endpoint.
 	 */
 	public static void check(final Role role, final Operation operation, final EndpointType endpoint) {
 		final int line = getLine(role);
 		final int column = getColumn(operation, endpoint);
-		LOG.trace("[LINE] Operation: " + role + " " + line);
-		LOG.trace("[COLUMN] Role: " + operation + " with " + endpoint + " " + column);
+		log.trace("[LINE] Operation: " + role + " " + line);
+		log.trace("[COLUMN] Role: " + operation + " with " + endpoint + " " + column);
 		if (line == -1 || column == -1) {
-			LOG.error("Unable to find the access rights (" + line + ";" + column + ") with " + role + ", " + operation + " and " + endpoint);
+			log.error("Unable to find the access rights (" + line + ";" + column + ") with " + role + ", " + operation + " and " + endpoint);
 			throw new EpickurWrongAccessRights("Operation: " + operation + " - Endpoint: " + endpoint
 					+ ". This error should not happen. Developer error.");
 		}
@@ -68,8 +60,7 @@ public final class MatrixAccessRights {
 	}
 
 	/**
-	 * @param role
-	 *            The rold
+	 * @param role The rold
 	 * @return The line number
 	 */
 	private static int getLine(final Role role) {
@@ -94,10 +85,8 @@ public final class MatrixAccessRights {
 	}
 
 	/**
-	 * @param operation
-	 *            The operation
-	 * @param endpoint
-	 *            The endpoint
+	 * @param operation The operation
+	 * @param endpoint  The endpoint
 	 * @return The column number
 	 */
 	private static int getColumn(final Operation operation, final EndpointType endpoint) {
@@ -165,8 +154,7 @@ public final class MatrixAccessRights {
 	}
 
 	/**
-	 * @param endpoint
-	 *            The endpoint
+	 * @param endpoint The endpoint
 	 * @return The offset
 	 */
 	private static int getOffset(final EndpointType endpoint) {

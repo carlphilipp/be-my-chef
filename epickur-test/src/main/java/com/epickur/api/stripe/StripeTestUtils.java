@@ -1,25 +1,21 @@
 package com.epickur.api.stripe;
 
+import com.stripe.Stripe;
+import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.stripe.Stripe;
-
+@Slf4j
 public class StripeTestUtils {
-
-	/** Logger **/
-	private static final Logger LOG = LogManager.getLogger(StripeTestUtils.class.getSimpleName());
 
 	public static void setupStripe() {
 		try {
 			Stripe.apiKey = getStripeProperty();
 		} catch (IOException e) {
-			LOG.error(e.getLocalizedMessage(), e);
+			log.error(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -31,20 +27,15 @@ public class StripeTestUtils {
 		try {
 			return getStripeProperty();
 		} catch (IOException e) {
-			LOG.error(e.getLocalizedMessage(), e);
+			log.error(e.getLocalizedMessage(), e);
 		}
 		return null;
 	}
 
 	protected static String getStripeProperty() throws IOException {
-		InputStream in = null;
-		try {
-			in = StripeTestUtils.class.getResource("/stripe-test.properties").openStream();
-			final Properties prop = new Properties();
-			prop.load(in);
-			return prop.getProperty("stripe.key");
-		} finally {
-			IOUtils.closeQuietly(in);
-		}
+		@Cleanup InputStream in = StripeTestUtils.class.getResource("/stripe-test.properties").openStream();
+		final Properties prop = new Properties();
+		prop.load(in);
+		return prop.getProperty("stripe.key");
 	}
 }

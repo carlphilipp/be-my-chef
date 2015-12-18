@@ -26,6 +26,12 @@
 			<groupId>com.stripe</groupId>
 			<artifactId>stripe-java</artifactId>
 		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
 	</dependencies>
 
 	<reporting>

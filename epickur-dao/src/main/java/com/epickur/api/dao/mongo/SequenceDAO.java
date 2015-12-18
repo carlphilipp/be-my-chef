@@ -4,8 +4,7 @@ import com.epickur.api.exception.EpickurDBException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonInt32;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +20,13 @@ import static com.epickur.api.dao.CollectionsName.SEQUENCE_COLL;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Repository
 public class SequenceDAO {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(SequenceDAO.class.getSimpleName());
 	@Autowired
 	private MongoDatabase db;
-	/**
-	 * Database collection
-	 */
+
 	private MongoCollection<Document> coll;
 
 	/**
@@ -60,7 +54,7 @@ public class SequenceDAO {
 		Document update = new Document("$inc", change);
 		try {
 			Document res = coll.findOneAndUpdate(query, update);
-			LOG.debug("Read next Order id");
+			log.debug("Read next Order id");
 			if (res != null) {
 				return Integer.toHexString(Integer.parseInt(res.get(sequenceField).toString()));
 			} else {

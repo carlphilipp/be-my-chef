@@ -25,6 +25,19 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<!-- Remove resources env and log4j.xml -->
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>epickur-dev.template.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+	</build>
+
 	<reporting>
 		<plugins>
 			<plugin>

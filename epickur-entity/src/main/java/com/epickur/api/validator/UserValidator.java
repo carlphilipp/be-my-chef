@@ -10,8 +10,6 @@ import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 
 /**
@@ -19,11 +17,6 @@ import org.bson.types.ObjectId;
  * @version 1.0
  */
 public class UserValidator extends Validator {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(UserValidator.class.getSimpleName());
 
 	/**
 	 * Constructor

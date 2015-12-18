@@ -5,7 +5,7 @@
 		"file":"registration_user.html"
 	},
 	"registration_admin": {
-		"subject":"New Registration - @@EMAIL@@",
+		"subject":"New Registration - @@USER_EMAIL@@",
 		"folder":"registration",
 		"file":"registration_admin.html"
 	},

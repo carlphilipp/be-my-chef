@@ -9,8 +9,7 @@ import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.joda.time.DateTime;
@@ -29,13 +28,10 @@ import static com.mongodb.client.model.Filters.*;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Repository
 public class VoucherDAO extends CrudDAO<Voucher> {
 
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(VoucherDAO.class.getSimpleName());
 	/**
 	 * Not implemented
 	 */
@@ -53,7 +49,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 
 	@Override
 	public Voucher create(final Voucher voucher) throws EpickurException {
-		LOG.debug("Create voucher: " + voucher);
+		log.debug("Create voucher: " + voucher);
 		Document doc = voucher.getDocumentDBView();
 		insertDocument(doc);
 		return Voucher.getDocumentAsVoucher(doc);
@@ -61,7 +57,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 
 	@Override
 	public Voucher read(final String code) throws EpickurException {
-		LOG.debug("Read voucher with code: " + code);
+		log.debug("Read voucher with code: " + code);
 		Document query = convertAttributeToDocument("code", code);
 		Document find = findDocument(query);
 		return processAfterQuery(find);
@@ -69,7 +65,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 
 	@Override
 	public Voucher update(final Voucher voucher) throws EpickurException {
-		LOG.debug("Update voucher: " + voucher);
+		log.debug("Update voucher: " + voucher);
 		Document filter = convertAttributeToDocument("_id", voucher.getId());
 		Document update = voucher.getUpdateQuery();
 		Document updated = updateDocument(filter, update);
@@ -97,7 +93,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 	 */
 	public List<Voucher> readToClean() throws EpickurException {
 		try {
-			LOG.debug("Read all vouchers to clean");
+			log.debug("Read all vouchers to clean");
 			DateTime date = new DateTime();
 			Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()),
 					eq("status", Status.VALID.getType()));

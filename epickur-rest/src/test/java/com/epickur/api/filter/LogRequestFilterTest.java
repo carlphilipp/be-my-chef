@@ -38,7 +38,7 @@ public class LogRequestFilterTest {
 
 	@Test
 	public void testDoFilterInternal() throws IOException, ServletException {
-		Enumeration<String> params = mock(Enumeration.class);
+		Enumeration params = mock(Enumeration.class);
 		when(params.hasMoreElements()).thenReturn(true, false);
 		when(params.nextElement()).thenReturn("param");
 		when(request.getRequestURL()).thenReturn(new StringBuffer());
@@ -50,7 +50,7 @@ public class LogRequestFilterTest {
 
 	@Test
 	public void testDoFilterInternalFail() throws IOException, ServletException, EpickurException {
-		Enumeration<String> params = mock(Enumeration.class);
+		Enumeration params = mock(Enumeration.class);
 		when(params.hasMoreElements()).thenReturn(true, false);
 		when(params.nextElement()).thenReturn("param");
 		when(request.getRequestURL()).thenReturn(new StringBuffer());

@@ -6,6 +6,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.BsonArray;
@@ -27,13 +28,9 @@ import static com.epickur.api.dao.CollectionsName.USER_COLL;
  * @author cph
  * @version 1.0
  */
+@Slf4j
 @Repository
 public class UserDAO extends CrudDAO<User> {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger LOG = LogManager.getLogger(UserDAO.class.getSimpleName());
 
 	@PostConstruct
 	protected void initCollection() {
@@ -42,7 +39,7 @@ public class UserDAO extends CrudDAO<User> {
 
 	@Override
 	public User create(final User user) throws EpickurException {
-		LOG.debug("Create user: " + user);
+		log.debug("Create user: " + user);
 		Document doc = user.getDocumentDBView();
 		insertDocument(doc);
 		return User.getDocumentAsUser(doc);
@@ -50,7 +47,7 @@ public class UserDAO extends CrudDAO<User> {
 
 	@Override
 	public User read(final String id) throws EpickurException {
-		LOG.debug("Read user with id: " + id);
+		log.debug("Read user with id: " + id);
 		Document query = convertAttributeToDocument("_id", new ObjectId(id));
 		Document find = findDocument(query);
 		return processAfterQuery(find);
@@ -64,7 +61,7 @@ public class UserDAO extends CrudDAO<User> {
 	 * @throws EpickurException if an epickur exception occurred
 	 */
 	public User readWithName(final String name) throws EpickurException {
-		LOG.debug("Read user with name: " + name);
+		log.debug("Read user with name: " + name);
 		Document query = convertAttributeToDocument("name", name);
 		Document find = findDocument(query);
 		return processAfterQuery(find);
@@ -78,7 +75,7 @@ public class UserDAO extends CrudDAO<User> {
 	 * @throws EpickurException if an epickur exception occurred
 	 */
 	public User readWithEmail(final String email) throws EpickurException {
-		LOG.debug("Read user with email: " + email);
+		log.debug("Read user with email: " + email);
 		Document query = convertAttributeToDocument("email", email);
 		Document find = findDocument(query);
 		return processAfterQuery(find);
@@ -86,7 +83,7 @@ public class UserDAO extends CrudDAO<User> {
 
 	@Override
 	public User update(final User user) throws EpickurException {
-		LOG.debug("Update user: " + user);
+		log.debug("Update user: " + user);
 		Document filter = convertAttributeToDocument("_id", user.getId());
 		Document update = user.getUpdateQuery();
 		Document updated = updateDocument(filter, update);

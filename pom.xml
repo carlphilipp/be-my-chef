@@ -73,6 +73,7 @@
 		<junit.version>4.12</junit.version>
 		<lombok.version>1.16.6</lombok.version>
 		<mongo.version>3.1.1</mongo.version>
+		<spring.version>4.2.4.RELEASE</spring.version>
 	</properties>
 
 	<build>
@@ -534,7 +535,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-framework-bom</artifactId>
-				<version>4.2.3.RELEASE</version>
+				<version>${spring.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
