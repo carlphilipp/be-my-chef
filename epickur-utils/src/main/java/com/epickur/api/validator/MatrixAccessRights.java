@@ -20,13 +20,13 @@ public final class MatrixAccessRights {
 	private static final boolean[][] MATRIX = new boolean[][] {
 			// @formatter:off
 
-	// Endpoint	    // 	-------------------------- USER --------------------------|------------------ ORDER ------------------|------------------------------- CATERER -------------------------------|------------------ DISH ------------------|----------------- VOUCHER -----------------|
-	// Method		// 	create - read - update - delete - readAll - resetPassword - create - read - update - delete - readAll - create - read - update - delete - readAll - readDishes - payementInfo - create - read - update - delete - search - create - read - update - delete - generate 
-	// Column		//   0     - 1    - 2      - 3      - 4       - 5             - 6      - 7    - 8      - 9      - 10      - 11     - 12   - 13     - 14     - 15      - 16         - 17           - 18     - 19   - 20     - 21     - 22     - 23     - 24   - 25     - 26     - 27
+	// Endpoint	    // 	-------------------------- USER --------------------------|------------------ ORDER ------------------|------------------------------- CATERER -------------------------------|---------------------- DISH ------------------------|----------------- VOUCHER -----------------|
+	// Method		// 	create - read - update - delete - readAll - resetPassword - create - read - update - delete - readAll - create - read - update - delete - readAll - readDishes - payementInfo - create - read - update - delete - readAll - search - create - read - update - delete - generate
+	// Column		//   0     - 1    - 2      - 3      - 4       - 5             - 6      - 7    - 8      - 9      - 10      - 11     - 12   - 13     - 14     - 15      - 16         - 17           - 18     - 19   - 20     - 21     , 22      - 23     - 24     - 25   - 26     - 27     - 28
 /* Administrator */		{true  , true , true   , true   , true    , true          , true   , true , true   , true   , true    , true   , true , true   , true   , true    , true       , true         , true   , true , true   , true   , true   , false  , true , false  , false  , true  }, 	/* Administrator */
 /* Super User */		{false , true , true   , false  , false   , false         , true   , true , true   , false  , true    , false  , true , true   , false  , false   , true       , false        , true   , true , true   , true   , true   , false  , true , false  , false  , false }, 	/* Super User */
 /* User */				{false , true , true   , false  , false   , false         , true   , true , true   , false  , true    , false  , true , false  , false  , false   , true       , false        , false  , true , false  , false  , true   , false  , true , false  , false  , false }, 	/* User */
-/* Epickur-Web */		{true  , false, false  , false  , false   , true          , false  , false, false  , false  , false   , false  , true , false  , false  , false   , true       , false        , false  , true, false  , false  , true   , false  , true , false  , false  , false }, 	/* Epickur-Web */
+/* Epickur-Web */		{true  , false, false  , false  , false   , true          , false  , false, false  , false  , false   , false  , true , false  , false  , false   , true       , false        , false  , true , false  , false  , true   , false  , true , false  , false  , false }, 	/* Epickur-Web */
 
 // @formatter:on
 	};
@@ -106,10 +106,10 @@ public final class MatrixAccessRights {
 			line = offset + 3;
 			break;
 		case READ_ALL:
-			if (endpoint.equals(EndpointType.DISH)) {
-				throw new EpickurWrongAccessRights("Operation: " + operation + " - Endpoint: " + endpoint
-						+ ". This error should not happen. Developer error.");
-			}
+//			if (endpoint.equals(EndpointType.DISH)) {
+//				throw new EpickurWrongAccessRights(
+//						"Operation: " + operation + " - Endpoint: " + endpoint 	+ ". This error should not happen. Developer error.");
+//			}
 			line = offset + 4;
 			break;
 		case RESET_PASSWORD:
@@ -138,7 +138,7 @@ public final class MatrixAccessRights {
 				throw new EpickurWrongAccessRights("Operation: " + operation + " - Endpoint: " + endpoint
 						+ ". This error should not happen. Developer error.");
 			}
-			line = offset + 4;
+			line = offset + 5;
 			break;
 		case GENERATE_VOUCHER:
 			if (!endpoint.equals(EndpointType.VOUCHER)) {

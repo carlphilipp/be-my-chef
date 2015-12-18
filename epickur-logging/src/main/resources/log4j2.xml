@@ -21,6 +21,10 @@
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
 		</Logger>
+		<Logger name="org.springframework" level="info">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="File"/>
+		</Logger>
 		<Logger name="com.cribbstechnologies.clients.mandrill" level="warn">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>

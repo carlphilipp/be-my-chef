@@ -10,7 +10,6 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
-import lombok.extern.slf4j.Slf4j;
 import org.bson.*;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
@@ -27,7 +26,7 @@ import static com.epickur.api.dao.CollectionsName.DISH_COLL;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+//@Slf4j
 @Repository
 public class DishDAO extends CrudDAO<Dish> {
 
@@ -38,7 +37,7 @@ public class DishDAO extends CrudDAO<Dish> {
 
 	@Override
 	public Dish create(final Dish dish) throws EpickurException {
-		log.debug("Create dish: {}", dish);
+		//log.debug("Create dish: {}", dish);
 		final Document doc = dish.getDocumentDBView();
 		insertDocument(doc);
 		return Dish.getDocumentAsDish(doc);
@@ -46,7 +45,7 @@ public class DishDAO extends CrudDAO<Dish> {
 
 	@Override
 	public Dish read(final String id) throws EpickurException {
-		log.debug("Read dish with id: {}", id);
+		//log.debug("Read dish with id: {}", id);
 		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
 		final Document find = findDocument(query);
 		return processAfterQuery(find);
@@ -54,7 +53,7 @@ public class DishDAO extends CrudDAO<Dish> {
 
 	@Override
 	public Dish update(final Dish dish) throws EpickurException {
-		log.debug("Update dish: {}", dish);
+		//log.debug("Update dish: {}", dish);
 		final Document filter = convertAttributeToDocument("_id", dish.getId());
 		final Document update = dish.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
@@ -134,7 +133,7 @@ public class DishDAO extends CrudDAO<Dish> {
 		find.put("caterer.workingTimes.hours." + day, openClose);
 		final List<Dish> dishes = new ArrayList<>();
 		MongoCursor<Document> cursor = null;
-		log.debug("Searching: {}", find);
+		//log.debug("Searching: {}", find);
 		try {
 			cursor = getColl().find(find).limit(limit).iterator();
 			while (cursor.hasNext()) {

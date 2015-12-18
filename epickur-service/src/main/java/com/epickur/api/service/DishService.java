@@ -8,6 +8,7 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.here.IGeocoder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +31,16 @@ public class DishService {
 	/**
 	 * The DAO {@link DishDAO}.
 	 */
-	@Autowired
+	//@Autowired
 	private DishDAO dao;
+
+	public DishService(){
+
+	}
+
+	public DishService(DishDAO dao){
+		this.dao = dao;
+	}
 
 	/**
 	 * Create a {@link Dish}
@@ -62,7 +71,7 @@ public class DishService {
 	 * @return a list of {@link Dish}
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
-	public final List<Dish> readAll() throws EpickurException {
+	public List<Dish> readAll() throws EpickurException {
 		return dao.readAll();
 	}
 
