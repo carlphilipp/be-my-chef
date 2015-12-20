@@ -6,6 +6,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ public class NoKeyController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@JsonView(User.PublicView.class)
 	@RequestMapping(value = "/check", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> checkUser(
 			@RequestParam("email") @NotBlank(message = "{nokey.check.user.email}") final String email,
@@ -202,6 +204,7 @@ public class NoKeyController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@JsonView(User.PublicView.class)
 	@ValidateSimpleAccessRights(operation = RESET_PASSWORD, endpoint = NO_KEY)
 	@RequestMapping(value = "/reset/users/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> resetPasswordSecondStep(

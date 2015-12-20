@@ -7,6 +7,7 @@ import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.validator.operation.Update;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
@@ -28,6 +29,7 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 	/**
 	 * Id
 	 */
+	@JsonView(User.PublicView.class)
 	@NotNull(message = "{id.null}", groups = { Update.class })
 	private ObjectId id;
 	/**

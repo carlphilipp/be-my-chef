@@ -9,6 +9,7 @@ import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
 import com.epickur.api.validator.operation.Create;
 import com.epickur.api.validator.operation.Update;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@JsonView(User.PublicView.class)
 	@ValidateSimpleAccessRights(operation = CREATE, endpoint = USER)
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(
@@ -142,6 +144,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@JsonView(User.PublicView.class)
 	@ValidateSimpleAccessRights(operation = READ, endpoint = USER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
@@ -193,6 +196,7 @@ public class UserController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@JsonView(User.PublicView.class)
 	@ValidateSimpleAccessRights(operation = UPDATE, endpoint = USER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(
@@ -200,16 +204,6 @@ public class UserController {
 			@RequestBody @Validated(Update.class) final User user) throws EpickurException {
 		if (StringUtils.isNotBlank(user.getPassword()) && StringUtils.isNotBlank(user.getNewPassword())) {
 			userService.injectNewPassword(user);
-			user.setNewPassword(null);
-		} else {
-			// Set password to null to prevent from updating the field with
-			// whatever irrelevant value that could have been sent in request
-			// field "password".
-			user.setPassword(null);
-		}
-		// TODO to move in service or User
-		if (user.getAllow() != null) {
-			user.setAllow(null);
 		}
 		final User result = userService.update(user);
 		return new ResponseEntity<>(result, HttpStatus.OK);
@@ -292,6 +286,7 @@ public class UserController {
 	 * @return A list of User.
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
+	@JsonView(User.PublicView.class)
 	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = USER)
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {

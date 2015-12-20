@@ -83,9 +83,6 @@ public class UserService {
 
 		emailUtils.emailNewRegistration(userCreated, code);
 
-		// We do not send back the password
-		userCreated.setPassword(null);
-		userCreated.setRole(null);
 		userCreated.setCode(code);
 		return userCreated;
 	}
@@ -103,10 +100,7 @@ public class UserService {
 	 */
 	@ValidateComplexAccessRights(operation = READ, type = USER)
 	public User read(final String id) throws EpickurException {
-		final User user = userDAO.read(id);
-		user.setPassword(null);
-		user.setRole(null);
-		return user;
+		return userDAO.read(id);
 	}
 
 	/**
@@ -127,13 +121,7 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public List<User> readAll() throws EpickurException {
-		final List<User> users = userDAO.readAll();
-		for (User user : users) {
-			// We do not send back the password or the role
-			user.setPassword(null);
-			user.setRole(null);
-		}
-		return users;
+		return userDAO.readAll();
 	}
 
 	/**
@@ -144,11 +132,7 @@ public class UserService {
 	@ValidateComplexAccessRights(operation = UPDATE, type = USER)
 	public User update(final User user) throws EpickurException {
 		user.prepareForUpdateIntoDB();
-		final User res = userDAO.update(user);
-		// We do not send back the password or the role
-		res.setPassword(null);
-		res.setRole(null);
-		return res;
+		return userDAO.update(user);
 	}
 
 	/**
@@ -192,8 +176,6 @@ public class UserService {
 				key.setKey(userFound.getKey());
 				key.setRole(userFound.getRole());
 				keyService.create(key);
-				userFound.setPassword(null);
-				userFound.setRole(null);
 			} else {
 				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 			}
@@ -247,8 +229,6 @@ public class UserService {
 		} else {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 		}
-		userFound.setPassword(null);
-		userFound.setRole(null);
 		return userFound;
 	}
 
@@ -284,12 +264,8 @@ public class UserService {
 			final String newEncryptedPassword = PasswordManager.createPasswordManager(newPassword).createDBPassword();
 			user.setPassword(newEncryptedPassword);
 			user.prepareForUpdateIntoDB();
-			final User res = userDAO.update(user);
-			res.setPassword(null);
-			res.setRole(null);
-			return res;
+			return userDAO.update(user);
 		}
-
 	}
 
 	/**

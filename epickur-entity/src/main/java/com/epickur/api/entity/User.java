@@ -14,6 +14,7 @@ import com.epickur.api.validator.operation.Update;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -45,70 +46,56 @@ import java.io.IOException;
 @EqualsAndHashCode(callSuper = true)
 public class User extends AbstractMainDBEntity {
 
-	/**
-	 * Name
-	 */
+	public interface PublicView {}
+	public interface PrivateView extends PublicView {}
+
+	@JsonView(PublicView.class)
 	@NotBlank(message = "{user.name.null}", groups = { Create.class })
 	private String name;
-	/**
-	 * First
-	 */
+
+	@JsonView(PublicView.class)
 	private String first;
-	/**
-	 * Last
-	 */
+
+	@JsonView(PublicView.class)
 	private String last;
-	/**
-	 * Password
-	 */
+
+	@JsonView(PrivateView.class)
 	@NotBlank(message = "{user.password.null}", groups = { Create.class })
 	private String password;
-	/**
-	 * Email
-	 */
+
+	@JsonView(PublicView.class)
 	@NotBlank(message = "{user.email.null}", groups = { Create.class })
 	private String email;
-	/**
-	 * Phone number
-	 */
+
+	@JsonView(PublicView.class)
 	@PhoneNumberValidate(groups = { Create.class, Update.class })
 	private PhoneNumber phoneNumber;
-	/**
-	 * Zip code
-	 */
+
+	@JsonView(PublicView.class)
 	@NotBlank(message = "{user.zipcode.null}", groups = { Create.class })
 	private String zipcode;
-	/**
-	 * State
-	 */
+
+	@JsonView(PublicView.class)
 	@NotBlank(message = "{user.state.null}", groups = { Create.class })
 	private String state;
-	/**
-	 * Country
-	 */
+
+	@JsonView(PublicView.class)
 	@NotBlank(message = "{user.country.null}", groups = { Create.class })
 	private String country;
 
-	/**
-	 * Indicate if allowed to login
-	 */
+	@JsonView(PublicView.class)
 	private Integer allow;
-	/**
-	 * Code generated the first time on create
-	 */
+
 	@JsonIgnore
 	private String code;
-	/**
-	 * API key generated
-	 */
+
+	@JsonView(PublicView.class)
 	private String key;
-	/**
-	 * New password to check
-	 */
+
+	@JsonView(PrivateView.class)
 	private String newPassword;
-	/**
-	 * Role. Not exposed to User
-	 */
+
+	@JsonView(PrivateView.class)
 	private Role role;
 
 	/**

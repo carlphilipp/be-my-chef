@@ -3,6 +3,7 @@ package com.epickur.api.rest;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.UserService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,7 @@ public class LoginController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
+	@JsonView(User.PublicView.class)
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> login(
 			@RequestParam("email") @NotBlank(message = "{login.email}") final String email,

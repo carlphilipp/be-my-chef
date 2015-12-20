@@ -68,8 +68,6 @@ public class UserServiceTest {
 		User actual = service.create(user, false);
 
 		assertNotNull(actual.getId());
-		assertNull(actual.getPassword());
-		assertNull(actual.getRole());
 		assertNotNull(actual.getCreatedAt());
 		assertNotNull(actual.getUpdatedAt());
 		assertNull(actual.getKey());
@@ -80,8 +78,6 @@ public class UserServiceTest {
 		verify(user, times(1)).setPassword(anyString());
 		verify(user, times(1)).setKey(null);
 		verify(user, times(1)).setRole(Role.USER);
-		verify(userAfterCreate, times(1)).setPassword(null);
-		verify(userAfterCreate, times(1)).setRole(null);
 		verify(userAfterCreate, times(1)).setCode(anyString());
 		verify(emailUtilsMock, times(1)).emailNewRegistration(userAfterCreate, actual.getCode());
 	}
@@ -125,8 +121,6 @@ public class UserServiceTest {
 		User actual = service.login(user.getEmail(), user.getPassword());
 
 		assertNotNull(actual.getId());
-		assertNull(actual.getPassword());
-		assertNull(actual.getRole());
 		assertNotNull(actual.getCreatedAt());
 		assertNotNull(actual.getUpdatedAt());
 		verify(userDAOMock, times(1)).readWithEmail(user.getEmail());
@@ -135,8 +129,6 @@ public class UserServiceTest {
 		verify(keyBusinessMock, times(1)).readWithName(user.getName());
 		verify(keyBusinessMock, times(1)).delete(id.toHexString());
 		verify(keyBusinessMock, times(1)).create(any(Key.class));
-		verify(userAfterRead, times(1)).setPassword(null);
-		verify(userAfterRead, times(1)).setRole(null);
 	}
 
 	@Test
@@ -272,7 +264,6 @@ public class UserServiceTest {
 		try {
 			User actual = service.checkCode(user.getEmail(), code);
 			assertEquals(1, actual.getAllow().intValue());
-			assertNull(actual.getPassword());
 		} finally {
 			verify(userDAOMock, times(1)).readWithEmail(user.getEmail());
 			verify(userDAOMock, times(1)).update(userAfterRead);
@@ -376,7 +367,6 @@ public class UserServiceTest {
 		verify(userDAOMock, times(1)).read(user.getId().toHexString());
 		verify(userDAOMock, times(1)).update(userAfterRead);
 		verify(userAfterRead, times(2)).setPassword(anyString());
-		verify(userAfterRead, times(1)).setRole(null);
 	}
 
 	@Test
