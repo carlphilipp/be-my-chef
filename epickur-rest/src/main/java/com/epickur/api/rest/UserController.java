@@ -33,7 +33,7 @@ import static com.epickur.api.enumeration.Operation.*;
  * @version 1.0
  */
 @RestController
-@RequestMapping(value = "/api/users")
+@RequestMapping(value = "/users")
 public class UserController {
 
 	@Autowired

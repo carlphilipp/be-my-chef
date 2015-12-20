@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-@RequestMapping(value = "/api/login")
+@RequestMapping(value = "/login")
 public class LoginController {
 
 	@Autowired

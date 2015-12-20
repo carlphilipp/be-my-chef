@@ -26,7 +26,7 @@ import static com.epickur.api.enumeration.Operation.RESET_PASSWORD;
  * @version 1.0
  */
 @RestController
-@RequestMapping(value = "/api/nokey")
+@RequestMapping(value = "/nokey")
 public class NoKeyController {
 
 	@Autowired

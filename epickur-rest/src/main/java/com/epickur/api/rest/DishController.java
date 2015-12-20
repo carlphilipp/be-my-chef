@@ -34,7 +34,7 @@ import static com.epickur.api.enumeration.Operation.*;
  * @version 1.0
  */
 @RestController
-@RequestMapping(value = "/api/dishes")
+@RequestMapping(value = "/dishes")
 public class DishController {
 
 	@Autowired

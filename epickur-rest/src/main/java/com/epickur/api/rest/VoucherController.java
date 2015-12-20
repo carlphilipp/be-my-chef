@@ -33,7 +33,7 @@ import static com.epickur.api.enumeration.Operation.READ;
  * @version 1.0
  */
 @RestController
-@RequestMapping(value = "/api/vouchers")
+@RequestMapping(value = "/vouchers")
 public class VoucherController {
 
 	/**
