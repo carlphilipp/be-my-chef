@@ -14,12 +14,33 @@ public class CommonsUtilTest {
 	public ExpectedException thrown = ExpectedException.none();
 
 	@Test
-	public void testParsPickupdate() {
+	public void testParsePickupdate() {
 		Object[] actual = CommonsUtil.parsePickupdate("mon-10:30");
 		assertNotNull(actual);
 		assertEquals(2, actual.length);
 		assertEquals("mon", actual[0]);
 		assertEquals(630, actual[1]);
+	}
+
+	@Test
+	public void testFormatWithAmPm() {
+		String actual = CommonsUtil.formatWithAmPm(0, 10);
+		assertNotNull(actual);
+		assertEquals("12:10AM", actual);
+	}
+
+	@Test
+	public void testFormatWithAmPm2() {
+		String actual = CommonsUtil.formatWithAmPm(0, 6);
+		assertNotNull(actual);
+		assertEquals("12:06AM", actual);
+	}
+
+	@Test
+	public void testConvertToReadableDate() {
+		String actual = CommonsUtil.convertToReadableDate("mon-10:30");
+		assertNotNull(actual);
+		assertEquals("Monday at 10:30AM", actual);
 	}
 
 	@Test
@@ -47,13 +68,13 @@ public class CommonsUtilTest {
 	}
 
 	@Test
-	public void testGetCurrentDateInFormat(){
+	public void testGetCurrentDateInFormat() {
 		String actual = CommonsUtil.getCurrentDateInFormat("yyyy-MM-dd");
 		assertNotNull(actual);
 	}
 
 	@Test
-	public void testGenerateRandomCode(){
+	public void testGenerateRandomCode() {
 		String actual = CommonsUtil.generateRandomCode();
 		assertNotNull(actual);
 	}

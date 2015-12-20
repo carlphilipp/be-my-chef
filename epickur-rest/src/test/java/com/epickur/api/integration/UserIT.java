@@ -177,7 +177,7 @@ public class UserIT {
 
 		// Delete this user
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 
@@ -246,7 +246,7 @@ public class UserIT {
 
 		// Delete this user
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 
@@ -301,7 +301,7 @@ public class UserIT {
 
 		// Delete this user
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 
@@ -355,7 +355,7 @@ public class UserIT {
 
 		// Delete this user
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 	}
@@ -489,7 +489,7 @@ public class UserIT {
 
 		// Delete this user
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		putRequest.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 
@@ -630,12 +630,12 @@ public class UserIT {
 
 		// Delete this order
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
 		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 
@@ -753,13 +753,13 @@ public class UserIT {
 		// Delete this order
 
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
 
 		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 

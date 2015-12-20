@@ -115,11 +115,11 @@ public class KeyRequestFilterTest {
 	public void testProcessKeyException() throws IOException, ServletException, EpickurException {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		doThrow(EpickurException.class).when(filter).handleKey(request, response, filterChain, key.getKey());
-		doNothing().when(filter).abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.INTERNAL_SERVER_ERROR);
+		doNothing().when(filter).abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 
 		filter.processKey(request, response, filterChain, key.getKey());
 
-		verify(filter, times(1)).abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.INTERNAL_SERVER_ERROR);
+		verify(filter, times(1)).abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 	}
 
 	@Test

@@ -120,7 +120,6 @@ public class CatererIT {
 
 		// Create result
 		id = jsonResult.get("id").asText();
-
 	}
 
 	@After
@@ -223,7 +222,7 @@ public class CatererIT {
 
 		// Delete this user
 		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 

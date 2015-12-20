@@ -73,7 +73,7 @@ public class KeyRequestFilter extends OncePerRequestFilter {
 			handleKey(request, response, filterChain, paramKey);
 		} catch (EpickurException e) {
 			log.error(e.getLocalizedMessage(), e);
-			abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.INTERNAL_SERVER_ERROR);
+			abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 		}
 	}
 

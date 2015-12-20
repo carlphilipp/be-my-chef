@@ -2,7 +2,6 @@ package com.epickur.api.exception;
 
 import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.ErrorMessage;
-import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.web.ResponseError;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +23,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Global exception handler. All failing requests not handled anywhere else should be redirected here.
@@ -43,61 +43,39 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Autowired
 	private HttpServletRequest context;
 
-	@Override
-	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status,
-			WebRequest request) {
-		final ErrorMessage errorMessage = new ErrorMessage();
-		errorMessage.setError(HttpStatus.BAD_REQUEST.value());
-		errorMessage.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-		log.warn("Fatal Error: {} {}", ex.getMessage(), ex.getClass(), ex);
-		return new ResponseEntity<>(errorMessage, getHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-
 	@ExceptionHandler({ Throwable.class, Exception.class })
-	public ResponseEntity<?> handleThrowable(final Throwable throwable) {
-		final ErrorMessage errorMessage = new ErrorMessage();
-		errorMessage.setError(HttpStatus.INTERNAL_SERVER_ERROR.value());
-		errorMessage.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+	public ResponseEntity<ErrorMessage> handleThrowable(final Throwable throwable) {
 		log.error("Fatal Error: {} {}", throwable.getLocalizedMessage(), throwable.getClass(), throwable);
-		return new ResponseEntity<Object>(errorMessage, getHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+		return ResponseError.error(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(EpickurException.class)
-	public ResponseEntity<?> handleEpickurException(final EpickurException exception) {
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+	public ResponseEntity<ErrorMessage> handleEpickurException(final EpickurException exception) {
 		if (exception instanceof EpickurNotFoundException) {
-			ErrorMessage errorMessage = new ErrorMessage();
-			errorMessage.setError(HttpStatus.NOT_FOUND.value());
-			errorMessage.setMessage(HttpStatus.NOT_FOUND.getReasonPhrase());
-			if (!StringUtils.isBlank(exception.getMessage())) {
-				errorMessage.addDescription(exception.getMessage());
-			}
-			return new ResponseEntity<>(errorMessage, headers, HttpStatus.NOT_FOUND);
+			return ResponseError.error(HttpStatus.NOT_FOUND);
 		} else if (exception instanceof EpickurParsingException) {
 			log.error(exception.getLocalizedMessage(), exception);
-			return ResponseError.error(HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.INTERNAL_SERVER_ERROR);
+			return ResponseError.error(HttpStatus.BAD_REQUEST);
 		} else if (exception instanceof EpickurDuplicateKeyException) {
 			return ResponseError.error(HttpStatus.CONFLICT, exception.getLocalizedMessage());
 		} else if (exception instanceof EpickurDBException) {
 			final EpickurDBException ex = (EpickurDBException) exception;
 			final StringBuilder stb = new StringBuilder();
-			stb.append("Request " + ex.getOperation() + " failed");
-
+			stb.append("Request ").append(ex.getOperation()).append(" failed");
 			if (ex.getDocument() != null) {
-				stb.append(" with: " + ex.getDocument());
+				stb.append(" with: ").append(ex.getDocument());
 			}
 			if (ex.getId() != null) {
-				stb.append(" - id: " + ex.getId());
+				stb.append(" - id: ").append(ex.getId());
 			}
 			if (ex.getUpdate() != null) {
-				stb.append(" - update: " + ex.getUpdate());
+				stb.append(" - update: ").append(ex.getUpdate());
 			}
 			log.error(exception.getLocalizedMessage() + " - " + stb, ex);
-			return ResponseError.error(HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.INTERNAL_SERVER_ERROR);
+			return ResponseError.error(HttpStatus.BAD_REQUEST);
 		} else if (exception instanceof GeoLocationException) {
 			log.error("Here exception: {}", exception.getLocalizedMessage(), exception);
-			return ResponseError.error(HttpStatus.INTERNAL_SERVER_ERROR, exception.getLocalizedMessage());
+			return ResponseError.error(HttpStatus.BAD_REQUEST, exception.getLocalizedMessage());
 		} else if (exception instanceof OrderStatusException) {
 			final ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setError(HttpStatus.BAD_REQUEST.value());
@@ -108,85 +86,82 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			return new ResponseEntity<>(errorMessage, getHeaders(), HttpStatus.BAD_REQUEST);
 		} else {
 			log.error(exception.getLocalizedMessage(), exception);
-			return ResponseError.error(HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.INTERNAL_SERVER_ERROR);
+			return ResponseError.error(HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<?> handleConstraintViolationException(final ConstraintViolationException exception) {
-		ErrorMessage message = new ErrorMessage();
-		message.setError(HttpStatus.BAD_REQUEST.value());
-		message.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-		Set<ConstraintViolation<?>> constraints = exception.getConstraintViolations();
-		Iterator<ConstraintViolation<?>> iterator = constraints.iterator();
-		while (iterator.hasNext()) {
-			ConstraintViolation<?> constraint = iterator.next();
-			message.addDescription(constraint.getMessage());
-		}
+	public ResponseEntity<ErrorMessage> handleConstraintViolationException(final ConstraintViolationException exception) {
+		final List<String> descriptions = new ArrayList<>();
+		final Set<ConstraintViolation<?>> constraints = exception.getConstraintViolations();
+		descriptions.addAll(constraints.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList()));
 		log.error("Error: {}", exception.getLocalizedMessage(), exception);
-		return new ResponseEntity<>(message, getHeaders(), HttpStatus.BAD_REQUEST);
+		return ResponseError.error(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase(), descriptions);
 	}
 
 	@ExceptionHandler({ IllegalArgumentException.class })
-	public ResponseEntity<?> handleIllegalArgumentException(final IllegalArgumentException exception) {
-		ErrorMessage mess = new ErrorMessage();
-		mess.setError(HttpStatus.BAD_REQUEST.value());
-		mess.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-		if (exception != null && !StringUtils.isBlank(exception.getMessage())) {
-			mess.addDescription(exception.getMessage());
+	public ResponseEntity<ErrorMessage> handleIllegalArgumentException(final IllegalArgumentException exception) {
+		if (!StringUtils.isBlank(exception.getMessage())) {
+			log.error("Error: {}", exception.getMessage(), exception);
+			return ResponseError.error(HttpStatus.BAD_REQUEST);
+		} else {
+			log.error("Error", exception);
+			return ResponseError.error(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase(), exception.getMessage());
 		}
-		log.error("Error: {}", exception.getMessage(), exception);
-		return new ResponseEntity<>(mess, getHeaders(), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler({ EpickurForbiddenException.class })
-	public ResponseEntity<?> handleEpickurForbiddenException(final EpickurForbiddenException exception) {
-		Key key = (Key) context.getAttribute("key");
+	public ResponseEntity<ErrorMessage> handleEpickurForbiddenException(final EpickurForbiddenException exception) {
+		final Key key = (Key) context.getAttribute("key");
 		log.warn("Forbidden : {} {}", exception.getMessage(), key.getId() != null ? " - User Id " + key.getId().toHexString() : "");
-		return ResponseError.error(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+		return ResponseError.error(HttpStatus.FORBIDDEN);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException ex, final HttpHeaders headers,
+			final HttpStatus status,
+			final WebRequest request) {
+		log.warn("Fatal Error: {} {}", ex.getMessage(), ex.getClass(), ex);
+		return changeResponseTypeToObject(ResponseError.error(HttpStatus.BAD_REQUEST));
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleExceptionInternal(final Exception ex, final Object body, final HttpHeaders headers,
+			final HttpStatus status,
+			final WebRequest request) {
+		final Key key = (Key) context.getAttribute("key");
+		log.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getLocalizedMessage(), key.getKey(), key.getUserId(), key.getRole());
+		return changeResponseTypeToObject(ResponseError.error(status));
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers,
+			final HttpStatus status,
+			final WebRequest request) {
+		final BindingResult bidingResult = ex.getBindingResult();
+		final List<ObjectError> errors = bidingResult.getAllErrors();
+		final List<String> descriptions = errors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
+		final Key key = (Key) context.getAttribute("key");
+		log.warn("MethodArgumentNotValidException {} {}", descriptions, key.toString());
+		return changeResponseTypeToObject(ResponseError.error(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase(), descriptions));
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers,
+			final HttpStatus status,
+			final WebRequest request) {
+		final Key key = (Key) context.getAttribute("key");
+		log.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getMessage(), key.getKey(), key.getUserId(), key.getRole());
+		return changeResponseTypeToObject(ResponseError.error(status, status.getReasonPhrase(), "Required request body is probably missing"));
+	}
+
+	private ResponseEntity<Object> changeResponseTypeToObject(ResponseEntity<ErrorMessage> responseEntity) {
+		return new ResponseEntity<>((Object) responseEntity.getBody(), responseEntity.getHeaders(), responseEntity.getStatusCode());
 	}
 
 	private HttpHeaders getHeaders() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		return headers;
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		ErrorMessage message = new ErrorMessage();
-		message.setError(status.value());
-		message.setMessage(status.getReasonPhrase());
-		Key key = (Key) context.getAttribute("key");
-		log.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getLocalizedMessage(), key.getKey(), key.getUserId(), key.getRole());
-		return new ResponseEntity<>(message, headers, status);
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status,
-			WebRequest request) {
-		ErrorMessage message = new ErrorMessage();
-		message.setError(HttpStatus.BAD_REQUEST.value());
-		message.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-		BindingResult bidingResult = ex.getBindingResult();
-		List<ObjectError> errors = bidingResult.getAllErrors();
-		for (ObjectError error : errors) {
-			message.addDescription(error.getDefaultMessage());
-		}
-		Key key = (Key) context.getAttribute("key");
-		log.warn("MethodArgumentNotValidException {} {}", message.getDescriptions(), key.toString());
-		return new ResponseEntity<>(message, getHeaders(), HttpStatus.BAD_REQUEST);
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status,
-			WebRequest request) {
-		ErrorMessage message = new ErrorMessage();
-		message.setError(status.value());
-		message.setMessage(status.getReasonPhrase());
-		message.addDescription("Required request body is probably  missing");
-		Key key = (Key) context.getAttribute("key");
-		log.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getMessage(), key.getKey(), key.getUserId(), key.getRole());
-		return new ResponseEntity<>(message, headers, status);
 	}
 }

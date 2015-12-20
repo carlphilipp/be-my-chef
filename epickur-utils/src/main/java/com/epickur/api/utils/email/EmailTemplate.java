@@ -64,7 +64,7 @@ public class EmailTemplate {
 				final String subject = node.get("subject").asText();
 				final String folder = node.get("folder").asText();
 				final String file = node.get("file").asText();
-				@Cleanup InputStream is2 = utils.getResource("templates/" + folder + "/" + file);
+				@Cleanup final InputStream is2 = utils.getResource("templates/" + folder + "/" + file);
 				final String content = IOUtils.toString(is2);
 				final String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
 				final Map<String, String> res = new HashMap<>();
@@ -86,8 +86,8 @@ public class EmailTemplate {
 		String base = null;
 		try {
 			final Charset charset = Charset.forName("UTF-8");
-			@Cleanup InputStream is = utils.getResource("templates/base.html");
-			@Cleanup Reader in = new InputStreamReader(is, charset);
+			@Cleanup final InputStream is = utils.getResource("templates/base.html");
+			@Cleanup final Reader in = new InputStreamReader(is, charset);
 			base = IOUtils.toString(in);
 		} catch (IOException e) {
 			log.error("Error while trying to access the base template", e);

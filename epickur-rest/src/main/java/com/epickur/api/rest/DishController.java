@@ -248,7 +248,6 @@ public class DishController {
 		}
 	}
 
-	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = DISH)
 	@RequestMapping(value = "/all", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
 		final List<Dish> dishes = dishService.readAll();

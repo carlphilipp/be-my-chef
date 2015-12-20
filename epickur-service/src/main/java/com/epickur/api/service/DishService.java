@@ -8,7 +8,6 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.here.IGeocoder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,14 +30,14 @@ public class DishService {
 	/**
 	 * The DAO {@link DishDAO}.
 	 */
-	//@Autowired
+	@Autowired
 	private DishDAO dao;
 
-	public DishService(){
+	public DishService() {
 
 	}
 
-	public DishService(DishDAO dao){
+	public DishService(DishDAO dao) {
 		this.dao = dao;
 	}
 

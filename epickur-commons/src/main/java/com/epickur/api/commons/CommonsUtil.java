@@ -1,7 +1,7 @@
 package com.epickur.api.commons;
 
+import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 public class CommonsUtil {
-	// TODO create test class for all of them
 
 	/**
 	 * @param pickupdate The pickup date
@@ -45,6 +44,70 @@ public class CommonsUtil {
 			}
 		}
 		return result;
+	}
+
+	public static String convertToReadableDate(final String pickupdate) {
+		final StringBuilder result = new StringBuilder();
+		if (pickupdate != null) {
+			final Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):([0-5][0-9]))$");
+			final Matcher matcher = pattern.matcher(pickupdate);
+			if (matcher.matches()) {
+				result.append(convertToReadableDay(matcher.group(1).toLowerCase()) + " ");
+				// Convert in minutes the given time
+				int hours = Integer.valueOf(matcher.group(3));
+				int mins = Integer.valueOf(matcher.group(4));
+				result.append("at " + formatWithAmPm(hours, mins));
+			}
+		}
+		return result.toString();
+	}
+
+	protected static String convertToReadableDay(final String day) {
+		if (day != null && day.length() != 3) {
+			throw new IllegalArgumentException();
+		}
+		switch (day) {
+		case "mon":
+			return "Monday";
+		case "tue":
+			return "Tuesday";
+		case "wed":
+			return "Wednesday";
+		case "thu":
+			return "Thursday";
+		case "fri":
+			return "Friday";
+		case "sat":
+			return "Saturday";
+		case "sun":
+			return "Sunday";
+		}
+		throw new IllegalArgumentException();
+	}
+
+	public static String formatWithAmPm(int hour, int minute) {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, hour);
+		calendar.set(Calendar.MINUTE, minute);
+		StringBuilder result = new StringBuilder();
+		int hour12FormatLocal = calendar.get(Calendar.HOUR);
+		if (hour12FormatLocal == 0) {
+			hour12FormatLocal = 12;
+		}
+		result.append(hour12FormatLocal);
+		int minuteLocal = calendar.get(Calendar.MINUTE);
+		String minute1;
+		if (minuteLocal < 10) {
+			minute1 = "0" + minuteLocal;
+		} else {
+			minute1 = "" + minuteLocal;
+		}
+		result.append(":" + minute1);
+		int amPm = calendar.get(Calendar.AM_PM);
+		String amPmResult = (amPm == 0) ? "AM" : "PM";
+		result.append(amPmResult);
+
+		return result.toString();
 	}
 
 	/**
@@ -75,36 +138,26 @@ public class CommonsUtil {
 	 * @param output the output path
 	 */
 	public static void createTarGz(final List<String> inputs, final String output) {
-		FileOutputStream dest = null;
-		TarOutputStream out = null;
-		BufferedInputStream origin = null;
 		try {
 			// Output file stream
-			dest = new FileOutputStream(output);
+			@Cleanup final FileOutputStream dest = new FileOutputStream(output);
 
 			// Create a TarOutputStream
-			out = new TarOutputStream(new BufferedOutputStream(dest));
+			@Cleanup final TarOutputStream out = new TarOutputStream(new BufferedOutputStream(dest));
 
 			for (String input : inputs) {
 				final File f = new File(input);
 				out.putNextEntry(new TarEntry(f, f.getName()));
-				origin = new BufferedInputStream(new FileInputStream(f));
+				@Cleanup final BufferedInputStream origin = new BufferedInputStream(new FileInputStream(f));
 				int count;
 				byte[] data = new byte[2048];
 				while ((count = origin.read(data)) != -1) {
 					out.write(data, 0, count);
 				}
 				out.flush();
-				origin.close();
 			}
-			out.close();
-			dest.close();
 		} catch (final IOException e) {
 			log.error("Error while creating tar.gz: {}", e.getLocalizedMessage(), e);
-		} finally {
-			IOUtils.closeQuietly(dest);
-			IOUtils.closeQuietly(out);
-			IOUtils.closeQuietly(origin);
 		}
 	}
 

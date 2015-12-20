@@ -39,7 +39,6 @@
 			<id>carl</id>
 			<name>Carl-Philipp Harmant</name>
 			<email>cp.harmant@gmail.com</email>
-			<url></url>
 			<organization>Be My Chef</organization>
 			<organizationUrl>https://www.bemychef.com.au</organizationUrl>
 			<roles>
@@ -52,7 +51,6 @@
 			<id>boris</id>
 			<name>Boris Guenebaut</name>
 			<email>boris.guenebaut@gmail.com</email>
-			<url></url>
 			<organization>Be My Chef</organization>
 			<organizationUrl>https://www.bemychef.com.au</organizationUrl>
 			<roles>
@@ -72,6 +70,7 @@
 		<jersey.version>2.22.1</jersey.version>
 		<junit.version>4.12</junit.version>
 		<lombok.version>1.16.6</lombok.version>
+		<log4j2.version>2.5</log4j2.version>
 		<mongo.version>3.1.1</mongo.version>
 		<spring.version>4.2.4.RELEASE</spring.version>
 	</properties>
@@ -263,17 +262,6 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -474,11 +462,11 @@
 				<version>2.2</version>
 			</plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>javancss-maven-plugin</artifactId>
-				<version>2.1</version>
-			</plugin>
+			<!--<plugin>-->
+				<!--<groupId>org.codehaus.mojo</groupId>-->
+				<!--<artifactId>javancss-maven-plugin</artifactId>-->
+				<!--<version>2.1</version>-->
+			<!--</plugin>-->
 		</plugins>
 	</reporting>
 
@@ -631,6 +619,26 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>1.7.12</version>
+			</dependency>
+
+			<!-- Logging -->
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${log4j2.version}</version>
+			</dependency>
+
+			<!-- Mapping slf4j to log4j -->
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
+				<version>${log4j2.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>${log4j2.version}</version>
 			</dependency>
 
 			<!-- Lombok -->

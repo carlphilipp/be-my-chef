@@ -22,12 +22,4 @@ public final class ErrorConstants {
 	public static final String INVALID_KEY = "Invalid API key";
 	/** Missing key */
 	public static final String MISSING_KEY = "Missing API key";
-	/** Internal server error */
-	public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
-
-	/**
-	 * Private Constructor
-	 */
-	private ErrorConstants() {
-	}
 }
