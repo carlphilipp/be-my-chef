@@ -30,10 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -46,15 +49,22 @@ public class CatererIT {
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
 
-	private static String URL;
-	private static String URL_NO_KEY;
+	private static final String jsonMimeType = "application/json";
+
+	private static final String ENDPOINT = "caterers";
+
+	private static String PROTOCOL;
+	private static String HOST;
+	private static String PORT;
+	private static String PATH;
+
 	private static String API_KEY;
-	private static String id;
-	private static String name;
+	private static String NAME;
+	private static String ID;
 
 	@AfterClass
 	public static void tearDownAfterClass() throws IOException {
-		EntityGenerator.cleanDB();
+		IntegrationTestUtils.cleanDB();
 	}
 
 	@Before
@@ -62,14 +72,13 @@ public class CatererIT {
 		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
-		String address = prop.getProperty("address");
-		String path = prop.getProperty("api.path");
-		URL_NO_KEY = address + path + "/caterers";
+		PROTOCOL = prop.getProperty("protocol");
+		HOST = prop.getProperty("host");
+		PORT = prop.getProperty("port");
+		PATH = prop.getProperty("api.path");
+
 		User admin = integrationTestUtils.createAdminAndLogin();
 		API_KEY = admin.getKey();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
-
-		String jsonMimeType = "application/json";
 
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
@@ -78,7 +87,7 @@ public class CatererIT {
 		ObjectNode address2 = mapper.createObjectNode();
 		ObjectNode geo = mapper.createObjectNode();
 		ArrayNode coordinates = mapper.createArrayNode();
-		name = RandomStringUtils.randomAlphabetic(10);
+		NAME = RandomStringUtils.randomAlphabetic(10);
 		Float[] coord = new Float[2];
 		coord[0] = -73.97f;
 		coord[1] = 40.77f;
@@ -94,7 +103,7 @@ public class CatererIT {
 		address2.put("country", "USA");
 		location.set("address", address2);
 		location.set("geo", geo);
-		caterer.put("name", name);
+		caterer.put("name", NAME);
 		caterer.set("location", location);
 		caterer.put("description", "Caterer description");
 		caterer.put("manager", "Manager name");
@@ -104,7 +113,14 @@ public class CatererIT {
 
 		caterer.set("workingTimes", mapper.readTree(workingTimes.toStringAPIView()));
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key",API_KEY )
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(caterer.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -119,25 +135,41 @@ public class CatererIT {
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
 		// Create result
-		id = jsonResult.get("id").asText();
+		ID = jsonResult.get("id").asText();
 	}
 
 	@After
 	public void tearDown() throws IOException {
-		if (id != null) {
-			String jsonMimeType = "application/json";
+		if (ID != null) {
 			// Delete
-			HttpDelete request = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-			request.addHeader("content-type", jsonMimeType);
-			HttpClientBuilder.create().build().execute(request);
+			deleteCaterer(ID);
 		}
+	}
+
+	private void deleteCaterer(final String id) throws IOException {
+		// Delete
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key",API_KEY )
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
+		HttpDelete request = new HttpDelete(uri);
+		request.addHeader("content-type", jsonMimeType);
+		HttpClientBuilder.create().build().execute(request);
 	}
 
 	@Test
 	public void testUnauthorized() throws IOException {
 		// Given
-		String jsonMimeType = "application/json";
-		HttpUriRequest request = new HttpGet(URL_NO_KEY);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.build()
+				.expand(ID)
+				.encode();
+		URI uri = uriComponents.toUri();
+		HttpUriRequest request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 
 		// When
@@ -152,7 +184,6 @@ public class CatererIT {
 
 	@Test
 	public void testCreate() throws IOException, EpickurParsingException {
-		String jsonMimeType = "application/json";
 
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
@@ -180,16 +211,21 @@ public class CatererIT {
 		caterer.setLocation(location);
 		caterer.setWorkingTimes(EntityGenerator.generateRandomWorkingTimes());
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key",API_KEY )
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -220,17 +256,21 @@ public class CatererIT {
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		// Delete this caterer
+		deleteCaterer(id);
 	}
 
 	@Test
 	public void testReadOneCaterer() throws IOException {
 		// Read
-		String jsonMimeType = "application/json";
-		HttpUriRequest request = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key",API_KEY )
+				.build()
+				.expand(ID)
+				.encode();
+		URI uri = uriComponents.toUri();
+		HttpUriRequest request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 
 		// Read request
@@ -238,9 +278,7 @@ public class CatererIT {
 
 		// Read result
 		assertEquals(HttpStatus.OK.value(), httpResponse.getStatusLine().getStatusCode());
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(HttpStatus.OK.value(), statusCode);
@@ -250,7 +288,7 @@ public class CatererIT {
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 
-		assertEquals(name, jsonResult.get("name").asText());
+		assertEquals(NAME, jsonResult.get("name").asText());
 		assertNotNull(jsonResult.get("createdAt"));
 		assertNotNull(jsonResult.get("updatedAt"));
 		assertNotNull(jsonResult.get("location"));

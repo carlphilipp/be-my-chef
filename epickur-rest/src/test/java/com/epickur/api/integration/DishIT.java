@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Cleanup;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.*;
@@ -23,10 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Properties;
@@ -42,39 +43,52 @@ public class DishIT {
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
 
-	private static String URL;
-	private static String URL_NO_KEY;
+	private static final String ENDPOINT = "dishes";
+
+	private static String PROTOCOL;
+	private static String HOST;
+	private static String PORT;
+	private static String PATH;
 	private static String API_KEY;
+
 	private static String jsonMimeType = "application/json";
+	private static ObjectMapper mapper;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
-		EntityGenerator.setupDB();
+		IntegrationTestUtils.setupDB();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws EpickurException, IOException {
-		EntityGenerator.cleanDB();
+		IntegrationTestUtils.cleanDB();
 	}
 
 	@Before
 	public void setUp() throws IOException, EpickurException {
-		@Cleanup InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
-		prop.load(in);
-		String address = prop.getProperty("address");
-		String path = prop.getProperty("api.path");
-		URL_NO_KEY = address + path + "/dishes";
-
 		User admin = integrationTestUtils.createAdminAndLogin();
 		API_KEY = admin.getKey();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
+
+		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
+		Properties prop = new Properties();
+		prop.load(in);
+		PROTOCOL = prop.getProperty("protocol");
+		HOST = prop.getProperty("host");
+		PORT = prop.getProperty("port");
+		PATH = prop.getProperty("api.path");
+		mapper = new ObjectMapper();
 	}
 
 	@Test
 	public void testUnauthorized() throws IOException {
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
 		// Given
-		HttpUriRequest request = new HttpGet(URL_NO_KEY);
+		HttpUriRequest request = new HttpGet(uri);
 
 		// When
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -93,9 +107,16 @@ public class DishIT {
 		Caterer cat = integrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
 
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
 		// Create
 		ObjectMapper mapper = new ObjectMapper();
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		// String asText = json.toString();
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
@@ -103,9 +124,7 @@ public class DishIT {
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -123,21 +142,36 @@ public class DishIT {
 		Caterer catererRes = EntityGenerator.getCaererObject(jsonResult.get("caterer").toString());
 		assertEquals(cat, catererRes);
 		List<NutritionFact> nutritionFactsRes = EntityGenerator.getListObject(jsonResult.get("nutritionFacts").toString());
-		for (int i = 0; i < nutritionFactsRes.size(); i++) {
-			assertEquals(dish.getNutritionFacts().size(), nutritionFactsRes.size());
-			assertEquals(dish.getNutritionFacts().get(0).getName(), nutritionFactsRes.get(0).getName());
-			assertEquals(dish.getNutritionFacts().get(0).getValue().doubleValue(), nutritionFactsRes.get(0).getValue().doubleValue(), 0.01);
-			assertEquals(dish.getNutritionFacts().get(0).getUnit().getSymbol(), nutritionFactsRes.get(0).getUnit().getSymbol());
-		}
+		assertNutritionFacts(dish, nutritionFactsRes);
 
 		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		// Delete this dish
+		deleteDish(id);
+	}
+
+	private void deleteDish(final String id) throws IOException {
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
+		HttpDelete requestDelete = new HttpDelete(uri);
 		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
+	}
+
+	private void assertNutritionFacts(final Dish dish, final List<NutritionFact> nutritionFactsRes){
+		for (int i = 0; i < nutritionFactsRes.size(); i++) {
+			assertEquals(dish.getNutritionFacts().size(), nutritionFactsRes.size());
+			assertEquals(dish.getNutritionFacts().get(0).getName(), nutritionFactsRes.get(0).getName());
+			assertEquals(dish.getNutritionFacts().get(0).getValue(), nutritionFactsRes.get(0).getValue(), 0.01);
+			assertEquals(dish.getNutritionFacts().get(0).getUnit().getSymbol(), nutritionFactsRes.get(0).getUnit().getSymbol());
+		}
 	}
 
 	@Test
@@ -148,18 +182,21 @@ public class DishIT {
 		dish.setCaterer(cat);
 
 		// Create
-		ObjectMapper mapper = new ObjectMapper();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
-		String id = null;
+		String id;
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(HttpStatus.OK.value(), statusCode);
@@ -169,14 +206,19 @@ public class DishIT {
 
 		id = jsonResult.get("id").asText();
 		// Read
-		HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+		HttpUriRequest request2 = new HttpGet(uri);
 		request2.addHeader("content-type", jsonMimeType);
 
 		// Read request
 		httpResponse = HttpClientBuilder.create().build().execute(request2);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 
 		// Read result
 		assertEquals(HttpStatus.OK.value(), httpResponse.getStatusLine().getStatusCode());
@@ -195,17 +237,10 @@ public class DishIT {
 		Caterer catererRes = EntityGenerator.getCaererObject(jsonResult.get("caterer").toString());
 		assertEquals(cat, catererRes);
 		List<NutritionFact> nutritionFactsRes = EntityGenerator.getListObject(jsonResult.get("nutritionFacts").toString());
-		for (int i = 0; i < nutritionFactsRes.size(); i++) {
-			assertEquals(dish.getNutritionFacts().size(), nutritionFactsRes.size());
-			assertEquals(dish.getNutritionFacts().get(0).getName(), nutritionFactsRes.get(0).getName());
-			assertEquals(dish.getNutritionFacts().get(0).getValue().doubleValue(), nutritionFactsRes.get(0).getValue().doubleValue(), 0.01);
-			assertEquals(dish.getNutritionFacts().get(0).getUnit().getSymbol(), nutritionFactsRes.get(0).getUnit().getSymbol());
-		}
+		assertNutritionFacts(dish, nutritionFactsRes);
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		// Delete this dish
+		deleteDish(id);
 	}
 
 	@Test
@@ -216,9 +251,14 @@ public class DishIT {
 		dish.setCaterer(cat);
 
 		// Create
-		ObjectMapper mapper = new ObjectMapper();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
@@ -253,9 +293,7 @@ public class DishIT {
 		String id;
 		HttpPut putRequest;
 		httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(HttpStatus.OK.value(), statusCode);
 		jsonResult = mapper.readTree(obj);
@@ -276,15 +314,21 @@ public class DishIT {
 		json.set("caterer", mapper.readTree(caterer2.toStringAPIView()));
 		requestEntity = new StringEntity(json.toString());
 
-		putRequest = new HttpPut(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+
+		putRequest = new HttpPut(uri);
 		putRequest.addHeader("content-type", jsonMimeType);
 		putRequest.setEntity(requestEntity);
 
 		// Put request
 		httpResponse = HttpClientBuilder.create().build().execute(putRequest);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 		jsonResult = mapper.readTree(obj);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
@@ -303,10 +347,8 @@ public class DishIT {
 		assertEquals(caterer2.getName(), caterer3.getName());
 		assertEquals(cat.getLocation().getAddress().getCity(), caterer3.getLocation().getAddress().getCity());
 
-		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		// Delete this dish
+		deleteDish(id);
 	}
 
 	@Test
@@ -316,17 +358,20 @@ public class DishIT {
 		Caterer cat = integrationTestUtils.createCaterer(dish.getCaterer(), null);
 		dish.setCaterer(cat);
 		// Create
-		ObjectMapper mapper = new ObjectMapper();
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readTree(obj);
@@ -336,12 +381,17 @@ public class DishIT {
 		String id = jsonResult.get("id").asText();
 
 		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+		HttpDelete requestDelete = new HttpDelete(uri);
 		requestDelete.addHeader("content-type", jsonMimeType);
 		httpResponse = HttpClientBuilder.create().build().execute(requestDelete);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(HttpStatus.OK.value(), statusCode2);
 		jsonResult = mapper.readTree(obj);
@@ -353,16 +403,19 @@ public class DishIT {
 		assertEquals(true, Boolean.valueOf(jsonResult.get("deleted").toString()));
 
 		// Read
-		HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+		HttpUriRequest request2 = new HttpGet(uri);
 		request2.addHeader("content-type", jsonMimeType);
 
 		// Read request
 		httpResponse = HttpClientBuilder.create().build().execute(request2);
-		IOUtils.closeQuietly(br);
-		IOUtils.closeQuietly(in);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
@@ -384,17 +437,26 @@ public class DishIT {
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-19:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
-				+ URLEncoder.encode(address, "UTF-8"));
+
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("pickupdate", pickupdate)
+				.queryParam("types", type)
+				.queryParam("limit", limit)
+				.queryParam("searchtext", URLEncoder.encode(address, "UTF-8"))
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
 
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
@@ -408,16 +470,25 @@ public class DishIT {
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-16:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
-				+ URLEncoder.encode(address, "UTF-8"));
+
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("pickupdate", pickupdate)
+				.queryParam("types", type)
+				.queryParam("limit", limit)
+				.queryParam("searchtext", URLEncoder.encode(address, "UTF-8"))
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		ObjectMapper mapper = new ObjectMapper();
 		List<?> jsonResult = mapper.readValue(obj, List.class);
@@ -430,17 +501,26 @@ public class DishIT {
 		String limit = "100";
 		String address = "832 W. Wrightwood, Chicago, Illinois";
 		String pickupdate = "mon-22:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
-				+ URLEncoder.encode(address, "UTF-8"));
+
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("pickupdate", pickupdate)
+				.queryParam("types", type)
+				.queryParam("limit", limit)
+				.queryParam("searchtext", URLEncoder.encode(address, "UTF-8"))
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
 
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);
@@ -453,7 +533,9 @@ public class DishIT {
 		String limit = "100";
 		String address = "388 Bourke St Melbourne, Australia";
 		String pickupdate = "mon-19:00";
-		HttpGet request = new HttpGet(URL + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
+
+		// TODO see with new Spring version if the fixed the bug of param not encoded in utf8 properly
+		HttpGet request = new HttpGet(PROTOCOL + "://" + HOST + ":" + PORT + "/" + PATH + "/" + ENDPOINT + "?key=" + API_KEY + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
 				+ URLEncoder.encode(address, "UTF-8"));
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -461,9 +543,7 @@ public class DishIT {
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + httpResponse.getEntity(), 200, statusCode);
 
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jsonResult = mapper.readValue(obj, ArrayNode.class);

@@ -34,10 +34,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,20 +55,27 @@ public class UserIT {
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
 
-	private static String URL;
-	private static String URL_NO_KEY;
-	private static String URL_EXECUTE_ORDER;
-	private static String name;
-	private static String start;
-	private static String end;
-	private static String id;
+	private static final String ENDPOINT = "users";
+	private static final String ENDPOINT_ORDER = "orders";
+	private static final String ENDPOINT_NOKEY = "nokey";
+	private static final String ENDPOINT_NOKEY_EXECUTE = "execute";
+	private static final String jsonMimeType = "application/json";
+
+	private static String PROTOCOL;
+	private static String HOST;
+	private static String PORT;
+	private static String PATH;
+
 	private static String API_KEY;
+	private static String NAME;
+	private static String EMAIL;
+	private static String ID;
 
 	private static ObjectMapper mapper;
 
 	@AfterClass
 	public static void afterClass() throws IOException {
-		EntityGenerator.cleanDB();
+		IntegrationTestUtils.cleanDB();
 	}
 
 	@Before
@@ -73,56 +83,53 @@ public class UserIT {
 		StripeTestUtils.setupStripe();
 
 		mapper = new ObjectMapper();
-		@Cleanup InputStreamReader in = new InputStreamReader(UserIT.class.getClass().getResourceAsStream("/test.properties"));
+
+		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
-		String address = prop.getProperty("address");
-		String path = prop.getProperty("api.path");
-
-		URL_NO_KEY = address + path + "/users";
-		URL_EXECUTE_ORDER = address + path + "/nokey/execute";
+		PROTOCOL = prop.getProperty("protocol");
+		HOST = prop.getProperty("host");
+		PORT = prop.getProperty("port");
+		PATH = prop.getProperty("api.path");
 
 		User admin = integrationTestUtils.createAdminAndLogin();
 		API_KEY = admin.getKey();
-		URL = URL_NO_KEY + "?key=" + API_KEY;
 
-		name = RandomStringUtils.randomAlphabetic(10);
-		String password = RandomStringUtils.randomAlphabetic(10);
-		start = RandomStringUtils.randomAlphabetic(5);
-		end = RandomStringUtils.randomAlphabetic(3);
+		User user = EntityGenerator.generateRandomUser();
 
-		String jsonMimeType = "application/json";
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key",API_KEY )
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		// Create
-		ObjectNode json = mapper.createObjectNode();
-		json.put("name", name);
-		json.put("password", password);
-		json.put("email", start + "@" + end + ".com");
-		json.put("country", "USA");
-		json.put("state", "Illinois");
-		json.put("zipcode", "60614");
-
-		HttpPost request = new HttpPost(URL);
-		StringEntity requestEntity = new StringEntity(json.toString());
+		HttpPost request = new HttpPost(uri);
+		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		JsonNode jsonResult = mapper.readTree(obj);
 
 		// Create result
-		id = jsonResult.get("id").asText();
+		ID = jsonResult.get("id").asText();
+		NAME = jsonResult.get("name").asText();
+		EMAIL = jsonResult.get("email").asText();
 	}
 
 	@Test
 	public void testUnauthorized() throws IOException {
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
 		// Given
-		String jsonMimeType = "application/json";
-		HttpUriRequest request = new HttpGet(URL_NO_KEY);
+		HttpUriRequest request = new HttpGet(uri);
 
 		// When
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -151,16 +158,21 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key",API_KEY )
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
@@ -176,15 +188,27 @@ public class UserIT {
 		assertEquals(jsonMimeType, mimeType);
 
 		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+//		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+//		requestDelete.addHeader("content-type", jsonMimeType);
+//		HttpClientBuilder.create().build().execute(requestDelete);
+		deleteUser(id);
+	}
+
+	private void deleteUser(final String id) throws IOException {
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
+		HttpDelete requestDelete = new HttpDelete(uri);
 		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 
 	@Test
 	public void testCreateFail() throws IOException {
-		String jsonMimeType = "application/json";
-
 		// Create
 		ObjectNode json = mapper.createObjectNode();
 		String name = RandomStringUtils.randomAlphabetic(10);
@@ -198,16 +222,21 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
@@ -231,29 +260,30 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		request = new HttpPost(URL);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		uri = uriComponents.toUri();
+
+		request = new HttpPost(uri);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
 		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.CONFLICT.value(), statusCode2);
 
 		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		deleteUser(id);
 	}
 
 	@Test
 	public void testCreatePhoneNumber() throws IOException {
-		String jsonMimeType = "application/json";
-
 		// Create
 		ObjectNode json = mapper.createObjectNode();
 		ObjectNode phoneNumber = mapper.createObjectNode();
@@ -271,15 +301,20 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readTree(obj);
@@ -300,15 +335,11 @@ public class UserIT {
 		assertEquals(jsonMimeType, mimeType);
 
 		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		deleteUser(id);
 	}
 
 	@Test
 	public void testCreatePhoneNumber2() throws IOException {
-		String jsonMimeType = "application/json";
-
 		// Create
 		ObjectNode json = mapper.createObjectNode();
 		ObjectNode phoneNumber = mapper.createObjectNode();
@@ -325,15 +356,20 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readTree(obj);
@@ -354,16 +390,11 @@ public class UserIT {
 		assertEquals(jsonMimeType, mimeType);
 
 		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
-
+		deleteUser(id);
 	}
 
 	@Test
 	public void testCreatePhoneNumber3Fail() throws IOException {
-		String jsonMimeType = "application/json";
-
 		// Create
 		ObjectNode json = mapper.createObjectNode();
 		ObjectNode phoneNumber = mapper.createObjectNode();
@@ -379,16 +410,22 @@ public class UserIT {
 		json.put("country", "USA");
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
-		HttpPost request = new HttpPost(URL);
+
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.BAD_REQUEST.value(), statusCode);
 		JsonNode jsonResult = mapper.readTree(obj);
@@ -403,8 +440,15 @@ public class UserIT {
 	@Test
 	public void testReadOneUser() throws IOException {
 		// Read
-		String jsonMimeType = "application/json";
-		HttpUriRequest request = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(ID)
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpUriRequest request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 
 		// Read request
@@ -413,9 +457,7 @@ public class UserIT {
 		// Read result
 		assertEquals(HttpStatus.OK.value(), httpResponse.getStatusLine().getStatusCode());
 
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 
@@ -423,16 +465,14 @@ public class UserIT {
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(jsonMimeType, mimeType);
 
-		assertEquals(name, jsonResult.get("name").asText());
+		assertEquals(NAME, jsonResult.get("name").asText());
 		assertEquals(null, jsonResult.get("password"));
-		assertEquals(start + "@" + end + ".com", jsonResult.get("email").asText());
+		assertEquals(EMAIL, jsonResult.get("email").asText());
 		assertEquals(0, jsonResult.get("allow").asLong(), 0.01);
-
 	}
-
+//
 	@Test
 	public void testUpdateOneUser() throws IOException {
-		String jsonMimeType = "application/json";
 		// Create
 		ObjectNode json = mapper.createObjectNode();
 		String name = RandomStringUtils.randomAlphabetic(10);
@@ -446,16 +486,21 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readTree(obj);
@@ -468,15 +513,21 @@ public class UserIT {
 		json.put("email", "epickur_test@epickur_test.com");
 		requestEntity = new StringEntity(json.toString());
 
-		HttpPut putRequest = new HttpPut(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+
+		HttpPut putRequest = new HttpPut(uri);
 		putRequest.addHeader("content-type", jsonMimeType);
 		putRequest.setEntity(requestEntity);
 
 		// Put request
 		httpResponse = HttpClientBuilder.create().build().execute(putRequest);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
 		jsonResult = mapper.readTree(obj);
@@ -488,14 +539,11 @@ public class UserIT {
 		assertEquals("epickur_test@epickur_test.com", jsonResult.get("email").asText());
 
 		// Delete this user
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		deleteUser(id);
 	}
 
 	@Test
 	public void testDeleteOneUser() throws IOException {
-		String jsonMimeType = "application/json";
 		// Create
 		ObjectNode json = mapper.createObjectNode();
 		String name = RandomStringUtils.randomAlphabetic(10);
@@ -509,16 +557,21 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 
@@ -527,19 +580,22 @@ public class UserIT {
 		String id = jsonResult.get("id").asText();
 
 		// Delete
-		HttpDelete request3 = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		request3.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(request3);
+		deleteUser(id);
 
 		// Read
-		HttpUriRequest request2 = new HttpGet(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+		HttpUriRequest request2 = new HttpGet(uri);
 		request2.addHeader("content-type", jsonMimeType);
 		// Read request
 		httpResponse = HttpClientBuilder.create().build().execute(request2);
 
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode2);
 
@@ -548,8 +604,6 @@ public class UserIT {
 
 	@Test
 	public void testAddOneOrder() throws IOException, EpickurParsingException {
-		String jsonMimeType = "application/json";
-
 		// Create User
 		ObjectNode json = mapper.createObjectNode();
 		String name = RandomStringUtils.randomAlphabetic(10);
@@ -563,16 +617,21 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create User request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readTree(obj);
@@ -602,7 +661,15 @@ public class UserIT {
 		String cardToken = EntityGenerator.generateRandomString();
 		json.put("cardToken", cardToken);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+
+		request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
@@ -610,9 +677,7 @@ public class UserIT {
 
 		// Create Order request
 		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
 		jsonResult = mapper.readTree(obj);
@@ -629,21 +694,25 @@ public class UserIT {
 		assertNotNull(jsonResult.get("dish"));
 
 		// Delete this order
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", "{orderId}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id, orderId)
+				.encode();
+		uri = uriComponents.toUri();
+
+		HttpDelete requestDelete = new HttpDelete(uri);
 		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		deleteUser(id);
 	}
 
 	@Test
 	public void testCreateOneOrderWithStripeToken() throws IOException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException, EpickurParsingException {
-		String jsonMimeType = "application/json";
-
 		// Create User
 		ObjectNode json = mapper.createObjectNode();
 		String name = RandomStringUtils.randomAlphabetic(10);
@@ -657,16 +726,21 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create User request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readTree(obj);
@@ -720,7 +794,15 @@ public class UserIT {
 
 		json.put("cardToken", token.getId());
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+
+		request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "true");
@@ -728,9 +810,7 @@ public class UserIT {
 
 		// Create Order request
 		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
@@ -751,16 +831,18 @@ public class UserIT {
 		assertNotNull(jsonResult.get("cardToken"));
 
 		// Delete this order
-
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		uri = uriComponents.toUri();
+		HttpDelete requestDelete = new HttpDelete(uri);
 		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
-
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		deleteUser(id);
 	}
 
 	@Test
@@ -780,16 +862,21 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create User request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
@@ -833,7 +920,15 @@ public class UserIT {
 		String cardToken = EntityGenerator.generateRandomString();
 		json.put("cardToken", cardToken);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+
+		request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
@@ -841,9 +936,7 @@ public class UserIT {
 
 		// Create Order request
 		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
@@ -861,18 +954,31 @@ public class UserIT {
 		assertNotNull(jsonResult.get("dish"));
 
 		// Delete this order
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id, orderId)
+				.encode();
+		uri = uriComponents.toUri();
+
+		HttpDelete requestDelete = new HttpDelete(uri);
 		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Check if order has been deleted
-		HttpGet requestGet = new HttpGet(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id, orderId)
+				.encode();
+		uri = uriComponents.toUri();
+		HttpGet requestGet = new HttpGet(uri);
 		requestGet.addHeader("content-type", jsonMimeType);
 		httpResponse = HttpClientBuilder.create().build().execute(requestGet);
 
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode3 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode3 + " with " + obj, HttpStatus.NOT_FOUND.value(), statusCode3);
@@ -883,9 +989,7 @@ public class UserIT {
 		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
 
 		// Delete this user
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		deleteUser(id);
 	}
 
 	@Test
@@ -905,15 +1009,20 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		// Create User request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
@@ -958,7 +1067,15 @@ public class UserIT {
 		String cardToken = EntityGenerator.generateRandomString();
 		json.put("cardToken", cardToken);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+
+		request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
@@ -966,9 +1083,7 @@ public class UserIT {
 
 		// Create Order request
 		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
@@ -995,14 +1110,20 @@ public class UserIT {
 		json.put("id", orderId);
 		json.put("createdBy", id);
 
-		HttpPut requestUpdate = new HttpPut(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id, orderId)
+				.encode();
+		uri = uriComponents.toUri();
+
+		HttpPut requestUpdate = new HttpPut(uri);
 		requestUpdate.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		requestUpdate.setEntity(requestEntity);
 		httpResponse = HttpClientBuilder.create().build().execute(requestUpdate);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode3 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode3 + " with " + obj, HttpStatus.OK.value(), statusCode3);
@@ -1019,20 +1140,23 @@ public class UserIT {
 		assertNotNull(jsonResult.get("dish"));
 
 		// Delete this order
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id, orderId)
+				.encode();
+		uri = uriComponents.toUri();
+		HttpDelete requestDelete = new HttpDelete(uri);
 		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		deleteUser(id);
 	}
 
 	@Test
 	public void testExecuteOneOrder() throws IOException, EpickurException {
-		String jsonMimeType = "application/json";
-
 		// Create User
 		ObjectNode json = mapper.createObjectNode();
 		String name = RandomStringUtils.randomAlphabetic(10);
@@ -1046,16 +1170,21 @@ public class UserIT {
 		json.put("state", "Illinois");
 		json.put("zipcode", "60614");
 
-		HttpPost request = new HttpPost(URL);
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", API_KEY)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
+
+		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create User request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
@@ -1086,7 +1215,15 @@ public class UserIT {
 		String cardToken = EntityGenerator.generateRandomString();
 		json.put("cardToken", cardToken);
 
-		request = new HttpPost(URL_NO_KEY + "/" + id + "/orders?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id)
+				.encode();
+		uri = uriComponents.toUri();
+
+		request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
@@ -1094,9 +1231,7 @@ public class UserIT {
 
 		// Create Order request
 		httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode2 + " with " + obj, HttpStatus.OK.value(), statusCode2);
@@ -1115,17 +1250,22 @@ public class UserIT {
 		assertNotNull(jsonResult.get("cardToken"));
 
 		String orderCode = Security.createOrderCode(new ObjectId(orderId), jsonResult.get("cardToken").asText());
-
-		// Execute order (Caterer choose yes or no)
 		String confirm = "false";
-		HttpGet httpGet = new HttpGet(
-				URL_EXECUTE_ORDER + "/users/" + id + "/orders/" + orderId + "?confirm=" + confirm + "&ordercode=" + orderCode);
+		// Execute order (Caterer choose yes or no)
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT_NOKEY, ENDPOINT_NOKEY_EXECUTE, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("confirm", confirm)
+				.queryParam("ordercode", orderCode)
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id, orderId)
+				.encode();
+		uri = uriComponents.toUri();
+		HttpGet httpGet = new HttpGet(uri);
 		httpGet.addHeader("content-type", jsonMimeType);
 		httpGet.addHeader("charge-agent", "false");
 		httpResponse = HttpClientBuilder.create().build().execute(httpGet);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		br = new BufferedReader(in);
-		obj = br.readLine();
+		obj = integrationTestUtils.readResult(httpResponse);
 
 		int statusCode3 = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode3 + " with " + obj, HttpStatus.OK.value(), statusCode3);
@@ -1134,13 +1274,18 @@ public class UserIT {
 		assertEquals(OrderStatus.DECLINED.toString(), jsonResult.get("status").asText());
 
 		// Delete this order
-		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "/orders/" + orderId + "?key=" + API_KEY);
+		uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", API_KEY)
+				.build()
+				.expand(id, orderId)
+				.encode();
+		uri = uriComponents.toUri();
+		HttpDelete requestDelete = new HttpDelete(uri);
 		requestDelete.addHeader("content-type", jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
-		requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-		requestDelete.addHeader("content-type", jsonMimeType);
-		HttpClientBuilder.create().build().execute(requestDelete);
+		deleteUser(id);
 	}
 }

@@ -65,7 +65,7 @@ public class OrderDAOIT {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		EntityGenerator.cleanDB();
+		IntegrationTestUtils.cleanDB();
 	}
 
 	@Before

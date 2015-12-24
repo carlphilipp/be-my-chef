@@ -32,38 +32,6 @@ public class EntityGenerator {
 
 	private static final String[] pickupdateDays = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
 
-	public static void setupDB() throws IOException {
-		final InputStreamReader in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
-		final Properties prop = new Properties();
-		prop.load(in);
-		in.close();
-
-		final String mongoPath = prop.getProperty("mongo.path");
-		final String mongoAddress = prop.getProperty("mongo.address");
-		final String mongoPort = prop.getProperty("mongo.port");
-		final String mongoDbName = prop.getProperty("mongo.db.name");
-		final String scriptSetupPath = prop.getProperty("script.setup");
-
-		final String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptSetupPath;
-		EntityGenerator.runShellCommand(cmd);
-	}
-
-	public static void cleanDB() throws IOException {
-		final InputStreamReader in = new InputStreamReader(EntityGenerator.class.getClass().getResourceAsStream("/test.properties"));
-		final Properties prop = new Properties();
-		prop.load(in);
-		in.close();
-
-		final String mongoPath = prop.getProperty("mongo.path");
-		final String mongoAddress = prop.getProperty("mongo.address");
-		final String mongoPort = prop.getProperty("mongo.port");
-		final String mongoDbName = prop.getProperty("mongo.db.name");
-		final String scriptCleanPath = prop.getProperty("script.clean");
-
-		final String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
-		EntityGenerator.runShellCommand(cmd);
-	}
-
 	public static Caterer getCaererObject(final String json) throws EpickurException {
 		Caterer caterer;
 		try {
@@ -113,30 +81,6 @@ public class EntityGenerator {
 			log.error("Error: " + e.getMessage(), e);
 		}
 		return null;
-	}
-
-	public static void runShellCommand(final String cmd) throws IOException {
-		log.debug("Executing: " + cmd);
-		final Process p = Runtime.getRuntime().exec(cmd);
-		final InputStream is = p.getInputStream();
-		BufferedReader br = null;
-		String line;
-		try {
-			br = new BufferedReader(new InputStreamReader(is));
-			while ((line = br.readLine()) != null) {
-				log.debug(line);
-			}
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					log.error(e.getMessage(), e);
-				}
-			}
-		}
 	}
 
 	public static List<NutritionFact> getListObject(final String json) {

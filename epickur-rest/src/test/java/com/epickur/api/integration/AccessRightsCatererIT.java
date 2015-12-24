@@ -24,10 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.Properties;
 
 import static org.junit.Assert.*;
@@ -39,10 +41,14 @@ public class AccessRightsCatererIT {
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
 
-	private static String END_POINT;
-	private static String URL;
-	private static String URL_NO_KEY;
-	private static String jsonMimeType;
+	private static final String ENDPOINT = "caterers";
+
+	private static String PROTOCOL;
+	private static String HOST;
+	private static String PORT;
+	private static String PATH;
+
+	private static final String jsonMimeType = "application/json";
 	private static ObjectMapper mapper;
 
 	@BeforeClass
@@ -50,37 +56,39 @@ public class AccessRightsCatererIT {
 		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
-		String address = prop.getProperty("address");
-		String path = prop.getProperty("api.path");
-		END_POINT = address + path;
-		jsonMimeType = "application/json";
+		PROTOCOL = prop.getProperty("protocol");
+		HOST = prop.getProperty("host");
+		PORT = prop.getProperty("port");
+		PATH = prop.getProperty("api.path");
 		mapper = new ObjectMapper();
-		EntityGenerator.setupDB();
+		IntegrationTestUtils.setupDB();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws IOException {
-		EntityGenerator.cleanDB();
+		IntegrationTestUtils.cleanDB();
 	}
 
 	// User Administrator
 	@Test
 	public void testAdministratorCatererCreate() throws EpickurException, IOException {
-
 		User admin = integrationTestUtils.createAdminAndLogin();
-		URL_NO_KEY = END_POINT + "/caterers";
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", admin.getKey())
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -93,15 +101,18 @@ public class AccessRightsCatererIT {
 		User admin = integrationTestUtils.createAdminAndLogin();
 		String id = integrationTestUtils.createCaterer().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/caterers/" + id;
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", admin.getKey())
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -110,20 +121,26 @@ public class AccessRightsCatererIT {
 	public void testAdministratorCatererUpdate() throws IOException, EpickurException {
 		User admin = integrationTestUtils.createAdminAndLogin();
 		Caterer caterer = integrationTestUtils.createCaterer();
-		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+		//URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
+		//URL = URL_NO_KEY + "?key=" + admin.getKey();
+
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", admin.getKey())
+				.build()
+				.expand(caterer.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		Caterer user = EntityGenerator.generateRandomCatererWithId();
 		user.setId(caterer.getId());
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -133,15 +150,18 @@ public class AccessRightsCatererIT {
 		User admin = integrationTestUtils.createAdminAndLogin();
 		String id = integrationTestUtils.createCaterer().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/caterers/" + id;
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", admin.getKey())
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -151,19 +171,19 @@ public class AccessRightsCatererIT {
 	public void testSuperUserCatererCreate() throws IOException, EpickurException {
 		String key = integrationTestUtils.createSuperUserAndLogin().getKey();
 
-		URL_NO_KEY = END_POINT + "/caterers";
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", key).build().encode();
+		URI uri = uriComponents.toUri();
 
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -177,15 +197,18 @@ public class AccessRightsCatererIT {
 		String key = integrationTestUtils.createSuperUserAndLogin().getKey();
 		String id = integrationTestUtils.createCaterer().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/caterers/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -197,20 +220,22 @@ public class AccessRightsCatererIT {
 		User superUser = integrationTestUtils.createSuperUserAndLogin();
 		String key = superUser.getKey();
 
-		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(caterer.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
-
 	}
 
 	@Test
@@ -221,18 +246,21 @@ public class AccessRightsCatererIT {
 
 		String key = superUser.getKey();
 
-		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(caterer.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -240,17 +268,20 @@ public class AccessRightsCatererIT {
 	@Test
 	public void testSuperUserCatererDelete() throws IOException, EpickurException {
 		User superUser = integrationTestUtils.createSuperUserAndLogin();
-		Caterer id = integrationTestUtils.createCaterer();
+		Caterer caterer = integrationTestUtils.createCaterer();
 
-		URL_NO_KEY = END_POINT + "/caterers/" + id.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + superUser.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", superUser.getKey())
+				.build()
+				.expand(caterer.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
@@ -260,19 +291,19 @@ public class AccessRightsCatererIT {
 	public void testUserCaterCreate() throws IOException, EpickurException {
 		String key = integrationTestUtils.createUserAndLogin().getKey();
 
-		URL_NO_KEY = END_POINT + "/caterers";
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", key).build().encode();
+		URI uri = uriComponents.toUri();
 
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -286,15 +317,18 @@ public class AccessRightsCatererIT {
 		String key = integrationTestUtils.createUserAndLogin().getKey();
 		String id = integrationTestUtils.createCaterer().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/caterers/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -306,35 +340,41 @@ public class AccessRightsCatererIT {
 		User superUser = integrationTestUtils.createUserAndLogin();
 		String key = superUser.getKey();
 
-		URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(caterer.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
 
 	@Test
 	public void testUserCatererDelete() throws IOException, EpickurException {
-		User superUser = integrationTestUtils.createSuperUserAndLogin();
-		Caterer id = integrationTestUtils.createCaterer();
+		User superUser = integrationTestUtils.createUserAndLogin();
+		Caterer caterer = integrationTestUtils.createCaterer();
 
-		URL_NO_KEY = END_POINT + "/caterers/" + id.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + superUser.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", superUser.getKey())
+				.build()
+				.expand(caterer.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}

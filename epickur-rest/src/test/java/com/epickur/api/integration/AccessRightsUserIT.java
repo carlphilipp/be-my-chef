@@ -8,7 +8,6 @@ import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Cleanup;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -25,10 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.Properties;
 
 import static org.junit.Assert.*;
@@ -40,10 +41,14 @@ public class AccessRightsUserIT {
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
 
-	private static String END_POINT;
-	private static String URL;
-	private static String URL_NO_KEY;
-	private static String jsonMimeType;
+	private static final String ENDPOINT = "users";
+
+	private static String PROTOCOL;
+	private static String HOST;
+	private static String PORT;
+	private static String PATH;
+
+	private static final String jsonMimeType = "application/json";
 	private static ObjectMapper mapper;
 
 	@BeforeClass
@@ -51,17 +56,17 @@ public class AccessRightsUserIT {
 		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
-		String address = prop.getProperty("address");
-		String path = prop.getProperty("api.path");
-		END_POINT = address + path;
-		jsonMimeType = "application/json";
+		PROTOCOL = prop.getProperty("protocol");
+		HOST = prop.getProperty("host");
+		PORT = prop.getProperty("port");
+		PATH = prop.getProperty("api.path");
 		mapper = new ObjectMapper();
-		EntityGenerator.setupDB();
+		IntegrationTestUtils.setupDB();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws IOException {
-		EntityGenerator.cleanDB();
+		IntegrationTestUtils.cleanDB();
 	}
 
 	// User Administrator
@@ -69,20 +74,22 @@ public class AccessRightsUserIT {
 	public void testAdministratorUserCreate() throws IOException, EpickurException {
 		User admin = integrationTestUtils.createAdminAndLogin();
 
-		URL_NO_KEY = END_POINT + "/users";
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", admin.getKey())
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		User user = EntityGenerator.generateRandomUser();
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -97,15 +104,18 @@ public class AccessRightsUserIT {
 
 		String id = integrationTestUtils.createUser().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", admin.getKey())
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -114,20 +124,24 @@ public class AccessRightsUserIT {
 	public void testAdministratorUserUpdate() throws IOException, EpickurException {
 		User admin = integrationTestUtils.createAdminAndLogin();
 		User normalUser = integrationTestUtils.createUserAndLogin();
-		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", admin.getKey())
+				.build()
+				.expand(normalUser.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		User user = EntityGenerator.generateRandomUser();
 		user.setId(normalUser.getId());
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -137,15 +151,18 @@ public class AccessRightsUserIT {
 		User admin = integrationTestUtils.createAdminAndLogin();
 		String id = integrationTestUtils.createUser().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", admin.getKey())
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
@@ -156,22 +173,22 @@ public class AccessRightsUserIT {
 	public void testSuperUserCreate() throws IOException, EpickurException {
 		String key = integrationTestUtils.createUserAndLogin().getKey();
 
-		URL_NO_KEY = END_POINT + "/users";
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", key)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		User user = EntityGenerator.generateRandomUser();
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		IOUtils.closeQuietly(br);
-		IOUtils.closeQuietly(in);
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
@@ -186,15 +203,18 @@ public class AccessRightsUserIT {
 		String key = integrationTestUtils.createUserAndLogin().getKey();
 		String id = integrationTestUtils.createUser().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -209,15 +229,18 @@ public class AccessRightsUserIT {
 		String key = newUser.getKey();
 		String id = newUser.getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -231,20 +254,23 @@ public class AccessRightsUserIT {
 		User superUser = integrationTestUtils.createUserAndLogin();
 		String key = superUser.getKey();
 
-		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(superUser.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		User user = EntityGenerator.generateRandomUser();
 		user.setId(superUser.getId());
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -259,20 +285,23 @@ public class AccessRightsUserIT {
 		String key = superUser.getKey();
 		String id = integrationTestUtils.createUser().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		User user = EntityGenerator.generateRandomUser();
 		user.setId(new ObjectId(id));
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -284,15 +313,18 @@ public class AccessRightsUserIT {
 	public void testSuperUserDelete() throws IOException, EpickurException {
 		User superUser = integrationTestUtils.createUserAndLogin();
 
-		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + superUser.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", superUser.getKey())
+				.build()
+				.expand(superUser.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
@@ -302,20 +334,22 @@ public class AccessRightsUserIT {
 	public void testUserCreate() throws IOException, EpickurException {
 		String key = integrationTestUtils.createUserAndLogin().getKey();
 
-		URL_NO_KEY = END_POINT + "/users";
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", key)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		User user = EntityGenerator.generateRandomUser();
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.addHeader("validate-agent", "false");
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -330,15 +364,18 @@ public class AccessRightsUserIT {
 		String key = integrationTestUtils.createUserAndLogin().getKey();
 		String id = integrationTestUtils.createUser().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -353,15 +390,18 @@ public class AccessRightsUserIT {
 		String key = newUser.getKey();
 		String id = newUser.getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -375,20 +415,23 @@ public class AccessRightsUserIT {
 		User normalUser = integrationTestUtils.createUserAndLogin();
 		String key = normalUser.getKey();
 
-		URL_NO_KEY = END_POINT + "/users/" + normalUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(normalUser.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		User user = EntityGenerator.generateRandomUser();
 		user.setId(normalUser.getId());
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -400,20 +443,23 @@ public class AccessRightsUserIT {
 		String key = normalUser.getKey();
 		String id = integrationTestUtils.createUser().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/users/" + id;
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		User user = EntityGenerator.generateRandomUser();
 		user.setId(new ObjectId(id));
 
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -425,15 +471,18 @@ public class AccessRightsUserIT {
 	public void testUserDelete() throws IOException, EpickurException {
 		User superUser = integrationTestUtils.createUserAndLogin();
 
-		URL_NO_KEY = END_POINT + "/users/" + superUser.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + superUser.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", superUser.getKey())
+				.build()
+				.expand(superUser.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}

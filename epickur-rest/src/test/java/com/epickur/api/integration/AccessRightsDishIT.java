@@ -26,10 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.Properties;
 
 import static org.junit.Assert.*;
@@ -41,10 +44,17 @@ public class AccessRightsDishIT {
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
 
-	private static String END_POINT;
-	private static String URL;
-	private static String URL_NO_KEY;
-	private static String jsonMimeType;
+	private static final String ENDPOINT = "dishes";
+
+	private static String PROTOCOL;
+	private static String HOST;
+	private static String PORT;
+	private static String PATH;
+
+//	private static String END_POINT;
+//	private static String URL;
+//	private static String URL_NO_KEY;
+	private static final String jsonMimeType = "application/json";
 	private static ObjectMapper mapper;
 
 	@BeforeClass
@@ -52,26 +62,30 @@ public class AccessRightsDishIT {
 		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
-		String address = prop.getProperty("address");
-		String path = prop.getProperty("api.path");
-		END_POINT = address + path;
-
-		jsonMimeType = "application/json";
+		PROTOCOL = prop.getProperty("protocol");
+		HOST = prop.getProperty("host");
+		PORT = prop.getProperty("port");
+		PATH = prop.getProperty("api.path");
 		mapper = new ObjectMapper();
-		EntityGenerator.setupDB();
+		IntegrationTestUtils.setupDB();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws IOException {
-		EntityGenerator.cleanDB();
+		IntegrationTestUtils.cleanDB();
 	}
 
 	// User Administrator
 	@Test
 	public void testAdministratorDishCreate() throws IOException, EpickurException {
 		User admin = integrationTestUtils.createAdminAndLogin();
-		URL_NO_KEY = END_POINT + "/dishes";
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", admin.getKey())
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
@@ -79,13 +93,11 @@ public class AccessRightsDishIT {
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -98,15 +110,18 @@ public class AccessRightsDishIT {
 		User admin = integrationTestUtils.createAdminAndLogin();
 		String id = integrationTestUtils.createDish().getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/dishes/" + id;
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", admin.getKey())
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -116,20 +131,24 @@ public class AccessRightsDishIT {
 		User admin = integrationTestUtils.createAdminAndLogin();
 		Dish dish = integrationTestUtils.createDish();
 		String id = dish.getId().toHexString();
-		URL_NO_KEY = END_POINT + "/dishes/" + id;
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", admin.getKey())
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -140,15 +159,18 @@ public class AccessRightsDishIT {
 		Dish dish = integrationTestUtils.createDish();
 		String id = dish.getId().toHexString();
 
-		URL_NO_KEY = END_POINT + "/dishes/" + id;
-		URL = URL_NO_KEY + "?key=" + admin.getKey();
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", admin.getKey())
+				.build()
+				.expand(id)
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -159,8 +181,12 @@ public class AccessRightsDishIT {
 		User user = integrationTestUtils.createSuperUserAndLogin();
 		String key = user.getKey();
 
-		URL_NO_KEY = END_POINT + "/dishes";
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", key)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
@@ -168,13 +194,11 @@ public class AccessRightsDishIT {
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -187,8 +211,12 @@ public class AccessRightsDishIT {
 		User user = integrationTestUtils.createSuperUserAndLogin();
 		String key = user.getKey();
 
-		URL_NO_KEY = END_POINT + "/dishes";
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", key)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
@@ -196,13 +224,11 @@ public class AccessRightsDishIT {
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -218,15 +244,18 @@ public class AccessRightsDishIT {
 
 		Dish dish = integrationTestUtils.createDish();
 
-		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(dish.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -238,17 +267,20 @@ public class AccessRightsDishIT {
 		User superUser = integrationTestUtils.createSuperUserAndLogin();
 		String key = superUser.getKey();
 
-		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(dish.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
@@ -262,17 +294,20 @@ public class AccessRightsDishIT {
 		Caterer caterer = integrationTestUtils.createCatererWithUserId(superUser.getId());
 		dish.setCaterer(caterer);
 
-		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(dish.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -284,15 +319,18 @@ public class AccessRightsDishIT {
 		User superUser = integrationTestUtils.createSuperUserAndLogin();
 		String key = superUser.getKey();
 
-		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(dish.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
@@ -306,15 +344,18 @@ public class AccessRightsDishIT {
 		Caterer caterer = integrationTestUtils.createCatererWithUserId(superUser.getId());
 		dish.setCaterer(caterer);
 
-		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(dish.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -325,8 +366,12 @@ public class AccessRightsDishIT {
 		User user = integrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
 
-		URL_NO_KEY = END_POINT + "/dishes";
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", key)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
@@ -334,13 +379,11 @@ public class AccessRightsDishIT {
 		dish.setCaterer(caterer);
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -353,8 +396,12 @@ public class AccessRightsDishIT {
 		User user = integrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
 
-		URL_NO_KEY = END_POINT + "/dishes";
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.queryParam("key", key)
+				.build()
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
@@ -363,13 +410,11 @@ public class AccessRightsDishIT {
 		dish.setCreatedBy(user.getId());
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPost request = new HttpPost(URL);
+		HttpPost request = new HttpPost(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
@@ -385,15 +430,18 @@ public class AccessRightsDishIT {
 
 		Dish dish = integrationTestUtils.createDish();
 
-		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(dish.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.OK.value(), statusCode);
 	}
@@ -405,17 +453,20 @@ public class AccessRightsDishIT {
 		User superUser = integrationTestUtils.createUserAndLogin();
 		String key = superUser.getKey();
 
-		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(dish.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
@@ -429,17 +480,20 @@ public class AccessRightsDishIT {
 		Caterer caterer = integrationTestUtils.createCatererWithUserId(user.getId());
 		dish.setCaterer(caterer);
 
-		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(dish.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		HttpPut request = new HttpPut(URL);
+		HttpPut request = new HttpPut(uri);
 		request.addHeader("content-type", jsonMimeType);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
@@ -451,15 +505,18 @@ public class AccessRightsDishIT {
 		User user = integrationTestUtils.createUserAndLogin();
 		String key = user.getKey();
 
-		URL_NO_KEY = END_POINT + "/dishes/" + dish.getId().toHexString();
-		URL = URL_NO_KEY + "?key=" + key;
+		UriComponents uriComponents = UriComponentsBuilder.newInstance()
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.queryParam("key", key)
+				.build()
+				.expand(dish.getId().toHexString())
+				.encode();
+		URI uri = uriComponents.toUri();
 
-		HttpDelete request = new HttpDelete(URL);
+		HttpDelete request = new HttpDelete(uri);
 		request.addHeader("content-type", jsonMimeType);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
+		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals("Wrong status code: " + statusCode + " with " + obj, HttpStatus.FORBIDDEN.value(), statusCode);
 	}
