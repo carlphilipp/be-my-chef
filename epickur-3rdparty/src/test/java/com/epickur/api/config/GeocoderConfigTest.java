@@ -3,6 +3,7 @@ package com.epickur.api.config;
 import com.epickur.api.here.GeocoderHereImpl;
 import com.epickur.api.here.Here;
 import com.epickur.api.utils.Utils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -32,5 +33,10 @@ public class GeocoderConfigTest {
 	@Bean
 	public EpickurProperties epickurProperties() {
 		return new EpickurProperties();
+	}
+
+	@Bean
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
 	}
 }

@@ -1,8 +1,6 @@
 package com.epickur.api.config;
 
-import com.epickur.api.dao.mongo.DishDAO;
-import com.epickur.api.service.DishService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.*;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -26,11 +24,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 		})
 public class ApplicationConfig {
 
-	@Autowired
-	DishDAO daol;
-
 	@Bean
-	public DishService dishService(){
-		return new DishService(daol);
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
 	}
 }

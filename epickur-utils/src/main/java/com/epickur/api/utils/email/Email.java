@@ -56,6 +56,8 @@ public class Email {
 	private MandrillMessagesRequest messagesRequest;
 	@Autowired
 	private MandrillConfiguration mandrillConfiguration;
+	@Autowired
+	private ObjectMapper mapper;
 	private MandrillRESTRequest request;
 	private String subject;
 	private String message;
@@ -67,7 +69,6 @@ public class Email {
 	 * @param sendTo          The list of email to send to
 	 */
 	protected void configure(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
-		final ObjectMapper mapper = new ObjectMapper();
 		this.subject = emailSubjectTxt;
 		this.message = emailMsgTxt;
 		this.sendTo = sendTo;

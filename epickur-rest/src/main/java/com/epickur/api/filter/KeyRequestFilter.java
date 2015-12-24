@@ -32,13 +32,12 @@ import java.io.IOException;
 @Component("keyRequestFilter")
 public class KeyRequestFilter extends OncePerRequestFilter {
 
-	/**
-	 * Key dao
-	 */
 	@Autowired
 	private KeyDAO keyDAO;
 	@Autowired
 	private Utils utils;
+	@Autowired
+	private ObjectMapper mapper;
 
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
@@ -63,7 +62,6 @@ public class KeyRequestFilter extends OncePerRequestFilter {
 		error.addDescription(errorType);
 		response.setStatus(status.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		final ObjectMapper mapper = new ObjectMapper();
 		response.getWriter().write(mapper.writeValueAsString(error));
 	}
 

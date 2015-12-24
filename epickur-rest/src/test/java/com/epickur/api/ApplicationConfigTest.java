@@ -9,6 +9,7 @@ import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.Email;
 import com.epickur.api.utils.email.EmailTemplate;
 import com.epickur.api.utils.email.EmailUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -134,5 +135,10 @@ public class ApplicationConfigTest {
 	@Bean
 	public EpickurProperties epickurProperties() {
 		return new EpickurProperties();
+	}
+
+	@Bean
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
 	}
 }

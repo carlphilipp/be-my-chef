@@ -35,6 +35,8 @@ public class EmailTemplate {
 	public EpickurProperties properties;
 	@Autowired
 	private Utils utils;
+	@Autowired
+	private ObjectMapper mapper;
 	private Map<String, Map<String, String>> templates;
 
 	/**
@@ -54,7 +56,6 @@ public class EmailTemplate {
 			final Charset charset = Charset.forName("UTF-8");
 			@Cleanup final InputStream is = utils.getResource("email-template.json");
 			@Cleanup final Reader in = new InputStreamReader(is, charset);
-			final ObjectMapper mapper = new ObjectMapper();
 			final JsonNode obj = mapper.readTree(in);
 			final Iterator<Entry<String, JsonNode>> iterator = obj.fields();
 			while (iterator.hasNext()) {

@@ -2,10 +2,12 @@ package com.epickur.api.filter;
 
 import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
+import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -28,6 +30,8 @@ public class KeyRequestFilterTest {
 
 	private static final String KEY_PROPERTY = "key";
 	private static final String KEY_VALUE = "keyValue";
+	@Mock
+	private ObjectMapper mapper;
 	@Mock
 	private Utils utils;
 	@Mock
@@ -124,6 +128,7 @@ public class KeyRequestFilterTest {
 	@Test
 	public void testAbortRequest() throws IOException {
 		when(response.getWriter()).thenReturn(printWriter);
+		when(mapper.writeValueAsString(any(ErrorMessage.class))).thenReturn("");
 
 		filter.abortRequest(response, HttpStatus.OK, "error");
 

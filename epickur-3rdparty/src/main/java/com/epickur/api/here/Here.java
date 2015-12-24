@@ -36,6 +36,8 @@ public class Here {
 	private Utils utils;
 	@Autowired
 	public EpickurProperties properties;
+	@Autowired
+	private ObjectMapper mapper;
 	/**
 	 * Url base
 	 */
@@ -151,7 +153,6 @@ public class Here {
 		Geo geo = null;
 		try {
 			log.info(data);
-			final ObjectMapper mapper = new ObjectMapper();
 			final Map<String, Object> mapObject = mapper.readValue(data, new TypeReference<Map<String, Object>>() {
 			});
 

@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = GeocoderConfigTest.class)
-public class GeocoderHereImplTest {
+public class GeocoderHereImpIT {
 
 	@Autowired
 	private GeocoderHereImpl geoCoder;
