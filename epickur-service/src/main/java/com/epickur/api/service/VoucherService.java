@@ -63,7 +63,7 @@ public class VoucherService {
 				voucher.setUsedCount(0);
 			}
 			voucher.setStatus(Status.VALID);
-			boolean added = result.add(voucher);
+			final boolean added = result.add(voucher);
 			if (added) {
 				Voucher temp = voucherDAO.read(voucher.getCode());
 				if (temp != null) {
@@ -97,7 +97,7 @@ public class VoucherService {
 			}
 		}
 		found.prepareForUpdateIntoDB();
-		return this.voucherDAO.update(found);
+		return voucherDAO.update(found);
 	}
 
 	/**
@@ -113,11 +113,11 @@ public class VoucherService {
 			found.setUsedCount(found.getUsedCount() - 1);
 		}
 		found.prepareForUpdateIntoDB();
-		return this.voucherDAO.update(found);
+		return voucherDAO.update(found);
 	}
 
 	protected Voucher readAndThrowException(final String code) throws EpickurException {
-		final Voucher found = this.voucherDAO.read(code);
+		final Voucher found = voucherDAO.read(code);
 		if (found == null) {
 			throw new EpickurException("Voucher '" + code + "' not found");
 		}

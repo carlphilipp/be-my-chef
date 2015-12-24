@@ -50,7 +50,7 @@ public class OrderJob {
 			final Scheduler scheduler = schedulerFactoryBean.getObject();
 			scheduler.scheduleJob(cancelOrder, triggerCancelOrder);
 			log.info("Added job '{}' to the scheduler with orderId {} and userId ", identity, orderId, userId);
-		} catch (SchedulerException se) {
+		} catch (final SchedulerException se) {
 			log.error(se.getLocalizedMessage(), se);
 		}
 	}
@@ -67,7 +67,7 @@ public class OrderJob {
 		try {
 			final Scheduler scheduler = schedulerFactoryBean.getObject();
 			scheduler.deleteJob(jobKey);
-		} catch (SchedulerException se) {
+		} catch (final SchedulerException se) {
 			log.error(se.getLocalizedMessage(), se);
 		}
 	}

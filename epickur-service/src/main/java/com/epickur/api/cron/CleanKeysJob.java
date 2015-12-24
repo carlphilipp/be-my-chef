@@ -38,7 +38,7 @@ public final class CleanKeysJob {
 					keyDao.delete(key.getId().toHexString());
 				}
 			}
-		} catch (EpickurException e) {
+		} catch (final EpickurException e) {
 			log.error(e.getLocalizedMessage(), e);
 		}
 	}

@@ -35,7 +35,6 @@ public class EmailTemplate {
 	public EpickurProperties properties;
 	@Autowired
 	private Utils utils;
-
 	private Map<String, Map<String, String>> templates;
 
 	/**
@@ -53,8 +52,8 @@ public class EmailTemplate {
 		final String base = getBaseTemplate();
 		try {
 			final Charset charset = Charset.forName("UTF-8");
-			@Cleanup InputStream is = utils.getResource("email-template.json");
-			@Cleanup Reader in = new InputStreamReader(is, charset);
+			@Cleanup final InputStream is = utils.getResource("email-template.json");
+			@Cleanup final Reader in = new InputStreamReader(is, charset);
 			final ObjectMapper mapper = new ObjectMapper();
 			final JsonNode obj = mapper.readTree(in);
 			final Iterator<Entry<String, JsonNode>> iterator = obj.fields();
@@ -72,7 +71,7 @@ public class EmailTemplate {
 				res.put("content", newContent);
 				templates.put(entry.getKey(), res);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			log.error("Error while trying to access the email templates", e);
 		}
 	}
@@ -89,7 +88,7 @@ public class EmailTemplate {
 			@Cleanup final InputStream is = utils.getResource("templates/base.html");
 			@Cleanup final Reader in = new InputStreamReader(is, charset);
 			base = IOUtils.toString(in);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			log.error("Error while trying to access the base template", e);
 		}
 		return base;
@@ -103,8 +102,8 @@ public class EmailTemplate {
 	 */
 	public Map<String, String> getTemplate(final EmailType type) {
 		final String typeStr = type.toString().toLowerCase();
-		if (this.templates.containsKey(typeStr)) {
-			return this.templates.get(typeStr);
+		if (templates.containsKey(typeStr)) {
+			return templates.get(typeStr);
 		} else {
 			return new HashMap<>();
 		}
@@ -154,7 +153,7 @@ public class EmailTemplate {
 	 * @return A Map
 	 */
 	public Map<String, String> convertToDataNewOrderCaterer(final User user, final Order order, final String orderCode) {
-		Map<String, String> data = getData(user, order);
+		final Map<String, String> data = getData(user, order);
 		data.put("@@ORDER_CODE@@", orderCode);
 		return data;
 	}
@@ -287,7 +286,7 @@ public class EmailTemplate {
 	 * @return The map.
 	 */
 	public Map<String, String> convertToDataResetUserPassword(final User user, final String resetCode) {
-		Map<String, String> data = getData(user, null);
+		final Map<String, String> data = getData(user, null);
 		data.put("@@RESET_CODE@@", resetCode);
 		return data;
 	}
@@ -317,7 +316,6 @@ public class EmailTemplate {
 			data.put("@@ORDER_CURRENCY@@", order.getCurrency().getSymbol());
 			data.put("@@ORDER_PICKUP_DATE@@", order.getPickupdate());
 		}
-
 		return data;
 	}
 }

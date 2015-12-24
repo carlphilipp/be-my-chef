@@ -39,31 +39,16 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
 @Service
 public class OrderService {
 
-	/**
-	 * Order dao
-	 */
 	@Autowired
 	private OrderDAO orderDAO;
-	/**
-	 * User dao
-	 */
 	@Autowired
 	private UserDAO userDAO;
-	/**
-	 * Sequence Order dao
-	 */
 	@Autowired
 	private SequenceDAO seqDAO;
-	/**
-	 * Voucher dao
-	 */
 	@Autowired
 	private VoucherService voucherService;
 	@Autowired
 	private OrderJob jobs;
-	/**
-	 * User Email utils
-	 */
 	@Autowired
 	private EmailUtils emailUtils;
 	@Autowired
@@ -174,7 +159,7 @@ public class OrderService {
 		if (!isDeleted) {
 			throw new EpickurNotFoundException(ErrorConstants.ORDER_NOT_FOUND, id);
 		}
-		return isDeleted;
+		return true;
 	}
 
 	/**

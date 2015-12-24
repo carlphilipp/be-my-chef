@@ -8,9 +8,9 @@ public final class PasswordManager {
 	private final String cryptedPasswordSalt;
 
 	PasswordManager(final String password) throws EpickurException {
-		this.saltHashed = Security.generateSalt();
 		final String passwordHashed = Security.encodeToSha256(password);
-		this.cryptedPasswordSalt = Security.encodeToSha256(passwordHashed + saltHashed);
+		saltHashed = Security.generateSalt();
+		cryptedPasswordSalt = Security.encodeToSha256(passwordHashed + saltHashed);
 	}
 
 	public static PasswordManager createPasswordManager(final String password) throws EpickurException {
@@ -24,10 +24,10 @@ public final class PasswordManager {
 	 * @throws EpickurException If something went bad
 	 */
 	public String createDBPassword() {
-		return this.saltHashed + this.cryptedPasswordSalt;
+		return saltHashed + cryptedPasswordSalt;
 	}
 
 	public String getCode(final String name, final String email) throws EpickurException {
-		return Security.createUserCode(name, this.saltHashed, this.cryptedPasswordSalt, email);
+		return Security.createUserCode(name, saltHashed, cryptedPasswordSalt, email);
 	}
 }

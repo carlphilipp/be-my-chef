@@ -66,6 +66,7 @@ public class CommonsUtil {
 		if (day != null && day.length() != 3) {
 			throw new IllegalArgumentException();
 		}
+		assert day != null;
 		switch (day) {
 		case "mon":
 			return "Monday";

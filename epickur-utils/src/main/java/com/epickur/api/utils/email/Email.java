@@ -67,11 +67,11 @@ public class Email {
 	 * @param sendTo          The list of email to send to
 	 */
 	protected void configure(final String emailSubjectTxt, final String emailMsgTxt, final String[] sendTo) {
+		final ObjectMapper mapper = new ObjectMapper();
 		this.subject = emailSubjectTxt;
 		this.message = emailMsgTxt;
 		this.sendTo = sendTo;
 		this.request = new MandrillRESTRequest();
-		final ObjectMapper mapper = new ObjectMapper();
 		this.request.setConfig(mandrillConfiguration);
 		this.request.setObjectMapper(mapper);
 		this.messagesRequest.setRequest(request);
@@ -89,8 +89,8 @@ public class Email {
 		mess.setFrom_email(properties.getMandrillFrom());
 		mess.setFrom_name(properties.getMandrillFromUsername());
 		mess.setHeaders(headers);
-		mess.setHtml(this.message);
-		mess.setSubject(this.subject);
+		mess.setHtml(message);
+		mess.setSubject(subject);
 		final MandrillRecipient[] recipients = new MandrillRecipient[sendTo.length];
 		for (int i = 0; i < sendTo.length; i++) {
 			recipients[i] = new MandrillRecipient(null, sendTo[i]);
@@ -103,7 +103,7 @@ public class Email {
 		if (properties.getSend()) {
 			try {
 				messagesRequest.sendMessage(mmr);
-			} catch (RequestFailedException e) {
+			} catch (final RequestFailedException e) {
 				log.error(e.getLocalizedMessage(), e);
 			}
 		}

@@ -16,13 +16,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stripe.exception.*;
 import com.stripe.model.Token;
-import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
-import java.io.*;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -43,45 +42,6 @@ public class EntityGenerator {
 			throw new EpickurException();
 		}
 		return caterer;
-	}
-
-	public static String convertListToStringIngredients(final List<Ingredient> ingredients) {
-		@Cleanup final OutputStream out = new ByteArrayOutputStream();
-		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
-		try {
-			mapper.writeValue(out, ingredients);
-			final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
-			return new String(data);
-		} catch (IOException e) {
-			log.error("Error: " + e.getMessage(), e);
-		}
-		return null;
-	}
-
-	public static String convertListToStringNutritionFacts(final List<NutritionFact> nutritionFacts) {
-		@Cleanup final OutputStream out = new ByteArrayOutputStream();
-		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
-		try {
-			mapper.writeValue(out, nutritionFacts);
-			final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
-			return new String(data);
-		} catch (IOException e) {
-			log.error("Error: " + e.getMessage(), e);
-		}
-		return null;
-	}
-
-	public static String convertListToStringSteps(final List<String> steps) {
-		@Cleanup final OutputStream out = new ByteArrayOutputStream();
-		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
-		try {
-			mapper.writeValue(out, steps);
-			final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
-			return new String(data);
-		} catch (IOException e) {
-			log.error("Error: " + e.getMessage(), e);
-		}
-		return null;
 	}
 
 	public static List<NutritionFact> getListObject(final String json) {

@@ -38,7 +38,7 @@ public final class CleanVouchersJob {
 				voucher.prepareForUpdateIntoDB();
 				this.voucherDAO.update(voucher);
 			}
-		} catch (EpickurException e) {
+		} catch (final EpickurException e) {
 			log.error(e.getLocalizedMessage(), e);
 		}
 	}

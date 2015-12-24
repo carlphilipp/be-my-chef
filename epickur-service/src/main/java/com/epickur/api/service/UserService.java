@@ -38,19 +38,10 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
 @Service
 public class UserService {
 
-	/**
-	 * User dao
-	 */
 	@Autowired
 	private UserDAO userDAO;
-	/**
-	 * Key Business
-	 */
 	@Autowired
 	private KeyService keyService;
-	/**
-	 * User Email utils
-	 */
 	@Autowired
 	private EmailUtils emailUtils;
 	@Autowired
@@ -79,7 +70,7 @@ public class UserService {
 
 		user.prepareForInsertionIntoDB();
 
-		User userCreated = userDAO.create(user);
+		final User userCreated = userDAO.create(user);
 
 		emailUtils.emailNewRegistration(userCreated, code);
 
@@ -143,7 +134,7 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public boolean delete(final String id) throws EpickurException {
-		boolean isDeleted = userDAO.delete(id);
+		final boolean isDeleted = userDAO.delete(id);
 		if (!isDeleted) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, id);
 		}
@@ -164,13 +155,13 @@ public class UserService {
 			if (!utils.isPasswordCorrect(password, userFound)) {
 				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 			} else if (userFound.getAllow() == 1) {
-				String tempKey = Security.generateRandomMd5();
+				final String tempKey = Security.generateRandomMd5();
 				userFound.setKey(tempKey);
-				Key currentKey = keyService.readWithName(userFound.getName());
+				final Key currentKey = keyService.readWithName(userFound.getName());
 				if (currentKey != null) {
 					keyService.delete(currentKey.getId().toHexString());
 				}
-				Key key = new Key();
+				final Key key = new Key();
 				key.setCreatedAt(new DateTime());
 				key.setUserId(userFound.getId());
 				key.setKey(userFound.getKey());
@@ -200,7 +191,7 @@ public class UserService {
 			if (!utils.isPasswordCorrect(user.getPassword(), userFound)) {
 				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, user.getEmail());
 			} else {
-				String newEnryptedPassword = PasswordManager.createPasswordManager(user.getNewPassword()).createDBPassword();
+				final String newEnryptedPassword = PasswordManager.createPasswordManager(user.getNewPassword()).createDBPassword();
 				user.setPassword(newEnryptedPassword);
 			}
 		}
@@ -241,7 +232,7 @@ public class UserService {
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 		}
-		String resetCode = Security.createResetCode(user.getId(), email);
+		final String resetCode = Security.createResetCode(user.getId(), email);
 		emailUtils.resetPassword(user, resetCode);
 	}
 
@@ -257,7 +248,7 @@ public class UserService {
 		if (user == null) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, id);
 		}
-		String resetCodeDB = Security.createResetCode(user.getId(), user.getEmail());
+		final String resetCodeDB = Security.createResetCode(user.getId(), user.getEmail());
 		if (!resetCodeDB.equals(resetCode)) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, id);
 		} else {
