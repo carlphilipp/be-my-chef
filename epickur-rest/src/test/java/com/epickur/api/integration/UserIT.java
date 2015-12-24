@@ -37,7 +37,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -52,26 +51,23 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = ApplicationConfigTest.class)
 public class UserIT {
 
-	@Autowired
-	private IntegrationTestUtils integrationTestUtils;
-
 	private static final String ENDPOINT = "users";
 	private static final String ENDPOINT_ORDER = "orders";
 	private static final String ENDPOINT_NOKEY = "nokey";
 	private static final String ENDPOINT_NOKEY_EXECUTE = "execute";
-	private static final String jsonMimeType = "application/json";
-
+	private static final String JSON_MIME_TYPE = "application/json";
 	private static String PROTOCOL;
 	private static String HOST;
 	private static String PORT;
 	private static String PATH;
-
 	private static String API_KEY;
 	private static String NAME;
 	private static String EMAIL;
 	private static String ID;
 
-	private static ObjectMapper mapper;
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
+	private ObjectMapper mapper;
 
 	@AfterClass
 	public static void afterClass() throws IOException {
@@ -106,7 +102,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -138,7 +134,7 @@ public class UserIT {
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getStatusLine().getStatusCode());
 
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 	}
 
 	@Test
@@ -189,7 +185,7 @@ public class UserIT {
 
 		// Delete this user
 //		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-//		requestDelete.addHeader("content-type", jsonMimeType);
+//		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
 //		HttpClientBuilder.create().build().execute(requestDelete);
 		deleteUser(id);
 	}
@@ -203,7 +199,7 @@ public class UserIT {
 				.encode();
 		URI uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 
@@ -231,7 +227,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -249,7 +245,7 @@ public class UserIT {
 		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
 		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		// Create the same user
 		json = mapper.createObjectNode();
@@ -269,7 +265,7 @@ public class UserIT {
 
 		request = new HttpPost(uri);
 		requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -310,7 +306,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -332,7 +328,7 @@ public class UserIT {
 		assertEquals(33, phoneNumberNode.get("countryCode").asInt());
 		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		// Delete this user
 		deleteUser(id);
@@ -365,7 +361,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -387,7 +383,7 @@ public class UserIT {
 		assertEquals(33, phoneNumberNode.get("countryCode").asInt());
 		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		// Delete this user
 		deleteUser(id);
@@ -420,7 +416,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -449,7 +445,7 @@ public class UserIT {
 		URI uri = uriComponents.toUri();
 
 		HttpUriRequest request = new HttpGet(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 
 		// Read request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -463,7 +459,7 @@ public class UserIT {
 
 		JsonNode jsonResult = mapper.readTree(obj);
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		assertEquals(NAME, jsonResult.get("name").asText());
 		assertEquals(null, jsonResult.get("password"));
@@ -495,7 +491,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -522,7 +518,7 @@ public class UserIT {
 		uri = uriComponents.toUri();
 
 		HttpPut putRequest = new HttpPut(uri);
-		putRequest.addHeader("content-type", jsonMimeType);
+		putRequest.addHeader("content-type", JSON_MIME_TYPE);
 		putRequest.setEntity(requestEntity);
 
 		// Put request
@@ -566,7 +562,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -591,7 +587,7 @@ public class UserIT {
 				.encode();
 		uri = uriComponents.toUri();
 		HttpUriRequest request2 = new HttpGet(uri);
-		request2.addHeader("content-type", jsonMimeType);
+		request2.addHeader("content-type", JSON_MIME_TYPE);
 		// Read request
 		httpResponse = HttpClientBuilder.create().build().execute(request2);
 
@@ -626,7 +622,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -645,7 +641,7 @@ public class UserIT {
 		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
 		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		// Create one Order
 		json = mapper.createObjectNode();
@@ -670,7 +666,7 @@ public class UserIT {
 		uri = uriComponents.toUri();
 
 		request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
 		request.setEntity(requestEntity);
@@ -703,7 +699,7 @@ public class UserIT {
 		uri = uriComponents.toUri();
 
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
@@ -735,7 +731,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -754,7 +750,7 @@ public class UserIT {
 		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
 		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		// Create one Order
 		json = mapper.createObjectNode();
@@ -803,7 +799,7 @@ public class UserIT {
 		uri = uriComponents.toUri();
 
 		request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "true");
 		request.setEntity(requestEntity);
@@ -838,7 +834,7 @@ public class UserIT {
 				.encode();
 		uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
@@ -1179,7 +1175,7 @@ public class UserIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -1199,7 +1195,7 @@ public class UserIT {
 		assertEquals(new Long(0).longValue(), jsonResult.get("allow").asLong());
 		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		// Create one Order
 		json = mapper.createObjectNode();
@@ -1224,7 +1220,7 @@ public class UserIT {
 		uri = uriComponents.toUri();
 
 		request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
 		request.setEntity(requestEntity);
@@ -1262,7 +1258,7 @@ public class UserIT {
 				.encode();
 		uri = uriComponents.toUri();
 		HttpGet httpGet = new HttpGet(uri);
-		httpGet.addHeader("content-type", jsonMimeType);
+		httpGet.addHeader("content-type", JSON_MIME_TYPE);
 		httpGet.addHeader("charge-agent", "false");
 		httpResponse = HttpClientBuilder.create().build().execute(httpGet);
 		obj = integrationTestUtils.readResult(httpResponse);
@@ -1282,7 +1278,7 @@ public class UserIT {
 				.encode();
 		uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user

@@ -39,7 +39,6 @@ public class UserServiceTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-
 	@Mock
 	private UserDAO userDAOMock;
 	@Mock
@@ -50,7 +49,6 @@ public class UserServiceTest {
 	private Utils utilsMock;
 	@InjectMocks
 	private UserService service;
-
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);

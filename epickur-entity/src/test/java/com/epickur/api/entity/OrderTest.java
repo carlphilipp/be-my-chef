@@ -16,10 +16,5 @@ public class OrderTest {
 
 		assertEquals(order.hashCode(), order2.hashCode());
 		assertEquals(order, order2);
-
-		Order key3 = order2;
-		assertEquals(order, key3);
-		assertFalse(order.equals(null));
-		assertFalse(order.equals(new User()));
 	}
 }

@@ -16,10 +16,5 @@ public class NutritionFactTest {
 
 		assertEquals(nutritionFact.hashCode(), nutritionFact2.hashCode());
 		assertEquals(nutritionFact, nutritionFact2);
-
-		NutritionFact key3 = nutritionFact2;
-		assertEquals(nutritionFact, key3);
-		assertFalse(nutritionFact.equals(null));
-		assertFalse(nutritionFact.equals(new User()));
 	}
 }

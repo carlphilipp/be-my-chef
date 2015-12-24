@@ -19,11 +19,6 @@ public class GeoTest {
 
 		assertEquals(geo.hashCode(), geo2.hashCode());
 		assertEquals(geo, geo2);
-
-		Geo geo3 = geo;
-		assertEquals(geo, geo3);
-		assertFalse(geo.equals(null));
-		assertFalse(geo.equals(new User()));
 	}
 
 	@Test

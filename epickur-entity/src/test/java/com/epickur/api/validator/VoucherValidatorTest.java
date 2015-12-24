@@ -62,8 +62,7 @@ public class VoucherValidatorTest {
 		thrown.expectMessage("The field voucher.code is not allowed to be null or empty");
 
 		VoucherValidator validator = new VoucherValidator();
-		String code = null;
-		validator.checkVoucherCode(code);
+		validator.checkVoucherCode(null);
 	}
 
 	@Test
@@ -73,9 +72,8 @@ public class VoucherValidatorTest {
 
 		VoucherValidator validator = new VoucherValidator();
 		ExpirationType expirationType = ExpirationType.UNTIL;
-		String date = null;
 		String format = "MM/dd/yyyy";
-		validator.checkVoucherGenerate(expirationType, date, format);
+		validator.checkVoucherGenerate(expirationType, null, format);
 	}
 
 	@Test
@@ -96,8 +94,7 @@ public class VoucherValidatorTest {
 		thrown.expectMessage("No voucher has been provided");
 
 		VoucherValidator validator = new VoucherValidator();
-		Voucher voucher = null;
-		validator.checkVoucher(voucher, null);
+		validator.checkVoucher(null, null);
 	}
 
 	@Test

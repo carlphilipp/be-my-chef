@@ -33,8 +33,7 @@ public final class PhoneNumberDeserializer extends JsonDeserializer<PhoneNumber>
 					String nationalNumber = node.get("nationalNumber").asText();
 					PhoneNumberUtil util = PhoneNumberUtil.getInstance();
 					try {
-						PhoneNumber phoneNumber = util.parse(nationalNumber, null);
-						return phoneNumber;
+						return util.parse(nationalNumber, null);
 					} catch (NumberParseException e) {
 						// Return dummy phone number because we do not want to handle illegal paramater here
 						return new PhoneNumber();

@@ -47,6 +47,7 @@ public final class WorkingTimes extends AbstractEntity {
 		// Removed preparation time #API-76
 		//Integer openTime = null;
 		final List<TimeFrame> timeFrames = getHours().get(day);
+		assert timeFrames != null;
 		for (final TimeFrame tf : timeFrames) {
 			// If the pickup date is in the current timeframe.
 			if (tf.getOpen() <= pickupdateMinutes && tf.getClose() >= pickupdateMinutes) {

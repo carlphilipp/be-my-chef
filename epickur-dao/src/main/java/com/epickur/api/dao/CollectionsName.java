@@ -17,16 +17,12 @@
 package com.epickur.api.dao;
 
 /**
- * This class get the general info from a property file
+ * This class declare the database document name.
  *
  * @author cph
  * @version 1.0
  */
 public final class CollectionsName {
-
-	/** Constructor */
-	private CollectionsName() {
-	}
 
 	public static String ORDER_COLL = "orders";
 

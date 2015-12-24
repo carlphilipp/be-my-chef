@@ -1,13 +1,12 @@
 package com.epickur.api.entity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
+import com.epickur.api.helper.EntityGenerator;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.epickur.api.helper.EntityGenerator;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class CatererTest {
 
@@ -47,10 +46,6 @@ public class CatererTest {
 		assertEquals(cat.hashCode(), cat2.hashCode());
 		assertEquals(cat, cat2);
 
-		Caterer cat3 = cat;
-		assertEquals(cat, cat3);
-		assertFalse(cat.equals(null));
-		assertFalse(cat.equals(new User()));
+		assertNotEquals(new User(), cat);
 	}
-
 }

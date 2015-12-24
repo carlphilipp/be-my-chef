@@ -39,7 +39,6 @@ public class UserDAOTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-
 	@Mock
 	private MongoDatabase dbMock;
 	@Mock

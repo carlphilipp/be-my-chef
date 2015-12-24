@@ -40,19 +40,17 @@ import static org.junit.Assert.assertFalse;
 @ContextConfiguration(classes = ApplicationConfigTest.class)
 public class DishIT {
 
-	@Autowired
-	private IntegrationTestUtils integrationTestUtils;
-
+	private static String JSON_MIME_TYPE = "application/json";
 	private static final String ENDPOINT = "dishes";
-
 	private static String PROTOCOL;
 	private static String HOST;
 	private static String PORT;
 	private static String PATH;
 	private static String API_KEY;
-
-	private static String jsonMimeType = "application/json";
 	private static ObjectMapper mapper;
+
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
@@ -97,7 +95,7 @@ public class DishIT {
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getStatusLine().getStatusCode());
 
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 	}
 
 	@Test
@@ -119,7 +117,7 @@ public class DishIT {
 		HttpPost request = new HttpPost(uri);
 		// String asText = json.toString();
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -146,7 +144,7 @@ public class DishIT {
 
 		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		// Delete this dish
 		deleteDish(id);
@@ -161,7 +159,7 @@ public class DishIT {
 				.encode();
 		URI uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 
@@ -191,7 +189,7 @@ public class DishIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		String id;
 		// Create request
@@ -214,7 +212,7 @@ public class DishIT {
 				.encode();
 		uri = uriComponents.toUri();
 		HttpUriRequest request2 = new HttpGet(uri);
-		request2.addHeader("content-type", jsonMimeType);
+		request2.addHeader("content-type", JSON_MIME_TYPE);
 
 		// Read request
 		httpResponse = HttpClientBuilder.create().build().execute(request2);
@@ -225,7 +223,7 @@ public class DishIT {
 
 		jsonResult = mapper.readTree(obj);
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		assertEquals(dish.getName(), jsonResult.get("name").asText());
 		assertEquals(dish.getDescription(), jsonResult.get("description").asText());
@@ -260,7 +258,7 @@ public class DishIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -323,7 +321,7 @@ public class DishIT {
 		uri = uriComponents.toUri();
 
 		putRequest = new HttpPut(uri);
-		putRequest.addHeader("content-type", jsonMimeType);
+		putRequest.addHeader("content-type", JSON_MIME_TYPE);
 		putRequest.setEntity(requestEntity);
 
 		// Put request
@@ -366,7 +364,7 @@ public class DishIT {
 		URI uri = uriComponents.toUri();
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -389,7 +387,7 @@ public class DishIT {
 				.encode();
 		uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
 		httpResponse = HttpClientBuilder.create().build().execute(requestDelete);
 		obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode2 = httpResponse.getStatusLine().getStatusCode();
@@ -398,7 +396,7 @@ public class DishIT {
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertFalse("Failed request: " + obj, jsonResult.has("error"));
 
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 		assertEquals(id, jsonResult.get("id").asText());
 		assertEquals(true, Boolean.valueOf(jsonResult.get("deleted").toString()));
 
@@ -411,7 +409,7 @@ public class DishIT {
 				.encode();
 		uri = uriComponents.toUri();
 		HttpUriRequest request2 = new HttpGet(uri);
-		request2.addHeader("content-type", jsonMimeType);
+		request2.addHeader("content-type", JSON_MIME_TYPE);
 
 		// Read request
 		httpResponse = HttpClientBuilder.create().build().execute(request2);
@@ -424,7 +422,7 @@ public class DishIT {
 
 		jsonResult = mapper.readTree(obj);
 		mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 		assertEquals(HttpStatus.NOT_FOUND.value(), Integer.valueOf(jsonResult.get("error").toString()).intValue());
 		assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), jsonResult.get("message").asText());
 	}
@@ -450,7 +448,7 @@ public class DishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -483,7 +481,7 @@ public class DishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -514,7 +512,7 @@ public class DishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -537,7 +535,7 @@ public class DishIT {
 		// TODO see with new Spring version if the fixed the bug of param not encoded in utf8 properly
 		HttpGet request = new HttpGet(PROTOCOL + "://" + HOST + ":" + PORT + "/" + PATH + "/" + ENDPOINT + "?key=" + API_KEY + "&pickupdate=" + pickupdate + "&types=" + type + "&limit=" + limit + "&searchtext="
 				+ URLEncoder.encode(address, "UTF-8"));
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
 		int statusCode = httpResponse.getStatusLine().getStatusCode();

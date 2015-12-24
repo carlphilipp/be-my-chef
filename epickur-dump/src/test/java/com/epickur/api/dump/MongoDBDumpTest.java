@@ -25,15 +25,9 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = MongoDumpConfigTest.class)
 public class MongoDBDumpTest {
 
-	private String mongod = "mongod";
-	private String ip = "localhost";
-	private Integer port = 27017;
-	private String database = "epickur";
-	private String username = "login";
-	private String password = "password";
-	private String backupPath = "/path";
-	private static final String TARGZEXT = ".tar.gz";
 	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+	private final String backupPath = "/path";
+
 	@Mock
 	private Runtime runtime;
 	@Mock
@@ -44,16 +38,14 @@ public class MongoDBDumpTest {
 	private File dumpFileMock;
 	@Mock
 	private File dumpDirectoryMock;
-
-	private File[] listOfFiles = new File[1];
 	@Mock
 	private File fileFound;
-
-	private InputStream inputStream = IOUtils.toInputStream("some test data for my input stream");
 	@Autowired
 	private EpickurProperties properties;
 	@Autowired
 	private MongoDBDump mongoDBDump;
+	private File[] listOfFiles = new File[1];
+	private InputStream inputStream = IOUtils.toInputStream("some test data for my input stream");
 
 	@Before
 	public void setUp() throws Exception {
@@ -95,6 +87,13 @@ public class MongoDBDumpTest {
 
 	@Test
 	public void testBuildDumpCommand() {
+		String mongod = "mongod";
+		String ip = "localhost";
+		Integer port = 27017;
+		String database = "epickur";
+		String username = "login";
+		String password = "password";
+
 		String expected = mongod + " -d " + database + " -h " + ip + ":" + port + " -u " + username + " -p" + password + " -o " + backupPath;
 		String actual = mongoDBDump.buildDumpCommand();
 		assertEquals(expected, actual);

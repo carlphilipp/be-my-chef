@@ -147,7 +147,7 @@ public class UserService {
 		if (!isDeleted) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, id);
 		}
-		return isDeleted;
+		return true;
 	}
 
 	/**

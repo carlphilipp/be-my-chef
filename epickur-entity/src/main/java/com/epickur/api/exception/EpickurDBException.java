@@ -14,8 +14,6 @@ public class EpickurDBException extends EpickurException {
 
 	/** Serializer */
 	private static final long serialVersionUID = 1L;
-	/** Unexepcted exception */
-	public static final String UNEXPECTED_EXCEPTION = "Unexpected error";
 	/** Dbo failed */
 	private Document doc;
 	/** Id */

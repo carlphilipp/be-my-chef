@@ -11,21 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
-/**
- * Created by carl on 12/15/2015.
- */
 public abstract class AccesRightsAspect {
 
 	@Autowired
 	protected HttpServletRequest request;
-
 	@Autowired
 	protected UserValidator userValidator;
 	@Autowired
 	protected DishValidator dishValidator;
 	@Autowired
 	protected CatererValidator catererValidator;
-
 	@Autowired
 	protected CatererDAO catererDAO;
 

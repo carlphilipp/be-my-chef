@@ -15,17 +15,6 @@ public class UserTest {
 
 		assertEquals(user.hashCode(), user2.hashCode());
 		assertEquals(user, user2);
-
-		User user3 = user2;
-		assertEquals(user, user3);
-		assertNotNull(user);
-		assertFalse(user.equals(new Address()));
-	}
-
-	@Test
-	public void testUserNull() {
-		User user = EntityGenerator.generateRandomUser();
-		user.toString();
 	}
 
 	@Test

@@ -47,11 +47,11 @@ public final class AmazonWebServices {
 			final StringBuilder stb = new StringBuilder();
 			stb.append(
 					"Caught an AmazonServiceException, which means your request made it to Amazon S3, but was rejected with an error response for some reason.");
-			stb.append("\nError Message:    " + ase.getMessage());
-			stb.append("\nHTTP Status Code: " + ase.getStatusCode());
-			stb.append("\nAWS Error Code:   " + ase.getErrorCode());
-			stb.append("\nError Type:       " + ase.getErrorType());
-			stb.append("\nRequest ID:       " + ase.getRequestId());
+			stb.append("\nError Message:    ").append(ase.getMessage());
+			stb.append("\nHTTP Status Code: ").append(ase.getStatusCode());
+			stb.append("\nAWS Error Code:   ").append(ase.getErrorCode());
+			stb.append("\nError Type:       ").append(ase.getErrorType());
+			stb.append("\nRequest ID:       ").append(ase.getRequestId());
 			log.error(stb.toString(), ase);
 		} catch (AmazonClientException ace) {
 			String res = "Caught an AmazonClientException, which means the client encountered an internal error while trying to communicate with S3, such as not being able to access the network.";

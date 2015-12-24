@@ -7,12 +7,10 @@ import com.epickur.api.config.PropertySourcesConfig;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.Email;
 import com.epickur.api.utils.email.EmailTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @PropertySource("classpath:email-test-data.properties")
 @Configuration
@@ -22,22 +20,22 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 public class EmailConfigTest {
 
 	@Bean
-	public Utils utils(){
+	public Utils utils() {
 		return new Utils();
 	}
 
 	@Bean
-	public EmailTemplate emailTemplate(){
+	public EmailTemplate emailTemplate() {
 		return new EmailTemplate();
 	}
 
 	@Bean
-	public Email email(){
+	public Email email() {
 		return new Email();
 	}
 
 	@Bean
-	public MandrillConfiguration mandrillConfiguration(){
+	public MandrillConfiguration mandrillConfiguration() {
 		MandrillConfiguration mandrillConfiguration = new MandrillConfiguration();
 		mandrillConfiguration.setApiKey(epickurProperties().getMandrillKey());
 		mandrillConfiguration.setApiVersion(epickurProperties().getMandrillVersion());
@@ -46,7 +44,7 @@ public class EmailConfigTest {
 	}
 
 	@Bean
-	public MandrillMessagesRequest mandrillMessagesRequest(){
+	public MandrillMessagesRequest mandrillMessagesRequest() {
 		return new MandrillMessagesRequest();
 	}
 

@@ -66,7 +66,6 @@ public class SimpleAccessRightsAspectTest {
 	public void testHandleOrderUpdate() {
 		Object[] args = new Object[3];
 		Order order = EntityGenerator.generateRandomOrderWithId();
-		;
 		args[1] = order.getId().toHexString();
 		args[2] = order;
 
@@ -79,7 +78,6 @@ public class SimpleAccessRightsAspectTest {
 
 		Object[] args = new Object[3];
 		Order order = EntityGenerator.generateRandomOrderWithId();
-		;
 		args[1] = EntityGenerator.generateRandomString();
 		args[2] = order;
 

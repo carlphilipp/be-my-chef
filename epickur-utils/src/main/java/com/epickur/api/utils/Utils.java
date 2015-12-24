@@ -72,8 +72,7 @@ public class Utils {
 	public String getAPIKey() throws IOException {
 		final Charset charset = Charset.forName("UTF8");
 		@Cleanup final InputStreamReader in = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("api.key"), charset);
-		final String apiKey = IOUtils.toString(in);
-		return apiKey;
+		return IOUtils.toString(in);
 	}
 
 	/**

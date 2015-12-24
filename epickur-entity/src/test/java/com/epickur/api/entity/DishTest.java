@@ -16,10 +16,5 @@ public class DishTest {
 
 		assertEquals(dish.hashCode(), dish2.hashCode());
 		assertEquals(dish, dish2);
-
-		Dish dish3 = dish2;
-		assertEquals(dish, dish3);
-		assertFalse(dish.equals(null));
-		assertFalse(dish.equals(new User()));
 	}
 }

@@ -16,10 +16,5 @@ public class IngredientTest {
 
 		assertEquals(ingredient.hashCode(), ingredient2.hashCode());
 		assertEquals(ingredient, ingredient2);
-
-		Ingredient dish3 = ingredient2;
-		assertEquals(ingredient, dish3);
-		assertFalse(ingredient.equals(null));
-		assertFalse(ingredient.equals(new User()));
 	}
 }

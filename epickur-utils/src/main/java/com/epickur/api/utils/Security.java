@@ -106,8 +106,7 @@ public final class Security {
 		final String email = user.getEmail();
 		final String saltHashed = user.getPassword().substring(0, sixtyFour);
 		final String cryptedPasswordSalt = user.getPassword().substring(sixtyFour, user.getPassword().length());
-		final String checkFound = Security.createUserCode(user.getName(), saltHashed, cryptedPasswordSalt, email);
-		return checkFound;
+		return Security.createUserCode(user.getName(), saltHashed, cryptedPasswordSalt, email);
 	}
 
 	/**

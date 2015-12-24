@@ -37,14 +37,6 @@ public class AddressTest {
 		address2.setPostalCode(postalCode);
 		address2.setState(state);
 		address2.setStreet(street);
-
-		assertEquals(address.hashCode(), address2.hashCode());
-		assertEquals(address, address2);
-
-		Address address3 = address;
-		assertEquals(address, address3);
-		assertFalse(address.equals(null));
-		assertFalse(address.equals(new User()));
 	}
 	
 	@Test

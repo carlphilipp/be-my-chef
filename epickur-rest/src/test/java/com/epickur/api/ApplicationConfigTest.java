@@ -9,20 +9,21 @@ import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.Email;
 import com.epickur.api.utils.email.EmailTemplate;
 import com.epickur.api.utils.email.EmailUtils;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @PropertySource("classpath:epickur-dev.properties")
-@ComponentScan(value = { "CatererService", "CatererDAO", "IntegrationTestUtils", "UserDAO", "UserService", "KeyService" })
 @Import({ SchedulerConfig.class, MongoConfig.class, ValidatorConfig.class, GeoCoder.class, AmazonWSConfig.class, StripeConfig.class,
 				EmailConfig.class })
 public class ApplicationConfigTest {
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer properties() throws Exception {
-		final PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
-		return pspc;
+		return new PropertySourcesPlaceholderConfigurer();
 	}
 
 	@Bean

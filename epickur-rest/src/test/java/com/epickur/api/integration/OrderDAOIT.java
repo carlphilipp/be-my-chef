@@ -43,12 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfigTest.class)
 public class OrderDAOIT {
-
-	@Autowired
-	private IntegrationTestUtils integrationTestUtils;
-	@Autowired
-	private OrderDAO dao;
-
+	
 	@Mock
 	private OrderService orderService;
 	@Mock
@@ -57,6 +52,10 @@ public class OrderDAOIT {
 	private HttpServletRequest context;
 	@InjectMocks
 	private static UserController userController;
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
+	@Autowired
+	private OrderDAO dao;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {

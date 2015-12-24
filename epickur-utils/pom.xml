@@ -20,10 +20,6 @@
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-entity</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-test</artifactId>
-		</dependency>
 
 		<!-- Generate PDF -->
 		<dependency>

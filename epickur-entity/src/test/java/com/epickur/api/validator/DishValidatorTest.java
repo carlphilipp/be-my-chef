@@ -67,8 +67,7 @@ public class DishValidatorTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validator.NO_DISH_PROVIDED);
 
-		Dish dish = null;
-		validator.checkUpdateData(new ObjectId().toHexString(), dish);
+		validator.checkUpdateData(new ObjectId().toHexString(), null);
 	}
 
 	@Test

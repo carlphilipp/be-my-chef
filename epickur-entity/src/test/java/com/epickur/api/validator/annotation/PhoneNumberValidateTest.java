@@ -16,9 +16,6 @@ import java.util.Set;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by carl on 12/16/2015.
- */
 public class PhoneNumberValidateTest {
 
 	private Validator validator;

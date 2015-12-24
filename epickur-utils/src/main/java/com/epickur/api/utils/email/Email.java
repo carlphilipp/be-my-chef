@@ -56,13 +56,9 @@ public class Email {
 	private MandrillMessagesRequest messagesRequest;
 	@Autowired
 	private MandrillConfiguration mandrillConfiguration;
-
 	private MandrillRESTRequest request;
-
 	private String subject;
-
 	private String message;
-
 	private String[] sendTo;
 
 	/**

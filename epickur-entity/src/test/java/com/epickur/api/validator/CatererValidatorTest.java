@@ -308,10 +308,9 @@ public class CatererValidatorTest {
 		thrown.expectMessage("Start date missing");
 
 		CatererValidator service = new CatererValidator();
-		DateTime start = null;
 		DateTime end = new DateTime();
 		end = end.plusMinutes(5);
-		service.checkPaymentInfo(start, end);
+		service.checkPaymentInfo(null, end);
 	}
 
 	@Test
@@ -321,9 +320,8 @@ public class CatererValidatorTest {
 
 		CatererValidator service = new CatererValidator();
 		DateTime start = new DateTime();
-		DateTime end = null;
 		start = start.plusHours(1);
-		service.checkPaymentInfo(start, end);
+		service.checkPaymentInfo(start, null);
 	}
 
 	@Test

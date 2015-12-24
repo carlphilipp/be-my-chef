@@ -16,10 +16,5 @@ public class KeyTest {
 
 		assertEquals(key.hashCode(), key2.hashCode());
 		assertEquals(key, key2);
-
-		Key key3 = key2;
-		assertEquals(key, key3);
-		assertFalse(key.equals(null));
-		assertFalse(key.equals(new User()));
 	}
 }

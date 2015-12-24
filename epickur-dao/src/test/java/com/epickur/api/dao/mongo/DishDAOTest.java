@@ -43,7 +43,6 @@ public class DishDAOTest {
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-
 	@Mock
 	private MongoDatabase dbMock;
 	@Mock

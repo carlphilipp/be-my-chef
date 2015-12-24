@@ -52,11 +52,11 @@ public class CommonsUtil {
 			final Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):([0-5][0-9]))$");
 			final Matcher matcher = pattern.matcher(pickupdate);
 			if (matcher.matches()) {
-				result.append(convertToReadableDay(matcher.group(1).toLowerCase()) + " ");
+				result.append(convertToReadableDay(matcher.group(1).toLowerCase())).append(" ");
 				// Convert in minutes the given time
 				int hours = Integer.valueOf(matcher.group(3));
 				int mins = Integer.valueOf(matcher.group(4));
-				result.append("at " + formatWithAmPm(hours, mins));
+				result.append("at ").append(formatWithAmPm(hours, mins));
 			}
 		}
 		return result.toString();
@@ -102,7 +102,7 @@ public class CommonsUtil {
 		} else {
 			minute1 = "" + minuteLocal;
 		}
-		result.append(":" + minute1);
+		result.append(":").append(minute1);
 		int amPm = calendar.get(Calendar.AM_PM);
 		String amPmResult = (amPm == 0) ? "AM" : "PM";
 		result.append(amPmResult);

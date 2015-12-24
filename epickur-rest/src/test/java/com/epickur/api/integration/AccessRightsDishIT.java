@@ -29,7 +29,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -41,20 +40,15 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = ApplicationConfigTest.class)
 public class AccessRightsDishIT {
 
-	@Autowired
-	private IntegrationTestUtils integrationTestUtils;
-
+	private static final String JSON_MIME_TYPE = "application/json";
 	private static final String ENDPOINT = "dishes";
-
 	private static String PROTOCOL;
 	private static String HOST;
 	private static String PORT;
 	private static String PATH;
 
-//	private static String END_POINT;
-//	private static String URL;
-//	private static String URL_NO_KEY;
-	private static final String jsonMimeType = "application/json";
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
 	private static ObjectMapper mapper;
 
 	@BeforeClass
@@ -94,7 +88,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -119,7 +113,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -145,7 +139,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -168,7 +162,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -195,7 +189,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -225,7 +219,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -253,7 +247,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -277,7 +271,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -304,7 +298,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -328,7 +322,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -353,7 +347,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -380,7 +374,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -411,7 +405,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -439,7 +433,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -463,7 +457,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -490,7 +484,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -514,7 +508,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();

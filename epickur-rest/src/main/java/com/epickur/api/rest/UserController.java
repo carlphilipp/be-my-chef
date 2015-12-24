@@ -241,10 +241,7 @@ public class UserController {
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(@PathVariable("id") final String id) throws EpickurException {
 		final boolean isDeleted = userService.delete(id);
-		final DeletedMessage deletedMessage = new DeletedMessage();
-		deletedMessage.setId(id);
-		deletedMessage.setDeleted(isDeleted);
-		return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
+		return getDeleteMessage(id, isDeleted);
 	}
 
 	// @formatter:off
@@ -610,10 +607,7 @@ public class UserController {
 			@PathVariable("id") final String id,
 			@PathVariable("orderId") final String orderId) throws EpickurException {
 		final boolean isDeleted = orderService.delete(orderId);
-		final DeletedMessage deletedMessage = new DeletedMessage();
-		deletedMessage.setId(id);
-		deletedMessage.setDeleted(isDeleted);
-		return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
+		return getDeleteMessage(orderId, isDeleted);
 	}
 
 	// @formatter:off
@@ -650,5 +644,12 @@ public class UserController {
 		userService.resetPasswordFirstStep(email);
 		node.put("status", "email sent");
 		return new ResponseEntity<>(node, HttpStatus.OK);
+	}
+
+	private ResponseEntity<?> getDeleteMessage(final String id, final boolean isDeleted) {
+		final DeletedMessage deletedMessage = new DeletedMessage();
+		deletedMessage.setId(id);
+		deletedMessage.setDeleted(isDeleted);
+		return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
 	}
 }

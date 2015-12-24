@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stripe.exception.*;
 import com.stripe.model.Token;
+import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.bson.types.ObjectId;
@@ -45,7 +46,7 @@ public class EntityGenerator {
 	}
 
 	public static String convertListToStringIngredients(final List<Ingredient> ingredients) {
-		final OutputStream out = new ByteArrayOutputStream();
+		@Cleanup final OutputStream out = new ByteArrayOutputStream();
 		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
 		try {
 			mapper.writeValue(out, ingredients);
@@ -58,7 +59,7 @@ public class EntityGenerator {
 	}
 
 	public static String convertListToStringNutritionFacts(final List<NutritionFact> nutritionFacts) {
-		final OutputStream out = new ByteArrayOutputStream();
+		@Cleanup final OutputStream out = new ByteArrayOutputStream();
 		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
 		try {
 			mapper.writeValue(out, nutritionFacts);
@@ -71,7 +72,7 @@ public class EntityGenerator {
 	}
 
 	public static String convertListToStringSteps(final List<String> steps) {
-		final OutputStream out = new ByteArrayOutputStream();
+		@Cleanup final OutputStream out = new ByteArrayOutputStream();
 		final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();
 		try {
 			mapper.writeValue(out, steps);

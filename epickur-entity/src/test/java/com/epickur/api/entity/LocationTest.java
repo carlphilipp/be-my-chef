@@ -16,10 +16,5 @@ public class LocationTest {
 
 		assertEquals(location.hashCode(), location2.hashCode());
 		assertEquals(location, location2);
-
-		Location location3 = location2;
-		assertEquals(location, location3);
-		assertFalse(location.equals(null));
-		assertFalse(location.equals(new User()));
 	}
 }

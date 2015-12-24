@@ -25,14 +25,19 @@ import java.util.List;
 @Slf4j
 public final class MongoDBDump {
 
-	@Autowired
-	private Utils utils;
-	@Autowired
-	private EpickurProperties properties;
 	/**
 	 * File separator
 	 */
 	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+	/**
+	 * Compression of the file
+	 */
+	private static final String TARGZEXT = ".tar.gz";
+
+	@Autowired
+	private Utils utils;
+	@Autowired
+	private EpickurProperties properties;
 	/**
 	 * Backup File
 	 */
@@ -45,10 +50,6 @@ public final class MongoDBDump {
 	 * Dump Directory
 	 */
 	private File dumpDirectory;
-	/**
-	 * Compression of the file
-	 */
-	private static final String TARGZEXT = ".tar.gz";
 	/**
 	 * Date
 	 */

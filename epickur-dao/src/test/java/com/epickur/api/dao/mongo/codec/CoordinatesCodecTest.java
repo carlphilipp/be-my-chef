@@ -18,7 +18,6 @@ public class CoordinatesCodecTest {
 	private BsonWriter writer;
 	@Mock
 	private BsonReader reader;
-
 	private CoordinatesCodec coordinatesCodec;
 
 	@Before

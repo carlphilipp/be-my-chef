@@ -1,15 +1,11 @@
 package com.epickur.api.stripe;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.when;
-
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import com.epickur.api.enumeration.Currency;
+import com.epickur.api.helper.EntityGenerator;
+import com.stripe.exception.*;
+import com.stripe.model.Charge;
+import com.stripe.model.Token;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -17,38 +13,25 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import com.epickur.api.enumeration.Currency;
-import com.epickur.api.helper.EntityGenerator;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Charge;
-import com.stripe.model.Token;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.when;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
 @PrepareForTest(Charge.class)
 public class StripePaymentTest {
-	
+
+	private static Token TOKEN;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
-	private static Token TOKEN;
-	
-	private StripePayment stripePayment;
 	@Mock
 	private Charge charge;
-
-	private APIConnectionException apiConnectionException = new APIConnectionException("error");
-
-	private InvalidRequestException invalidReqException = new InvalidRequestException("error", null, null, null, new Throwable());
-
-	private AuthenticationException authenticationException = new AuthenticationException(null, null, null);
 	@Mock
 	private StripeException stripeException;
+	private StripePayment stripePayment;
 	
 	
 	@BeforeClass
@@ -77,7 +60,7 @@ public class StripePaymentTest {
 
 	@Test
 	public void testChargeCard() throws StripeException {
-		Integer value = Integer.valueOf(1500);
+		Integer value = 1500;
 		when(charge.getPaid()).thenReturn(true);
 		when(charge.getAmount()).thenReturn(value);
 		
@@ -90,10 +73,11 @@ public class StripePaymentTest {
 	@Test
 	public void testChargeCardInvalidRequestExceptionFail() throws StripeException {
 		thrown.expect(InvalidRequestException.class);
+		InvalidRequestException invalidReqException = new InvalidRequestException("error", null, null, null, new Throwable());
 		
 		when(Charge.create(anyObject())).thenThrow(invalidReqException);
 		
-		Integer value = Integer.valueOf(-1500);
+		Integer value = -1500;
 		
 		stripePayment.chargeCard(TOKEN.getId(), value, Currency.AUD);
 	}
@@ -102,10 +86,11 @@ public class StripePaymentTest {
 	@Test
 	public void testChargeCardAuthenticationExceptionFail() throws StripeException {
 		thrown.expect(AuthenticationException.class);
+		AuthenticationException authenticationException = new AuthenticationException(null, null, null);
 		
 		when(Charge.create(anyObject())).thenThrow(authenticationException);
 		
-		Integer value = Integer.valueOf(-1500);
+		Integer value = -1500;
 		
 		stripePayment.chargeCard(TOKEN.getId(), value, Currency.AUD);
 	}
@@ -114,10 +99,11 @@ public class StripePaymentTest {
 	@Test
 	public void testChargeCardAPIConnectionExceptionFail() throws StripeException {
 		thrown.expect(APIConnectionException.class);
+		APIConnectionException apiConnectionException = new APIConnectionException("error");
 		
 		when(Charge.create(anyObject())).thenThrow(apiConnectionException);
 		
-		Integer value = Integer.valueOf(-1500);
+		Integer value = -1500;
 		
 		stripePayment.chargeCard(TOKEN.getId(), value, Currency.AUD);
 	}
@@ -126,10 +112,11 @@ public class StripePaymentTest {
 	@Test
 	public void testChargeCardStripeExceptionFail() throws StripeException {
 		thrown.expect(StripeException.class);
+		APIConnectionException apiConnectionException = new APIConnectionException("error");
 		
 		when(Charge.create(anyObject())).thenThrow(apiConnectionException);
 		
-		Integer value = Integer.valueOf(-1500);
+		Integer value = -1500;
 		
 		stripePayment.chargeCard(TOKEN.getId(), value, Currency.AUD);
 	}

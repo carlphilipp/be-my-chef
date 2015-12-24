@@ -46,21 +46,18 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration(classes = ApplicationConfigTest.class)
 public class CatererIT {
 
-	@Autowired
-	private IntegrationTestUtils integrationTestUtils;
-
-	private static final String jsonMimeType = "application/json";
-
+	private static final String JSON_MIME_TYPE = "application/json";
 	private static final String ENDPOINT = "caterers";
-
 	private static String PROTOCOL;
 	private static String HOST;
 	private static String PORT;
 	private static String PATH;
-
 	private static String API_KEY;
 	private static String NAME;
 	private static String ID;
+
+	@Autowired
+	private IntegrationTestUtils integrationTestUtils;
 
 	@AfterClass
 	public static void tearDownAfterClass() throws IOException {
@@ -122,7 +119,7 @@ public class CatererIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(caterer.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -156,7 +153,7 @@ public class CatererIT {
 				.encode();
 		URI uri = uriComponents.toUri();
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(request);
 	}
 
@@ -170,7 +167,7 @@ public class CatererIT {
 				.encode();
 		URI uri = uriComponents.toUri();
 		HttpUriRequest request = new HttpGet(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 
 		// When
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -179,7 +176,7 @@ public class CatererIT {
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getStatusLine().getStatusCode());
 
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 	}
 
 	@Test
@@ -220,7 +217,7 @@ public class CatererIT {
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -254,7 +251,7 @@ public class CatererIT {
 
 		String id = jsonResult.get("id").asText();
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		// Delete this caterer
 		deleteCaterer(id);
@@ -271,7 +268,7 @@ public class CatererIT {
 				.encode();
 		URI uri = uriComponents.toUri();
 		HttpUriRequest request = new HttpGet(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader("content-type", JSON_MIME_TYPE);
 
 		// Read request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -286,7 +283,7 @@ public class CatererIT {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
-		assertEquals(jsonMimeType, mimeType);
+		assertEquals(JSON_MIME_TYPE, mimeType);
 
 		assertEquals(NAME, jsonResult.get("name").asText());
 		assertNotNull(jsonResult.get("createdAt"));

@@ -9,7 +9,6 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.rest.CatererController;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;

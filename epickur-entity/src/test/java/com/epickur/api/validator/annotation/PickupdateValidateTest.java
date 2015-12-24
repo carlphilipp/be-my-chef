@@ -1,14 +1,11 @@
 package com.epickur.api.validator.annotation;
 
-import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Order;
-import com.epickur.api.entity.User;
 import com.epickur.api.entity.times.Hours;
 import com.epickur.api.entity.times.TimeFrame;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.validator.operation.Update;
-import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,9 +20,6 @@ import java.util.Set;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by carl on 12/16/2015.
- */
 public class PickupdateValidateTest {
 
 	private Validator validator;

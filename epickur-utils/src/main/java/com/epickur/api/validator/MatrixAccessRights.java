@@ -18,7 +18,7 @@ public final class MatrixAccessRights {
 	 * The access rights matrix
 	 */
 	private static final boolean[][] MATRIX = new boolean[][] {
-			// @formatter:off
+// @formatter:off
 
 	// Endpoint	    // 	-------------------------- USER --------------------------|------------------ ORDER ------------------|------------------------------- CATERER -------------------------------|------------------ DISH ------------------|----------------- VOUCHER -----------------|
 	// Method		// 	create - read - update - delete - readAll - resetPassword - create - read - update - delete - readAll - create - read - update - delete - readAll - readDishes - payementInfo - create - read - update - delete - search - create - read - update - delete - generate

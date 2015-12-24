@@ -10,26 +10,26 @@ For full endpoint documentation please go [here](epickur-rest/apidoc/index.html)
 ASCII dependency graph:
 
 ```
-                 Logging                        Config
-                   |_____________________         |
-                   |                     |        |
-                 Commons                Test      |
-                   |                     |        |
-                   |                     |        |
-                 Entity                  |        |
-                   |                     |        |
-                   |                     |        |
-                 Utils                   |        |
-           ________|________             |        |
-          |        |        |            |        |
-     3rd Party    DAO      Dump          |        |
-          |________|________|            |        |
-                   |                     |        |
-                Service                  |        |
-                   |_____________________|        |
-                              |___________________|
-                              |
-                             Rest
+             Logging
+           _____|_____
+          |           |
+         Test      Commons
+          |           |
+          |           |
+          |        Entity       Config
+          |           |            |
+          |           |____________|
+          |           |
+          |         Utils
+          |___________|____________ 
+          |           |            |
+      3rd Party      DAO          Dump
+          |___________|____________|
+                      |
+                   Service
+                      |
+                      |
+                     Rest
 ```
 
 The test module contains basic features for testing. It is used in the compile scope so other sub-modules can use during their tests.
