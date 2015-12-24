@@ -77,12 +77,10 @@ public class VoucherValidator extends Validator {
 			if (StringUtils.isBlank(expirationDate)) {
 				throw new EpickurIllegalArgument("The param expirationDate is not allowed to be null or empty when expirationType is until");
 			} else {
-				if (expirationDate != null) {
-					try {
-						CommonsUtil.parseDate(expirationDate, format);
-					} catch (Exception e) {
-						throw new EpickurParsingException("Error while parsing date '" + expirationDate + "' with format '" + format + "'", e);
-					}
+				try {
+					CommonsUtil.parseDate(expirationDate, format);
+				} catch (Exception e) {
+					throw new EpickurParsingException("Error while parsing date '" + expirationDate + "' with format '" + format + "'", e);
 				}
 			}
 		}
