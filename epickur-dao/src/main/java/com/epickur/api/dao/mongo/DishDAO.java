@@ -81,7 +81,7 @@ public class DishDAO extends CrudDAO<Dish> {
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
-				Dish dish = Dish.getDocumentAsDish(cursor.next());
+				final Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
 		} catch (final MongoException e) {
@@ -115,7 +115,7 @@ public class DishDAO extends CrudDAO<Dish> {
 			// db.dishes.find({$or: [{type:'meat'},{type:'fish'}]})
 			final BsonArray or = new BsonArray();
 			for (final DishType type : types) {
-				BsonDocument content = new BsonDocument();
+				final BsonDocument content = new BsonDocument();
 				content.append("type", new BsonString(type.getType()));
 				or.add(content);
 			}
@@ -174,7 +174,7 @@ public class DishDAO extends CrudDAO<Dish> {
 		try {
 			cursor = getColl().find(find).iterator();
 			while (cursor.hasNext()) {
-				Dish dish = Dish.getDocumentAsDish(cursor.next());
+				final Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
 		} catch (final MongoException e) {

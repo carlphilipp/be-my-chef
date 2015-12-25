@@ -77,7 +77,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
-				Caterer user = Caterer.getDocumentAsCatererDBView(cursor.next());
+				final Caterer user = Caterer.getDocumentAsCatererDBView(cursor.next());
 				caterers.add(user);
 			}
 		} catch (final MongoException e) {

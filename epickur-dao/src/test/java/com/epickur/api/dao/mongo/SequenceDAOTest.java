@@ -26,38 +26,38 @@ public class SequenceDAOTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
-	private MongoDatabase dbMock;
+	private MongoDatabase db;
 	@Mock
-	private MongoCollection<Document> collMock;
+	private MongoCollection<Document> collection;
 	@InjectMocks
 	private SequenceDAO dao;
 	
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(dbMock.getCollection(SEQUENCE_COLL)).thenReturn(collMock);
+		when(db.getCollection(SEQUENCE_COLL)).thenReturn(collection);
 	}
 	
 	@Test
 	public void testNextId() throws EpickurException {
 		Document found = new Document().append("seq", 5);
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class))).thenReturn(found);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class))).thenReturn(found);
 		
 		String actual = dao.getNextId();
 
 		assertNotNull(actual);
 		assertEquals("5", actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class));
 	}
 	
 	@Test
 	public void testNextIdNotFound() throws EpickurException {
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class))).thenReturn(null);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class))).thenReturn(null);
 		
 		String actual = dao.getNextId();
 
 		assertNotNull(actual);
 		assertEquals("0", actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class));
 	}
 }

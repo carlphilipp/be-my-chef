@@ -38,9 +38,9 @@ public class KeyDAOTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
-	private MongoDatabase dbMock;
+	private MongoDatabase db;
 	@Mock
-	private MongoCollection<Document> collMock;
+	private MongoCollection<Document> collection;
 	@Mock
 	private FindIterable<Document> findIteratble;
 	@Mock
@@ -53,7 +53,7 @@ public class KeyDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(dbMock.getCollection(KEY_COLL)).thenReturn(collMock);
+		when(db.getCollection(KEY_COLL)).thenReturn(collection);
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class KeyDAOTest {
 		Key actual = dao.create(key);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -74,12 +74,12 @@ public class KeyDAOTest {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Document document = key.getDocumentDBView();
 
-		doThrow(new MongoException("")).when(collMock).insertOne(document);
+		doThrow(new MongoException("")).when(collection).insertOne(document);
 
 		Key actual = dao.create(key);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -88,13 +88,13 @@ public class KeyDAOTest {
 		Document query = new Document().append("key", key);
 		Document found = EntityGenerator.generateRandomAdminKey().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
 		Key actual = dao.read(key);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 	}
 
 	@Test
@@ -104,7 +104,7 @@ public class KeyDAOTest {
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
 
-		when(collMock.find(query)).thenThrow(new MongoException(""));
+		when(collection.find(query)).thenThrow(new MongoException(""));
 
 		dao.read(key);
 	}
@@ -115,20 +115,20 @@ public class KeyDAOTest {
 		Document query = new Document().append("userName", userName);
 		Document found = EntityGenerator.generateRandomAdminKey().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
 		Key actual = dao.readWithName(userName);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
 		Document found = EntityGenerator.generateRandomAdminKey().getDocumentDBView();
 
-		when(collMock.find()).thenReturn(findIteratble);
+		when(collection.find()).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
@@ -137,7 +137,7 @@ public class KeyDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find();
+		verify(collection, times(1)).find();
 		verify(cursor, times(1)).close();
 	}
 	
@@ -145,7 +145,7 @@ public class KeyDAOTest {
 	public void testReadAllReadMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 		
-		when(collMock.find()).thenThrow(new MongoException(""));
+		when(collection.find()).thenThrow(new MongoException(""));
 
 		dao.readAll();
 	}
@@ -164,13 +164,13 @@ public class KeyDAOTest {
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
 
-		when(collMock.deleteOne(query)).thenReturn(deleteResult);
+		when(collection.deleteOne(query)).thenReturn(deleteResult);
 		when(deleteResult.getDeletedCount()).thenReturn(1L);
 
 		boolean actual = dao.deleteWithKey(key);
 
 		assertTrue(actual);
-		verify(collMock, times(1)).deleteOne(query);
+		verify(collection, times(1)).deleteOne(query);
 	}
 	
 	@Test
@@ -178,13 +178,13 @@ public class KeyDAOTest {
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
 
-		when(collMock.deleteOne(query)).thenReturn(deleteResult);
+		when(collection.deleteOne(query)).thenReturn(deleteResult);
 		when(deleteResult.getDeletedCount()).thenReturn(0L);
 
 		boolean actual = dao.deleteWithKey(key);
 
 		assertFalse(actual);
-		verify(collMock, times(1)).deleteOne(query);
+		verify(collection, times(1)).deleteOne(query);
 	}
 	
 	@Test
@@ -194,7 +194,7 @@ public class KeyDAOTest {
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
 
-		when(collMock.deleteOne(query)).thenThrow(new MongoException(""));
+		when(collection.deleteOne(query)).thenThrow(new MongoException(""));
 		dao.deleteWithKey(key);
 	}
 }

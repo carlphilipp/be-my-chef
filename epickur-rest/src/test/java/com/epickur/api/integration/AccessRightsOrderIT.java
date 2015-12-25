@@ -49,11 +49,13 @@ public class AccessRightsOrderIT {
 	private static String HOST;
 	private static String PORT;
 	private static String PATH;
+	private static User USER;
 
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
-	private static ObjectMapper mapper;
-	private static User user;
+	@Autowired
+	private ObjectMapper mapper;
+
 
 	@Before
 	public void setUp() throws IOException, EpickurException {
@@ -64,8 +66,7 @@ public class AccessRightsOrderIT {
 		HOST = prop.getProperty("host");
 		PORT = prop.getProperty("port");
 		PATH = prop.getProperty("api.path");
-		mapper = new ObjectMapper();
-		user = integrationTestUtils.createUserAndLogin();
+		USER = integrationTestUtils.createUserAndLogin();
 		IntegrationTestUtils.setupDB();
 	}
 
@@ -85,7 +86,7 @@ public class AccessRightsOrderIT {
 				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT)
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(user.getId().toHexString())
+				.expand(USER.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -108,7 +109,7 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderRead() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Order order = integrationTestUtils.createOrder(user.getId());
+		Order order = integrationTestUtils.createOrder(USER.getId());
 		User admin = integrationTestUtils.createAdminAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
@@ -116,7 +117,7 @@ public class AccessRightsOrderIT {
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -142,7 +143,7 @@ public class AccessRightsOrderIT {
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(user.getId().toHexString(), id)
+				.expand(USER.getId().toHexString(), id)
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -157,7 +158,7 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderUpdate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Order order = integrationTestUtils.createOrder(user.getId());
+		Order order = integrationTestUtils.createOrder(USER.getId());
 		User admin = integrationTestUtils.createAdminAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
@@ -165,11 +166,11 @@ public class AccessRightsOrderIT {
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
-		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
@@ -186,7 +187,7 @@ public class AccessRightsOrderIT {
 	public void testAdministratorOrderUpdate2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		ObjectId id = new ObjectId();
-		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
 		updatedOrder.setId(id);
 		User admin = integrationTestUtils.createAdminAndLogin();
 
@@ -195,7 +196,7 @@ public class AccessRightsOrderIT {
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(user.getId().toHexString(), updatedOrder.getId().toHexString())
+				.expand(USER.getId().toHexString(), updatedOrder.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -212,7 +213,7 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderDelete() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Order order = integrationTestUtils.createOrder(user.getId());
+		Order order = integrationTestUtils.createOrder(USER.getId());
 		User admin = integrationTestUtils.createAdminAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
@@ -220,7 +221,7 @@ public class AccessRightsOrderIT {
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -236,14 +237,14 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderCreate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createSuperUserAndLogin();
+		USER = integrationTestUtils.createSuperUserAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT)
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString())
+				.expand(USER.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -265,15 +266,15 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createSuperUserAndLogin();
-		Order order = integrationTestUtils.createOrder(user.getId());
+		USER = integrationTestUtils.createSuperUserAndLogin();
+		Order order = integrationTestUtils.createOrder(USER.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, order.getId().toHexString())
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -291,15 +292,15 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createSuperUserAndLogin();
+		USER = integrationTestUtils.createSuperUserAndLogin();
 		String id = new ObjectId().toHexString();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), id)
+				.expand(USER.getId().toHexString(), id)
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -314,16 +315,16 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead3() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createSuperUserAndLogin();
+		USER = integrationTestUtils.createSuperUserAndLogin();
 		User otherUser = integrationTestUtils.createUserAndLogin();
 		Order order = integrationTestUtils.createOrder(otherUser.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -338,19 +339,19 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderUpdate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createSuperUserAndLogin();
-		Order order = integrationTestUtils.createOrder(user.getId());
+		USER = integrationTestUtils.createSuperUserAndLogin();
+		Order order = integrationTestUtils.createOrder(USER.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
-		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
@@ -366,17 +367,17 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderUpdate2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createSuperUserAndLogin();
+		USER = integrationTestUtils.createSuperUserAndLogin();
 		ObjectId id = new ObjectId();
-		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
 		updatedOrder.setId(id);
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), updatedOrder.getId().toHexString())
+				.expand(USER.getId().toHexString(), updatedOrder.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -393,15 +394,15 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderDelete() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createSuperUserAndLogin();
-		Order order = integrationTestUtils.createOrder(user.getId());
+		USER = integrationTestUtils.createSuperUserAndLogin();
+		Order order = integrationTestUtils.createOrder(USER.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -417,13 +418,13 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderCreate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createUserAndLogin();
+		USER = integrationTestUtils.createUserAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT)
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString())
+				.expand(USER.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -445,15 +446,15 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead() throws IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createUserAndLogin();
-		Order order = integrationTestUtils.createOrder(user.getId());
+		USER = integrationTestUtils.createUserAndLogin();
+		Order order = integrationTestUtils.createOrder(USER.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -471,15 +472,15 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead2() throws IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createUserAndLogin();
+		USER = integrationTestUtils.createUserAndLogin();
 		String id = new ObjectId().toHexString();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), id)
+				.expand(USER.getId().toHexString(), id)
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -494,7 +495,7 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead3() throws IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createUserAndLogin();
+		USER = integrationTestUtils.createUserAndLogin();
 
 		User otherUser = integrationTestUtils.createUserAndLogin();
 
@@ -503,9 +504,9 @@ public class AccessRightsOrderIT {
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -520,19 +521,19 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderUpdate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createUserAndLogin();
-		Order order = integrationTestUtils.createOrder(user.getId());
+		USER = integrationTestUtils.createUserAndLogin();
+		Order order = integrationTestUtils.createOrder(USER.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
-		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
@@ -548,17 +549,17 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderUpdate2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createUserAndLogin();
+		USER = integrationTestUtils.createUserAndLogin();
 		ObjectId id = new ObjectId();
-		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
 		updatedOrder.setId(id);
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), updatedOrder.getId().toHexString())
+				.expand(USER.getId().toHexString(), updatedOrder.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -575,15 +576,15 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderDelete() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		user = integrationTestUtils.createUserAndLogin();
-		Order order = integrationTestUtils.createOrder(user.getId());
+		USER = integrationTestUtils.createUserAndLogin();
+		Order order = integrationTestUtils.createOrder(USER.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT)
 				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", user.getKey())
+				.queryParam("key", USER.getKey())
 				.build()
-				.expand(user.getId().toHexString(), order.getId().toHexString())
+				.expand(USER.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 

@@ -1,6 +1,7 @@
 package com.epickur.api.enumeration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ public class MeasurementUnitTest {
 		assertEquals("KG", mu.getShortDescription());
 		assertEquals("Kilogram", mu.getDescription());
 		assertEquals("kg", mu.getSymbol());
-		assertEquals(true, mu.isMetric());
+		assertTrue(mu.isMetric());
 	}
 
 	@Test(expected = IllegalArgumentException.class)

@@ -30,6 +30,7 @@ public class KeyRequestFilterTest {
 
 	private static final String KEY_PROPERTY = "key";
 	private static final String KEY_VALUE = "keyValue";
+
 	@Mock
 	private ObjectMapper mapper;
 	@Mock

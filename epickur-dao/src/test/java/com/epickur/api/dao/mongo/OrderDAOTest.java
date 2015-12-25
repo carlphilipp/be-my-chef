@@ -40,9 +40,9 @@ public class OrderDAOTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
-	private MongoDatabase dbMock;
+	private MongoDatabase db;
 	@Mock
-	private MongoCollection<Document> collMock;
+	private MongoCollection<Document> collection;
 	@Mock
 	private FindIterable<Document> findIteratble;
 	@Mock
@@ -53,7 +53,7 @@ public class OrderDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(dbMock.getCollection(ORDER_COLL)).thenReturn(collMock);
+		when(db.getCollection(ORDER_COLL)).thenReturn(collection);
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class OrderDAOTest {
 		Order actual = dao.create(order);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -73,13 +73,13 @@ public class OrderDAOTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Document document = order.getDocumentDBView();
 
-		doThrow(new MongoException("")).when(collMock).insertOne(document);
+		doThrow(new MongoException("")).when(collection).insertOne(document);
 
 		Order actual = dao.create(order);
 
 		assertNotNull(actual);
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
-		verify(collMock, times(1)).insertOne(document);
+		verify(db, times(1)).getCollection(ORDER_COLL);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -88,13 +88,13 @@ public class OrderDAOTest {
 		Document query = new Document().append("_id", new ObjectId(orderId));
 		Document found = EntityGenerator.generateRandomOrder().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
 		Order actual = dao.read(orderId);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 	}
 
 	@Test
@@ -104,7 +104,7 @@ public class OrderDAOTest {
 		String orderId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(orderId));
 
-		when(collMock.find(query)).thenThrow(new MongoException(""));
+		when(collection.find(query)).thenThrow(new MongoException(""));
 
 		dao.read(orderId);
 	}
@@ -123,25 +123,25 @@ public class OrderDAOTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Document document = order.getDocumentDBView();
 
-		when(collMock.findOneAndUpdate(anyObject(), anyObject(), anyObject()))
+		when(collection.findOneAndUpdate(anyObject(), anyObject(), anyObject()))
 				.thenReturn(document);
 
 		Order actual = dao.update(order);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(anyObject(), anyObject(), anyObject());
+		verify(collection, times(1)).findOneAndUpdate(anyObject(), anyObject(), anyObject());
 	}
 
 	@Test
 	public void testUpdateNotFound() throws EpickurException {
 		Order order = EntityGenerator.generateRandomOrder();
 
-		when(collMock.findOneAndUpdate( anyObject(), anyObject(), anyObject())).thenReturn(null);
+		when(collection.findOneAndUpdate( anyObject(), anyObject(), anyObject())).thenReturn(null);
 
 		Order actual = dao.update(order);
 
 		assertNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(anyObject(), anyObject(), anyObject());
+		verify(collection, times(1)).findOneAndUpdate(anyObject(), anyObject(), anyObject());
 	}
 
 	@Test
@@ -149,11 +149,11 @@ public class OrderDAOTest {
 		thrown.expect(EpickurDBException.class);
 		Order order = EntityGenerator.generateRandomOrder();
 
-		when(collMock.findOneAndUpdate(anyObject(), anyObject(), anyObject())).thenThrow(new MongoException(""));
+		when(collection.findOneAndUpdate(anyObject(), anyObject(), anyObject())).thenThrow(new MongoException(""));
 
 		dao.update(order);
 
-		verify(dbMock, times(1)).getCollection(ORDER_COLL);
+		verify(db, times(1)).getCollection(ORDER_COLL);
 	}
 
 	@Test
@@ -168,7 +168,7 @@ public class OrderDAOTest {
 		Document query = new Document().append("createdBy", userId);
 		Document found = EntityGenerator.generateRandomOrder().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
@@ -177,7 +177,7 @@ public class OrderDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 		verify(cursor, times(1)).close();
 	}
 
@@ -188,7 +188,7 @@ public class OrderDAOTest {
 		String userId = new ObjectId().toHexString();
 		Document query = new Document().append("createdBy", userId);
 
-		when(collMock.find(query)).thenThrow(new MongoException(""));
+		when(collection.find(query)).thenThrow(new MongoException(""));
 
 		dao.readAllWithUserId(userId);
 	}
@@ -198,7 +198,7 @@ public class OrderDAOTest {
 		String catererId = new ObjectId().toHexString();
 		Document found = EntityGenerator.generateRandomOrder().getDocumentDBView();
 
-		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
+		when(collection.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
@@ -209,7 +209,7 @@ public class OrderDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find((Document) anyObject());
+		verify(collection, times(1)).find((Document) anyObject());
 		verify(cursor, times(1)).close();
 	}
 
@@ -219,7 +219,7 @@ public class OrderDAOTest {
 
 		String catererId = new ObjectId().toHexString();
 
-		when(collMock.find((Document) anyObject())).thenThrow(new MongoException(""));
+		when(collection.find((Document) anyObject())).thenThrow(new MongoException(""));
 
 		DateTime start = new DateTime().minusDays(5);
 		DateTime end = new DateTime().plusDays(5);

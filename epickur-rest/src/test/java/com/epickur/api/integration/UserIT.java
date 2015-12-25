@@ -67,6 +67,7 @@ public class UserIT {
 
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
+	@Autowired
 	private ObjectMapper mapper;
 
 	@AfterClass
@@ -77,8 +78,6 @@ public class UserIT {
 	@Before
 	public void setUp() throws IOException, EpickurException {
 		StripeTestUtils.setupStripe();
-
-		mapper = new ObjectMapper();
 
 		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();

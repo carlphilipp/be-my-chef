@@ -1,28 +1,24 @@
 package com.epickur.api.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.epickur.api.dao.mongo.CatererDAO;
+import com.epickur.api.entity.Caterer;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.validator.CatererValidator;
-import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.dao.mongo.CatererDAO;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Key;
-import com.epickur.api.enumeration.Role;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class CatererServiceTest {
 
@@ -32,12 +28,12 @@ public class CatererServiceTest {
 	private CatererValidator validator;
 	@InjectMocks
 	private CatererService catererService;
-	
+
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 	}
-	
+
 	@Test
 	public void testCreate() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
@@ -87,9 +83,9 @@ public class CatererServiceTest {
 		List<Caterer> caterers = new ArrayList<>();
 		caterers.add(caterer1);
 		caterers.add(caterer2);
-		
+
 		when(catererDAOMock.readAll()).thenReturn(caterers);
-		
+
 		List<Caterer> actual = catererService.readAll();
 		assertNotNull("Caterer is null", actual);
 		assertEquals(caterer1.getId(), actual.get(0).getId());
@@ -97,11 +93,11 @@ public class CatererServiceTest {
 	}
 
 	@Test
-	public void testUpdate() throws EpickurException {		
+	public void testUpdate() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Caterer catererAfterUpdate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterUpdate.setDescription("new desc");
-		
+
 		when(catererDAOMock.read(anyString())).thenReturn(catererAfterUpdate);
 		when(catererDAOMock.update(caterer)).thenReturn(catererAfterUpdate);
 

@@ -38,9 +38,9 @@ public class CatererDAOTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
-	private MongoDatabase dbMock;
+	private MongoDatabase db;
 	@Mock
-	private MongoCollection<Document> collMock;
+	private MongoCollection<Document> collection;
 	@Mock
 	private FindIterable<Document> findIteratble;
 	@Mock
@@ -51,7 +51,7 @@ public class CatererDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(dbMock.getCollection(CATERER_COLL)).thenReturn(collMock);
+		when(db.getCollection(CATERER_COLL)).thenReturn(collection);
 	}
 	
 	@Test
@@ -62,7 +62,7 @@ public class CatererDAOTest {
 		Caterer actual = dao.create(caterer);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -72,12 +72,12 @@ public class CatererDAOTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Document document = caterer.getDocumentDBView();
 
-		doThrow(new MongoException("")).when(collMock).insertOne(document);
+		doThrow(new MongoException("")).when(collection).insertOne(document);
 
 		Caterer actual = dao.create(caterer);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -86,13 +86,13 @@ public class CatererDAOTest {
 		Document query = new Document().append("_id", new ObjectId(catererId));
 		Document found = EntityGenerator.generateRandomCatererWithId().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
 		Caterer actual = dao.read(catererId);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class CatererDAOTest {
 		String catererId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(catererId));
 
-		when(collMock.find(query)).thenThrow(new MongoException(""));
+		when(collection.find(query)).thenThrow(new MongoException(""));
 
 		dao.read(catererId);
 	}
@@ -120,7 +120,7 @@ public class CatererDAOTest {
 	public void testReadAll() throws EpickurException {
 		Document found = EntityGenerator.generateRandomCatererWithId().getDocumentDBView();
 
-		when(collMock.find()).thenReturn(findIteratble);
+		when(collection.find()).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
@@ -129,7 +129,7 @@ public class CatererDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find();
+		verify(collection, times(1)).find();
 		verify(cursor, times(1)).close();
 	}
 
@@ -137,7 +137,7 @@ public class CatererDAOTest {
 	public void testReadAllMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 
-		when(collMock.find()).thenThrow(new MongoException(""));
+		when(collection.find()).thenThrow(new MongoException(""));
 
 		dao.readAll();
 	}
@@ -147,24 +147,24 @@ public class CatererDAOTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Document document = caterer.getDocumentDBView();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
 
 		Caterer actual = dao.update(caterer);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
 
 		Caterer actual = dao.update(caterer);
 
 		assertNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
@@ -173,7 +173,7 @@ public class CatererDAOTest {
 
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
 				.thenThrow(new MongoException(""));
 
 		dao.update(caterer);

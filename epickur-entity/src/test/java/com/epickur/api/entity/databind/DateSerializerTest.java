@@ -13,5 +13,4 @@ public class DateSerializerTest {
 		DateSerializer ser = new DateSerializer();
 		ser.serialize(null, null, null);
 	}
-
 }

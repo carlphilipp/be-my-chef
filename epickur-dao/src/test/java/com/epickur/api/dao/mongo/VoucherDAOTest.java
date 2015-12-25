@@ -38,9 +38,9 @@ public class VoucherDAOTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
-	private MongoDatabase dbMock;
+	private MongoDatabase db;
 	@Mock
-	private MongoCollection<Document> collMock;
+	private MongoCollection<Document> collection;
 	@Mock
 	private FindIterable<Document> findIteratble;
 	@Mock
@@ -51,7 +51,7 @@ public class VoucherDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(dbMock.getCollection(VOUCHER_COLL)).thenReturn(collMock);
+		when(db.getCollection(VOUCHER_COLL)).thenReturn(collection);
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class VoucherDAOTest {
 		Voucher actual = dao.create(voucher);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -72,12 +72,12 @@ public class VoucherDAOTest {
 		Voucher voucher = EntityGenerator.generateVoucher();
 		Document document = voucher.getDocumentDBView();
 
-		doThrow(new MongoException("")).when(collMock).insertOne(document);
+		doThrow(new MongoException("")).when(collection).insertOne(document);
 
 		Voucher actual = dao.create(voucher);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -86,13 +86,13 @@ public class VoucherDAOTest {
 		Document query = new Document().append("code", code);
 		Document found = EntityGenerator.generateVoucher().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
 		Voucher actual = dao.read(code);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class VoucherDAOTest {
 		String code = new ObjectId().toHexString();
 		Document query = new Document().append("code", code);
 
-		when(collMock.find(query)).thenThrow(new MongoException(""));
+		when(collection.find(query)).thenThrow(new MongoException(""));
 
 		dao.read(code);
 	}
@@ -111,7 +111,7 @@ public class VoucherDAOTest {
 	public void testReadToClean() throws EpickurException {
 		Document found = EntityGenerator.generateVoucher().getDocumentDBView();
 
-		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
+		when(collection.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
@@ -120,14 +120,14 @@ public class VoucherDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find(any(Document.class));
+		verify(collection, times(1)).find(any(Document.class));
 	}
 	
 	@Test
 	public void testReadToCleanMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 		
-		when(collMock.find(any(Document.class))).thenThrow(new MongoException(""));
+		when(collection.find(any(Document.class))).thenThrow(new MongoException(""));
 
 		dao.readToClean();
 	}
@@ -144,24 +144,24 @@ public class VoucherDAOTest {
 		Voucher voucher = EntityGenerator.generateVoucher();
 		Document document = voucher.getDocumentDBView();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
 
 		Voucher actual = dao.update(voucher);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
 		Voucher voucher = EntityGenerator.generateVoucher();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
 
 		Voucher actual = dao.update(voucher);
 
 		assertNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
@@ -170,7 +170,7 @@ public class VoucherDAOTest {
 
 		Voucher voucher = EntityGenerator.generateVoucher();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
 				.thenThrow(new MongoException(""));
 
 		dao.update(voucher);

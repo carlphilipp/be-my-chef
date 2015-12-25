@@ -37,6 +37,8 @@ public class AddressTest {
 		address2.setPostalCode(postalCode);
 		address2.setState(state);
 		address2.setStreet(street);
+
+		assertEquals(address, address2);
 	}
 	
 	@Test
@@ -51,6 +53,7 @@ public class AddressTest {
 		address.setStreet(null);
 		Address address2 = address.clone();
 		assertEquals(address2.hashCode(), address.hashCode());
+		assertEquals(address, address2);
 	}
 	
 	@Test

@@ -49,7 +49,8 @@ public class AccessRightsDishIT {
 
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
-	private static ObjectMapper mapper;
+	@Autowired
+	private ObjectMapper mapper;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
@@ -60,7 +61,6 @@ public class AccessRightsDishIT {
 		HOST = prop.getProperty("host");
 		PORT = prop.getProperty("port");
 		PATH = prop.getProperty("api.path");
-		mapper = new ObjectMapper();
 		IntegrationTestUtils.setupDB();
 	}
 

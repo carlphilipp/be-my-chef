@@ -40,9 +40,9 @@ public class UserDAOTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
-	private MongoDatabase dbMock;
+	private MongoDatabase db;
 	@Mock
-	private MongoCollection<Document> collMock;
+	private MongoCollection<Document> collection;
 	@Mock
 	private FindIterable<Document> findIteratble;
 	@Mock
@@ -53,7 +53,7 @@ public class UserDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(dbMock.getCollection(USER_COLL)).thenReturn(collMock);
+		when(db.getCollection(USER_COLL)).thenReturn(collection);
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class UserDAOTest {
 		User actual = dao.create(user);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -74,12 +74,12 @@ public class UserDAOTest {
 		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
 
-		doThrow(new MongoException("")).when(collMock).insertOne(document);
+		doThrow(new MongoException("")).when(collection).insertOne(document);
 
 		User actual = dao.create(user);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -88,13 +88,13 @@ public class UserDAOTest {
 		Document query = new Document().append("_id", new ObjectId(userId));
 		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
 		User actual = dao.read(userId);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 	}
 
 	@Test
@@ -104,7 +104,7 @@ public class UserDAOTest {
 		String userId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(userId));
 
-		when(collMock.find(query)).thenThrow(new MongoException(""));
+		when(collection.find(query)).thenThrow(new MongoException(""));
 
 		dao.read(userId);
 	}
@@ -124,13 +124,13 @@ public class UserDAOTest {
 		Document query = new Document().append("name", name);
 		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
 		User actual = dao.readWithName(name);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 	}
 
 	@Test
@@ -139,20 +139,20 @@ public class UserDAOTest {
 		Document query = new Document().append("email", email);
 		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
 		User actual = dao.readWithEmail(email);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
 		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
 
-		when(collMock.find()).thenReturn(findIteratble);
+		when(collection.find()).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
@@ -161,7 +161,7 @@ public class UserDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find();
+		verify(collection, times(1)).find();
 		verify(cursor, times(1)).close();
 	}
 
@@ -169,7 +169,7 @@ public class UserDAOTest {
 	public void testReadAllMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 
-		when(collMock.find()).thenThrow(new MongoException(""));
+		when(collection.find()).thenThrow(new MongoException(""));
 
 		dao.readAll();
 	}
@@ -179,24 +179,24 @@ public class UserDAOTest {
 		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
 
 		User actual = dao.update(user);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
 		User user = EntityGenerator.generateRandomUser();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
 
 		User actual = dao.update(user);
 
 		assertNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
@@ -205,7 +205,7 @@ public class UserDAOTest {
 
 		User user = EntityGenerator.generateRandomUser();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
 				.thenThrow(new MongoException(""));
 
 		dao.update(user);
@@ -219,11 +219,11 @@ public class UserDAOTest {
 		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
 
-		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
+		when(collection.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(document);
 
 		boolean actual = dao.exists(name, email);
 		assertTrue(actual);
-		verify(collMock, times(1)).find(any(Document.class));
+		verify(collection, times(1)).find(any(Document.class));
 	}
 }

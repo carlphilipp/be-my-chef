@@ -104,7 +104,6 @@ public class UserValidatorTest {
 		UserValidator validator = new UserValidator();
 		Order order = EntityGenerator.generateRandomOrder();
 		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Operation.READ);
-
 	}
 
 	@Test
@@ -114,6 +113,5 @@ public class UserValidatorTest {
 		UserValidator validator = new UserValidator();
 		Order order = EntityGenerator.generateRandomOrder();
 		validator.checkOrderRightsAfter(Role.SUPER_USER, new ObjectId(), order, Operation.DELETE);
-
 	}
 }

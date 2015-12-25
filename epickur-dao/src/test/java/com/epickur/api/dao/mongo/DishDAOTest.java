@@ -44,9 +44,9 @@ public class DishDAOTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
-	private MongoDatabase dbMock;
+	private MongoDatabase db;
 	@Mock
-	private MongoCollection<Document> collMock;
+	private MongoCollection<Document> collection;
 	@Mock
 	private FindIterable<Document> findIteratble;
 	@Mock
@@ -57,7 +57,7 @@ public class DishDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(dbMock.getCollection(DISH_COLL)).thenReturn(collMock);
+		when(db.getCollection(DISH_COLL)).thenReturn(collection);
 	}
 	
 	@Test
@@ -68,7 +68,7 @@ public class DishDAOTest {
 		Dish actual = dao.create(dish);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -78,12 +78,12 @@ public class DishDAOTest {
 		Dish dish = EntityGenerator.generateRandomDish();
 		Document document = dish.getDocumentDBView();
 
-		doThrow(new MongoException("")).when(collMock).insertOne(document);
+		doThrow(new MongoException("")).when(collection).insertOne(document);
 
 		Dish actual = dao.create(dish);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 
 	@Test
@@ -92,13 +92,13 @@ public class DishDAOTest {
 		Document query = new Document().append("_id", new ObjectId(dishId));
 		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
 
-		when(collMock.find(query)).thenReturn(findIteratble);
+		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
 		Dish actual = dao.read(dishId);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).find(query);
+		verify(collection, times(1)).find(query);
 	}
 
 	@Test
@@ -108,7 +108,7 @@ public class DishDAOTest {
 		String dishId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(dishId));
 
-		when(collMock.find(query)).thenThrow(new MongoException(""));
+		when(collection.find(query)).thenThrow(new MongoException(""));
 
 		dao.read(dishId);
 	}
@@ -126,7 +126,7 @@ public class DishDAOTest {
 	public void testReadAll() throws EpickurException {
 		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
 
-		when(collMock.find()).thenReturn(findIteratble);
+		when(collection.find()).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
@@ -135,7 +135,7 @@ public class DishDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find();
+		verify(collection, times(1)).find();
 		verify(cursor, times(1)).close();
 	}
 
@@ -143,7 +143,7 @@ public class DishDAOTest {
 	public void testReadAllMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 
-		when(collMock.find()).thenThrow(new MongoException(""));
+		when(collection.find()).thenThrow(new MongoException(""));
 
 		dao.readAll();
 	}
@@ -153,24 +153,24 @@ public class DishDAOTest {
 		Dish dish = EntityGenerator.generateRandomDish();
 		Document document = dish.getDocumentDBView();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
 
 		Dish actual = dao.update(dish);
 
 		assertNotNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
 		Dish dish = EntityGenerator.generateRandomDish();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
 
 		Dish actual = dao.update(dish);
 
 		assertNull(actual);
-		verify(collMock, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
@@ -179,7 +179,7 @@ public class DishDAOTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 
-		when(collMock.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
 				.thenThrow(new MongoException(""));
 
 		dao.update(dish);
@@ -204,7 +204,7 @@ public class DishDAOTest {
 		dishTypes.add(DishType.MAIN);
 		Geo geo = EntityGenerator.generateGeo();
 		
-		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
+		when(collection.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.limit(10)).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
@@ -214,7 +214,7 @@ public class DishDAOTest {
 		
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find(any(Document.class));
+		verify(collection, times(1)).find(any(Document.class));
 		verify(cursor, times(1)).close();
 	}
 	
@@ -238,7 +238,7 @@ public class DishDAOTest {
 		dishTypes.add(DishType.DESSERT);
 		Geo geo = EntityGenerator.generateGeo();
 		
-		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
+		when(collection.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.limit(10)).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
@@ -248,7 +248,7 @@ public class DishDAOTest {
 		
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find(any(Document.class));
+		verify(collection, times(1)).find(any(Document.class));
 		verify(cursor, times(1)).close();
 	}
 	
@@ -260,7 +260,7 @@ public class DishDAOTest {
 		dishTypes.add(DishType.MAIN);
 		Geo geo = EntityGenerator.generateGeo();
 		
-		when(collMock.find(any(Document.class))).thenThrow(new MongoException(""));
+		when(collection.find(any(Document.class))).thenThrow(new MongoException(""));
 		
 		dao.search("mon", 5, dishTypes, 10, geo, 20);
 	}
@@ -270,7 +270,7 @@ public class DishDAOTest {
 		String catererId = new ObjectId().toHexString();
 		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
 		
-		when(collMock.find(any(Document.class))).thenReturn(findIteratble);
+		when(collection.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
@@ -279,7 +279,7 @@ public class DishDAOTest {
 		
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collMock, times(1)).find(any(Document.class));
+		verify(collection, times(1)).find(any(Document.class));
 		verify(cursor, times(1)).close();
 	}
 	
@@ -289,7 +289,7 @@ public class DishDAOTest {
 		
 		String catererId = new ObjectId().toHexString();
 		
-		when(collMock.find(any(Document.class))).thenThrow(new MongoException(""));
+		when(collection.find(any(Document.class))).thenThrow(new MongoException(""));
 		
 		dao.searchWithCatererId(catererId);
 	}

@@ -47,10 +47,11 @@ public class DishIT {
 	private static String PORT;
 	private static String PATH;
 	private static String API_KEY;
-	private static ObjectMapper mapper;
 
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
+	@Autowired
+	private ObjectMapper mapper;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
@@ -74,7 +75,6 @@ public class DishIT {
 		HOST = prop.getProperty("host");
 		PORT = prop.getProperty("port");
 		PATH = prop.getProperty("api.path");
-		mapper = new ObjectMapper();
 	}
 
 	@Test

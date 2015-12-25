@@ -47,7 +47,8 @@ public class AccessRightsCatererIT {
 
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
-	private static ObjectMapper mapper;
+	@Autowired
+	private ObjectMapper mapper;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
@@ -58,7 +59,6 @@ public class AccessRightsCatererIT {
 		HOST = prop.getProperty("host");
 		PORT = prop.getProperty("port");
 		PATH = prop.getProperty("api.path");
-		mapper = new ObjectMapper();
 		IntegrationTestUtils.setupDB();
 	}
 
@@ -119,8 +119,6 @@ public class AccessRightsCatererIT {
 	public void testAdministratorCatererUpdate() throws IOException, EpickurException {
 		User admin = integrationTestUtils.createAdminAndLogin();
 		Caterer caterer = integrationTestUtils.createCaterer();
-		//URL_NO_KEY = END_POINT + "/caterers/" + caterer.getId().toHexString();
-		//URL = URL_NO_KEY + "?key=" + admin.getKey();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")

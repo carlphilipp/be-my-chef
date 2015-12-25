@@ -8,7 +8,6 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -50,7 +49,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 	@Override
 	public Voucher create(final Voucher voucher) throws EpickurException {
 		log.debug("Create voucher: " + voucher);
-		Document doc = voucher.getDocumentDBView();
+		final Document doc = voucher.getDocumentDBView();
 		insertDocument(doc);
 		return Voucher.getDocumentAsVoucher(doc);
 	}
@@ -58,17 +57,17 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 	@Override
 	public Voucher read(final String code) throws EpickurException {
 		log.debug("Read voucher with code: " + code);
-		Document query = convertAttributeToDocument("code", code);
-		Document find = findDocument(query);
+		final Document query = convertAttributeToDocument("code", code);
+		final Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
 	@Override
 	public Voucher update(final Voucher voucher) throws EpickurException {
 		log.debug("Update voucher: " + voucher);
-		Document filter = convertAttributeToDocument("_id", voucher.getId());
-		Document update = voucher.getUpdateQuery();
-		Document updated = updateDocument(filter, update);
+		final Document filter = convertAttributeToDocument("_id", voucher.getId());
+		final Document update = voucher.getUpdateQuery();
+		final Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -94,22 +93,21 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 	public List<Voucher> readToClean() throws EpickurException {
 		try {
 			log.debug("Read all vouchers to clean");
-			DateTime date = new DateTime();
-			Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()),
+			final DateTime date = new DateTime();
+			final Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()),
 					eq("status", Status.VALID.getType()));
-			FindIterable<Document> find = getColl().find(query);
+			final FindIterable<Document> find = getColl().find(query);
 			if (find != null) {
-				List<Voucher> res = new ArrayList<>();
-				MongoCursor<Document> cursor = find.iterator();
-				while (cursor.hasNext()) {
-					Voucher current = Voucher.getDocumentAsVoucher(cursor.next());
+				final List<Voucher> res = new ArrayList<>();
+				for (final Document document : find) {
+					final Voucher current = Voucher.getDocumentAsVoucher(document);
 					res.add(current);
 				}
 				return res;
 			} else {
 				return null;
 			}
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("readToClean", e.getMessage(), e);
 		}
 	}

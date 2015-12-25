@@ -44,23 +44,23 @@ public class SequenceDAO {
 	 * @throws EpickurDBException If an epickur exception occurred
 	 */
 	public String getNextId() throws EpickurDBException {
-		String sequenceId = "order";
-		String sequenceField = "seq";
+		final String sequenceId = "order";
+		final String sequenceField = "seq";
 
-		Document query = new Document();
+		final Document query = new Document();
 		query.append("_id", sequenceId);
 
-		Document change = new Document(sequenceField, new BsonInt32(1));
-		Document update = new Document("$inc", change);
+		final Document change = new Document(sequenceField, new BsonInt32(1));
+		final Document update = new Document("$inc", change);
 		try {
-			Document res = coll.findOneAndUpdate(query, update);
+			final Document res = coll.findOneAndUpdate(query, update);
 			log.debug("Read next Order id");
 			if (res != null) {
 				return Integer.toHexString(Integer.parseInt(res.get(sequenceField).toString()));
 			} else {
 				// Put 1 as new seq and return 0 as current sequence
 				query.append(sequenceField, 1);
-				this.coll.insertOne(query);
+				coll.insertOne(query);
 				return Integer.toHexString(0);
 			}
 		} catch (MongoException e) {

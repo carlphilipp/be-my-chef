@@ -44,10 +44,11 @@ public class AccessRightsUserIT {
 	private static String HOST;
 	private static String PORT;
 	private static String PATH;
-	private static ObjectMapper mapper;
 
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
+	@Autowired
+	private ObjectMapper mapper;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
@@ -58,7 +59,6 @@ public class AccessRightsUserIT {
 		HOST = prop.getProperty("host");
 		PORT = prop.getProperty("port");
 		PATH = prop.getProperty("api.path");
-		mapper = new ObjectMapper();
 		IntegrationTestUtils.setupDB();
 	}
 

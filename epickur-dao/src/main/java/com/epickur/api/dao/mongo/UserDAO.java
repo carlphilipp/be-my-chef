@@ -38,7 +38,7 @@ public class UserDAO extends CrudDAO<User> {
 	@Override
 	public User create(final User user) throws EpickurException {
 		log.debug("Create user: " + user);
-		Document doc = user.getDocumentDBView();
+		final Document doc = user.getDocumentDBView();
 		insertDocument(doc);
 		return User.getDocumentAsUser(doc);
 	}
@@ -46,8 +46,8 @@ public class UserDAO extends CrudDAO<User> {
 	@Override
 	public User read(final String id) throws EpickurException {
 		log.debug("Read user with id: " + id);
-		Document query = convertAttributeToDocument("_id", new ObjectId(id));
-		Document find = findDocument(query);
+		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
+		final Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -60,8 +60,8 @@ public class UserDAO extends CrudDAO<User> {
 	 */
 	public User readWithName(final String name) throws EpickurException {
 		log.debug("Read user with name: " + name);
-		Document query = convertAttributeToDocument("name", name);
-		Document find = findDocument(query);
+		final Document query = convertAttributeToDocument("name", name);
+		final Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
@@ -74,17 +74,17 @@ public class UserDAO extends CrudDAO<User> {
 	 */
 	public User readWithEmail(final String email) throws EpickurException {
 		log.debug("Read user with email: " + email);
-		Document query = convertAttributeToDocument("email", email);
-		Document find = findDocument(query);
+		final Document query = convertAttributeToDocument("email", email);
+		final Document find = findDocument(query);
 		return processAfterQuery(find);
 	}
 
 	@Override
 	public User update(final User user) throws EpickurException {
 		log.debug("Update user: " + user);
-		Document filter = convertAttributeToDocument("_id", user.getId());
-		Document update = user.getUpdateQuery();
-		Document updated = updateDocument(filter, update);
+		final Document filter = convertAttributeToDocument("_id", user.getId());
+		final Document update = user.getUpdateQuery();
+		final Document updated = updateDocument(filter, update);
 		return processAfterQuery(updated);
 	}
 
@@ -98,15 +98,15 @@ public class UserDAO extends CrudDAO<User> {
 
 	@Override
 	public List<User> readAll() throws EpickurException {
-		List<User> users = new ArrayList<>();
+		final List<User> users = new ArrayList<>();
 		MongoCursor<Document> cursor = null;
 		try {
 			cursor = getColl().find().iterator();
 			while (cursor.hasNext()) {
-				User user = User.getDocumentAsUser(cursor.next());
+				final User user = User.getDocumentAsUser(cursor.next());
 				users.add(user);
 			}
-		} catch (MongoException e) {
+		} catch (final MongoException e) {
 			throw new EpickurDBException("readAll", e.getMessage(), e);
 		} finally {
 			if (cursor != null) {
@@ -125,17 +125,17 @@ public class UserDAO extends CrudDAO<User> {
 	 * @throws EpickurDBException If an epickur exception occurred
 	 */
 	public boolean exists(final String name, final String email) throws EpickurDBException {
-		Document query = createExistsQuery(name, email);
-		Document found = findDocument(query);
+		final Document query = createExistsQuery(name, email);
+		final Document found = findDocument(query);
 		return found != null;
 	}
 
 	private Document createExistsQuery(final String name, final String email) {
-		Document query = new Document();
-		BsonArray or = new BsonArray();
+		final Document query = new Document();
+		final BsonArray or = new BsonArray();
 
-		BsonDocument bsonName = new BsonDocument();
-		BsonDocument bsonEmail = new BsonDocument();
+		final BsonDocument bsonName = new BsonDocument();
+		final BsonDocument bsonEmail = new BsonDocument();
 		bsonName.append("name", new BsonString(name));
 		bsonEmail.append("email", new BsonString(email));
 

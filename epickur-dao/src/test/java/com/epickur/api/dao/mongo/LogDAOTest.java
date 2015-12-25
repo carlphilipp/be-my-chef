@@ -28,9 +28,9 @@ public class LogDAOTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
-	private MongoDatabase dbMock;
+	private MongoDatabase db;
 	@Mock
-	private MongoCollection<Document> collMock;
+	private MongoCollection<Document> collection;
 	@Mock
 	private FindIterable<Document> findIteratble;
 	@Mock
@@ -41,7 +41,7 @@ public class LogDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(dbMock.getCollection(LOG_COLL)).thenReturn(collMock);
+		when(db.getCollection(LOG_COLL)).thenReturn(collection);
 	}
 	
 	@Test
@@ -52,7 +52,7 @@ public class LogDAOTest {
 		Log actual = dao.create(log);
 
 		assertNull(actual);
-		verify(collMock, times(1)).insertOne(document);
+		verify(collection, times(1)).insertOne(document);
 	}
 	
 	@Test

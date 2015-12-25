@@ -1,16 +1,12 @@
 package com.epickur.api.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import com.epickur.api.dao.mongo.VoucherDAO;
+import com.epickur.api.entity.Voucher;
+import com.epickur.api.enumeration.voucher.DiscountType;
+import com.epickur.api.enumeration.voucher.ExpirationType;
+import com.epickur.api.enumeration.voucher.Status;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,13 +16,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.dao.mongo.VoucherDAO;
-import com.epickur.api.entity.Voucher;
-import com.epickur.api.enumeration.voucher.DiscountType;
-import com.epickur.api.enumeration.voucher.ExpirationType;
-import com.epickur.api.enumeration.voucher.Status;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class VoucherServiceTest {
 
@@ -36,26 +33,26 @@ public class VoucherServiceTest {
 	private VoucherDAO voucherDAO;
 	@InjectMocks
 	private VoucherService voucherService;
-	
+
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 	}
-	
+
 	@Test
-	public void testRead() throws EpickurException{
+	public void testRead() throws EpickurException {
 		Voucher voucher = EntityGenerator.generateVoucher();
-		
+
 		when(voucherDAO.read(anyString())).thenReturn(voucher);
-		
+
 		Voucher actual = voucherService.read(EntityGenerator.generateRandomString());
 		assertNotNull(actual);
 	}
-	
+
 	@Test
-	public void testGenerate() throws EpickurException{
+	public void testGenerate() throws EpickurException {
 		when(voucherDAO.read(anyString())).thenReturn(null);
-		
+
 		int count = 10;
 		Set<Voucher> actuals = voucherService.generate(count, DiscountType.AMOUNT, 15, ExpirationType.ONETIME, new DateTime());
 		assertNotNull(actuals);
@@ -68,10 +65,10 @@ public class VoucherServiceTest {
 		Voucher voucherAfter = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfter.setStatus(Status.VALID);
 		voucherAfter.setExpirationType(ExpirationType.ONETIME);
-		
+
 		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfter);
 		when(voucherDAO.update(anyObject())).thenReturn(voucherAfter);
-		
+
 		Voucher actual = voucherService.validateVoucher(voucher.getCode());
 		assertNotNull(actual);
 		assertEquals(Status.EXPIRED, actual.getStatus());
@@ -82,9 +79,9 @@ public class VoucherServiceTest {
 		thrown.expect(EpickurException.class);
 		UUID uuid = UUID.randomUUID();
 		thrown.expectMessage("Voucher '" + uuid.toString() + "' not found");
-		
+
 		when(voucherDAO.read(uuid.toString())).thenReturn(null);
-		
+
 		voucherService.validateVoucher(uuid.toString());
 	}
 
@@ -93,13 +90,13 @@ public class VoucherServiceTest {
 		thrown.expect(EpickurException.class);
 		UUID uuid = UUID.randomUUID();
 		thrown.expectMessage("Voucher '" + uuid.toString() + "' expired");
-		
+
 		Voucher voucher = EntityGenerator.generateVoucher();
 		Voucher voucherAfter = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfter.setStatus(Status.EXPIRED);
-		
+
 		when(voucherDAO.read(uuid.toString())).thenReturn(voucherAfter);
-		
+
 		Voucher actual = voucherService.validateVoucher(uuid.toString());
 		assertNotNull(actual);
 		assertEquals(Status.EXPIRED, actual.getStatus());
@@ -118,10 +115,10 @@ public class VoucherServiceTest {
 		DateTime now = new DateTime();
 		voucherAfterUpdate.setCreatedAt(now);
 		voucherAfterUpdate.setUpdatedAt(now);
-		
+
 		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfterRead);
 		when(voucherDAO.update(anyObject())).thenReturn(voucherAfterUpdate);
-		
+
 		Voucher actual = voucherService.validateVoucher(voucher.getCode());
 		assertNotNull(actual);
 		assertEquals(Status.VALID, actual.getStatus());
@@ -129,7 +126,7 @@ public class VoucherServiceTest {
 		assertNotNull(actual.getCreatedAt());
 		assertNotNull(actual.getUpdatedAt());
 	}
-	
+
 	@Test
 	public void testValidateUntil2() throws EpickurException {
 		Voucher voucher = EntityGenerator.generateVoucher();
@@ -144,10 +141,10 @@ public class VoucherServiceTest {
 		voucherAfterUpdate.setCreatedAt(now);
 		voucherAfterUpdate.setUpdatedAt(now);
 		voucherAfterUpdate.setUsedCount(4);
-		
+
 		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfterCreate);
 		when(voucherDAO.update(anyObject())).thenReturn(voucherAfterUpdate);
-		
+
 		Voucher actual = voucherService.validateVoucher(voucher.getCode());
 		assertNotNull(actual);
 		assertEquals(Status.VALID, actual.getStatus());
@@ -155,7 +152,7 @@ public class VoucherServiceTest {
 		assertNotNull(actual.getCreatedAt());
 		assertNotNull(actual.getUpdatedAt());
 	}
-	
+
 	@Test
 	public void testRevertOneTime() throws EpickurException {
 		Voucher voucher = EntityGenerator.generateVoucher();
@@ -164,16 +161,16 @@ public class VoucherServiceTest {
 		Voucher voucherAfterUpdate = EntityGenerator.mockVoucherAfterCreate(voucherAfterRead);
 		voucherAfterUpdate.setStatus(Status.VALID);
 		voucherAfterUpdate.setUsedCount(0);
-		
+
 		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfterRead);
 		when(voucherDAO.update(anyObject())).thenReturn(voucherAfterUpdate);
-	
+
 		Voucher actual = voucherService.revertVoucher(voucher.getCode());
 		assertNotNull(actual);
 		assertEquals(Status.VALID, actual.getStatus());
 		assertEquals(0, actual.getUsedCount().intValue());
 	}
-	
+
 	@Test
 	public void testRevertUntil() throws EpickurException {
 		Voucher voucher = EntityGenerator.generateVoucher();
@@ -183,10 +180,10 @@ public class VoucherServiceTest {
 		Voucher voucherAfterUpdate = EntityGenerator.mockVoucherAfterCreate(voucherAfterRead);
 		voucherAfterUpdate.setStatus(Status.VALID);
 		voucherAfterUpdate.setUsedCount(9);
-		
+
 		when(voucherDAO.read(voucher.getCode())).thenReturn(voucherAfterRead);
 		when(voucherDAO.update(anyObject())).thenReturn(voucherAfterUpdate);
-	
+
 		Voucher actual = voucherService.revertVoucher(voucher.getCode());
 		assertNotNull(actual);
 		assertEquals(Status.VALID, actual.getStatus());

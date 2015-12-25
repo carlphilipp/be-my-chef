@@ -1,11 +1,9 @@
 package com.epickur.api.entity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
+import com.epickur.api.helper.EntityGenerator;
 import org.junit.Test;
 
-import com.epickur.api.helper.EntityGenerator;
+import static org.junit.Assert.assertEquals;
 
 public class IngredientTest {
 

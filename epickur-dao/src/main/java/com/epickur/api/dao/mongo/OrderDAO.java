@@ -86,7 +86,7 @@ public class OrderDAO extends CrudDAO<Order> {
 		try {
 			cursor = getColl().find(query).iterator();
 			while (cursor.hasNext()) {
-				Order user = Order.getDocumentAsOrder(cursor.next());
+				final Order user = Order.getDocumentAsOrder(cursor.next());
 				orders.add(user);
 			}
 		} catch (final MongoException e) {
@@ -123,7 +123,7 @@ public class OrderDAO extends CrudDAO<Order> {
 		try {
 			cursor = getColl().find(query).iterator();
 			while (cursor.hasNext()) {
-				Order user = Order.getDocumentAsOrder(cursor.next());
+				final Order user = Order.getDocumentAsOrder(cursor.next());
 				orders.add(user);
 			}
 		} catch (final MongoException e) {

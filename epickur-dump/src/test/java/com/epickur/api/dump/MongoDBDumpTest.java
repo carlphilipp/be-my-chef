@@ -26,18 +26,18 @@ import static org.mockito.Mockito.*;
 public class MongoDBDumpTest {
 
 	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
-	private final String backupPath = "/path";
+	private static final String BACKUP_PATH = "/path";
 
 	@Mock
 	private Runtime runtime;
 	@Mock
 	private Process process;
 	@Mock
-	private File backupFolderMock;
+	private File backupFolder;
 	@Mock
-	private File dumpFileMock;
+	private File dumpFile;
 	@Mock
-	private File dumpDirectoryMock;
+	private File dumpDirectory;
 	@Mock
 	private File fileFound;
 	@Autowired
@@ -50,9 +50,9 @@ public class MongoDBDumpTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		mongoDBDump.setBackupFolder(backupFolderMock);
-		mongoDBDump.setDumpFile(dumpFileMock);
-		mongoDBDump.setDumpDirectory(dumpDirectoryMock);
+		mongoDBDump.setBackupFolder(backupFolder);
+		mongoDBDump.setDumpFile(dumpFile);
+		mongoDBDump.setDumpDirectory(dumpDirectory);
 		mongoDBDump.setRuntime(runtime);
 	}
 
@@ -64,8 +64,8 @@ public class MongoDBDumpTest {
 
 		boolean actual = mongoDBDump.exportMongo();
 
-		verify(backupFolderMock, times(1)).exists();
-		verify(backupFolderMock, times(1)).mkdir();
+		verify(backupFolder, times(1)).exists();
+		verify(backupFolder, times(1)).mkdir();
 		verify(runtime, times(1)).exec(mongoDBDump.buildDumpCommand());
 		verify(process, times(1)).waitFor();
 		assertTrue(actual);
@@ -78,8 +78,8 @@ public class MongoDBDumpTest {
 
 		boolean actual = mongoDBDump.exportMongo();
 
-		verify(backupFolderMock, times(1)).exists();
-		verify(backupFolderMock, times(1)).mkdir();
+		verify(backupFolder, times(1)).exists();
+		verify(backupFolder, times(1)).mkdir();
 		//verify(runtime, times(1)).exec(mongoDBDump.buildDumpCommand());
 		verify(process, times(1)).waitFor();
 		assertFalse(actual);
@@ -94,63 +94,63 @@ public class MongoDBDumpTest {
 		String username = "login";
 		String password = "password";
 
-		String expected = mongod + " -d " + database + " -h " + ip + ":" + port + " -u " + username + " -p" + password + " -o " + backupPath;
+		String expected = mongod + " -d " + database + " -h " + ip + ":" + port + " -u " + username + " -p" + password + " -o " + BACKUP_PATH;
 		String actual = mongoDBDump.buildDumpCommand();
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void testGetCurrentFullPathName() throws UnknownHostException {
-		String expected = backupPath + FILE_SEPARATOR + mongoDBDump.getCurrentNameFile();
+		String expected = BACKUP_PATH + FILE_SEPARATOR + mongoDBDump.getCurrentNameFile();
 		String actual = mongoDBDump.getCurrentFullPathName();
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void testDeleteDumpFile() throws UnknownHostException {
-		when(dumpFileMock.delete()).thenReturn(true);
+		when(dumpFile.delete()).thenReturn(true);
 
 		mongoDBDump.deleteDumpFile();
 
-		verify(dumpFileMock, times(1)).delete();
+		verify(dumpFile, times(1)).delete();
 	}
 
 	@Test
 	public void testDeleteDumpFileNotWorked() throws UnknownHostException {
-		when(dumpFileMock.delete()).thenReturn(false);
+		when(dumpFile.delete()).thenReturn(false);
 
 		mongoDBDump.deleteDumpFile();
 
-		verify(dumpFileMock, times(1)).delete();
+		verify(dumpFile, times(1)).delete();
 	}
 
 	@Test
 	public void testCleanDumpDirectory() throws UnknownHostException {
-		when(dumpDirectoryMock.exists()).thenReturn(true);
-		when(dumpDirectoryMock.isDirectory()).thenReturn(true);
+		when(dumpDirectory.exists()).thenReturn(true);
+		when(dumpDirectory.isDirectory()).thenReturn(true);
 
 		mongoDBDump.cleanDumpDirectory();
 	}
 
 	@Test
 	public void testCleanDumpDirectoryFailed() throws UnknownHostException {
-		when(dumpDirectoryMock.exists()).thenReturn(true);
-		when(dumpDirectoryMock.isDirectory()).thenReturn(true);
-		when(dumpDirectoryMock.listFiles()).thenReturn(null);
+		when(dumpDirectory.exists()).thenReturn(true);
+		when(dumpDirectory.isDirectory()).thenReturn(true);
+		when(dumpDirectory.listFiles()).thenReturn(null);
 
 		mongoDBDump.cleanDumpDirectory();
 	}
 
 	@Test
 	public void testGetListFiles() throws UnknownHostException {
-		when(dumpDirectoryMock.listFiles()).thenReturn(listOfFiles);
+		when(dumpDirectory.listFiles()).thenReturn(listOfFiles);
 		listOfFiles[0] = fileFound;
 		when(fileFound.isFile()).thenReturn(true);
 		when(fileFound.getAbsolutePath()).thenReturn("/path");
 
 		List<String> actuals = mongoDBDump.getListFiles();
 
-		verify(dumpDirectoryMock, times(1)).listFiles();
+		verify(dumpDirectory, times(1)).listFiles();
 		verify(fileFound, times(1)).isFile();
 		verify(fileFound, times(1)).getAbsolutePath();
 		assertNotNull(actuals);

@@ -32,13 +32,10 @@ public class IntegrationTestUtils {
 
 	@Autowired
 	private CatererService catererService;
-
 	@Autowired
 	private UserService userService;
-
 	@Autowired
 	private DishService dishService;
-
 	@Autowired
 	private OrderService orderService;
 
