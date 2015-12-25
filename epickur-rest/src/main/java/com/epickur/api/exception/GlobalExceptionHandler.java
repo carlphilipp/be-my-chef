@@ -41,7 +41,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	 * Context
 	 */
 	@Autowired
-	private HttpServletRequest context;
+	private HttpServletRequest request;
 
 	@ExceptionHandler({ Throwable.class, Exception.class })
 	public ResponseEntity<ErrorMessage> handleThrowable(final Throwable throwable) {
@@ -112,7 +112,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler({ EpickurForbiddenException.class })
 	public ResponseEntity<ErrorMessage> handleEpickurForbiddenException(final EpickurForbiddenException exception) {
-		final Key key = (Key) context.getAttribute("key");
+		final Key key = (Key) request.getAttribute("key");
 		log.warn("Forbidden : {} {}", exception.getMessage(), key.getId() != null ? " - User Id " + key.getId().toHexString() : "");
 		return ResponseError.error(HttpStatus.FORBIDDEN);
 	}
@@ -129,7 +129,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleExceptionInternal(final Exception ex, final Object body, final HttpHeaders headers,
 			final HttpStatus status,
 			final WebRequest request) {
-		final Key key = (Key) context.getAttribute("key");
+		final Key key = (Key) this.request.getAttribute("key");
 		log.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getLocalizedMessage(), key.getKey(), key.getUserId(), key.getRole());
 		return changeResponseTypeToObject(ResponseError.error(status));
 	}
@@ -141,7 +141,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		final BindingResult bidingResult = ex.getBindingResult();
 		final List<ObjectError> errors = bidingResult.getAllErrors();
 		final List<String> descriptions = errors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
-		final Key key = (Key) context.getAttribute("key");
+		final Key key = (Key) this.request.getAttribute("key");
 		log.warn("MethodArgumentNotValidException {} {}", descriptions, key.toString());
 		return changeResponseTypeToObject(ResponseError.error(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase(), descriptions));
 	}
@@ -150,7 +150,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers,
 			final HttpStatus status,
 			final WebRequest request) {
-		final Key key = (Key) context.getAttribute("key");
+		final Key key = (Key) this.request.getAttribute("key");
 		log.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getMessage(), key.getKey(), key.getUserId(), key.getRole());
 		return changeResponseTypeToObject(ResponseError.error(status, status.getReasonPhrase(), "Required request body is probably missing"));
 	}

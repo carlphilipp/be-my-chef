@@ -86,20 +86,20 @@ public class DishValidator extends Validator {
 		if (StringUtils.isBlank(dish.getImageAfterUrl())) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "imageAfterUrl"));
 		}
-		if (dish.getIngredients() != null) {
-			checkIngredientsData(dish.getIngredients());
-		} else {
+		if (dish.getIngredients() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "ingredients"));
-		}
-		if (dish.getSteps() != null) {
-			checkStepsData(dish.getSteps());
 		} else {
+			checkIngredientsData(dish.getIngredients());
+		}
+		if (dish.getSteps() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "steps"));
-		}
-		if (dish.getCaterer() != null) {
-			checkCatererData(dish.getCaterer());
 		} else {
+			checkStepsData(dish.getSteps());
+		}
+		if (dish.getCaterer() == null) {
 			throw new EpickurIllegalArgument(fieldNull(getEntity(), "caterer"));
+		} else {
+			checkCatererData(dish.getCaterer());
 		}
 	}
 

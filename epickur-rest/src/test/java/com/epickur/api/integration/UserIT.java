@@ -184,9 +184,6 @@ public class UserIT {
 		assertEquals(jsonMimeType, mimeType);
 
 		// Delete this user
-//		HttpDelete requestDelete = new HttpDelete(URL_NO_KEY + "/" + id + "?key=" + API_KEY);
-//		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
-//		HttpClientBuilder.create().build().execute(requestDelete);
 		deleteUser(id);
 	}
 
@@ -466,7 +463,7 @@ public class UserIT {
 		assertEquals(EMAIL, jsonResult.get("email").asText());
 		assertEquals(0, jsonResult.get("allow").asLong(), 0.01);
 	}
-//
+
 	@Test
 	public void testUpdateOneUser() throws IOException {
 		// Create
@@ -691,7 +688,7 @@ public class UserIT {
 
 		// Delete this order
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", "{orderId}")
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
 				.queryParam("key", API_KEY)
 				.build()
 				.expand(id, orderId)
@@ -828,9 +825,10 @@ public class UserIT {
 
 		// Delete this order
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
 				.queryParam("key", API_KEY)
 				.build()
+				.expand(id, orderId)
 				.encode();
 		uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
