@@ -1,6 +1,6 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.aop.ValidateSimpleAccessRights;
+import com.epickur.api.annotation.ValidateSimpleAccessRights;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Key;
@@ -8,7 +8,7 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.report.Report;
+import com.epickur.api.utils.report.Report;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;

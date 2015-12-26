@@ -1,14 +1,14 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.aop.ValidateSimpleAccessRights;
+import com.epickur.api.annotation.ValidateSimpleAccessRights;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import com.epickur.api.validator.operation.Create;
-import com.epickur.api.validator.operation.Update;
+import com.epickur.api.operation.Create;
+import com.epickur.api.operation.Update;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;

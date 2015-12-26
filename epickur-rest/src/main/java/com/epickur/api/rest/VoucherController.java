@@ -1,6 +1,6 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.aop.ValidateSimpleAccessRights;
+import com.epickur.api.annotation.ValidateSimpleAccessRights;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;

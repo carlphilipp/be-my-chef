@@ -1,6 +1,6 @@
 package com.epickur.api.service;
 
-import com.epickur.api.aop.ValidateComplexAccessRights;
+import com.epickur.api.annotation.ValidateComplexAccessRights;
 import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Order;

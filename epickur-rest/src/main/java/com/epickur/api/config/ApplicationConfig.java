@@ -20,7 +20,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 				PropertySourcesConfig.class,
 				StripeConfig.class,
 				SchedulerConfig.class,
-				ValidatorConfig.class
+				ValidationConfig.class
 		})
 public class ApplicationConfig {
 

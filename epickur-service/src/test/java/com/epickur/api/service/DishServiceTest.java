@@ -1,18 +1,13 @@
 package com.epickur.api.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.epickur.api.validator.DishValidator;
+import com.epickur.api.dao.mongo.DishDAO;
+import com.epickur.api.entity.Dish;
+import com.epickur.api.entity.Geo;
+import com.epickur.api.entity.Key;
+import com.epickur.api.enumeration.Role;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
+import com.epickur.api.here.GeocoderHereImpl;
 import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Before;
@@ -23,14 +18,17 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import com.epickur.api.dao.mongo.DishDAO;
-import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Geo;
-import com.epickur.api.entity.Key;
-import com.epickur.api.enumeration.Role;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.here.GeocoderHereImpl;
-import com.epickur.api.helper.EntityGenerator;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
@@ -43,8 +41,6 @@ public class DishServiceTest {
 	private GeocoderHereImpl geoCoder;
 	@Mock
 	private Geo geo;
-	@Mock
-	private DishValidator validator;
 	@InjectMocks
 	private DishService dishService;
 	private Key key;
@@ -55,7 +51,7 @@ public class DishServiceTest {
 		key.setRole(Role.ADMIN);
 		key.setUserId(new ObjectId());
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		key = null;
@@ -154,7 +150,7 @@ public class DishServiceTest {
 		whenNew(GeocoderHereImpl.class).withNoArguments().thenReturn(geoCoder);
 		when(geoCoder.getPosition(anyString())).thenReturn(geo);
 
-		List<Dish> listActual = dishService.search("", 0, new ArrayList<>(), 0, new Geo(),"", 0);
+		List<Dish> listActual = dishService.search("", 0, new ArrayList<>(), 0, new Geo(), "", 0);
 		Dish actual = listActual.get(0);
 		assertNotNull("Dish is null", actual);
 	}

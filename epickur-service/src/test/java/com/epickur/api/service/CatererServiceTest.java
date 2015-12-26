@@ -4,7 +4,6 @@ import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.validator.CatererValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -24,8 +23,6 @@ public class CatererServiceTest {
 
 	@Mock
 	private CatererDAO catererDAOMock;
-	@Mock
-	private CatererValidator validator;
 	@InjectMocks
 	private CatererService catererService;
 

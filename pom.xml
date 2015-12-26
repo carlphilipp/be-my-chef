@@ -32,6 +32,7 @@
 		<module>epickur-service</module>
 		<module>epickur-test</module>
 		<module>epickur-utils</module>
+		<module>epickur-validation</module>
 	</modules>
 
 	<developers>
@@ -529,6 +530,20 @@
 				<artifactId>epickur-utils</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.epickur.api</groupId>
+				<artifactId>epickur-validation</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Servlet -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>3.1.0</version>
+				<scope>provided</scope>
+			</dependency>
+
 
 			<!-- Spring BOM -->
 			<dependency>
@@ -647,6 +662,30 @@
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
 				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>5.2.2.Final</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.el</groupId>
+				<artifactId>javax.el-api</artifactId>
+				<version>2.2.4</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.glassfish.web</groupId>
+				<artifactId>javax.el</artifactId>
+				<version>2.2.4</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.1.0.Final</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

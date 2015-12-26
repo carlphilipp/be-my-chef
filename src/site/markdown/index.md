@@ -16,24 +16,36 @@ ASCII dependency graph:
          Test      Commons
           |           |
           |           |
-          |        Entity       Config
+          |         Entity       Config
           |           |            |
           |           |____________|
           |           |
           |         Utils
           |___________|____________ 
           |           |            |
-      3rd Party      DAO          Dump
+      3rd Party      Dump         DAO
           |___________|____________|
-                      |
-                   Service
-                      |
+                      |            |
+                   Service     Validation
+                      |            |
+                      |____________|
                       |
                      Rest
 ```
 
-The test module contains basic features for testing. It is used in the compile scope so other sub-modules can use during their tests.
-When adding new module, take care of cyclic dependency error: Two modules must not depends on each other.
+When adding a new module, be careful with cyclic dependency error: Two modules must not depends on each other.
+
+* Logging: Contains all the logging dependencies and configuration used everywhere in the project.
+* Commons: Contains basic functionalities that do not need any knowledge of main entity objects. Example: String or Date manipulation.
+* Test: Contains test utilities for Stripe payement. Might be merged in the futur with 3rd party.
+* Entity: Contains all basic entity objects needed in the application. No logic there, just entitied and Serializer/Desrializer classes.
+* Utils: Contains reports, security, access rights and emails features.
+* DAO: Access Mongo DB.
+* 3rd Party: Access Amazon, Here and Stripe.
+* Dump: Contains all the classes needed to create a MongoDB dump.
+* Service: Contains all the logic to prepare data before storing them.
+* Rest: Contains all the endpoint that the client use to retrieve data.
+* Validation: Validate data using AspectJ.
 
 ###Prerequisites:
 * Java SDK 8 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html

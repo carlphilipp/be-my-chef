@@ -1,16 +1,16 @@
 package com.epickur.api.entity;
 
+import com.epickur.api.annotation.ChangePasswordValidate;
+import com.epickur.api.annotation.PhoneNumberValidate;
 import com.epickur.api.entity.deserialize.PhoneNumberDeserializer;
 import com.epickur.api.entity.deserialize.RoleDeserializer;
+import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.epickur.api.entity.serialize.PhoneNumberSerializer;
 import com.epickur.api.entity.serialize.RoleSerializer;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurParsingException;
-import com.epickur.api.utils.ObjectMapperWrapperDB;
-import com.epickur.api.validator.annotation.ChangePasswordValidate;
-import com.epickur.api.validator.annotation.PhoneNumberValidate;
-import com.epickur.api.validator.operation.Create;
-import com.epickur.api.validator.operation.Update;
+import com.epickur.api.operation.Create;
+import com.epickur.api.operation.Update;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -46,8 +46,11 @@ import java.io.IOException;
 @EqualsAndHashCode(callSuper = true)
 public class User extends AbstractMainDBEntity {
 
-	public interface PublicView {}
-	public interface PrivateView extends PublicView {}
+	public interface PublicView {
+	}
+
+	public interface PrivateView extends PublicView {
+	}
 
 	@JsonView(PublicView.class)
 	@NotBlank(message = "{user.name.null}", groups = { Create.class })

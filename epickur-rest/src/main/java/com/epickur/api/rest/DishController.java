@@ -1,6 +1,6 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.aop.ValidateSimpleAccessRights;
+import com.epickur.api.annotation.ValidateSimpleAccessRights;
 import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;

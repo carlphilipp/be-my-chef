@@ -18,7 +18,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @PropertySource("classpath:epickur-dev.properties")
-@Import({ SchedulerConfig.class, MongoConfig.class, ValidatorConfig.class, GeoCoder.class, AmazonWSConfig.class, StripeConfig.class,
+@Import({ SchedulerConfig.class, MongoConfig.class, ValidationConfig.class, GeoCoder.class, AmazonWSConfig.class, StripeConfig.class,
 				EmailConfig.class })
 public class ApplicationConfigTest {
 

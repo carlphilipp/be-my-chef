@@ -1,6 +1,6 @@
 package com.epickur.api.service;
 
-import com.epickur.api.aop.ValidateComplexAccessRights;
+import com.epickur.api.annotation.ValidateComplexAccessRights;
 import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;

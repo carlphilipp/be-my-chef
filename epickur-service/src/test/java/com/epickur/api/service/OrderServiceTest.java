@@ -7,6 +7,8 @@ import com.epickur.api.dao.mongo.UserDAO;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.Voucher;
+import com.epickur.api.utils.email.EmailUtils;
+import com.epickur.api.utils.security.Security;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
@@ -15,9 +17,6 @@ import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.stripe.StripePayment;
-import com.epickur.api.utils.security.Security;
-import com.epickur.api.utils.email.EmailUtils;
-import com.epickur.api.validator.UserValidator;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.model.Charge;
 import com.stripe.model.Token;
@@ -32,8 +31,20 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PowerMockIgnore("javax.management.*")
@@ -63,8 +74,6 @@ public class OrderServiceTest {
 	private EmailUtils emailUtilsMock;
 	@Mock
 	private OrderJob jobs;
-	@Mock
-	private UserValidator validator;
 	@InjectMocks
 	private OrderService orderService;
 

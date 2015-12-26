@@ -1,6 +1,6 @@
 package com.epickur.api.service;
 
-import com.epickur.api.aop.ValidateComplexAccessRights;
+import com.epickur.api.annotation.ValidateComplexAccessRights;
 import com.epickur.api.cron.OrderJob;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.SequenceDAO;

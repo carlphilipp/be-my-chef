@@ -16,18 +16,19 @@ ASCII dependency graph:
          Test      Commons
           |           |
           |           |
-          |        Entity       Config
+          |         Entity       Config
           |           |            |
           |           |____________|
           |           |
           |         Utils
           |___________|____________ 
           |           |            |
-      3rd Party      DAO          Dump
+      3rd Party      Dump         DAO
           |___________|____________|
-                      |
-                   Service
-                      |
+                      |            |
+                   Service     Validation
+                      |            |
+                      |____________|
                       |
                      Rest
 ```
@@ -44,6 +45,7 @@ When adding a new module, be careful with cyclic dependency error: Two modules m
 * Dump: Contains all the classes needed to create a MongoDB dump.
 * Service: Contains all the logic to prepare data before storing them.
 * Rest: Contains all the endpoint that the client use to retrieve data.
+* Validation: Validate data using AspectJ.
 
 ###Prerequisites:
 * Java SDK 8 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
