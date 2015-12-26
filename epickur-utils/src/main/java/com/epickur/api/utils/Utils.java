@@ -8,6 +8,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
+import com.epickur.api.utils.security.Security;
 import lombok.Cleanup;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;

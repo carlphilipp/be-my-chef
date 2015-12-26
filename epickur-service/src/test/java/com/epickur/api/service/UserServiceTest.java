@@ -31,8 +31,8 @@ import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.utils.ErrorConstants;
-import com.epickur.api.utils.PasswordManager;
-import com.epickur.api.utils.Security;
+import com.epickur.api.utils.security.PasswordManager;
+import com.epickur.api.utils.security.Security;
 import com.epickur.api.utils.email.EmailUtils;
 
 public class UserServiceTest {

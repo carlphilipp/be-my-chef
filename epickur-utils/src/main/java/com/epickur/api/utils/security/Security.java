@@ -1,4 +1,4 @@
-package com.epickur.api.utils;
+package com.epickur.api.utils.security;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;

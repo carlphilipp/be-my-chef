@@ -1,4 +1,4 @@
-package com.epickur.api.utils;
+package com.epickur.api.utils.security;
 
 import com.epickur.api.exception.EpickurException;
 

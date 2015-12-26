@@ -10,7 +10,7 @@ import com.epickur.api.enumeration.Currency;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.utils.Security;
+import com.epickur.api.utils.security.Security;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;

@@ -112,7 +112,7 @@ public class CatererValidator extends Validator {
 			if (location.getGeo() == null) {
 				throw new EpickurIllegalArgument(fieldNull(entity, "location.geo"));
 			} else {
-				Geo geo = location.getGeo();
+				final Geo geo = location.getGeo();
 				if (geo.getLatitude() == null) {
 					throw new EpickurIllegalArgument(fieldNull(entity, "location.geo.latitude"));
 				}

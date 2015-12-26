@@ -12,7 +12,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.stripe.StripeTestUtils;
-import com.epickur.api.utils.Security;
+import com.epickur.api.utils.security.Security;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;

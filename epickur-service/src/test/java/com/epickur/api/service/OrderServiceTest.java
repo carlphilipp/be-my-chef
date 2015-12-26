@@ -15,7 +15,7 @@ import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.stripe.StripePayment;
-import com.epickur.api.utils.Security;
+import com.epickur.api.utils.security.Security;
 import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.validator.UserValidator;
 import com.stripe.exception.APIConnectionException;

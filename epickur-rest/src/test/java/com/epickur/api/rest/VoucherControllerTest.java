@@ -10,7 +10,6 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.Utils;
-import com.epickur.api.validator.VoucherValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +25,9 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class VoucherControllerTest {
@@ -35,8 +36,6 @@ public class VoucherControllerTest {
 	private VoucherService voucherBusiness;
 	@Mock
 	private HttpServletRequest context;
-	@Mock
-	private VoucherValidator validator;
 	@Mock
 	private Utils utils;
 	@InjectMocks

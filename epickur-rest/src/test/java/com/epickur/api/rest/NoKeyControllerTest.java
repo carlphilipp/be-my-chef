@@ -5,10 +5,9 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.stripe.StripeTestUtils;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import com.epickur.api.validator.UserValidator;
+import com.epickur.api.stripe.StripeTestUtils;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.bson.types.ObjectId;
@@ -37,8 +36,6 @@ public class NoKeyControllerTest {
 	private OrderService orderBusiness;
 	@Mock
 	private HttpServletRequest context;
-	@Mock
-	private UserValidator validator;
 	@InjectMocks
 	private NoKeyController controller;
 

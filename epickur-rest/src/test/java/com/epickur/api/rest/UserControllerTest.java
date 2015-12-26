@@ -1,20 +1,17 @@
 package com.epickur.api.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.epickur.api.validator.UserValidator;
+import com.epickur.api.entity.Key;
+import com.epickur.api.entity.Order;
+import com.epickur.api.entity.User;
+import com.epickur.api.entity.message.DeletedMessage;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
+import com.epickur.api.service.OrderService;
+import com.epickur.api.service.UserService;
+import com.epickur.api.stripe.StripeTestUtils;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.bson.types.ObjectId;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,20 +21,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import com.epickur.api.entity.Key;
-import com.epickur.api.entity.Order;
-import com.epickur.api.entity.User;
-import com.epickur.api.entity.message.DeletedMessage;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.stripe.StripeTestUtils;
-import com.epickur.api.service.OrderService;
-import com.epickur.api.service.UserService;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class UserControllerTest {
 
@@ -47,8 +44,6 @@ public class UserControllerTest {
 	private OrderService orderService;
 	@Mock
 	private HttpServletRequest context;
-	@Mock
-	private UserValidator validator;
 	@InjectMocks
 	private UserController controller;
 

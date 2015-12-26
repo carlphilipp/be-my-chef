@@ -10,7 +10,6 @@ import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.utils.Utils;
-import com.epickur.api.validator.DishValidator;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,8 +23,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class DishControllerTest {
@@ -36,8 +39,6 @@ public class DishControllerTest {
 	private CatererService catererService;
 	@Mock
 	private HttpServletRequest context;
-	@Mock
-	private DishValidator validator;
 	@Mock
 	private Utils utils;
 	@InjectMocks

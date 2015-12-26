@@ -3,7 +3,11 @@ package com.epickur.api.aop;
 import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.UserDAO;
-import com.epickur.api.entity.*;
+import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Dish;
+import com.epickur.api.entity.Key;
+import com.epickur.api.entity.Order;
+import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
@@ -15,10 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
 
-import static com.epickur.api.enumeration.EndpointType.*;
+import static com.epickur.api.enumeration.EndpointType.CATERER;
+import static com.epickur.api.enumeration.EndpointType.DISH;
+import static com.epickur.api.enumeration.EndpointType.ORDER;
+import static com.epickur.api.enumeration.EndpointType.USER;
 import static com.epickur.api.enumeration.Operation.READ;
 import static com.epickur.api.enumeration.Operation.UPDATE;
-import static com.epickur.api.utils.ErrorConstants.*;
+import static com.epickur.api.utils.ErrorConstants.CATERER_NOT_FOUND;
+import static com.epickur.api.utils.ErrorConstants.DISH_NOT_FOUND;
+import static com.epickur.api.utils.ErrorConstants.ORDER_NOT_FOUND;
+import static com.epickur.api.utils.ErrorConstants.USER_NOT_FOUND;
 
 @Aspect
 public class ComplexAccessRightsAspect extends AccesRightsAspect {

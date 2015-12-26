@@ -9,14 +9,17 @@ import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.stripe.StripeTestUtils;
 import com.epickur.api.report.Report;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
+import com.epickur.api.stripe.StripeTestUtils;
 import com.epickur.api.utils.Utils;
-import com.epickur.api.validator.CatererValidator;
-import com.stripe.exception.*;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -34,7 +37,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -55,8 +61,6 @@ public class CatererControllerTest {
 	private HttpServletRequest context;
 	@Mock
 	private Report report;
-	@Mock
-	private CatererValidator validator;
 	@Mock
 	private Utils utils;
 	@InjectMocks
@@ -226,7 +230,8 @@ public class CatererControllerTest {
 			ResponseEntity<?> actual = controller.paymentInfo(catererAfterCreate.getId().toHexString(), null, null, null);
 			assertNotNull(actual);
 			assertEquals(200, actual.getStatusCode().value());
-			assertEquals("attachment; filename =" + catererAfterCreate.getId().toHexString() + ".pdf", actual.getHeaders().getFirst("content-disposition"));
+			assertEquals("attachment; filename =" + catererAfterCreate.getId().toHexString() + ".pdf",
+					actual.getHeaders().getFirst("content-disposition"));
 			assertEquals("application/pdf", actual.getHeaders().getContentType().toString());
 		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
 			fail(EntityGenerator.STRIPE_MESSAGE);

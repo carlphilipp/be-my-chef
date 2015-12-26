@@ -51,7 +51,7 @@ public class Report {
 			final JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
 			final JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
 			return JasperExportManager.exportReportToPdf(jasperPrint);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new EpickurException("Error while generating the pdf report", e);
 		}
 	}

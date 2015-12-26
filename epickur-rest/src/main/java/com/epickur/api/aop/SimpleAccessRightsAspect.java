@@ -1,6 +1,10 @@
 package com.epickur.api.aop;
 
-import com.epickur.api.entity.*;
+import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Dish;
+import com.epickur.api.entity.Key;
+import com.epickur.api.entity.Order;
+import com.epickur.api.entity.User;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
@@ -19,8 +23,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
 
-import static com.epickur.api.enumeration.EndpointType.*;
-import static com.epickur.api.enumeration.Operation.*;
+import static com.epickur.api.enumeration.EndpointType.CATERER;
+import static com.epickur.api.enumeration.EndpointType.DISH;
+import static com.epickur.api.enumeration.EndpointType.NO_KEY;
+import static com.epickur.api.enumeration.EndpointType.ORDER;
+import static com.epickur.api.enumeration.EndpointType.USER;
+import static com.epickur.api.enumeration.EndpointType.VOUCHER;
+import static com.epickur.api.enumeration.Operation.CREATE;
+import static com.epickur.api.enumeration.Operation.GENERATE_VOUCHER;
+import static com.epickur.api.enumeration.Operation.PAYEMENT_INFO;
+import static com.epickur.api.enumeration.Operation.READ;
+import static com.epickur.api.enumeration.Operation.RESET_PASSWORD;
+import static com.epickur.api.enumeration.Operation.SEARCH_DISH;
+import static com.epickur.api.enumeration.Operation.UPDATE;
 import static com.epickur.api.utils.ErrorConstants.CATERER_NOT_FOUND;
 
 @Aspect
