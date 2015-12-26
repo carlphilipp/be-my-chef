@@ -248,6 +248,104 @@ public class DishController {
 		}
 	}
 
+	// @formatter:off
+	/**
+	 *
+	 * @api {get} /dishes/all Get all dishes.
+	 * @apiVersion 1.0.0
+	 * @apiName ReadAllDishes
+	 * @apiGroup Dishes
+	 * @apiDescription Read all dishes.
+	 * @apiPermission admin, super_user, user
+	 *
+	 * @apiParam (Request: URL Parameter) {String} types list of Dish type to search.
+	 * @apiParam (Request: URL Parameter) {String} limit Limit of number of result (default is 50).
+	 * @apiParam (Request: URL Parameter) {String} at Geocoordinates to use (latitude, longitude).
+	 * @apiParam (Request: URL Parameter) {String} searchtext Searchtext to geocode.
+	 * @apiParam (Request: URL Parameter) {String} distance Distance from the origin point to search (in meter) (default is 500).
+	 *
+	 * @apiSuccess (Response: JSON Object) {String} id Id of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} name Name of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} description Description of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} type Type of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} cookingTime Cooking time of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} difficultyLevel Difficulty level of the Dish.
+	 * @apiSuccess (Response: JSON Object) {Caterer} caterer Caterer of the Dish.
+	 * @apiSuccess (Response: JSON Object) {Ingredient[]} ingredients Ingredients of the Dish.
+	 * @apiSuccess (Response: JSON Object) {NutritionFact[]} nutritionFacts Nutrition fact of the Dish.
+	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
+	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
+	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
+	 *
+	 * @apiSuccessExample Success-Response:
+	 *	HTTP/1.1 200 OK
+	 *	[{
+	 *		"id": "54e12a60731e59c612c5fac7",
+	 *		"name": "Thai Inbox",
+	 *		"description": "Noodles with rice",
+	 *		"type": "Meat",
+	 *		"caterer": {
+	 *			"id": "54e90015b634980ccd05e3bc",
+	 *			"name": "Super Thai",
+	 *			"description": "Super Thai - Noodles, Curry dishes",
+	 *			"manager": "John Lee",
+	 *			"email": "jlee@superthai.com",
+	 *			"phone": "312-211-8911",
+	 *			"location": {
+	 *				"address": {
+	 *					"label": "House next to the police station",
+	 *					"houseNumber": "832",
+	 *					"street": "W. Wrightwood Avenue",
+	 *					"city": "Chicago",
+	 *					"postalCode": 60614,
+	 *					"state": "Illinois",
+	 *					"country": "USA"
+	 *				},
+	 *				"geo": {
+	 *					"type": "Point",
+	 *					"coordinates": [-87.65024,41.928276]
+	 *				}
+	 *			},
+	 *			"createdAt": 1424556053008,
+	 *			"updatedAt": 1424556053008
+	 *		},
+	 *		"price": 500,
+	 *		"ingredients": [{
+	 *			"name": "Noodles",
+	 *			"sequence": 1,
+	 *			"quantity": 1.0
+	 *		},
+	 *		{
+	 *			"name": "Rice",
+	 *			"sequence": 2,
+	 *			"quantity": 1.0
+	 *		}],
+	 *		"cookingTime": 5,
+	 *		"difficultyLevel": 1,
+	 *		"nutritionFacts": [{
+	 *			"name": "Calories",
+	 *			"value": 1250.0,
+	 *			"unit": "kJ"
+	 *		},
+	 *		{
+	 *			"name": "Proteins",
+	 *			"value": 750.5,
+	 *			"unit": "g"
+	 *		}],
+	 *		"videoUrl": "http://www.google.com",
+	 *		"createdAt": 1424042592185,
+	 *		"updatedAt": 1424042592185
+	 *	}]
+	 *
+	 * @apiUse InternalError
+	 */
+	// @formatter:on
+	/**
+	 * Read all dishes.
+	 *
+	 * @return a list of dishes
+	 * @throws EpickurException
+	 */
 	@RequestMapping(value = "/all", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
 		final List<Dish> dishes = dishService.readAll();
@@ -503,7 +601,6 @@ public class DishController {
 	 * @apiUse ForbiddenError
 	 */
 	// @formatter:on
-
 	/**
 	 * @param pickupdate The pickup date.
 	 * @param types      The list of Dish type.
