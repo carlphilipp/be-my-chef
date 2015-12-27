@@ -6,10 +6,13 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.stripe.StripeTestUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stripe.exception.*;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
 import lombok.Cleanup;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -56,7 +59,6 @@ public class AccessRightsOrderIT {
 	@Autowired
 	private ObjectMapper mapper;
 
-
 	@Before
 	public void setUp() throws IOException, EpickurException {
 		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
@@ -72,7 +74,6 @@ public class AccessRightsOrderIT {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		StripeTestUtils.resetStripe();
 		IntegrationTestUtils.cleanDB();
 	}
 

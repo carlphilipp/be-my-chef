@@ -1,31 +1,40 @@
-package com.epickur.api.integration;
+package com.epickur.api.stripe;
 
-import static org.junit.Assert.assertEquals;
+import com.epickur.api.config.EpickurProperties;
+import com.epickur.api.config.StripeConfigTest;
+import com.epickur.api.enumeration.Currency;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Charge;
+import com.stripe.model.Token;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-import com.epickur.api.enumeration.Currency;
-import com.epickur.api.stripe.StripePayment;
-import com.epickur.api.stripe.StripeTestUtils;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Charge;
-import com.stripe.model.Token;
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = StripeConfigTest.class)
 public class StripePaymentIT {
+
+	@Autowired
+	private EpickurProperties properties;
 
 	@Before
 	public void setUpBeforeClass() {
-		StripeTestUtils.setupStripe();
+		Stripe.apiKey = properties.getStripeKey();
 	}
 
 	@After
 	public void tearDownAfterClass() throws Exception {
-		StripeTestUtils.resetStripe();
+		Stripe.apiKey = null;
 	}
 
 	@Test

@@ -39,10 +39,10 @@ public class StripePayment {
 		} catch (CardException e) {
 			// Since it's a decline, CardException will be caught
 			final StringBuilder stb = new StringBuilder();
-			stb.append("Card declined: " + chargeMap);
-			stb.append("\nStatus is: " + e.getCode());
-			stb.append("\nMessage is: " + e.getParam());
-			stb.append("\n" + e.getLocalizedMessage());
+			stb.append("Card declined: ").append(chargeMap);
+			stb.append("\nStatus is: ").append(e.getCode());
+			stb.append("\nMessage is: ").append(e.getParam());
+			stb.append("\n").append(e.getLocalizedMessage());
 			log.error(stb.toString(), e);
 			throw e;
 		} catch (InvalidRequestException e) {

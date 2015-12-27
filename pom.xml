@@ -30,7 +30,6 @@
 		<module>epickur-logging</module>
 		<module>epickur-rest</module>
 		<module>epickur-service</module>
-		<module>epickur-test</module>
 		<module>epickur-utils</module>
 		<module>epickur-validation</module>
 	</modules>
@@ -518,12 +517,6 @@
 				<groupId>com.epickur.api</groupId>
 				<artifactId>epickur-service</artifactId>
 				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-test</artifactId>
-				<version>${project.version}</version>
-				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>

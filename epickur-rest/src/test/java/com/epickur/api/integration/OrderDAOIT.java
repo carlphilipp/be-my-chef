@@ -1,23 +1,6 @@
 package com.epickur.api.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.List;
-
 import com.epickur.api.ApplicationConfigTest;
-import org.bson.types.ObjectId;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.entity.Key;
@@ -25,7 +8,6 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.stripe.StripeTestUtils;
 import com.epickur.api.rest.UserController;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
@@ -34,16 +16,28 @@ import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
+import org.bson.types.ObjectId;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfigTest.class)
 public class OrderDAOIT {
-	
+
 	@Mock
 	private OrderService orderService;
 	@Mock
@@ -56,16 +50,6 @@ public class OrderDAOIT {
 	private IntegrationTestUtils integrationTestUtils;
 	@Autowired
 	private OrderDAO dao;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws IOException {
-		StripeTestUtils.setupStripe();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		IntegrationTestUtils.cleanDB();
-	}
 
 	@Before
 	public void setUp() {

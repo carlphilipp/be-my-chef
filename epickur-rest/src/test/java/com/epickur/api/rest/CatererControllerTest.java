@@ -9,20 +9,17 @@ import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.utils.report.Report;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
-import com.epickur.api.stripe.StripeTestUtils;
 import com.epickur.api.utils.Utils;
+import com.epickur.api.utils.report.Report;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -65,16 +62,6 @@ public class CatererControllerTest {
 	private Utils utils;
 	@InjectMocks
 	private CatererController controller;
-
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		StripeTestUtils.setupStripe();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		StripeTestUtils.resetStripe();
-	}
 
 	@Before
 	public void setUp() {

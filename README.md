@@ -10,18 +10,18 @@ For full endpoint documentation please go [here](epickur-rest/apidoc/index.html)
 ASCII dependency graph:
 
 ```
-             Logging
-           _____|_____
-          |           |
-         Test      Commons
-          |           |
-          |           |
-          |         Entity       Config
-          |           |            |
-          |           |____________|
-          |           |
-          |         Utils
-          |___________|____________ 
+                   Logging
+                      |
+                      |
+                   Commons
+                      |
+                      |
+                    Entity       Config
+                      |            |
+                      |____________|
+                      |
+                    Utils
+           ___________|____________ 
           |           |            |
       3rd Party      Dump         DAO
           |___________|____________|

@@ -11,10 +11,9 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:epickur-dev.properties")
-@Import(
-		PropertySourcesConfig.class
-)
+@Import(PropertySourcesConfig.class)
 public class GeocoderConfigTest {
+
 	@Bean
 	public GeocoderHereImpl geocoderHere() {
 		return new GeocoderHereImpl();

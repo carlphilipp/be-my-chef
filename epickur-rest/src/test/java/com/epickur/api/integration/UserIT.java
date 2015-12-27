@@ -11,17 +11,24 @@ import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.stripe.StripeTestUtils;
 import com.epickur.api.utils.security.Security;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.stripe.exception.*;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Token;
 import lombok.Cleanup;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -45,7 +52,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfigTest.class)
@@ -77,8 +87,6 @@ public class UserIT {
 
 	@Before
 	public void setUp() throws IOException, EpickurException {
-		StripeTestUtils.setupStripe();
-
 		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
 		Properties prop = new Properties();
 		prop.load(in);
@@ -94,7 +102,7 @@ public class UserIT {
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key",API_KEY )
+				.queryParam("key", API_KEY)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
@@ -155,7 +163,7 @@ public class UserIT {
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
 				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key",API_KEY )
+				.queryParam("key", API_KEY)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
@@ -1246,7 +1254,8 @@ public class UserIT {
 		String confirm = "false";
 		// Execute order (Caterer choose yes or no)
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT_NOKEY, ENDPOINT_NOKEY_EXECUTE, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.scheme(PROTOCOL).host(HOST).port(PORT)
+				.pathSegment(PATH, ENDPOINT_NOKEY, ENDPOINT_NOKEY_EXECUTE, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
 				.queryParam("confirm", confirm)
 				.queryParam("ordercode", orderCode)
 				.queryParam("key", API_KEY)

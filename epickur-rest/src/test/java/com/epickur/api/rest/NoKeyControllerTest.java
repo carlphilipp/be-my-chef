@@ -7,13 +7,10 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import com.epickur.api.stripe.StripeTestUtils;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.bson.types.ObjectId;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,16 +35,6 @@ public class NoKeyControllerTest {
 	private HttpServletRequest context;
 	@InjectMocks
 	private NoKeyController controller;
-
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		StripeTestUtils.setupStripe();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		StripeTestUtils.resetStripe();
-	}
 
 	@Before
 	public void setUp() {
