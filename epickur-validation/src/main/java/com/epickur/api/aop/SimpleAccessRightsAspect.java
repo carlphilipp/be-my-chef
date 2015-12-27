@@ -45,7 +45,7 @@ public class SimpleAccessRightsAspect extends AccessRightsAspect {
 	@Autowired
 	private VoucherValidation voucherValidator;
 
-	@Before("execution(* com.epickur.api.rest.*.*(..)) && @annotation( com.epickur.api.annotation.ValidateSimpleAccessRights)")
+	@Before("execution(* com.epickur.api.rest.*.*(..)) && @annotation(com.epickur.api.annotation.ValidateSimpleAccessRights)")
 	public void checkAccessRights(final JoinPoint joinPoint) throws Throwable {
 		final Method method = getMethodFromJointPoint(joinPoint);
 
