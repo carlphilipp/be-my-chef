@@ -1,6 +1,7 @@
 package com.epickur.api;
 
 import com.epickur.api.commons.CommonsUtil;
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Order;
@@ -20,15 +21,17 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Properties;
 
 @Slf4j
 @Component
 public class IntegrationTestUtils {
+
+	private static EpickurProperties staticProperties;
 
 	@Autowired
 	private CatererService catererService;
@@ -38,30 +41,24 @@ public class IntegrationTestUtils {
 	private DishService dishService;
 	@Autowired
 	private OrderService orderService;
+	@Autowired
+	private EpickurProperties properties;
+
+	@PostConstruct
+	public void postConstruct() {
+		// Trick to inject autowire field into a static field
+		staticProperties = properties;
+	}
 
 	public static void setupDB() throws IOException {
-		@Cleanup final InputStreamReader in = new InputStreamReader(IntegrationTestUtils.class.getClass().getResourceAsStream("/test.properties"));
-		final Properties prop = new Properties();
-		prop.load(in);
-		final String mongoPath = prop.getProperty("mongo.path");
-		final String mongoAddress = prop.getProperty("mongo.address");
-		final String mongoPort = prop.getProperty("mongo.port");
-		final String mongoDbName = prop.getProperty("mongo.db.name");
-		final String scriptSetupPath = prop.getProperty("script.setup");
-		final String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptSetupPath;
+		final String cmd = staticProperties.getMongoPath() + " " + staticProperties.getMongoAddress() + ":" + staticProperties.getMongoPort() + "/"
+				+ staticProperties.getMongoDbName() + " " + staticProperties.getSetupDB();
 		runShellCommand(cmd);
 	}
 
 	public static void cleanDB() throws IOException {
-		@Cleanup final InputStreamReader in = new InputStreamReader(IntegrationTestUtils.class.getClass().getResourceAsStream("/test.properties"));
-		final Properties prop = new Properties();
-		prop.load(in);
-		final String mongoPath = prop.getProperty("mongo.path");
-		final String mongoAddress = prop.getProperty("mongo.address");
-		final String mongoPort = prop.getProperty("mongo.port");
-		final String mongoDbName = prop.getProperty("mongo.db.name");
-		final String scriptCleanPath = prop.getProperty("script.clean");
-		final String cmd = mongoPath + " " + mongoAddress + ":" + mongoPort + "/" + mongoDbName + " " + scriptCleanPath;
+		final String cmd = staticProperties.getMongoPath() + " " + staticProperties.getMongoAddress() + ":" + staticProperties.getMongoPort() + "/"
+				+ staticProperties.getMongoDbName() + " " + staticProperties.getCleanDB();
 		runShellCommand(cmd);
 	}
 

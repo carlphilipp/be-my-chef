@@ -20,10 +20,6 @@
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-utils</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-test</artifactId>
-		</dependency>
 
 		<!-- Amazon API -->
 		<dependency>

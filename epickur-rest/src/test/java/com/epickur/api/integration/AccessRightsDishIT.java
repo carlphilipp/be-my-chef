@@ -2,6 +2,7 @@ package com.epickur.api.integration;
 
 import com.epickur.api.ApplicationConfigTest;
 import com.epickur.api.IntegrationTestUtils;
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.User;
@@ -9,7 +10,6 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Cleanup;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -19,7 +19,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.bson.types.ObjectId;
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,45 +28,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.Properties;
 
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfigTest.class)
-public class AccessRightsDishIT {
+public class AccessRightsDishIT extends AccessRights {
 
-	private static final String JSON_MIME_TYPE = "application/json";
 	private static final String ENDPOINT = "dishes";
-	private static String PROTOCOL;
-	private static String HOST;
-	private static String PORT;
-	private static String PATH;
-
-	@Autowired
-	private IntegrationTestUtils integrationTestUtils;
-	@Autowired
-	private ObjectMapper mapper;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws IOException {
-		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
-		prop.load(in);
-		PROTOCOL = prop.getProperty("protocol");
-		HOST = prop.getProperty("host");
-		PORT = prop.getProperty("port");
-		PATH = prop.getProperty("api.path");
-		IntegrationTestUtils.setupDB();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws IOException {
-		IntegrationTestUtils.cleanDB();
-	}
 
 	// User Administrator
 	@Test
@@ -75,7 +46,7 @@ public class AccessRightsDishIT {
 		User admin = integrationTestUtils.createAdminAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
 				.queryParam("key", admin.getKey())
 				.build()
 				.encode();
@@ -88,7 +59,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -105,7 +76,7 @@ public class AccessRightsDishIT {
 		String id = integrationTestUtils.createDish().getId().toHexString();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", admin.getKey())
 				.build()
 				.expand(id)
@@ -113,7 +84,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -127,7 +98,7 @@ public class AccessRightsDishIT {
 		String id = dish.getId().toHexString();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", admin.getKey())
 				.build()
 				.expand(id)
@@ -139,7 +110,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -154,7 +125,7 @@ public class AccessRightsDishIT {
 		String id = dish.getId().toHexString();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", admin.getKey())
 				.build()
 				.expand(id)
@@ -162,7 +133,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -176,7 +147,7 @@ public class AccessRightsDishIT {
 		String key = user.getKey();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
 				.queryParam("key", key)
 				.build()
 				.encode();
@@ -189,7 +160,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -206,7 +177,7 @@ public class AccessRightsDishIT {
 		String key = user.getKey();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
 				.queryParam("key", key)
 				.build()
 				.encode();
@@ -219,7 +190,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -239,7 +210,7 @@ public class AccessRightsDishIT {
 		Dish dish = integrationTestUtils.createDish();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", key)
 				.build()
 				.expand(dish.getId().toHexString())
@@ -247,7 +218,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -262,7 +233,7 @@ public class AccessRightsDishIT {
 		String key = superUser.getKey();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", key)
 				.build()
 				.expand(dish.getId().toHexString())
@@ -271,7 +242,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -289,7 +260,7 @@ public class AccessRightsDishIT {
 		dish.setCaterer(caterer);
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", key)
 				.build()
 				.expand(dish.getId().toHexString())
@@ -298,7 +269,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -314,7 +285,7 @@ public class AccessRightsDishIT {
 		String key = superUser.getKey();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", key)
 				.build()
 				.expand(dish.getId().toHexString())
@@ -322,7 +293,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -339,7 +310,7 @@ public class AccessRightsDishIT {
 		dish.setCaterer(caterer);
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", key)
 				.build()
 				.expand(dish.getId().toHexString())
@@ -347,7 +318,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -361,7 +332,7 @@ public class AccessRightsDishIT {
 		String key = user.getKey();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
 				.queryParam("key", key)
 				.build()
 				.encode();
@@ -374,7 +345,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -391,7 +362,7 @@ public class AccessRightsDishIT {
 		String key = user.getKey();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
 				.queryParam("key", key)
 				.build()
 				.encode();
@@ -405,7 +376,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -425,7 +396,7 @@ public class AccessRightsDishIT {
 		Dish dish = integrationTestUtils.createDish();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", key)
 				.build()
 				.expand(dish.getId().toHexString())
@@ -433,7 +404,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -448,7 +419,7 @@ public class AccessRightsDishIT {
 		String key = superUser.getKey();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", key)
 				.build()
 				.expand(dish.getId().toHexString())
@@ -457,7 +428,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -475,7 +446,7 @@ public class AccessRightsDishIT {
 		dish.setCaterer(caterer);
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", key)
 				.build()
 				.expand(dish.getId().toHexString())
@@ -484,7 +455,7 @@ public class AccessRightsDishIT {
 
 		StringEntity requestEntity = new StringEntity(dish.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -500,7 +471,7 @@ public class AccessRightsDishIT {
 		String key = user.getKey();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.queryParam("key", key)
 				.build()
 				.expand(dish.getId().toHexString())
@@ -508,7 +479,7 @@ public class AccessRightsDishIT {
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();

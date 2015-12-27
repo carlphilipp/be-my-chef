@@ -119,7 +119,6 @@ public class EmailTemplate {
 	 */
 	public Map<String, String> convertToDataNewRegistrationUser(final User user, String code) {
 		final Map<String, String> data = getData(user, null);
-		data.put("@@FOLDER@@", properties.getFolder());
 		data.put("@@CHECK@@", code);
 		return data;
 	}

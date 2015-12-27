@@ -2,7 +2,12 @@ package com.epickur.api.integration;
 
 import com.epickur.api.ApplicationConfigTest;
 import com.epickur.api.IntegrationTestUtils;
-import com.epickur.api.entity.*;
+import com.epickur.api.config.EpickurProperties;
+import com.epickur.api.entity.Address;
+import com.epickur.api.entity.Caterer;
+import com.epickur.api.entity.Geo;
+import com.epickur.api.entity.Location;
+import com.epickur.api.entity.User;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
@@ -23,7 +28,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +37,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -46,45 +50,47 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration(classes = ApplicationConfigTest.class)
 public class CatererIT {
 
+	private static final String CONTENT_TYPE = "content-type";
 	private static final String JSON_MIME_TYPE = "application/json";
 	private static final String ENDPOINT = "caterers";
-	private static String PROTOCOL;
-	private static String HOST;
-	private static String PORT;
-	private static String PATH;
-	private static String API_KEY;
-	private static String NAME;
-	private static String ID;
 
+	private String protocol;
+	private String host;
+	private String port;
+	private String path;
+	private String apiKey;
+	private String name;
+	private String id;
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
+	@Autowired
+	private ObjectMapper mapper;
+	@Autowired
+	protected EpickurProperties properties;
 
 	@AfterClass
 	public static void tearDownAfterClass() throws IOException {
 		IntegrationTestUtils.cleanDB();
 	}
 
-	@Before
-	public void setUp() throws IOException, EpickurException {
-		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
-		prop.load(in);
-		PROTOCOL = prop.getProperty("protocol");
-		HOST = prop.getProperty("host");
-		PORT = prop.getProperty("port");
-		PATH = prop.getProperty("api.path");
+	@PostConstruct
+	public void postConstruct() throws IOException, EpickurException {
+		IntegrationTestUtils.cleanDB();
+		protocol = properties.getProtocol();
+		host = properties.getHost();
+		port = properties.getPort().toString();
+		path = properties.getPath();
 
 		User admin = integrationTestUtils.createAdminAndLogin();
-		API_KEY = admin.getKey();
+		apiKey = admin.getKey();
 
 		// Create
-		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode caterer = mapper.createObjectNode();
 		ObjectNode location = mapper.createObjectNode();
 		ObjectNode address2 = mapper.createObjectNode();
 		ObjectNode geo = mapper.createObjectNode();
 		ArrayNode coordinates = mapper.createArrayNode();
-		NAME = RandomStringUtils.randomAlphabetic(10);
+		name = RandomStringUtils.randomAlphabetic(10);
 		Float[] coord = new Float[2];
 		coord[0] = -73.97f;
 		coord[1] = 40.77f;
@@ -100,7 +106,7 @@ public class CatererIT {
 		address2.put("country", "USA");
 		location.set("address", address2);
 		location.set("geo", geo);
-		caterer.put("name", NAME);
+		caterer.put("name", name);
 		caterer.set("location", location);
 		caterer.put("description", "Caterer description");
 		caterer.put("manager", "Manager name");
@@ -111,49 +117,50 @@ public class CatererIT {
 		caterer.set("workingTimes", mapper.readTree(workingTimes.toStringAPIView()));
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key",API_KEY )
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(caterer.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		in = new InputStreamReader(httpResponse.getEntity().getContent());
-		BufferedReader br = new BufferedReader(in);
+		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+		@Cleanup BufferedReader br = new BufferedReader(in);
 		String obj = br.readLine();
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(HttpStatus.OK.value(), statusCode);
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
 		// Create result
-		ID = jsonResult.get("id").asText();
+		id = jsonResult.get("id").asText();
+		IntegrationTestUtils.setupDB();
 	}
 
 	@After
 	public void tearDown() throws IOException {
-		if (ID != null) {
+		if (id != null) {
 			// Delete
-			deleteCaterer(ID);
+			deleteCaterer(id);
 		}
 	}
 
 	private void deleteCaterer(final String id) throws IOException {
 		// Delete
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
-				.queryParam("key",API_KEY )
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id)
 				.encode();
 		URI uri = uriComponents.toUri();
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(request);
 	}
 
@@ -161,13 +168,13 @@ public class CatererIT {
 	public void testUnauthorized() throws IOException {
 		// Given
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
 				.build()
-				.expand(ID)
+				.expand(id)
 				.encode();
 		URI uri = uriComponents.toUri();
 		HttpUriRequest request = new HttpGet(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 
 		// When
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -183,7 +190,6 @@ public class CatererIT {
 	public void testCreate() throws IOException, EpickurParsingException {
 
 		// Create
-		ObjectMapper mapper = new ObjectMapper();
 		String name = RandomStringUtils.randomAlphabetic(10);
 		Caterer caterer = new Caterer();
 		caterer.setName(name);
@@ -209,15 +215,15 @@ public class CatererIT {
 		caterer.setWorkingTimes(EntityGenerator.generateRandomWorkingTimes());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key",API_KEY )
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(caterer.toStringAPIView());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -261,14 +267,14 @@ public class CatererIT {
 	public void testReadOneCaterer() throws IOException {
 		// Read
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
-				.queryParam("key",API_KEY )
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
+				.queryParam("key", apiKey)
 				.build()
-				.expand(ID)
+				.expand(id)
 				.encode();
 		URI uri = uriComponents.toUri();
 		HttpUriRequest request = new HttpGet(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 
 		// Read request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -280,12 +286,11 @@ public class CatererIT {
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
 		assertEquals(HttpStatus.OK.value(), statusCode);
 
-		ObjectMapper mapper = new ObjectMapper();
 		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(JSON_MIME_TYPE, mimeType);
 
-		assertEquals(NAME, jsonResult.get("name").asText());
+		assertEquals(name, jsonResult.get("name").asText());
 		assertNotNull(jsonResult.get("createdAt"));
 		assertNotNull(jsonResult.get("updatedAt"));
 		assertNotNull(jsonResult.get("location"));

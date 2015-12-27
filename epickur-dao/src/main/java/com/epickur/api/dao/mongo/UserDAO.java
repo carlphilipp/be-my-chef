@@ -28,7 +28,8 @@ import static com.epickur.api.dao.CollectionsName.USER_COLL;
  */
 @Slf4j
 @Repository
-public class UserDAO extends CrudDAO<User> {
+public class
+UserDAO extends CrudDAO<User> {
 
 	@PostConstruct
 	protected void initCollection() {

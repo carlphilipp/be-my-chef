@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = EmailConfigTest.class)
 public class EmailTest {
 
-	@Value("${admins}")
+	@Value("${epickur.admins}")
 	private String[] admins;
 
 	@Autowired

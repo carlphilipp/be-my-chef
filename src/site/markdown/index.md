@@ -75,21 +75,14 @@ to
 This file contains all the properties of the application. Some are linked with your environment like:
 
 ```
-  address               = http://localhost:8180
-  folder                = /epickur/api
-  mongo.address         = localhost
-  mongo.port            = 27017
+     epickur.name     = BE MY CHEF
+     epickur.protocol = http
+     epickur.host     = localhost
+     epickur.port     = 8180
+     epickur.path     = epickur
 ```
 
 Some properties need to be updated to fit your environment.
-
-There is also the same things for the test file:
-
-`epickur-rest/src/test/resources/test.template.properties`
-
-to
-
-`epickur-rest/test/resources/test.properties`
 
 ####Lombok
 

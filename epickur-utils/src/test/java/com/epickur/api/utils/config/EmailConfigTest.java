@@ -15,9 +15,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @PropertySource("classpath:email-test-data.properties")
 @Configuration
-@Import(
-		PropertySourcesConfig.class
-)
+@Import(PropertySourcesConfig.class)
 public class EmailConfigTest {
 
 	@Bean

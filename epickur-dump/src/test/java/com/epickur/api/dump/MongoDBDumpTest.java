@@ -1,6 +1,5 @@
 package com.epickur.api.dump;
 
-import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.config.MongoDumpConfigTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -18,8 +17,13 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MongoDumpConfigTest.class)
@@ -40,8 +44,6 @@ public class MongoDBDumpTest {
 	private File dumpDirectory;
 	@Mock
 	private File fileFound;
-	@Autowired
-	private EpickurProperties properties;
 	@Autowired
 	private MongoDBDump mongoDBDump;
 	private File[] listOfFiles = new File[1];
@@ -80,7 +82,6 @@ public class MongoDBDumpTest {
 
 		verify(backupFolder, times(1)).exists();
 		verify(backupFolder, times(1)).mkdir();
-		//verify(runtime, times(1)).exec(mongoDBDump.buildDumpCommand());
 		verify(process, times(1)).waitFor();
 		assertFalse(actual);
 	}
@@ -156,5 +157,4 @@ public class MongoDBDumpTest {
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
 	}
-
 }

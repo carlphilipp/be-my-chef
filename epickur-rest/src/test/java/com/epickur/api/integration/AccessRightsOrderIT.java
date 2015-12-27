@@ -2,6 +2,7 @@ package com.epickur.api.integration;
 
 import com.epickur.api.ApplicationConfigTest;
 import com.epickur.api.IntegrationTestUtils;
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
@@ -13,7 +14,6 @@ import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
-import lombok.Cleanup;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -23,7 +23,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.bson.types.ObjectId;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,48 +32,26 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfigTest.class)
-public class AccessRightsOrderIT {
+public class AccessRightsOrderIT extends AccessRights {
 
-	private static final String JSON_MIME_TYPE = "application/json";
 	private static final String ENDPOINT = "users";
 	private static final String ORDER_EXT = "orders";
-	private static String PROTOCOL;
-	private static String HOST;
-	private static String PORT;
-	private static String PATH;
-	private static User USER;
 
-	@Autowired
-	private IntegrationTestUtils integrationTestUtils;
-	@Autowired
-	private ObjectMapper mapper;
+	private User user;
 
-	@Before
-	public void setUp() throws IOException, EpickurException {
-		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
-		prop.load(in);
-		PROTOCOL = prop.getProperty("protocol");
-		HOST = prop.getProperty("host");
-		PORT = prop.getProperty("port");
-		PATH = prop.getProperty("api.path");
-		USER = integrationTestUtils.createUserAndLogin();
-		IntegrationTestUtils.setupDB();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		IntegrationTestUtils.cleanDB();
+	@PostConstruct
+	public void postConstruct() throws IOException, EpickurException {
+		super.postConstruct();
+		user = integrationTestUtils.createUserAndLogin();
 	}
 
 	// User Administrator
@@ -84,10 +61,10 @@ public class AccessRightsOrderIT {
 		User admin = integrationTestUtils.createAdminAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ORDER_EXT)
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(USER.getId().toHexString())
+				.expand(user.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
@@ -95,7 +72,7 @@ public class AccessRightsOrderIT {
 
 		StringEntity requestEntity = new StringEntity(order.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.addHeader("charge-agent", "true");
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -110,20 +87,20 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderRead() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Order order = integrationTestUtils.createOrder(USER.getId());
+		Order order = integrationTestUtils.createOrder(user.getId());
 		User admin = integrationTestUtils.createAdminAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpGet getReq = new HttpGet(uri);
-		getReq.addHeader("content-type", JSON_MIME_TYPE);
+		getReq.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -140,16 +117,16 @@ public class AccessRightsOrderIT {
 		String id = new ObjectId().toHexString();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), id)
+				.expand(user.getId().toHexString(), id)
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -159,24 +136,24 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderUpdate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Order order = integrationTestUtils.createOrder(USER.getId());
+		Order order = integrationTestUtils.createOrder(user.getId());
 		User admin = integrationTestUtils.createAdminAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
-		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -188,22 +165,22 @@ public class AccessRightsOrderIT {
 	public void testAdministratorOrderUpdate2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
 		ObjectId id = new ObjectId();
-		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
 		User admin = integrationTestUtils.createAdminAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), updatedOrder.getId().toHexString())
+				.expand(user.getId().toHexString(), updatedOrder.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -214,20 +191,20 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testAdministratorOrderDelete() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		Order order = integrationTestUtils.createOrder(USER.getId());
+		Order order = integrationTestUtils.createOrder(user.getId());
 		User admin = integrationTestUtils.createAdminAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
 				.queryParam("key", admin.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -238,21 +215,21 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderCreate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createSuperUserAndLogin();
+		user = integrationTestUtils.createSuperUserAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT)
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT)
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString())
+				.expand(user.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		Order order = EntityGenerator.generateRandomOrder();
 		StringEntity requestEntity = new StringEntity(order.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.addHeader("charge-agent", "true");
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -267,20 +244,20 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createSuperUserAndLogin();
-		Order order = integrationTestUtils.createOrder(USER.getId());
+		user = integrationTestUtils.createSuperUserAndLogin();
+		Order order = integrationTestUtils.createOrder(user.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, order.getId().toHexString())
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, order.getId().toHexString())
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpGet getReq = new HttpGet(uri);
-		getReq.addHeader("content-type", JSON_MIME_TYPE);
+		getReq.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -293,20 +270,20 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createSuperUserAndLogin();
+		user = integrationTestUtils.createSuperUserAndLogin();
 		String id = new ObjectId().toHexString();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), id)
+				.expand(user.getId().toHexString(), id)
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -316,21 +293,21 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderRead3() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createSuperUserAndLogin();
+		user = integrationTestUtils.createSuperUserAndLogin();
 		User otherUser = integrationTestUtils.createUserAndLogin();
 		Order order = integrationTestUtils.createOrder(otherUser.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpGet getReq = new HttpGet(uri);
-		getReq.addHeader("content-type", JSON_MIME_TYPE);
+		getReq.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -340,24 +317,24 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderUpdate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createSuperUserAndLogin();
-		Order order = integrationTestUtils.createOrder(USER.getId());
+		user = integrationTestUtils.createSuperUserAndLogin();
+		Order order = integrationTestUtils.createOrder(user.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
-		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -368,23 +345,23 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderUpdate2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createSuperUserAndLogin();
+		user = integrationTestUtils.createSuperUserAndLogin();
 		ObjectId id = new ObjectId();
-		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), updatedOrder.getId().toHexString())
+				.expand(user.getId().toHexString(), updatedOrder.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -395,20 +372,20 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testSuperUserOrderDelete() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createSuperUserAndLogin();
-		Order order = integrationTestUtils.createOrder(USER.getId());
+		user = integrationTestUtils.createSuperUserAndLogin();
+		Order order = integrationTestUtils.createOrder(user.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -419,20 +396,20 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderCreate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createUserAndLogin();
+		user = integrationTestUtils.createUserAndLogin();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT)
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ORDER_EXT)
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString())
+				.expand(user.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		Order order = EntityGenerator.generateRandomOrder();
 		StringEntity requestEntity = new StringEntity(order.toStringAPIView());
 		HttpPost request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.addHeader("charge-agent", "true");
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -447,20 +424,20 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead() throws IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createUserAndLogin();
-		Order order = integrationTestUtils.createOrder(USER.getId());
+		user = integrationTestUtils.createUserAndLogin();
+		Order order = integrationTestUtils.createOrder(user.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpGet getReq = new HttpGet(uri);
-		getReq.addHeader("content-type", JSON_MIME_TYPE);
+		getReq.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -473,20 +450,20 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead2() throws IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createUserAndLogin();
+		user = integrationTestUtils.createUserAndLogin();
 		String id = new ObjectId().toHexString();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), id)
+				.expand(user.getId().toHexString(), id)
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpGet request = new HttpGet(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -496,23 +473,23 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderRead3() throws IOException, EpickurException, AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createUserAndLogin();
+		user = integrationTestUtils.createUserAndLogin();
 
 		User otherUser = integrationTestUtils.createUserAndLogin();
 
 		Order order = integrationTestUtils.createOrder(otherUser.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpGet getReq = new HttpGet(uri);
-		getReq.addHeader("content-type", JSON_MIME_TYPE);
+		getReq.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(getReq);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -522,24 +499,24 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderUpdate() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createUserAndLogin();
-		Order order = integrationTestUtils.createOrder(USER.getId());
+		user = integrationTestUtils.createUserAndLogin();
+		Order order = integrationTestUtils.createOrder(user.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
-		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(order.getId());
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -550,23 +527,23 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderUpdate2() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createUserAndLogin();
+		user = integrationTestUtils.createUserAndLogin();
 		ObjectId id = new ObjectId();
-		Order updatedOrder = integrationTestUtils.createOrder(USER.getId());
+		Order updatedOrder = integrationTestUtils.createOrder(user.getId());
 		updatedOrder.setId(id);
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), updatedOrder.getId().toHexString())
+				.expand(user.getId().toHexString(), updatedOrder.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		StringEntity requestEntity = new StringEntity(updatedOrder.toStringAPIView());
 		HttpPut request = new HttpPut(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
@@ -577,20 +554,20 @@ public class AccessRightsOrderIT {
 	@Test
 	public void testUserOrderDelete() throws IOException, EpickurException, AuthenticationException,
 			InvalidRequestException, APIConnectionException, CardException, APIException {
-		USER = integrationTestUtils.createUserAndLogin();
-		Order order = integrationTestUtils.createOrder(USER.getId());
+		user = integrationTestUtils.createUserAndLogin();
+		Order order = integrationTestUtils.createOrder(user.getId());
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
-				.queryParam("key", USER.getKey())
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT, "{id}", ORDER_EXT, "{orderId}")
+				.queryParam("key", user.getKey())
 				.build()
-				.expand(USER.getId().toHexString(), order.getId().toHexString())
+				.expand(user.getId().toHexString(), order.getId().toHexString())
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpDelete request = new HttpDelete(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 		String obj = integrationTestUtils.readResult(httpResponse);
 		int statusCode = httpResponse.getStatusLine().getStatusCode();

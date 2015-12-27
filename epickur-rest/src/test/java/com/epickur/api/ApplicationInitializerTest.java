@@ -25,9 +25,11 @@ public class ApplicationInitializerTest {
 	public void testApplicationInit() {
 		log.info("Starting configuration...");
 		assertNotNull(properties);
+		assertNotNull(properties.getProtocol());
+		assertNotNull(properties.getHost());
+		assertNotNull(properties.getPort());
 		assertNotNull(properties.getName());
-		assertNotNull(properties.getAddress());
-		assertNotNull(properties.getFolder());
+		assertNotNull(properties.getPath());
 		assertNotNull(properties.getAdmins());
 		assertNotNull(properties.getWebAddress());
 		assertNotNull(properties.getMandrillKey());
@@ -36,6 +38,7 @@ public class ApplicationInitializerTest {
 		assertNotNull(properties.getMandrillVersion());
 		assertNotNull(properties.getMandrillUrl());
 		assertNotNull(properties.getSend());
+		assertNotNull(properties.getMongoPath());
 		assertNotNull(properties.getMongodPath());
 		assertNotNull(properties.getMongoBackupPath());
 		assertNotNull(properties.getCleanKeysInterval());
@@ -49,5 +52,7 @@ public class ApplicationInitializerTest {
 		assertNotNull(properties.getAwsAccessKeyId());
 		assertNotNull(properties.getAwsSecretKey());
 		assertNotNull(properties.getAwsBucket());
+		assertNotNull(properties.getCleanDB());
+		assertNotNull(properties.getSetupDB());
 	}
 }

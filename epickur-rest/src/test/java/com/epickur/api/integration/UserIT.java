@@ -2,6 +2,7 @@ package com.epickur.api.integration;
 
 import com.epickur.api.ApplicationConfigTest;
 import com.epickur.api.IntegrationTestUtils;
+import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.entity.NutritionFact;
@@ -44,6 +45,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -61,55 +63,56 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(classes = ApplicationConfigTest.class)
 public class UserIT {
 
+	private static final String CONTENT_TYPE = "content-type";
+	private static final String JSON_MIME_TYPE = "application/json";
 	private static final String ENDPOINT = "users";
 	private static final String ENDPOINT_ORDER = "orders";
 	private static final String ENDPOINT_NOKEY = "nokey";
 	private static final String ENDPOINT_NOKEY_EXECUTE = "execute";
-	private static final String JSON_MIME_TYPE = "application/json";
-	private static String PROTOCOL;
-	private static String HOST;
-	private static String PORT;
-	private static String PATH;
-	private static String API_KEY;
-	private static String NAME;
-	private static String EMAIL;
-	private static String ID;
 
+	private String protocol;
+	private String host;
+	private String port;
+	private String path;
+	private String apiKey;
+	private String name;
+	private String email;
+	private String id;
 	@Autowired
 	private IntegrationTestUtils integrationTestUtils;
 	@Autowired
 	private ObjectMapper mapper;
+	@Autowired
+	protected EpickurProperties properties;
 
 	@AfterClass
 	public static void afterClass() throws IOException {
 		IntegrationTestUtils.cleanDB();
 	}
 
-	@Before
+	@PostConstruct
 	public void setUp() throws IOException, EpickurException {
-		@Cleanup InputStreamReader in = new InputStreamReader(CatererIT.class.getClass().getResourceAsStream("/test.properties"));
-		Properties prop = new Properties();
-		prop.load(in);
-		PROTOCOL = prop.getProperty("protocol");
-		HOST = prop.getProperty("host");
-		PORT = prop.getProperty("port");
-		PATH = prop.getProperty("api.path");
+		IntegrationTestUtils.cleanDB();
+		protocol = properties.getProtocol();
+		host = properties.getHost();
+		port = properties.getPort().toString();
+		path = properties.getPath();
 
 		User admin = integrationTestUtils.createAdminAndLogin();
-		API_KEY = admin.getKey();
+		apiKey = admin.getKey();
 
 		User user = EntityGenerator.generateRandomUser();
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(user.toStringAPIView());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -118,15 +121,16 @@ public class UserIT {
 		JsonNode jsonResult = mapper.readTree(obj);
 
 		// Create result
-		ID = jsonResult.get("id").asText();
-		NAME = jsonResult.get("name").asText();
-		EMAIL = jsonResult.get("email").asText();
+		id = jsonResult.get("id").asText();
+		name = jsonResult.get("name").asText();
+		email = jsonResult.get("email").asText();
+		IntegrationTestUtils.setupDB();
 	}
 
 	@Test
 	public void testUnauthorized() throws IOException {
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
@@ -162,15 +166,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader(CONTENT_TYPE, jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -196,14 +200,14 @@ public class UserIT {
 
 	private void deleteUser(final String id) throws IOException {
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id)
 				.encode();
 		URI uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
+		requestDelete.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(requestDelete);
 	}
 
@@ -223,15 +227,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -261,15 +265,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		uri = uriComponents.toUri();
 
 		request = new HttpPost(uri);
 		requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -302,15 +306,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -357,15 +361,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -412,15 +416,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -441,15 +445,15 @@ public class UserIT {
 	public void testReadOneUser() throws IOException {
 		// Read
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
+				.queryParam("key", apiKey)
 				.build()
-				.expand(ID)
+				.expand(id)
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpUriRequest request = new HttpGet(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 
 		// Read request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -465,9 +469,9 @@ public class UserIT {
 		String mimeType = ContentType.getOrDefault(httpResponse.getEntity()).getMimeType();
 		assertEquals(JSON_MIME_TYPE, mimeType);
 
-		assertEquals(NAME, jsonResult.get("name").asText());
+		assertEquals(name, jsonResult.get("name").asText());
 		assertEquals(null, jsonResult.get("password"));
-		assertEquals(EMAIL, jsonResult.get("email").asText());
+		assertEquals(email, jsonResult.get("email").asText());
 		assertEquals(0, jsonResult.get("allow").asLong(), 0.01);
 	}
 
@@ -487,15 +491,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -514,15 +518,15 @@ public class UserIT {
 		requestEntity = new StringEntity(json.toString());
 
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id)
 				.encode();
 		uri = uriComponents.toUri();
 
 		HttpPut putRequest = new HttpPut(uri);
-		putRequest.addHeader("content-type", JSON_MIME_TYPE);
+		putRequest.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		putRequest.setEntity(requestEntity);
 
 		// Put request
@@ -558,15 +562,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create request
@@ -584,14 +588,14 @@ public class UserIT {
 
 		// Read
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id)
 				.encode();
 		uri = uriComponents.toUri();
 		HttpUriRequest request2 = new HttpGet(uri);
-		request2.addHeader("content-type", JSON_MIME_TYPE);
+		request2.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		// Read request
 		httpResponse = HttpClientBuilder.create().build().execute(request2);
 
@@ -618,15 +622,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -662,15 +666,15 @@ public class UserIT {
 		json.put("cardToken", cardToken);
 
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id)
 				.encode();
 		uri = uriComponents.toUri();
 
 		request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
 		request.setEntity(requestEntity);
@@ -695,15 +699,15 @@ public class UserIT {
 
 		// Delete this order
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id, orderId)
 				.encode();
 		uri = uriComponents.toUri();
 
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
+		requestDelete.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
@@ -727,15 +731,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -795,15 +799,15 @@ public class UserIT {
 		json.put("cardToken", token.getId());
 
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id)
 				.encode();
 		uri = uriComponents.toUri();
 
 		request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "true");
 		request.setEntity(requestEntity);
@@ -832,14 +836,14 @@ public class UserIT {
 
 		// Delete this order
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id, orderId)
 				.encode();
 		uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
+		requestDelete.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
@@ -864,15 +868,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader(CONTENT_TYPE, jsonMimeType);
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -922,15 +926,15 @@ public class UserIT {
 		json.put("cardToken", cardToken);
 
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id)
 				.encode();
 		uri = uriComponents.toUri();
 
 		request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader(CONTENT_TYPE, jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
 		request.addHeader("charge-agent", "false");
@@ -956,27 +960,27 @@ public class UserIT {
 
 		// Delete this order
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id, orderId)
 				.encode();
 		uri = uriComponents.toUri();
 
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader(CONTENT_TYPE, jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Check if order has been deleted
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id, orderId)
 				.encode();
 		uri = uriComponents.toUri();
 		HttpGet requestGet = new HttpGet(uri);
-		requestGet.addHeader("content-type", jsonMimeType);
+		requestGet.addHeader(CONTENT_TYPE, jsonMimeType);
 		httpResponse = HttpClientBuilder.create().build().execute(requestGet);
 
 		obj = integrationTestUtils.readResult(httpResponse);
@@ -1011,15 +1015,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader(CONTENT_TYPE, jsonMimeType);
 		request.setEntity(requestEntity);
 		// Create User request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
@@ -1069,15 +1073,15 @@ public class UserIT {
 		json.put("cardToken", cardToken);
 
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id)
 				.encode();
 		uri = uriComponents.toUri();
 
 		request = new HttpPost(uri);
-		request.addHeader("content-type", jsonMimeType);
+		request.addHeader(CONTENT_TYPE, jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		request.setEntity(requestEntity);
 		request.addHeader("charge-agent", "false");
@@ -1112,15 +1116,15 @@ public class UserIT {
 		json.put("createdBy", id);
 
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id, orderId)
 				.encode();
 		uri = uriComponents.toUri();
 
 		HttpPut requestUpdate = new HttpPut(uri);
-		requestUpdate.addHeader("content-type", jsonMimeType);
+		requestUpdate.addHeader(CONTENT_TYPE, jsonMimeType);
 		requestEntity = new StringEntity(json.toString());
 		requestUpdate.setEntity(requestEntity);
 		httpResponse = HttpClientBuilder.create().build().execute(requestUpdate);
@@ -1142,14 +1146,14 @@ public class UserIT {
 
 		// Delete this order
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id, orderId)
 				.encode();
 		uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", jsonMimeType);
+		requestDelete.addHeader(CONTENT_TYPE, jsonMimeType);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user
@@ -1172,15 +1176,15 @@ public class UserIT {
 		json.put("zipcode", "60614");
 
 		UriComponents uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT)
+				.queryParam("key", apiKey)
 				.build()
 				.encode();
 		URI uri = uriComponents.toUri();
 
 		HttpPost request = new HttpPost(uri);
 		StringEntity requestEntity = new StringEntity(json.toString());
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		request.setEntity(requestEntity);
 
 		// Create User request
@@ -1217,15 +1221,15 @@ public class UserIT {
 		json.put("cardToken", cardToken);
 
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER)
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER)
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id)
 				.encode();
 		uri = uriComponents.toUri();
 
 		request = new HttpPost(uri);
-		request.addHeader("content-type", JSON_MIME_TYPE);
+		request.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		requestEntity = new StringEntity(json.toString());
 		request.addHeader("charge-agent", "false");
 		request.setEntity(requestEntity);
@@ -1254,17 +1258,17 @@ public class UserIT {
 		String confirm = "false";
 		// Execute order (Caterer choose yes or no)
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT)
-				.pathSegment(PATH, ENDPOINT_NOKEY, ENDPOINT_NOKEY_EXECUTE, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.scheme(protocol).host(host).port(port)
+				.pathSegment(path, ENDPOINT_NOKEY, ENDPOINT_NOKEY_EXECUTE, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
 				.queryParam("confirm", confirm)
 				.queryParam("ordercode", orderCode)
-				.queryParam("key", API_KEY)
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id, orderId)
 				.encode();
 		uri = uriComponents.toUri();
 		HttpGet httpGet = new HttpGet(uri);
-		httpGet.addHeader("content-type", JSON_MIME_TYPE);
+		httpGet.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		httpGet.addHeader("charge-agent", "false");
 		httpResponse = HttpClientBuilder.create().build().execute(httpGet);
 		obj = integrationTestUtils.readResult(httpResponse);
@@ -1277,14 +1281,14 @@ public class UserIT {
 
 		// Delete this order
 		uriComponents = UriComponentsBuilder.newInstance()
-				.scheme(PROTOCOL).host(HOST).port(PORT).pathSegment(PATH, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
-				.queryParam("key", API_KEY)
+				.scheme(protocol).host(host).port(port).pathSegment(path, ENDPOINT, "{id}", ENDPOINT_ORDER, "{orderId}")
+				.queryParam("key", apiKey)
 				.build()
 				.expand(id, orderId)
 				.encode();
 		uri = uriComponents.toUri();
 		HttpDelete requestDelete = new HttpDelete(uri);
-		requestDelete.addHeader("content-type", JSON_MIME_TYPE);
+		requestDelete.addHeader(CONTENT_TYPE, JSON_MIME_TYPE);
 		HttpClientBuilder.create().build().execute(requestDelete);
 
 		// Delete this user

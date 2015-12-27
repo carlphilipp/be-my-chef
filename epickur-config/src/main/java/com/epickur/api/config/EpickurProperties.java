@@ -9,13 +9,17 @@ import org.springframework.stereotype.Component;
 public class EpickurProperties {
 
 	// Base
-	@Value("${name}")
+	@Value("${epickur.protocol}")
+	private String protocol;
+	@Value("${epickur.host}")
+	private String host;
+	@Value("${epickur.port}")
+	private Integer port;
+	@Value("${epickur.name}")
 	private String name;
-	@Value("${address}")
-	private String address;
-	@Value("${folder}")
-	private String folder;
-	@Value("${admins}")
+	@Value("${epickur.path}")
+	private String path;
+	@Value("${epickur.admins}")
 	private String[] admins;
 
 	// Epickur Web site
@@ -37,6 +41,8 @@ public class EpickurProperties {
 	private Boolean send;
 
 	// MongoDB
+	@Value("${mongo.path}")
+	private String mongoPath;
 	@Value("${mongo.address}")
 	private String mongoAddress;
 	@Value("${mongo.port}")
@@ -85,5 +91,11 @@ public class EpickurProperties {
 	private String awsSecretKey;
 	@Value("${aws.bucket}")
 	private String awsBucket;
+
+	// Scripts used in tests
+	@Value("${script.setup}")
+	private String setupDB;
+	@Value("${script.clean}")
+	private String cleanDB;
 
 }

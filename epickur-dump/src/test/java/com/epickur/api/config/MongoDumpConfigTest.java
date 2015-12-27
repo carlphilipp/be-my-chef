@@ -8,17 +8,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @PropertySource("classpath:dump-test-data.properties")
-@Import(
-		PropertySourcesConfig.class
-)
+@Import(PropertySourcesConfig.class)
 public class MongoDumpConfigTest {
-
-	@Bean
-	public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
-		propertySourcesPlaceholderConfigurer.setIgnoreResourceNotFound(true);
-		return propertySourcesPlaceholderConfigurer;
-	}
 
 	@Bean
 	public Utils utils() {
