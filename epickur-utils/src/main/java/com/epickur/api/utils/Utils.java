@@ -134,8 +134,8 @@ public class Utils {
 		final Geo geo = new Geo();
 		final String[] geoArray = str.split(",");
 		// TODO Not sure about 0 or 1, check which one is correct
-		geo.setLatitude(Double.valueOf(geoArray[0]));
-		geo.setLongitude(Double.valueOf(geoArray[1]));
+		geo.setLatitude(Double.parseDouble(geoArray[0]));
+		geo.setLongitude(Double.parseDouble(geoArray[1]));
 		return geo;
 	}
 }

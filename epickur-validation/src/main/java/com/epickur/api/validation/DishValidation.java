@@ -8,10 +8,10 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
-import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -118,7 +118,6 @@ public class DishValidation extends Validation {
 	 * @param action    The Crud Action
 	 * @param catererDB The CatererDB
 	 * @param key       The Key
-	 * @throws EpickurException If an EpickurExeption occured
 	 */
 	public void checkRightsBefore(final Role role, final Operation action, final Caterer catererDB, final Key key) {
 		if (role == Role.SUPER_USER && action == Operation.CREATE && !key.getUserId().equals(catererDB.getCreatedBy())) {
@@ -171,7 +170,7 @@ public class DishValidation extends Validation {
 					"The parameter pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: " + pickupdate);
 		}
 		final String[] typesArray = types.split(",");
-		for (String temp : typesArray) {
+		for (final String temp : typesArray) {
 			try {
 				DishType.fromString(temp);
 			} catch (IllegalArgumentException e) {
@@ -182,14 +181,12 @@ public class DishValidation extends Validation {
 			throw new EpickurIllegalArgument("The parameter at or searchtext are not allowed to be null or empty at the same time");
 		} else {
 			if (!StringUtils.isBlank(at)) {
-				String[] coordinates = at.split(",");
+				final String[] coordinates = at.split(",");
 				if (coordinates.length != 2) {
 					throw new EpickurIllegalArgument("The parameter at should contain 2 coordinates");
 				} else {
-					for (String temp : coordinates) {
-						try {
-							Double.valueOf(temp);
-						} catch (NumberFormatException e) {
+					for (final String temp : coordinates) {
+						if(!NumberUtils.isNumber(temp)) {
 							throw new EpickurIllegalArgument(at + " is not a valid coordinate");
 						}
 					}

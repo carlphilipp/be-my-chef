@@ -312,7 +312,7 @@ public class EmailTemplate {
 			data.put("@@ORDER_ID@@", order.getId().toHexString());
 			data.put("@@READABLE_ORDER_ID@@", order.getReadableId());
 			data.put("@@ORDER_QUANTITY@@", order.getQuantity().toString());
-			data.put("@@ORDER_AMOUNT@@", String.valueOf((order.getAmount() / 100.0)));
+			data.put("@@ORDER_AMOUNT@@", Double.toString(order.getAmount() / 100.0));
 			data.put("@@ORDER_CURRENCY@@", order.getCurrency().getSymbol());
 			data.put("@@ORDER_PICKUP_DATE@@", order.getPickupdate());
 		}

@@ -1,13 +1,5 @@
 package com.epickur.api.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bson.types.ObjectId;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Ingredient;
 import com.epickur.api.enumeration.Operation;
@@ -16,10 +8,17 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurIllegalArgument;
 import com.epickur.api.helper.EntityGenerator;
+import org.bson.types.ObjectId;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DishValidationTest {
@@ -30,7 +29,7 @@ public class DishValidationTest {
 	@Mock
 	private CatererValidation catererValidator;
 	@InjectMocks
-	private DishValidation validator;
+	private DishValidation dishValidation;
 
 	@Test
 	public void testCheckCreateDish() {
@@ -39,7 +38,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setName(null);
-		validator.checkCreateData(dish);
+		dishValidation.checkCreateData(dish);
 	}
 
 	@Test
@@ -49,7 +48,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setDescription(null);
-		validator.checkCreateData(dish);
+		dishValidation.checkCreateData(dish);
 	}
 
 	@Test
@@ -59,7 +58,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setId(null);
-		validator.checkUpdateData(new ObjectId().toHexString(), dish);
+		dishValidation.checkUpdateData(new ObjectId().toHexString(), dish);
 	}
 
 	@Test
@@ -67,13 +66,13 @@ public class DishValidationTest {
 		thrown.expect(EpickurIllegalArgument.class);
 		thrown.expectMessage(Validation.NO_DISH_PROVIDED);
 
-		validator.checkUpdateData(new ObjectId().toHexString(), null);
+		dishValidation.checkUpdateData(new ObjectId().toHexString(), null);
 	}
 
 	@Test
 	public void testData() {
 		Dish dish = EntityGenerator.generateRandomDish();
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -83,7 +82,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setType(null);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -93,7 +92,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setPrice(null);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -103,7 +102,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setCookingTime(null);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -113,7 +112,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setDifficultyLevel(null);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -123,7 +122,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setIngredients(null);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -133,7 +132,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setSteps(null);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -143,7 +142,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.setCaterer(null);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -153,7 +152,7 @@ public class DishValidationTest {
 
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -164,7 +163,7 @@ public class DishValidationTest {
 		Dish dish = EntityGenerator.generateRandomDish();
 		List<String> step = new ArrayList<>();
 		dish.setSteps(step);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -175,7 +174,7 @@ public class DishValidationTest {
 		Dish dish = EntityGenerator.generateRandomDish();
 		List<Ingredient> ing = new ArrayList<>();
 		dish.setIngredients(ing);
-		validator.checkData(dish);
+		dishValidation.checkData(dish);
 	}
 
 	@Test
@@ -183,6 +182,26 @@ public class DishValidationTest {
 		thrown.expect(EpickurForbiddenException.class);
 
 		Dish dish = EntityGenerator.generateRandomDish();
-		validator.checkRightsAfter(Role.SUPER_USER, new ObjectId(), dish, Operation.UPDATE);
+		dishValidation.checkRightsAfter(Role.SUPER_USER, new ObjectId(), dish, Operation.UPDATE);
+	}
+
+	@Test
+	public void testCheckSearch() {
+		dishValidation.checkSearch("mon-18:10", "main", "-141.0,5.55", null);
+	}
+
+	@Test
+	public void testCheckSearchFail() {
+		thrown.expect(EpickurIllegalArgument.class);
+		thrown.expectMessage("The parameter at should contain 2 coordinates");
+
+		dishValidation.checkSearch("mon-18:10", "main", "-141.0,5.55,0.0", null);
+	}
+
+	@Test
+	public void testCheckSearchFail2() {
+		thrown.expect(EpickurIllegalArgument.class);
+
+		dishValidation.checkSearch("mon-18:10", "main", "-141.0,ppp", null);
 	}
 }

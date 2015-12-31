@@ -55,8 +55,8 @@ public class CommonsUtil {
 			if (matcher.matches()) {
 				result.append(convertToReadableDay(matcher.group(1).toLowerCase())).append(" ");
 				// Convert in minutes the given time
-				int hours = Integer.valueOf(matcher.group(3));
-				int mins = Integer.valueOf(matcher.group(4));
+				int hours = Integer.parseInt(matcher.group(3));
+				int mins = Integer.parseInt(matcher.group(4));
 				result.append("at ").append(formatWithAmPm(hours, mins));
 			}
 		}
