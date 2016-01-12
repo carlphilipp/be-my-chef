@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -117,10 +118,8 @@ public class Utils {
 	 */
 	public List<DishType> stringToListDishType(final String types) {
 		final List<DishType> res = new ArrayList<>();
-		final String[] typesArray = types.split(",");
-		for (final String temp : typesArray) {
-			res.add(DishType.fromString(temp));
-		}
+		final List<String> typesArray = Arrays.asList(types.split(","));
+		typesArray.stream().forEach(temp -> res.add(DishType.fromString(temp)));
 		return res;
 	}
 

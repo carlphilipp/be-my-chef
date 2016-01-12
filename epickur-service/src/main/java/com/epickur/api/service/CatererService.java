@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.epickur.api.enumeration.EndpointType.CATERER;
 import static com.epickur.api.enumeration.Operation.UPDATE;
@@ -89,12 +90,10 @@ public class CatererService {
 	 * @return The addition of all orders amount
 	 */
 	public Integer getTotalAmountSuccessful(final List<Order> orders) {
-		Integer amount = 0;
-		for (Order order : orders) {
-			if (order.getStatus() == OrderStatus.SUCCESSFUL) {
-				amount += order.getAmount();
-			}
-		}
-		return amount;
+		final AtomicInteger amount = new AtomicInteger();
+		orders.stream()
+				.filter(order -> order.getStatus() == OrderStatus.SUCCESSFUL)
+				.forEach(order -> { amount.addAndGet(order.getAmount());} );
+		return amount.get();
 	}
 }

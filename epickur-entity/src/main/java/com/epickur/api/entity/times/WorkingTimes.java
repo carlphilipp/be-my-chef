@@ -48,21 +48,9 @@ public final class WorkingTimes extends AbstractEntity {
 		//Integer openTime = null;
 		final List<TimeFrame> timeFrames = getHours().get(day);
 		assert timeFrames != null;
-		for (final TimeFrame tf : timeFrames) {
-			// If the pickup date is in the current timeframe.
-			if (tf.getOpen() <= pickupdateMinutes && tf.getClose() >= pickupdateMinutes) {
-				//openTime = tf.getOpen();
-				return true;
-				//break;
-			}
-		}
-		/*if (openTime != null) {
-			// We keep this dish if the caterer has time to prepare it.
-			if (pickupdateMinutes.intValue() - getMinimumPreparationTime() >= openTime) {
-				return true;
-			}
-		}*/
-		return false;
+		return timeFrames
+				.parallelStream()
+				.anyMatch(timeFrame -> timeFrame.getOpen() <= pickupdateMinutes && timeFrame.getClose() >= pickupdateMinutes);
 	}
 
 	/**

@@ -109,9 +109,7 @@ public class Caterer extends AbstractMainDBEntity {
 				if (key.equals("location")) {
 					final Location loc = Location.getObject((Document) found.get(key));
 					final Map<String, Object> locations = loc.getUpdateMap(prefix + ".location");
-					for (final Entry<String, Object> entry : locations.entrySet()) {
-						result.put(entry.getKey(), entry.getValue());
-					}
+					result.putAll(locations);
 				} else if (key.equals("workingTimes")) {
 					final WorkingTimes wt = WorkingTimes.getObject((Document) found.get(key));
 					final Map<String, Object> workingTimesMap = wt.getUpdateMapObject(prefix + ".workingTimes");

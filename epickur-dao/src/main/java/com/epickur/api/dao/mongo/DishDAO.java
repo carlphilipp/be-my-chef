@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static com.epickur.api.dao.CollectionsName.DISH_COLL;
 
@@ -151,13 +152,9 @@ public class DishDAO extends CrudDAO<Dish> {
 		// TODO See how to optimize that and avoid doing that here.
 		// Should be doable in MongoDB.
 		final List<Dish> res = new ArrayList<>();
-		for (final Dish dish : dishes) {
-			Caterer cat = dish.getCaterer();
-			WorkingTimes workingTimes = cat.getWorkingTimes();
-			if (workingTimes.canBePickup(day, pickupdateMinutes)) {
-				res.add(dish);
-			}
-		}
+		dishes.stream()
+				.filter(dish -> dish.getCaterer().getWorkingTimes().canBePickup(day, pickupdateMinutes))
+				.forEach(res::add);
 		return res;
 	}
 

@@ -124,12 +124,9 @@ public abstract class AbstractMainDBEntity extends AbstractEntity {
 		final Document args = new Document();
 		final Document result = new Document().append("$set", args);
 		final Set<Entry<String, Object>> set = found.entrySet();
-		for (Entry<String, Object> entry : set) {
-			String k = entry.getKey();
-			if (!k.equals("id")) {
-				args.put(k, found.get(k));
-			}
-		}
+		set.stream()
+				.filter(entry -> !"id".equals(entry.getKey()))
+				.forEach(entry -> args.put(entry.getKey(), found.get(entry.getKey())));
 		return result;
 	}
 }

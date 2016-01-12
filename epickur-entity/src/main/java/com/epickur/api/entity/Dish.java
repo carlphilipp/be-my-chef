@@ -154,9 +154,7 @@ public final class Dish extends AbstractMainDBEntity {
 				if (key.equals("caterer")) {
 					final Caterer cat = Caterer.getDocumentAsCatererAPIView((Document) found.get(key));
 					final Map<String, Object> caterers = cat.getUpdateMap("caterer");
-					for (final Entry<String, Object> entry : caterers.entrySet()) {
-						args.put(entry.getKey(), entry.getValue());
-					}
+					args.putAll(caterers);
 				} else {
 					args.put(key, found.get(key));
 				}
