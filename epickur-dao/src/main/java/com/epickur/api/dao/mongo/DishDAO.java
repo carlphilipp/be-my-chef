@@ -3,7 +3,6 @@ package com.epickur.api.dao.mongo;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
-import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
@@ -11,14 +10,17 @@ import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.*;
+import org.bson.BsonArray;
+import org.bson.BsonDocument;
+import org.bson.BsonInt32;
+import org.bson.BsonString;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import static com.epickur.api.dao.CollectionsName.DISH_COLL;
 
