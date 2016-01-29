@@ -86,7 +86,7 @@ public class VoucherController {
 	 * @throws EpickurException If an EpickurException occured
 	 */
 	@ValidateSimpleAccessRights(operation = READ, endpoint = VOUCHER)
-	@RequestMapping(value = "/{code}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("code") final String code) throws EpickurException {
 		final Voucher voucher = voucherService.read(code);
 		if (voucher == null) {
@@ -154,7 +154,7 @@ public class VoucherController {
 	 * @throws EpickurException If an EpickurException occured
 	 */
 	@ValidateSimpleAccessRights(operation = GENERATE_VOUCHER, endpoint = VOUCHER)
-	@RequestMapping(value = "/generate", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/generate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> generate(
 			@RequestParam("count") @NotBlank(message = "{voucher.generate.count.blank}") @Min(value = 0, message = "{voucher.generate.count.positive}") final Integer count,
 			@RequestParam("discountType") @NotBlank(message = "{voucher.generate.discounttype}") final DiscountType discountType,

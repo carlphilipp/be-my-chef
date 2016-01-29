@@ -65,7 +65,7 @@ public class LoginController {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	@JsonView(User.PublicView.class)
-	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> login(
 			@RequestParam("email") @NotBlank(message = "{login.email}") final String email,
 			@RequestParam("password") @NotBlank(message = "{login.password}") final String password)

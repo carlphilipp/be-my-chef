@@ -146,7 +146,7 @@ public class UserController {
 	 */
 	@JsonView(User.PublicView.class)
 	@ValidateSimpleAccessRights(operation = READ, endpoint = USER)
-	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		final User user = userService.read(id);
 		return new ResponseEntity<>(user, HttpStatus.OK);
@@ -285,7 +285,7 @@ public class UserController {
 	 */
 	@JsonView(User.PublicView.class)
 	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = USER)
-	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
 		final List<User> users = userService.readAll();
 		return new ResponseEntity<>(users, HttpStatus.OK);
@@ -345,7 +345,7 @@ public class UserController {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	@ValidateSimpleAccessRights(operation = READ, endpoint = ORDER)
-	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readOneOrder(
 			@PathVariable("id") final String id,
 			@PathVariable("orderId") final String orderId) throws EpickurException {
@@ -424,7 +424,7 @@ public class UserController {
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
 	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = ORDER)
-	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAllOrders(@PathVariable("id") final String id) throws EpickurException {
 		final List<Order> orders = orderService.readAllWithUserId(id);
 		return new ResponseEntity<>(orders, HttpStatus.OK);

@@ -238,7 +238,7 @@ public class DishController {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	@ValidateSimpleAccessRights(operation = READ, endpoint = DISH)
-	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		final Dish dish = dishService.read(id);
 		if (dish == null) {
@@ -346,7 +346,7 @@ public class DishController {
 	 * @return a list of dishes
 	 * @throws EpickurException
 	 */
-	@RequestMapping(value = "/all", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
 		final List<Dish> dishes = dishService.readAll();
 		return new ResponseEntity<>(dishes, HttpStatus.OK);
@@ -612,7 +612,7 @@ public class DishController {
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
 	@ValidateSimpleAccessRights(operation = SEARCH_DISH, endpoint = DISH)
-	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> search(
 			@RequestParam("pickupdate") @NotBlank(message = "{dish.search.pickupdate}") final String pickupdate,
 			@RequestParam("types") @NotBlank(message = "{dish.search.types}") final String types,

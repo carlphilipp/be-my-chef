@@ -51,7 +51,7 @@ public class LogoutController {
 	 * @return The reponse
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> logout(@RequestParam("key") @NotBlank(message = "{logout.key}") final String key) throws EpickurException {
 		keyService.deleteWithKey(key);
 		final SuccessMessage successMessage = new SuccessMessage();

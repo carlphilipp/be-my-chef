@@ -79,7 +79,7 @@ public class NoKeyController {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	@JsonView(User.PublicView.class)
-	@RequestMapping(value = "/check", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/check", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> checkUser(
 			@RequestParam("email") @NotBlank(message = "{nokey.check.user.email}") final String email,
 			@RequestParam("check") @NotBlank(message = "{nokey.check.user.check}") final String check)
@@ -149,7 +149,7 @@ public class NoKeyController {
 	 * @return The response
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	@RequestMapping(value = "/execute/users/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/execute/users/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> executeOrder(
 			@PathVariable("id") final String userId,
 			@PathVariable("orderId") final String orderId,

@@ -187,7 +187,7 @@ public class CatererController {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	@ValidateSimpleAccessRights(operation = READ, endpoint = CATERER)
-	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		final Caterer caterer = catererService.read(id);
 		if (caterer == null) {
@@ -382,7 +382,7 @@ public class CatererController {
 	 * @throws EpickurException If an epickur exception occurred.
 	 */
 	@ValidateSimpleAccessRights(operation = READ_ALL, endpoint = CATERER)
-	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readAll() throws EpickurException {
 		final List<Caterer> caterers = catererService.readAll();
 		return new ResponseEntity<>(caterers, HttpStatus.OK);
@@ -498,7 +498,7 @@ public class CatererController {
 	 * @throws EpickurException If an Epickur exception occurred.
 	 */
 	@ValidateSimpleAccessRights(operation = READ_DISHES, endpoint = CATERER)
-	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/dishes", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/dishes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readDishes(@PathVariable("id") final String catererId) throws EpickurException {
 		final List<Dish> dishes = dishService.searchDishesForOneCaterer(catererId);
 		return new ResponseEntity<>(dishes, HttpStatus.OK);
