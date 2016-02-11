@@ -7,6 +7,7 @@ import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Cleanup;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +98,7 @@ public class Here {
 	 * @return a url The URL
 	 * @throws HereException If we could not access the coordinates
 	 */
+	@SneakyThrows(UnsupportedEncodingException.class)
 	protected final String urlBuilder() throws HereException {
 		final StringBuilder stb = new StringBuilder();
 		stb.append(URL_BASE);
@@ -110,11 +112,8 @@ public class Here {
 		stb.append(URL_ADDRESS_ATTRIBUTES);
 		stb.append(URL_MAX_RESULTS);
 		stb.append(URL_JSON_ATTRIBUTES);
-		try {
-			stb.append(URL_SEARCH_TEXT + URLEncoder.encode(text, "UTF-8"));
-		} catch (final UnsupportedEncodingException e) {
-			throw new HereException("Encoding Exception", e);
-		}
+		stb.append(URL_SEARCH_TEXT);
+		stb.append(URLEncoder.encode(text, "UTF-8"));
 		return stb.toString();
 	}
 

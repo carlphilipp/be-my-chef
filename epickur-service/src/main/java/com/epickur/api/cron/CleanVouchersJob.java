@@ -36,7 +36,7 @@ public final class CleanVouchersJob {
 				log.info("Expire voucher {} {}", voucher.getCode(), voucher.getExpiration());
 				voucher.setStatus(Status.EXPIRED);
 				voucher.prepareForUpdateIntoDB();
-				this.voucherDAO.update(voucher);
+				voucherDAO.update(voucher);
 			}
 		} catch (final EpickurException e) {
 			log.error(e.getLocalizedMessage(), e);

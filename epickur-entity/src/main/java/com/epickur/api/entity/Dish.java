@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -189,12 +190,8 @@ public final class Dish extends AbstractMainDBEntity {
 	}
 
 	@Override
+	@SneakyThrows(CloneNotSupportedException.class)
 	public Dish clone() {
-		try {
-			return (Dish) super.clone();
-		} catch (CloneNotSupportedException e) {
-			log.error("Error while cloning: {}", e.getMessage(), e);
-			throw new RuntimeException();
-		}
+		return (Dish) super.clone();
 	}
 }

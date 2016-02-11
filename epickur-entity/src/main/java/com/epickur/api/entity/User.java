@@ -4,13 +4,13 @@ import com.epickur.api.annotation.ChangePasswordValidate;
 import com.epickur.api.annotation.PhoneNumberValidate;
 import com.epickur.api.entity.deserialize.PhoneNumberDeserializer;
 import com.epickur.api.entity.deserialize.RoleDeserializer;
-import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.epickur.api.entity.serialize.PhoneNumberSerializer;
 import com.epickur.api.entity.serialize.RoleSerializer;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.operation.Create;
 import com.epickur.api.operation.Update;
+import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -170,12 +171,8 @@ public class User extends AbstractMainDBEntity {
 	}
 
 	@Override
+	@SneakyThrows(CloneNotSupportedException.class)
 	public User clone() {
-		try {
-			return (User) super.clone();
-		} catch (CloneNotSupportedException e) {
-			log.error("Error while cloning: {}", e.getMessage(), e);
-			throw new RuntimeException();
-		}
+		return (User) super.clone();
 	}
 }

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -83,12 +84,8 @@ public final class Location extends AbstractEntity {
 	}
 
 	@Override
+	@SneakyThrows(CloneNotSupportedException.class)
 	public Location clone() {
-		try {
-			return (Location) super.clone();
-		} catch (CloneNotSupportedException e) {
-			log.error("Error while cloning: {}", e.getMessage(), e);
-			throw new RuntimeException();
-		}
+		return (Location) super.clone();
 	}
 }

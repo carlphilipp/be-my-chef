@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonArray;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 /**
  * Geo entity
- * 
+ *
  * @author cph
  * @version 1.0
  */
@@ -27,12 +28,18 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = false)
 public class Geo extends AbstractEntity {
 
-	/** Type */
+	/**
+	 * Type
+	 */
 	private String type = "Point";
-	/** Coordinates [ longitude, latitude] */
+	/**
+	 * Coordinates [ longitude, latitude]
+	 */
 	private Double[] coordinates;
 
-	/** Constructor */
+	/**
+	 * Constructor
+	 */
 	public Geo() {
 		this.coordinates = new Double[2];
 		this.coordinates[0] = 0.0;
@@ -48,8 +55,7 @@ public class Geo extends AbstractEntity {
 	}
 
 	/**
-	 * @param latitude
-	 *            The latitude
+	 * @param latitude The latitude
 	 */
 	public void setLatitude(final Double latitude) {
 		this.coordinates[1] = latitude;
@@ -64,8 +70,7 @@ public class Geo extends AbstractEntity {
 	}
 
 	/**
-	 * @param longitude
-	 *            The Longitude
+	 * @param longitude The Longitude
 	 */
 	public void setLongitude(final Double longitude) {
 		this.coordinates[0] = longitude;
@@ -79,8 +84,7 @@ public class Geo extends AbstractEntity {
 	}
 
 	/**
-	 * @param type
-	 *            The type
+	 * @param type The type
 	 */
 	public void setType(final String type) {
 		this.type = "Point";
@@ -94,16 +98,14 @@ public class Geo extends AbstractEntity {
 	}
 
 	/**
-	 * @param coordinates
-	 *            The coordinates
+	 * @param coordinates The coordinates
 	 */
 	public void setCoordinates(final Double[] coordinates) {
 		this.coordinates = coordinates.clone();
 	}
 
 	/**
-	 * @param prefix
-	 *            The prefix
+	 * @param prefix The prefix
 	 * @return a map
 	 */
 	@JsonIgnore
@@ -119,10 +121,8 @@ public class Geo extends AbstractEntity {
 	}
 
 	/**
-	 * @param minDistance
-	 *            The minimum distance
-	 * @param maxDistance
-	 *            The maximum distance
+	 * @param minDistance The minimum distance
+	 * @param maxDistance The maximum distance
 	 * @return a Document
 	 */
 	public Document getSearch(final Integer minDistance, final Integer maxDistance) {
@@ -138,12 +138,8 @@ public class Geo extends AbstractEntity {
 	}
 
 	@Override
+	@SneakyThrows(CloneNotSupportedException.class)
 	public Geo clone() {
-		try {
-			return (Geo) super.clone();
-		} catch (CloneNotSupportedException e) {
-			log.error("Error while cloning: {}", e.getMessage(), e);
-			throw new RuntimeException();
-		}
+		return (Geo) super.clone();
 	}
 }

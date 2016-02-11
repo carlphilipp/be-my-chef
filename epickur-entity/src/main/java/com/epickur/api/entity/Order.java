@@ -3,7 +3,6 @@ package com.epickur.api.entity;
 import com.epickur.api.annotation.PickupdateValidate;
 import com.epickur.api.entity.deserialize.ObjectIdDeserializer;
 import com.epickur.api.entity.deserialize.OrderStatusDeserializer;
-import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.epickur.api.entity.serialize.ObjectIdSerializer;
 import com.epickur.api.entity.serialize.OrderStatusSerializer;
 import com.epickur.api.enumeration.Currency;
@@ -13,6 +12,7 @@ import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.operation.Create;
 import com.epickur.api.operation.Update;
+import com.epickur.api.utils.ObjectMapperWrapperDB;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -261,12 +262,8 @@ public class Order extends AbstractMainDBEntity {
 	}
 
 	@Override
+	@SneakyThrows(CloneNotSupportedException.class)
 	public Order clone() {
-		try {
-			return (Order) super.clone();
-		} catch (CloneNotSupportedException e) {
-			log.error("Error while cloning: {}", e.getMessage(), e);
-			throw new RuntimeException();
-		}
+		return (Order) super.clone();
 	}
 }
