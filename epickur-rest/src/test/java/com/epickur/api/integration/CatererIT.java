@@ -3,11 +3,7 @@ package com.epickur.api.integration;
 import com.epickur.api.ApplicationConfigTest;
 import com.epickur.api.IntegrationTestUtils;
 import com.epickur.api.config.EpickurProperties;
-import com.epickur.api.entity.Address;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Geo;
-import com.epickur.api.entity.Location;
-import com.epickur.api.entity.User;
+import com.epickur.api.entity.*;
 import com.epickur.api.entity.times.WorkingTimes;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
@@ -16,7 +12,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.Cleanup;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -130,16 +125,17 @@ public class CatererIT {
 
 		// Create request
 		HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		String obj = br.readLine();
-		int statusCode = httpResponse.getStatusLine().getStatusCode();
-		assertEquals(HttpStatus.OK.value(), statusCode);
-		JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
+		try (final InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+			 final BufferedReader br = new BufferedReader(in)) {
+			String obj = br.readLine();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			assertEquals(HttpStatus.OK.value(), statusCode);
+			JsonNode jsonResult = mapper.readValue(obj, JsonNode.class);
 
-		// Create result
-		id = jsonResult.get("id").asText();
-		IntegrationTestUtils.setupDB();
+			// Create result
+			id = jsonResult.get("id").asText();
+			IntegrationTestUtils.setupDB();
+		}
 	}
 
 	@After

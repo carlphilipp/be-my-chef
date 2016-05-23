@@ -6,7 +6,6 @@ import com.epickur.api.entity.User;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,10 +51,9 @@ public class EmailTemplate {
 	@PostConstruct
 	private void loadTemplates() {
 		final String base = getBaseTemplate();
-		try {
-			final Charset charset = Charset.forName("UTF-8");
-			@Cleanup final InputStream is = utils.getResource("email-template.json");
-			@Cleanup final Reader in = new InputStreamReader(is, charset);
+		final Charset charset = Charset.forName("UTF-8");
+		try (final InputStream is = utils.getResource("email-template.json");
+			 final Reader in = new InputStreamReader(is, charset)) {
 			final JsonNode obj = mapper.readTree(in);
 			final Iterator<Entry<String, JsonNode>> iterator = obj.fields();
 			while (iterator.hasNext()) {
@@ -64,13 +62,14 @@ public class EmailTemplate {
 				final String subject = node.get("subject").asText();
 				final String folder = node.get("folder").asText();
 				final String file = node.get("file").asText();
-				@Cleanup final InputStream is2 = utils.getResource("templates/" + folder + "/" + file);
-				final String content = IOUtils.toString(is2);
-				final String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
-				final Map<String, String> res = new HashMap<>();
-				res.put("subject", subject);
-				res.put("content", newContent);
-				templates.put(entry.getKey(), res);
+				try (final InputStream is2 = utils.getResource("templates/" + folder + "/" + file)) {
+					final String content = IOUtils.toString(is2);
+					final String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
+					final Map<String, String> res = new HashMap<>();
+					res.put("subject", subject);
+					res.put("content", newContent);
+					templates.put(entry.getKey(), res);
+				}
 			}
 		} catch (final IOException e) {
 			log.error("Error while trying to access the email templates", e);
@@ -84,10 +83,9 @@ public class EmailTemplate {
 	 */
 	private String getBaseTemplate() {
 		String base = null;
-		try {
-			final Charset charset = Charset.forName("UTF-8");
-			@Cleanup final InputStream is = utils.getResource("templates/base.html");
-			@Cleanup final Reader in = new InputStreamReader(is, charset);
+		final Charset charset = Charset.forName("UTF-8");
+		try (final InputStream is = utils.getResource("templates/base.html");
+			 final Reader in = new InputStreamReader(is, charset)) {
 			base = IOUtils.toString(in);
 		} catch (final IOException e) {
 			log.error("Error while trying to access the base template", e);

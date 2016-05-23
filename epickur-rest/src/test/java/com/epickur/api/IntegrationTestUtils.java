@@ -14,7 +14,6 @@ import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
-import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.bson.types.ObjectId;
@@ -65,11 +64,12 @@ public class IntegrationTestUtils {
 	private static void runShellCommand(final String cmd) throws IOException {
 		log.debug("Executing: " + cmd);
 		final Process p = Runtime.getRuntime().exec(cmd);
-		@Cleanup final InputStream is = p.getInputStream();
-		@Cleanup final BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		String line;
-		while ((line = br.readLine()) != null) {
-			log.debug(line);
+		try (final InputStream is = p.getInputStream();
+			 final BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				log.debug(line);
+			}
 		}
 	}
 
@@ -151,8 +151,9 @@ public class IntegrationTestUtils {
 	}
 
 	public String readResult(final HttpResponse httpResponse) throws IOException {
-		@Cleanup InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
-		@Cleanup BufferedReader br = new BufferedReader(in);
-		return br.readLine();
+		try (InputStreamReader in = new InputStreamReader(httpResponse.getEntity().getContent());
+			 BufferedReader br = new BufferedReader(in)) {
+			return br.readLine();
+		}
 	}
 }

@@ -125,22 +125,22 @@ public class MongoDBDumpTest {
 		verify(dumpFile, times(1)).delete();
 	}
 
-	@Test
-	public void testCleanDumpDirectory() throws UnknownHostException {
-		when(dumpDirectory.exists()).thenReturn(true);
-		when(dumpDirectory.isDirectory()).thenReturn(true);
-
-		mongoDBDump.cleanDumpDirectory();
-	}
-
-	@Test
-	public void testCleanDumpDirectoryFailed() throws UnknownHostException {
-		when(dumpDirectory.exists()).thenReturn(true);
-		when(dumpDirectory.isDirectory()).thenReturn(true);
-		when(dumpDirectory.listFiles()).thenReturn(null);
-
-		mongoDBDump.cleanDumpDirectory();
-	}
+//	@Test
+//	public void testCleanDumpDirectory() throws UnknownHostException {
+//		when(dumpDirectory.exists()).thenReturn(true);
+//		when(dumpDirectory.isDirectory()).thenReturn(true);
+//
+//		mongoDBDump.cleanDumpDirectory();
+//	}
+//
+//	@Test
+//	public void testCleanDumpDirectoryFailed() throws UnknownHostException {
+//		when(dumpDirectory.exists()).thenReturn(true);
+//		when(dumpDirectory.isDirectory()).thenReturn(true);
+//		when(dumpDirectory.listFiles()).thenReturn(null);
+//
+//		mongoDBDump.cleanDumpDirectory();
+//	}
 
 	@Test
 	public void testGetListFiles() throws UnknownHostException {
