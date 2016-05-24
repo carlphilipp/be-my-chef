@@ -93,7 +93,7 @@ public class CatererService {
 		final AtomicInteger amount = new AtomicInteger();
 		orders.stream()
 				.filter(order -> order.getStatus() == OrderStatus.SUCCESSFUL)
-				.forEach(order -> { amount.addAndGet(order.getAmount());} );
+				.forEach(order -> amount.addAndGet(order.getAmount()));
 		return amount.get();
 	}
 }
