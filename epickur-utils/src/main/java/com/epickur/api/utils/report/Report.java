@@ -1,7 +1,6 @@
 package com.epickur.api.utils.report;
 
 import com.epickur.api.exception.EpickurException;
-import lombok.Cleanup;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -45,8 +44,7 @@ public class Report {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public byte[] getReport() throws EpickurException {
-		try {
-			@Cleanup final InputStream inputStream = Report.class.getClassLoader().getResourceAsStream("report.jrxml");
+		try (final InputStream inputStream = Report.class.getClassLoader().getResourceAsStream("report.jrxml")) {
 			final JasperDesign jasperDesign = JRXmlLoader.load(inputStream);
 			final JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
 			final JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());

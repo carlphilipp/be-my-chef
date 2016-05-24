@@ -1,6 +1,5 @@
 package com.epickur.api.commons;
 
-import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.joda.time.DateTime;
@@ -69,20 +68,20 @@ public class CommonsUtil {
 		}
 		assert day != null;
 		switch (day) {
-		case "mon":
-			return "Monday";
-		case "tue":
-			return "Tuesday";
-		case "wed":
-			return "Wednesday";
-		case "thu":
-			return "Thursday";
-		case "fri":
-			return "Friday";
-		case "sat":
-			return "Saturday";
-		case "sun":
-			return "Sunday";
+			case "mon":
+				return "Monday";
+			case "tue":
+				return "Tuesday";
+			case "wed":
+				return "Wednesday";
+			case "thu":
+				return "Thursday";
+			case "fri":
+				return "Friday";
+			case "sat":
+				return "Saturday";
+			case "sun":
+				return "Sunday";
 		}
 		throw new IllegalArgumentException();
 	}
@@ -140,23 +139,19 @@ public class CommonsUtil {
 	 * @param output the output path
 	 */
 	public static void createTarGz(final List<String> inputs, final String output) {
-		try {
-			// Output file stream
-			@Cleanup final FileOutputStream dest = new FileOutputStream(output);
-
-			// Create a TarOutputStream
-			@Cleanup final TarOutputStream out = new TarOutputStream(new BufferedOutputStream(dest));
-
+		try (final FileOutputStream dest = new FileOutputStream(output);
+			 final TarOutputStream out = new TarOutputStream(new BufferedOutputStream(dest))) {
 			for (String input : inputs) {
 				final File f = new File(input);
 				out.putNextEntry(new TarEntry(f, f.getName()));
-				@Cleanup final BufferedInputStream origin = new BufferedInputStream(new FileInputStream(f));
-				int count;
-				byte[] data = new byte[2048];
-				while ((count = origin.read(data)) != -1) {
-					out.write(data, 0, count);
+				try (final BufferedInputStream origin = new BufferedInputStream(new FileInputStream(f))) {
+					int count;
+					byte[] data = new byte[2048];
+					while ((count = origin.read(data)) != -1) {
+						out.write(data, 0, count);
+					}
+					out.flush();
 				}
-				out.flush();
 			}
 		} catch (final IOException e) {
 			log.error("Error while creating tar.gz: {}", e.getLocalizedMessage(), e);
@@ -176,10 +171,11 @@ public class CommonsUtil {
 	}
 
 	public static Properties getProperties(final Class<?> clazz, final String resource) throws IOException {
-		@Cleanup InputStream in = clazz.getResource(resource).openStream();
-		final Properties prop = new Properties();
-		prop.load(in);
-		return prop;
+		try (final InputStream in = clazz.getResource(resource).openStream()) {
+			final Properties prop = new Properties();
+			prop.load(in);
+			return prop;
+		}
 	}
 
 	/**
@@ -197,7 +193,7 @@ public class CommonsUtil {
 	 */
 	private static String getRandomConsonants(final int size) {
 		// Removed l
-		final String[] consonants = { "q", "w", "r", "t", "p", "s", "d", "f", "g", "h", "j", "k", "z", "x", "c", "v", "b", "n", "m" };
+		final String[] consonants = {"q", "w", "r", "t", "p", "s", "d", "f", "g", "h", "j", "k", "z", "x", "c", "v", "b", "n", "m"};
 		final StringBuilder res = new StringBuilder();
 		final RandomDataGenerator randomData = new RandomDataGenerator();
 		for (int i = 0; i < size; i++) {
