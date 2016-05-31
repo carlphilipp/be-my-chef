@@ -1,7 +1,7 @@
 Epickur RESTful API
 ===================
 
-Welcome to Epickur RESTful API!!
+Welcome to Epickur RESTful API!!!
 
 For full endpoint documentation please go [here](epickur-rest/apidoc/index.html).
 
