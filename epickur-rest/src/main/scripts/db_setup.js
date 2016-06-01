@@ -1,13 +1,13 @@
 /** Add indexes **/
-db.users.ensureIndex( { "name": 1 }, { unique: true, sparse: true } )
-db.users.ensureIndex( { "email": 1 }, { unique: true, sparse: true } )
-db.caterers.ensureIndex( { "email": 1 }, { unique: true, sparse: true } )
-db.caterers.ensureIndex( { "name": 1 }, { unique: true, sparse: true } )
-db.caterers.ensureIndex( { 'location.geo' : "2dsphere" } )
-db.dishes.ensureIndex( { 'caterer.location.geo' : "2dsphere" } )
-db.dishes.ensureIndex( { "caterer._id" : 1 }, { unique: false, sparse: true } )
-db.orders.createIndex( { "readableId": 1 }, { unique: true, sparse: true } )
-db.vouchers.createIndex( { "code": 1 }, { unique: true, sparse: true } )
+db.users.ensureIndex( { "name": 1 }, { unique: true, sparse: true } );
+db.users.ensureIndex( { "email": 1 }, { unique: true, sparse: true } );
+db.caterers.ensureIndex( { "email": 1 }, { unique: true, sparse: true } );
+db.caterers.ensureIndex( { "name": 1 }, { unique: true, sparse: true } );
+db.caterers.ensureIndex( { 'location.geo' : "2dsphere" } );
+db.dishes.ensureIndex( { 'caterer.location.geo' : "2dsphere" } );
+db.dishes.ensureIndex( { "caterer._id" : 1 }, { unique: false, sparse: true } );
+db.orders.createIndex( { "readableId": 1 }, { unique: true, sparse: true } );
+db.vouchers.createIndex( { "code": 1 }, { unique: true, sparse: true } );
 
 /** Insert caterers **/
 db.caterers.insert(
@@ -127,7 +127,7 @@ db.caterers.insert(
     "updatedAt" : NumberLong(1424556053010)
   }
   ]
-)
+);
 
 /** Insert User **/
 db.users.insert(
@@ -147,7 +147,7 @@ db.users.insert(
     "createdAt": NumberLong(1423427362621),
     "updatedAt": NumberLong(1423427362622)
   }]
-)
+);
 
 /** Insert Dishes **/
 db.dishes.insert(
@@ -385,7 +385,7 @@ db.dishes.insert(
   		"createdAt": NumberLong(1424042592185),
   		"updatedAt": NumberLong(1424042592185)
 	}]
-)
+);
 
 /** Insert Orders **/
  db.orders.insert( 
@@ -480,4 +480,4 @@ db.dishes.insert(
     "createdBy" : "553292bd4c399700629d6f7c",
     "createdAt" : NumberLong(1429377728692),
     "updatedAt" : NumberLong(1429377728692)
-})
+});

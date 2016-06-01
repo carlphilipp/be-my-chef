@@ -1,14 +1,14 @@
 /** Empty caterers **/
-db.caterers.remove({})
+db.caterers.remove({});
 
 /** Empty User **/
-db.users.remove({})
+db.users.remove({});
 
 /** Empty Dishes **/
-db.dishes.remove({})
+db.dishes.remove({});
 
 /** Empty Orders **/
-db.orders.remove({})
+db.orders.remove({});
 
 /** Empty Keys **/
-db.keys.remove({})
+db.keys.remove({});
