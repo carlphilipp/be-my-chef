@@ -1,9 +1,10 @@
 package com.epickur.api.dao;
 
-import java.util.List;
-
 import com.epickur.api.entity.AbstractEntity;
 import com.epickur.api.exception.EpickurException;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface that defines the CRUD operation and a readAll operation that needs to be implemented.
@@ -35,7 +36,7 @@ public interface ICrudDAO<T extends AbstractEntity> {
 	 * @throws EpickurException
 	 *             If an epickur exception occurred
 	 */
-	T read(final String id) throws EpickurException;
+	Optional<T> read(final String id) throws EpickurException;
 
 	/**
 	 * Update an object

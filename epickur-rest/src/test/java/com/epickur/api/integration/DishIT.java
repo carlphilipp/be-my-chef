@@ -143,7 +143,7 @@ public class DishIT {
 		assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
 		assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
 		assertEquals(dish.getVideoUrl(), jsonResult.get("videoUrl").asText());
-		Caterer catererRes = EntityGenerator.getCaererObject(jsonResult.get("caterer").toString());
+		Caterer catererRes = EntityGenerator.getCatererObject(jsonResult.get("caterer").toString());
 		assertEquals(cat, catererRes);
 		List<NutritionFact> nutritionFactsRes = EntityGenerator.getListObject(jsonResult.get("nutritionFacts").toString());
 		assertNutritionFacts(dish, nutritionFactsRes);
@@ -238,7 +238,7 @@ public class DishIT {
 		assertEquals(new Long(dish.getCookingTime()).longValue(), jsonResult.get("cookingTime").asLong());
 		assertEquals(new Long(dish.getDifficultyLevel()).longValue(), jsonResult.get("difficultyLevel").asLong());
 		assertEquals(dish.getVideoUrl(), jsonResult.get("videoUrl").asText());
-		Caterer catererRes = EntityGenerator.getCaererObject(jsonResult.get("caterer").toString());
+		Caterer catererRes = EntityGenerator.getCatererObject(jsonResult.get("caterer").toString());
 		assertEquals(cat, catererRes);
 		List<NutritionFact> nutritionFactsRes = EntityGenerator.getListObject(jsonResult.get("nutritionFacts").toString());
 		assertNutritionFacts(dish, nutritionFactsRes);
@@ -346,7 +346,7 @@ public class DishIT {
 		assertEquals(cookingTimePut, jsonResult.get("cookingTime").asLong(), 0.001);
 		assertEquals(difficultyLevelPut, jsonResult.get("difficultyLevel").asLong(), 0.001);
 		assertEquals(videoURLPut, jsonResult.get("videoUrl").asText());
-		Caterer caterer3 = EntityGenerator.getCaererObject(jsonResult.get("caterer").toString());
+		Caterer caterer3 = EntityGenerator.getCatererObject(jsonResult.get("caterer").toString());
 		assertEquals(cat.getId(), caterer3.getId());
 		assertEquals(caterer2.getName(), caterer3.getName());
 		assertEquals(cat.getLocation().getAddress().getCity(), caterer3.getLocation().getAddress().getCity());

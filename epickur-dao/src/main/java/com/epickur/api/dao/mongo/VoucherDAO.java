@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.VOUCHER_COLL;
 import static com.mongodb.client.model.Filters.*;
@@ -55,7 +56,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 	}
 
 	@Override
-	public Voucher read(final String code) throws EpickurException {
+	public Optional<Voucher> read(final String code) throws EpickurException {
 		log.debug("Read voucher with code: " + code);
 		final Document query = convertAttributeToDocument("code", code);
 		final Document find = findDocument(query);
@@ -68,14 +69,19 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 		final Document filter = convertAttributeToDocument("_id", voucher.getId());
 		final Document update = voucher.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		return processAfterQuery(updated);
-	}
-
-	private Voucher processAfterQuery(final Document voucher) throws EpickurParsingException {
-		if (voucher != null) {
-			return Voucher.getDocumentAsVoucher(voucher);
+		final Optional<Voucher> voucherOptional = processAfterQuery(updated);
+		if (voucherOptional.isPresent()) {
+			return voucherOptional.get();
 		} else {
 			return null;
+		}
+	}
+
+	private Optional<Voucher> processAfterQuery(final Document voucher) throws EpickurParsingException {
+		if (voucher != null) {
+			return Optional.of(Voucher.getDocumentAsVoucher(voucher));
+		} else {
+			return Optional.empty();
 		}
 	}
 

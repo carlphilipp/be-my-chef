@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.enumeration.EndpointType.DISH;
 import static com.epickur.api.enumeration.Operation.*;
@@ -240,11 +241,11 @@ public class DishController {
 	@ValidateSimpleAccessRights(operation = READ, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
-		final Dish dish = dishService.read(id);
-		if (dish == null) {
+		final Optional<Dish> dish = dishService.read(id);
+		if (!dish.isPresent()) {
 			return ResponseError.notFound(ErrorConstants.DISH_NOT_FOUND, id);
 		} else {
-			return new ResponseEntity<>(dish, HttpStatus.OK);
+			return new ResponseEntity<>(dish.get(), HttpStatus.OK);
 		}
 	}
 

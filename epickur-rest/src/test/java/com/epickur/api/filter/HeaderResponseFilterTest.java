@@ -17,6 +17,6 @@ public class HeaderResponseFilterTest {
 		FilterChain filterChain = mock(FilterChain.class);
 		HeaderResponseFilter filter = new HeaderResponseFilter();
 		filter.doFilterInternal(null, response, filterChain);
-		verify(filterChain, times(1)).doFilter(null, response);
+		verify(filterChain).doFilter(null, response);
 	}
 }

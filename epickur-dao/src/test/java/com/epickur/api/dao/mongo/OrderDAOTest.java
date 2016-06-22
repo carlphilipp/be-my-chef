@@ -1,18 +1,14 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.dao.CollectionsName.ORDER_COLL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
+import com.epickur.api.entity.Order;
+import com.epickur.api.exception.EpickurDBException;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
+import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -25,15 +21,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.entity.Order;
-import com.epickur.api.exception.EpickurDBException;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
-import com.mongodb.MongoException;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
+import java.util.List;
+import java.util.Optional;
+
+import static com.epickur.api.dao.CollectionsName.ORDER_COLL;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.*;
 
 public class OrderDAOTest {
 
@@ -64,7 +59,7 @@ public class OrderDAOTest {
 		Order actual = dao.create(order);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).insertOne(document);
+		verify(collection).insertOne(document);
 	}
 
 	@Test
@@ -78,8 +73,8 @@ public class OrderDAOTest {
 		Order actual = dao.create(order);
 
 		assertNotNull(actual);
-		verify(db, times(1)).getCollection(ORDER_COLL);
-		verify(collection, times(1)).insertOne(document);
+		verify(db).getCollection(ORDER_COLL);
+		verify(collection).insertOne(document);
 	}
 
 	@Test
@@ -91,10 +86,10 @@ public class OrderDAOTest {
 		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
-		Order actual = dao.read(orderId);
+		Optional<Order> actual = dao.read(orderId);
 
-		assertNotNull(actual);
-		verify(collection, times(1)).find(query);
+		assertTrue(actual.isPresent());
+		verify(collection).find(query);
 	}
 
 	@Test
@@ -129,7 +124,7 @@ public class OrderDAOTest {
 		Order actual = dao.update(order);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).findOneAndUpdate(anyObject(), anyObject(), anyObject());
+		verify(collection).findOneAndUpdate(anyObject(), anyObject(), anyObject());
 	}
 
 	@Test
@@ -141,7 +136,7 @@ public class OrderDAOTest {
 		Order actual = dao.update(order);
 
 		assertNull(actual);
-		verify(collection, times(1)).findOneAndUpdate(anyObject(), anyObject(), anyObject());
+		verify(collection).findOneAndUpdate(anyObject(), anyObject(), anyObject());
 	}
 
 	@Test
@@ -153,7 +148,7 @@ public class OrderDAOTest {
 
 		dao.update(order);
 
-		verify(db, times(1)).getCollection(ORDER_COLL);
+		verify(db).getCollection(ORDER_COLL);
 	}
 
 	@Test
@@ -177,8 +172,8 @@ public class OrderDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collection, times(1)).find(query);
-		verify(cursor, times(1)).close();
+		verify(collection).find(query);
+		verify(cursor).close();
 	}
 
 	@Test
@@ -209,8 +204,8 @@ public class OrderDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collection, times(1)).find((Document) anyObject());
-		verify(cursor, times(1)).close();
+		verify(collection).find((Document) anyObject());
+		verify(cursor).close();
 	}
 
 	@Test

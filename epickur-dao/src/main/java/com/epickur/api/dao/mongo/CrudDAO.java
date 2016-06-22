@@ -15,6 +15,8 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 /**
  * Abstract class that helps the manipulation of Documents.
  *
@@ -39,7 +41,7 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	public abstract T create(final T obj) throws EpickurException;
 
 	@Override
-	public abstract T read(final String id) throws EpickurException;
+	public abstract Optional<T> read(final String id) throws EpickurException;
 
 	@Override
 	public abstract T update(final T obj) throws EpickurException;

@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * This class represents a process to cancel orders when it's been too long time it was not accepted.
  *
@@ -50,11 +52,13 @@ public class CancelOrderJob extends QuartzJobBean {
 	protected void executeInternal(final JobExecutionContext context) throws JobExecutionException {
 		try {
 			final String orderId = context.getJobDetail().getJobDataMap().getString("orderId");
-			Order order = orderDAO.read(orderId);
+			Optional<Order> orderOptional = orderDAO.read(orderId);
 			final String userId = context.getJobDetail().getJobDataMap().getString("userId");
-			final User user = userDAO.read(userId);
-			if (user != null && order != null) {
+			final Optional<User> userOptional = userDAO.read(userId);
+			if (userOptional.isPresent() && orderOptional.isPresent()) {
 				log.info("Cancel order id: {} with user id: {}", orderId, userId);
+				Order order = orderOptional.get();
+				User user = userOptional.get();
 				order.setStatus(OrderStatus.CANCELED);
 				order.prepareForUpdateIntoDB();
 				order = orderDAO.update(order);

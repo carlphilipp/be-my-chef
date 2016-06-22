@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -60,7 +61,7 @@ public class DishControllerTest {
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 
-		when(catererService.read(anyString())).thenReturn(caterer);
+		when(catererService.read(anyString())).thenReturn(Optional.of(caterer));
 		when(dishService.create(anyObject())).thenReturn(dishAfterCreate);
 
 		ResponseEntity<?> actual = controller.create(dish);
@@ -78,7 +79,7 @@ public class DishControllerTest {
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 
-		when(dishService.read(anyString())).thenReturn(dishAfterCreate);
+		when(dishService.read(anyString())).thenReturn(Optional.of(dishAfterCreate));
 
 		ResponseEntity actual = controller.read(new ObjectId().toHexString());
 		assertNotNull(actual);
@@ -94,7 +95,7 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 
-		when(dishService.read(anyString())).thenReturn(null);
+		when(dishService.read(anyString())).thenReturn(Optional.empty());
 
 		ResponseEntity actual = controller.read(new ObjectId().toHexString());
 		assertNotNull(actual);

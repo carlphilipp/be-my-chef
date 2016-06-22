@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.epickur.api.enumeration.EndpointType.VOUCHER;
@@ -88,11 +89,11 @@ public class VoucherController {
 	@ValidateSimpleAccessRights(operation = READ, endpoint = VOUCHER)
 	@RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("code") final String code) throws EpickurException {
-		final Voucher voucher = voucherService.read(code);
-		if (voucher == null) {
+		final Optional<Voucher> voucher = voucherService.read(code);
+		if (!voucher.isPresent()) {
 			return ResponseError.notFound(ErrorConstants.VOUCHER_NOT_FOUND, code);
 		} else {
-			return new ResponseEntity<>(voucher, HttpStatus.OK);
+			return new ResponseEntity<>(voucher.get(), HttpStatus.OK);
 		}
 	}
 

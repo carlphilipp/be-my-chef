@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -34,7 +35,7 @@ public class VoucherService {
 	 * @return A Voucher
 	 * @throws EpickurException If an EpickurException occurred
 	 */
-	public Voucher read(final String code) throws EpickurException {
+	public Optional<Voucher> read(final String code) throws EpickurException {
 		return voucherDAO.read(code);
 	}
 
@@ -65,8 +66,8 @@ public class VoucherService {
 			voucher.setStatus(Status.VALID);
 			final boolean added = result.add(voucher);
 			if (added) {
-				Voucher temp = voucherDAO.read(voucher.getCode());
-				if (temp != null) {
+				final Optional<Voucher> temp = voucherDAO.read(voucher.getCode());
+				if (temp.isPresent()) {
 					result.remove(voucher);
 				} else {
 					voucher.prepareForInsertionIntoDB();
@@ -117,10 +118,10 @@ public class VoucherService {
 	}
 
 	protected Voucher readAndThrowException(final String code) throws EpickurException {
-		final Voucher found = voucherDAO.read(code);
-		if (found == null) {
+		final Optional<Voucher> found = voucherDAO.read(code);
+		if (!found.isPresent()) {
 			throw new EpickurException("Voucher '" + code + "' not found");
 		}
-		return found;
+		return found.get();
 	}
 }

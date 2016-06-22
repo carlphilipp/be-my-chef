@@ -20,13 +20,12 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -77,10 +76,10 @@ public class DishServiceTest {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 
-		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
+		when(dishDAOMock.read(anyString())).thenReturn(Optional.of(dishAfterRead));
 
-		Dish actual = dishService.read(dish.getId().toHexString());
-		assertNotNull("Dish is null", actual);
+		Optional<Dish> actual = dishService.read(dish.getId().toHexString());
+		assertTrue(actual.isPresent());
 	}
 
 	@Test
@@ -104,7 +103,7 @@ public class DishServiceTest {
 		Dish dishAfterUpdate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterUpdate.setName("new name");
 
-		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
+		when(dishDAOMock.read(anyString())).thenReturn(Optional.of(dishAfterRead));
 		when(dishDAOMock.update(anyObject())).thenReturn(dishAfterUpdate);
 
 		Dish actual = dishService.update(dish);
@@ -117,7 +116,7 @@ public class DishServiceTest {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 
-		when(dishDAOMock.read(anyString())).thenReturn(dishAfterRead);
+		when(dishDAOMock.read(anyString())).thenReturn(Optional.of(dishAfterRead));
 		when(dishDAOMock.delete(dish.getId().toHexString())).thenReturn(true);
 
 		boolean actual = dishService.delete(dish.getId().toHexString());
@@ -145,8 +144,7 @@ public class DishServiceTest {
 		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
 
-		when(dishDAOMock.search(anyString(), anyInt(), anyObject(), anyInt(), anyObject(), anyInt()))
-				.thenReturn(listDishes);
+		when(dishDAOMock.search(anyString(), anyInt(), anyObject(), anyInt(), anyObject(), anyInt())).thenReturn(listDishes);
 		whenNew(GeocoderHereImpl.class).withNoArguments().thenReturn(geoCoder);
 		when(geoCoder.getPosition(anyString())).thenReturn(geo);
 

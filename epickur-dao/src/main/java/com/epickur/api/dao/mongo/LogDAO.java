@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.LOG_COLL;
 
@@ -41,7 +42,7 @@ public class LogDAO extends CrudDAO<Log> {
 	}
 
 	@Override
-	public Log read(final String id) throws EpickurException {
+	public Optional<Log> read(final String id) throws EpickurException {
 		throw new NotImplementedException("Not implemented yet");
 	}
 

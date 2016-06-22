@@ -1,13 +1,8 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.dao.CollectionsName.SEQUENCE_COLL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import com.epickur.api.exception.EpickurException;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,9 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.exception.EpickurException;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import static com.epickur.api.dao.CollectionsName.SEQUENCE_COLL;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class SequenceDAOTest {
 	
@@ -47,7 +45,7 @@ public class SequenceDAOTest {
 
 		assertNotNull(actual);
 		assertEquals("5", actual);
-		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class));
+		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class));
 	}
 	
 	@Test
@@ -58,6 +56,6 @@ public class SequenceDAOTest {
 
 		assertNotNull(actual);
 		assertEquals("0", actual);
-		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class));
+		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class));
 	}
 }

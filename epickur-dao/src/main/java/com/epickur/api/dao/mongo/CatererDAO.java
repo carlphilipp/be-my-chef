@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.CATERER_COLL;
 
@@ -41,7 +42,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	}
 
 	@Override
-	public Caterer read(final String id) throws EpickurException {
+	public Optional<Caterer> read(final String id) throws EpickurException {
 		log.debug("Read caterer: {}", id);
 		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
 		final Document find = findDocument(query);
@@ -54,7 +55,12 @@ public class CatererDAO extends CrudDAO<Caterer> {
 		final Document filter = convertAttributeToDocument("_id", caterer.getId());
 		final Document update = caterer.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		return processAfterQuery(updated);
+		final Optional<Caterer> catererOptional = processAfterQuery(updated);
+		if (catererOptional.isPresent()) {
+			return catererOptional.get();
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -62,11 +68,11 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	 * @return A Caterer
 	 * @throws EpickurParsingException If an EpickurException occurred.
 	 */
-	private Caterer processAfterQuery(final Document caterer) throws EpickurParsingException {
+	private Optional<Caterer> processAfterQuery(final Document caterer) throws EpickurParsingException {
 		if (caterer != null) {
-			return Caterer.getDocumentAsCatererDBView(caterer);
+			return Optional.of(Caterer.getDocumentAsCatererDBView(caterer));
 		} else {
-			return null;
+			return Optional.empty();
 		}
 	}
 

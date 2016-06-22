@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Filter that check if the provided key is valid
@@ -66,7 +67,7 @@ public class KeyRequestFilter extends OncePerRequestFilter {
 	}
 
 	protected void processKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain,
-			final String paramKey) throws IOException, ServletException {
+							  final String paramKey) throws IOException, ServletException {
 		try {
 			handleKey(request, response, filterChain, paramKey);
 		} catch (EpickurException e) {
@@ -76,7 +77,7 @@ public class KeyRequestFilter extends OncePerRequestFilter {
 	}
 
 	protected void handleKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain,
-			final String paramKey) throws EpickurException, IOException, ServletException {
+							 final String paramKey) throws EpickurException, IOException, ServletException {
 		final String apiKey = utils.getAPIKey();
 		if (paramKey.equals(apiKey)) {
 			handleAPIKey(request, response, filterChain);
@@ -94,13 +95,18 @@ public class KeyRequestFilter extends OncePerRequestFilter {
 	}
 
 	protected void handlePrivateKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain,
-			final String paramKey) throws EpickurException, IOException, ServletException {
-		final Key key = keyDAO.read(paramKey);
-		if (!utils.isValid(key)) {
-			abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.INVALID_KEY);
+									final String paramKey) throws EpickurException, IOException, ServletException {
+		final Optional<Key> key = keyDAO.read(paramKey);
+		if (key.isPresent()) {
+			final Key keyFound = key.get();
+			if (!utils.isValid(keyFound)) {
+				abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.INVALID_KEY);
+			} else {
+				request.setAttribute("key", keyFound);
+				filterChain.doFilter(request, response);
+			}
 		} else {
-			request.setAttribute("key", key);
-			filterChain.doFilter(request, response);
+			abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.INVALID_KEY);
 		}
 	}
 }

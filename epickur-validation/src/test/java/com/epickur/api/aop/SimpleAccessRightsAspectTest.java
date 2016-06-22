@@ -2,11 +2,7 @@ package com.epickur.api.aop;
 
 import com.epickur.api.annotation.ValidateSimpleAccessRights;
 import com.epickur.api.dao.mongo.CatererDAO;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Key;
-import com.epickur.api.entity.Order;
-import com.epickur.api.entity.User;
+import com.epickur.api.entity.*;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.exception.EpickurException;
@@ -33,29 +29,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
-import static com.epickur.api.enumeration.EndpointType.CATERER;
-import static com.epickur.api.enumeration.EndpointType.DISH;
-import static com.epickur.api.enumeration.EndpointType.NO_KEY;
-import static com.epickur.api.enumeration.EndpointType.ORDER;
-import static com.epickur.api.enumeration.EndpointType.USER;
-import static com.epickur.api.enumeration.EndpointType.VOUCHER;
-import static com.epickur.api.enumeration.Operation.CREATE;
-import static com.epickur.api.enumeration.Operation.GENERATE_VOUCHER;
-import static com.epickur.api.enumeration.Operation.PAYEMENT_INFO;
-import static com.epickur.api.enumeration.Operation.READ;
-import static com.epickur.api.enumeration.Operation.RESET_PASSWORD;
-import static com.epickur.api.enumeration.Operation.SEARCH_DISH;
-import static com.epickur.api.enumeration.Operation.UPDATE;
+import static com.epickur.api.enumeration.EndpointType.*;
+import static com.epickur.api.enumeration.Operation.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SimpleAccessRightsAspectTest {
@@ -134,7 +114,7 @@ public class SimpleAccessRightsAspectTest {
 
 		accessRightsAspect.handleUser(RESET_PASSWORD, args);
 
-		verify(userValidator, times(1)).checkResetPasswordData(node);
+		verify(userValidator).checkResetPasswordData(node);
 	}
 
 	@Test
@@ -145,7 +125,7 @@ public class SimpleAccessRightsAspectTest {
 
 		accessRightsAspect.handleCaterer(CREATE, args);
 
-		verify(catererValidator, times(1)).checkCreateCaterer(caterer);
+		verify(catererValidator).checkCreateCaterer(caterer);
 	}
 
 	@Test
@@ -157,13 +137,13 @@ public class SimpleAccessRightsAspectTest {
 
 		accessRightsAspect.handleCaterer(UPDATE, args);
 
-		verify(catererValidator, times(1)).checkUpdateCaterer(caterer.getId().toHexString(), caterer);
+		verify(catererValidator).checkUpdateCaterer(caterer.getId().toHexString(), caterer);
 	}
 
 	@Test
 	public void testHandleCatererPaymentInfo() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
-		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(caterer);
+		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(Optional.of(caterer));
 
 		Object[] args = new Object[1];
 		args[0] = caterer.getId().toHexString();
@@ -176,7 +156,7 @@ public class SimpleAccessRightsAspectTest {
 		thrown.expect(EpickurNotFoundException.class);
 
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
-		when(catererDAO.read(anyString())).thenReturn(null);
+		when(catererDAO.read(anyString())).thenReturn(Optional.empty());
 
 		Object[] args = new Object[1];
 		args[0] = caterer.getId().toHexString();
@@ -190,7 +170,7 @@ public class SimpleAccessRightsAspectTest {
 		args[0] = EntityGenerator.generateRandomString();
 		accessRightsAspect.handleVoucher(READ, args);
 
-		verify(voucherValidator, times(1)).checkVoucherCode((String) args[0]);
+		verify(voucherValidator).checkVoucherCode((String) args[0]);
 	}
 
 	@Test
@@ -201,7 +181,7 @@ public class SimpleAccessRightsAspectTest {
 		args[5] = "format";
 		accessRightsAspect.handleVoucher(GENERATE_VOUCHER, args);
 
-		verify(voucherValidator, times(1)).checkVoucherGenerate((ExpirationType) args[3], (String) args[4], (String) args[5]);
+		verify(voucherValidator).checkVoucherGenerate((ExpirationType) args[3], (String) args[4], (String) args[5]);
 	}
 
 	@Test
@@ -210,7 +190,7 @@ public class SimpleAccessRightsAspectTest {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Caterer caterer = dish.getCaterer();
 
-		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(caterer);
+		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(Optional.of(caterer));
 
 		Object[] args = new Object[1];
 		args[0] = dish;
@@ -226,7 +206,7 @@ public class SimpleAccessRightsAspectTest {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Caterer caterer = dish.getCaterer();
 
-		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(null);
+		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(Optional.empty());
 
 		Object[] args = new Object[1];
 		args[0] = dish;
@@ -240,7 +220,7 @@ public class SimpleAccessRightsAspectTest {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Caterer caterer = dish.getCaterer();
 
-		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(caterer);
+		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(Optional.of(caterer));
 
 		Object[] args = new Object[2];
 		args[0] = dish.getId().toHexString();
@@ -255,7 +235,7 @@ public class SimpleAccessRightsAspectTest {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Caterer caterer = dish.getCaterer();
 
-		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(caterer);
+		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(Optional.of(caterer));
 
 		Object[] args = new Object[5];
 		args[0] = EntityGenerator.generateRandomString();
@@ -317,9 +297,9 @@ public class SimpleAccessRightsAspectTest {
 
 		accessRightsAspect.checkAccessRights(joinPoint);
 
-		verify(accessRightsAspect, times(1)).validateMatrixAccessRights(any(), any(), any());
-		verify(accessRightsAspect, times(1)).validateLogicAccessRights(any(), any(), any(), any());
-		verify(accessRightsAspect, times(1)).getMethodFromJointPoint(joinPoint);
+		verify(accessRightsAspect).validateMatrixAccessRights(any(), any(), any());
+		verify(accessRightsAspect).validateLogicAccessRights(any(), any(), any(), any());
+		verify(accessRightsAspect).getMethodFromJointPoint(joinPoint);
 	}
 
 	@ValidateSimpleAccessRights(operation = CREATE, endpoint = CATERER)

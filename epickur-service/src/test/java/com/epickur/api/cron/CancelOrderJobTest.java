@@ -19,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.quartz.*;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.*;
 
 public class CancelOrderJobTest {
@@ -60,22 +62,22 @@ public class CancelOrderJobTest {
 		when(jobDetail.getJobDataMap()).thenReturn(jobDataMap);
 		when(jobDataMap.getString("orderId")).thenReturn(order.getId().toHexString());
 		when(jobDataMap.getString("userId")).thenReturn(user.getId().toHexString());
-		when(orderDAO.read(order.getId().toHexString())).thenReturn(order);
+		when(orderDAO.read(order.getId().toHexString())).thenReturn(Optional.of(order));
 		when(orderDAO.update(order)).thenReturn(order);
-		when(userDAO.read(user.getId().toHexString())).thenReturn(user);
-		when(voucherDAO.read(anyString())).thenReturn(voucher);
+		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.of(user));
+		when(voucherDAO.read(anyString())).thenReturn(Optional.of(voucher));
 
 		orderJob.execute(context);
 
-		verify(orderDAO, times(1)).read(order.getId().toHexString());
-		verify(userDAO, times(1)).read(user.getId().toHexString());
-		verify(emailUtils, times(1)).emailCancelOrder(user, order);
-		verify(order, times(1)).setStatus(OrderStatus.CANCELED);
-		verify(order, times(1)).setReadableId(null);
-		verify(order, times(1)).setCreatedAt(null);
-		verify(order, times(1)).setUpdatedAt(any(DateTime.class));
-		verify(order, times(1)).prepareForUpdateIntoDB();
-		//verify(voucherBusiness, times(1)).revertVoucher(voucher.getCode());
+		verify(orderDAO).read(order.getId().toHexString());
+		verify(userDAO).read(user.getId().toHexString());
+		verify(emailUtils).emailCancelOrder(user, order);
+		verify(order).setStatus(OrderStatus.CANCELED);
+		verify(order).setReadableId(null);
+		verify(order).setCreatedAt(null);
+		verify(order).setUpdatedAt(any(DateTime.class));
+		verify(order).prepareForUpdateIntoDB();
+		//verify(voucherBusiness).revertVoucher(voucher.getCode());
 	}
 
 	@Test
@@ -95,11 +97,11 @@ public class CancelOrderJobTest {
 		when(jobDataMap.getString("userId")).thenReturn(user.getId().toHexString());
 		when(orderDAO.read(order.getId().toHexString())).thenThrow(new EpickurException());
 		when(orderDAO.update(order)).thenReturn(order);
-		when(userDAO.read(user.getId().toHexString())).thenReturn(user);
+		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.of(user));
 
 		orderJob.execute(context);
 
-		verify(orderDAO, times(1)).read(order.getId().toHexString());
+		verify(orderDAO).read(order.getId().toHexString());
 		verify(userDAO, never()).read(user.getId().toHexString());
 		verify(emailUtils, never()).emailCancelOrder(user, order);
 		verify(order, never()).setStatus(any(OrderStatus.class));

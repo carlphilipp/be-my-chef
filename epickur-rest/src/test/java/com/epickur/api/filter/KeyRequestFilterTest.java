@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -52,19 +53,19 @@ public class KeyRequestFilterTest {
 	@Test
 	public void testHandlePrivateKey() throws EpickurException, IOException, ServletException {
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(dao.read(key.getKey())).thenReturn(key);
+		when(dao.read(key.getKey())).thenReturn(Optional.of(key));
 		when(utils.isValid(key)).thenReturn(true);
 
 		filter.handlePrivateKey(request, response, filterChain, key.getKey());
 
-		verify(request, times(1)).setAttribute(KEY_PROPERTY, key);
-		verify(filterChain, times(1)).doFilter(request, response);
+		verify(request).setAttribute(KEY_PROPERTY, key);
+		verify(filterChain).doFilter(request, response);
 	}
 
 	@Test
 	public void testHandlePrivateKeyAbort() throws EpickurException, IOException, ServletException {
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(dao.read(key.getKey())).thenReturn(key);
+		when(dao.read(key.getKey())).thenReturn(Optional.of(key));
 		when(utils.isValid(key)).thenReturn(false);
 		doNothing().when(filter).abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.INVALID_KEY);
 
@@ -78,8 +79,8 @@ public class KeyRequestFilterTest {
 	public void testHandleAPIKey() throws IOException, ServletException {
 		filter.handleAPIKey(request, response, filterChain);
 
-		verify(request, times(1)).setAttribute(eq(KEY_PROPERTY), any(Key.class));
-		verify(filterChain, times(1)).doFilter(request, response);
+		verify(request).setAttribute(eq(KEY_PROPERTY), any(Key.class));
+		verify(filterChain).doFilter(request, response);
 	}
 
 	@Test
@@ -91,7 +92,7 @@ public class KeyRequestFilterTest {
 
 		filter.handleKey(request, response, filterChain, key.getKey());
 
-		verify(filter, times(1)).handlePrivateKey(request, response, filterChain, key.getKey());
+		verify(filter).handlePrivateKey(request, response, filterChain, key.getKey());
 	}
 
 	@Test
@@ -102,7 +103,7 @@ public class KeyRequestFilterTest {
 
 		filter.handleKey(request, response, filterChain, key.getKey());
 
-		verify(filter, times(1)).handleAPIKey(request, response, filterChain);
+		verify(filter).handleAPIKey(request, response, filterChain);
 	}
 
 	@Test
@@ -112,7 +113,7 @@ public class KeyRequestFilterTest {
 
 		filter.processKey(request, response, filterChain, key.getKey());
 
-		verify(filter, times(1)).handleKey(request, response, filterChain, key.getKey());
+		verify(filter).handleKey(request, response, filterChain, key.getKey());
 	}
 
 	@Test
@@ -123,7 +124,7 @@ public class KeyRequestFilterTest {
 
 		filter.processKey(request, response, filterChain, key.getKey());
 
-		verify(filter, times(1)).abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+		verify(filter).abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 	}
 
 	@Test
@@ -133,7 +134,7 @@ public class KeyRequestFilterTest {
 
 		filter.abortRequest(response, HttpStatus.OK, "error");
 
-		verify(printWriter, times(1)).write(anyString());
+		verify(printWriter).write(anyString());
 	}
 
 	@Test
@@ -145,7 +146,7 @@ public class KeyRequestFilterTest {
 
 		filter.doFilterInternal(request, response, filterChain);
 
-		verify(filter, times(1)).processKey(request, response, filterChain, KEY_VALUE);
+		verify(filter).processKey(request, response, filterChain, KEY_VALUE);
 	}
 
 	@Test
@@ -157,7 +158,7 @@ public class KeyRequestFilterTest {
 
 		filter.doFilterInternal(request, response, filterChain);
 
-		verify(filter, times(1)).abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.MISSING_KEY);
+		verify(filter).abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.MISSING_KEY);
 	}
 
 	@Test
@@ -168,6 +169,6 @@ public class KeyRequestFilterTest {
 
 		filter.doFilterInternal(request, response, filterChain);
 
-		verify(filterChain, times(1)).doFilter(request, response);
+		verify(filterChain).doFilter(request, response);
 	}
 }

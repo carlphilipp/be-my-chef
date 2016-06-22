@@ -5,11 +5,7 @@ import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.UserDAO;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Key;
-import com.epickur.api.entity.Order;
-import com.epickur.api.entity.User;
+import com.epickur.api.entity.*;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
@@ -31,20 +27,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
-import static com.epickur.api.enumeration.EndpointType.CATERER;
-import static com.epickur.api.enumeration.EndpointType.DISH;
-import static com.epickur.api.enumeration.EndpointType.ORDER;
-import static com.epickur.api.enumeration.EndpointType.USER;
+import static com.epickur.api.enumeration.EndpointType.*;
 import static com.epickur.api.enumeration.Operation.READ;
 import static com.epickur.api.enumeration.Operation.UPDATE;
 import static com.epickur.api.enumeration.Role.ADMIN;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComplexAccessRightsAspectTest {
@@ -79,7 +68,7 @@ public class ComplexAccessRightsAspectTest {
 	public void testHandleOrderRead() throws EpickurException {
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		ObjectId userId = new ObjectId();
-		when(orderDAO.read(order.getId().toHexString())).thenReturn(order);
+		when(orderDAO.read(order.getId().toHexString())).thenReturn(Optional.of(order));
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -88,14 +77,14 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.handleOrder(READ, args, key);
 
-		verify(userValidator, times(1)).checkOrderRightsAfter(ADMIN, userId, order, READ);
+		verify(userValidator).checkOrderRightsAfter(ADMIN, userId, order, READ);
 	}
 
 	@Test
 	public void testHandleOrderUpdate() throws EpickurException {
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		ObjectId userId = new ObjectId();
-		when(orderDAO.read(order.getId().toHexString())).thenReturn(order);
+		when(orderDAO.read(order.getId().toHexString())).thenReturn(Optional.of(order));
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -104,8 +93,8 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.handleOrder(UPDATE, args, key);
 
-		verify(userValidator, times(1)).checkOrderRightsAfter(ADMIN, userId, order, UPDATE);
-		verify(userValidator, times(1)).checkOrderStatus(order);
+		verify(userValidator).checkOrderRightsAfter(ADMIN, userId, order, UPDATE);
+		verify(userValidator).checkOrderStatus(order);
 	}
 
 	@Test
@@ -114,7 +103,7 @@ public class ComplexAccessRightsAspectTest {
 
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		ObjectId userId = new ObjectId();
-		when(orderDAO.read(order.getId().toHexString())).thenReturn(null);
+		when(orderDAO.read(order.getId().toHexString())).thenReturn(Optional.empty());
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -128,7 +117,7 @@ public class ComplexAccessRightsAspectTest {
 	public void testHandleDishRead() throws EpickurException {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		ObjectId userId = new ObjectId();
-		when(dishDAO.read(dish.getId().toHexString())).thenReturn(dish);
+		when(dishDAO.read(dish.getId().toHexString())).thenReturn(Optional.of(dish));
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -137,14 +126,14 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.handleDish(READ, args, key);
 
-		verify(dishValidator, times(1)).checkRightsAfter(ADMIN, userId, dish, READ);
+		verify(dishValidator).checkRightsAfter(ADMIN, userId, dish, READ);
 	}
 
 	@Test
 	public void testHandleDishUpdate() throws EpickurException {
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		ObjectId userId = new ObjectId();
-		when(dishDAO.read(dish.getId().toHexString())).thenReturn(dish);
+		when(dishDAO.read(dish.getId().toHexString())).thenReturn(Optional.of(dish));
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -153,7 +142,7 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.handleDish(UPDATE, args, key);
 
-		verify(dishValidator, times(1)).checkRightsAfter(ADMIN, userId, dish, UPDATE);
+		verify(dishValidator).checkRightsAfter(ADMIN, userId, dish, UPDATE);
 	}
 
 	@Test
@@ -162,7 +151,7 @@ public class ComplexAccessRightsAspectTest {
 
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		ObjectId userId = new ObjectId();
-		when(dishDAO.read(dish.getId().toHexString())).thenReturn(null);
+		when(dishDAO.read(dish.getId().toHexString())).thenReturn(Optional.empty());
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -176,7 +165,7 @@ public class ComplexAccessRightsAspectTest {
 	public void testHandleCatererRead() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		ObjectId userId = new ObjectId();
-		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(caterer);
+		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(Optional.of(caterer));
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -185,7 +174,7 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.handleCaterer(READ, args, key);
 
-		verify(catererValidator, times(1)).checkRightsAfter(ADMIN, userId, caterer, READ);
+		verify(catererValidator).checkRightsAfter(ADMIN, userId, caterer, READ);
 	}
 
 	@Test
@@ -194,7 +183,7 @@ public class ComplexAccessRightsAspectTest {
 
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		ObjectId userId = new ObjectId();
-		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(null);
+		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(Optional.empty());
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -208,7 +197,7 @@ public class ComplexAccessRightsAspectTest {
 	public void testHandleUserRead() throws EpickurException {
 		User user = EntityGenerator.generateRandomUserWithId();
 		ObjectId userId = new ObjectId();
-		when(userDAO.read(user.getId().toHexString())).thenReturn(user);
+		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.of(user));
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -217,14 +206,14 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.handleUser(READ, args, key);
 
-		verify(userValidator, times(1)).checkUserRightsAfter(ADMIN, userId, user, READ);
+		verify(userValidator).checkUserRightsAfter(ADMIN, userId, user, READ);
 	}
 
 	@Test
 	public void testHandleUserUpdate() throws EpickurException {
 		User user = EntityGenerator.generateRandomUserWithId();
 		ObjectId userId = new ObjectId();
-		when(userDAO.read(user.getId().toHexString())).thenReturn(user);
+		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.of(user));
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -233,7 +222,7 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.handleUser(UPDATE, args, key);
 
-		verify(userValidator, times(1)).checkUserRightsAfter(ADMIN, userId, user, UPDATE);
+		verify(userValidator).checkUserRightsAfter(ADMIN, userId, user, UPDATE);
 	}
 
 	@Test
@@ -242,7 +231,7 @@ public class ComplexAccessRightsAspectTest {
 
 		User user = EntityGenerator.generateRandomUserWithId();
 		ObjectId userId = new ObjectId();
-		when(userDAO.read(user.getId().toHexString())).thenReturn(null);
+		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.empty());
 		when(key.getRole()).thenReturn(ADMIN);
 		when(key.getUserId()).thenReturn(userId);
 
@@ -251,7 +240,7 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.handleUser(UPDATE, args, key);
 
-		verify(userValidator, times(1)).checkUserRightsAfter(ADMIN, userId, user, UPDATE);
+		verify(userValidator).checkUserRightsAfter(ADMIN, userId, user, UPDATE);
 	}
 
 	@Test
@@ -267,7 +256,7 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.checkUserAccessRightsBefore(joinPoint);
 
-		verify(accessRightsAspect, times(1)).getMethodFromJointPoint(joinPoint);
+		verify(accessRightsAspect).getMethodFromJointPoint(joinPoint);
 	}
 
 	@ValidateComplexAccessRights(operation = READ, type = USER)
@@ -287,7 +276,7 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.checkUserAccessRightsBefore(joinPoint);
 
-		verify(accessRightsAspect, times(1)).getMethodFromJointPoint(joinPoint);
+		verify(accessRightsAspect).getMethodFromJointPoint(joinPoint);
 	}
 
 	@ValidateComplexAccessRights(operation = UPDATE, type = CATERER)
@@ -307,7 +296,7 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.checkUserAccessRightsBefore(joinPoint);
 
-		verify(accessRightsAspect, times(1)).getMethodFromJointPoint(joinPoint);
+		verify(accessRightsAspect).getMethodFromJointPoint(joinPoint);
 	}
 
 	@ValidateComplexAccessRights(operation = UPDATE, type = DISH)
@@ -327,7 +316,7 @@ public class ComplexAccessRightsAspectTest {
 
 		accessRightsAspect.checkUserAccessRightsBefore(joinPoint);
 
-		verify(accessRightsAspect, times(1)).getMethodFromJointPoint(joinPoint);
+		verify(accessRightsAspect).getMethodFromJointPoint(joinPoint);
 	}
 
 	@ValidateComplexAccessRights(operation = READ, type = ORDER)

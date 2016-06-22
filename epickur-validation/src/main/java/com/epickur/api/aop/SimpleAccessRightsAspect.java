@@ -1,11 +1,7 @@
 package com.epickur.api.aop;
 
 import com.epickur.api.annotation.ValidateSimpleAccessRights;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Key;
-import com.epickur.api.entity.Order;
-import com.epickur.api.entity.User;
+import com.epickur.api.entity.*;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
@@ -23,20 +19,10 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 
-import static com.epickur.api.enumeration.EndpointType.CATERER;
-import static com.epickur.api.enumeration.EndpointType.DISH;
-import static com.epickur.api.enumeration.EndpointType.NO_KEY;
-import static com.epickur.api.enumeration.EndpointType.ORDER;
-import static com.epickur.api.enumeration.EndpointType.USER;
-import static com.epickur.api.enumeration.EndpointType.VOUCHER;
-import static com.epickur.api.enumeration.Operation.CREATE;
-import static com.epickur.api.enumeration.Operation.GENERATE_VOUCHER;
-import static com.epickur.api.enumeration.Operation.PAYEMENT_INFO;
-import static com.epickur.api.enumeration.Operation.READ;
-import static com.epickur.api.enumeration.Operation.RESET_PASSWORD;
-import static com.epickur.api.enumeration.Operation.SEARCH_DISH;
-import static com.epickur.api.enumeration.Operation.UPDATE;
+import static com.epickur.api.enumeration.EndpointType.*;
+import static com.epickur.api.enumeration.Operation.*;
 import static com.epickur.api.utils.ErrorConstants.CATERER_NOT_FOUND;
 
 @Aspect
@@ -87,11 +73,11 @@ public class SimpleAccessRightsAspect extends AccessRightsAspect {
 			final Dish dish = (Dish) args[0];
 			dishValidation.checkCreateData(dish);
 			final String catererId = dish.getCaterer().getId().toHexString();
-			final Caterer caterer = catererDAO.read(catererId);
-			if (caterer == null) {
+			final Optional<Caterer> caterer = catererDAO.read(catererId);
+			if (!caterer.isPresent()) {
 				throw new EpickurNotFoundException(CATERER_NOT_FOUND, catererId);
 			}
-			dishValidation.checkRightsBefore(key.getRole(), CREATE, caterer, key);
+			dishValidation.checkRightsBefore(key.getRole(), CREATE, caterer.get(), key);
 		} else if (operation == UPDATE) {
 			final String id = (String) args[0];
 			final Dish dish = (Dish) args[1];
@@ -128,8 +114,8 @@ public class SimpleAccessRightsAspect extends AccessRightsAspect {
 		} else if (operation == PAYEMENT_INFO) {
 			String id = (String) args[0];
 			// TODO : Find a better way to do that because the read() is done twice
-			final Caterer caterer = catererDAO.read(id);
-			if (caterer == null) {
+			final Optional<Caterer> caterer = catererDAO.read(id);
+			if (!caterer.isPresent()) {
 				throw new EpickurNotFoundException(CATERER_NOT_FOUND, id);
 			}
 		}

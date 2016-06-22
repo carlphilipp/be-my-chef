@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.enumeration.EndpointType.DISH;
 import static com.epickur.api.enumeration.Operation.DELETE;
@@ -60,7 +61,7 @@ public class DishService {
 	 * @return the {@link Dish}
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
-	public Dish read(final String id) throws EpickurException {
+	public Optional<Dish> read(final String id) throws EpickurException {
 		return dao.read(id);
 	}
 

@@ -23,11 +23,9 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -71,7 +69,7 @@ public class UserControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userService.read(anyString())).thenReturn(userAfterRead);
+		when(userService.read(anyString())).thenReturn(Optional.of(userAfterRead));
 
 		ResponseEntity<?> actual = controller.read(user.getId().toHexString());
 		assertNotNull(actual);
@@ -179,7 +177,7 @@ public class UserControllerTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order);
 
-		when(orderService.readOrder(anyString())).thenReturn(orderAfterRead);
+		when(orderService.readOrder(anyString())).thenReturn(Optional.of(orderAfterRead));
 
 		ResponseEntity<?> actual = controller.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
 		assertNotNull(actual);

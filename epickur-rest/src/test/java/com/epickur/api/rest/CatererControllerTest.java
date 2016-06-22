@@ -14,11 +14,7 @@ import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.report.Report;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
+import com.stripe.exception.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,11 +29,9 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -89,7 +83,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererService.read(anyString())).thenReturn(catererAfterCreate);
+		when(catererService.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
 
 		ResponseEntity<?> actual = controller.read(catererAfterCreate.getId().toHexString());
 		assertNotNull(actual);
@@ -103,7 +97,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererService.read(anyString())).thenReturn(null);
+		when(catererService.read(anyString())).thenReturn(Optional.empty());
 
 		ResponseEntity<?> actual = controller.read(catererAfterCreate.getId().toHexString());
 		assertNotNull(actual);
@@ -205,7 +199,7 @@ public class CatererControllerTest {
 			List<Order> orders = new ArrayList<>();
 			orders.add(order);
 
-			when(catererService.read(anyString())).thenReturn(catererAfterCreate);
+			when(catererService.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
 			when(orderService.readAllWithCatererId(anyString(), anyObject(), anyObject())).thenReturn(orders);
 			when(catererService.getTotalAmountSuccessful(anyObject())).thenReturn(150);
 			Key key = EntityGenerator.generateRandomAdminKey();
@@ -235,7 +229,7 @@ public class CatererControllerTest {
 			List<Order> orders = new ArrayList<>();
 			orders.add(order);
 
-			when(catererService.read(anyString())).thenReturn(catererAfterCreate);
+			when(catererService.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
 			when(orderService.readAllWithCatererId(anyString(), anyObject(), anyObject())).thenReturn(orders);
 			when(catererService.getTotalAmountSuccessful(anyObject())).thenReturn(150);
 			Key key = EntityGenerator.generateRandomAdminKey();

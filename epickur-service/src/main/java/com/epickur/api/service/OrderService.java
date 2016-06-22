@@ -15,8 +15,8 @@ import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.stripe.StripePayment;
 import com.epickur.api.utils.ErrorConstants;
-import com.epickur.api.utils.security.Security;
 import com.epickur.api.utils.email.EmailUtils;
+import com.epickur.api.utils.security.Security;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import org.bson.types.ObjectId;
@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.enumeration.EndpointType.ORDER;
 import static com.epickur.api.enumeration.Operation.READ;
@@ -62,8 +63,7 @@ public class OrderService {
 	 * @return an Order
 	 * @throws EpickurException If an EpickurException occurred
 	 */
-	public Order create(final String userId, final Order order)
-			throws EpickurException {
+	public Order create(final String userId, final Order order) throws EpickurException {
 		final User user = readUser(userId);
 		handleVoucher(order);
 		prepareOrder(order, userId);
@@ -100,11 +100,11 @@ public class OrderService {
 	}
 
 	protected User readUser(final String userId) throws EpickurException {
-		final User user = userDAO.read(userId);
-		if (user == null) {
+		final Optional<User> user = userDAO.read(userId);
+		if (!user.isPresent()) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, userId);
 		}
-		return user;
+		return user.get();
 	}
 
 	/**
@@ -113,9 +113,8 @@ public class OrderService {
 	 * @throws EpickurException If an ${@link EpickurException} occurred
 	 */
 	@ValidateComplexAccessRights(operation = READ, type = ORDER)
-	public Order readOrder(final String id) throws EpickurException {
+	public Optional<Order> readOrder(final String id) throws EpickurException {
 		return orderDAO.read(id);
-
 	}
 
 	/**
@@ -174,7 +173,7 @@ public class OrderService {
 	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public Order executeOrder(final String userId, final String orderId, final boolean confirm,
-			final boolean shouldCharge, final String orderCode) throws EpickurException {
+							  final boolean shouldCharge, final String orderCode) throws EpickurException {
 		final User user = readUser(userId);
 		Order order = read(orderId);
 		checkAutorization(orderCode, order);
@@ -223,11 +222,11 @@ public class OrderService {
 	}
 
 	protected Order read(final String orderId) throws EpickurException {
-		final Order order = orderDAO.read(orderId);
-		if (order == null) {
+		final Optional<Order> order = orderDAO.read(orderId);
+		if (!order.isPresent()) {
 			throw new EpickurNotFoundException(ErrorConstants.ORDER_NOT_FOUND, orderId);
 		}
-		return order;
+		return order.get();
 	}
 
 	protected void checkAutorization(final String orderCode, final Order order) throws EpickurException {
