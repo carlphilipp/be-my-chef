@@ -1,26 +1,22 @@
 package com.epickur.api.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.epickur.api.dao.mongo.KeyDAO;
+import com.epickur.api.entity.Key;
+import com.epickur.api.exception.EpickurException;
+import com.epickur.api.helper.EntityGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.dao.mongo.KeyDAO;
-import com.epickur.api.entity.Key;
-import com.epickur.api.exception.EpickurException;
-import com.epickur.api.helper.EntityGenerator;
-import com.epickur.api.service.KeyService;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.when;
 
 public class KeyServiceTest {
 	
@@ -54,7 +50,7 @@ public class KeyServiceTest {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterRead = EntityGenerator.mockKeyAfterCreate(key);
 
-		when(keyDAOMock.readWithName(anyString())).thenReturn(keyAfterRead);
+		when(keyDAOMock.readWithName(isA(String.class))).thenReturn(keyAfterRead);
 
 		Key actual = keyBusiness.readWithName(EntityGenerator.generateRandomString());
 		assertNotNull(actual);
@@ -62,7 +58,7 @@ public class KeyServiceTest {
 
 	@Test
 	public void testDelete() throws EpickurException {
-		when(keyDAOMock.delete(anyString())).thenReturn(true);
+		when(keyDAOMock.delete(isA(String.class))).thenReturn(true);
 
 		boolean actual = keyBusiness.delete(EntityGenerator.generateRandomString());
 		assertTrue(actual);
@@ -70,7 +66,7 @@ public class KeyServiceTest {
 
 	@Test
 	public void testDeleteWithKey() throws EpickurException {
-		when(keyDAOMock.deleteWithKey(anyString())).thenReturn(true);
+		when(keyDAOMock.deleteWithKey(isA(String.class))).thenReturn(true);
 
 		boolean actual = keyBusiness.deleteWithKey(EntityGenerator.generateRandomString());
 		assertTrue(actual);

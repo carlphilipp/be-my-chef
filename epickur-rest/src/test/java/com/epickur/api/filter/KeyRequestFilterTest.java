@@ -134,7 +134,7 @@ public class KeyRequestFilterTest {
 
 		filter.abortRequest(response, HttpStatus.OK, "error");
 
-		verify(printWriter).write(anyString());
+		verify(printWriter).write(isA(String.class));
 	}
 
 	@Test

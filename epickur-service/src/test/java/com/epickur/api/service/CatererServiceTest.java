@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
 public class CatererServiceTest {
@@ -59,7 +57,7 @@ public class CatererServiceTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererDAOMock.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
+		when(catererDAOMock.read(isA(String.class))).thenReturn(Optional.of(catererAfterCreate));
 
 		Optional<Caterer> actualCaterer = catererService.read(EntityGenerator.generateRandomString());
 
@@ -99,7 +97,7 @@ public class CatererServiceTest {
 		Caterer catererAfterUpdate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterUpdate.setDescription("new desc");
 
-		when(catererDAOMock.read(anyString())).thenReturn(Optional.of(catererAfterUpdate));
+		when(catererDAOMock.read(isA(String.class))).thenReturn(Optional.of(catererAfterUpdate));
 		when(catererDAOMock.update(caterer)).thenReturn(catererAfterUpdate);
 
 		Caterer actual = catererService.update(caterer);

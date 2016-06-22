@@ -156,7 +156,7 @@ public class SimpleAccessRightsAspectTest {
 		thrown.expect(EpickurNotFoundException.class);
 
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
-		when(catererDAO.read(anyString())).thenReturn(Optional.empty());
+		when(catererDAO.read(isA(String.class))).thenReturn(Optional.empty());
 
 		Object[] args = new Object[1];
 		args[0] = caterer.getId().toHexString();

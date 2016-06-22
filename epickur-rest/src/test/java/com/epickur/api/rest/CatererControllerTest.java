@@ -33,7 +33,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -83,7 +83,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererService.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
+		when(catererService.read(isA(String.class))).thenReturn(Optional.of(catererAfterCreate));
 
 		ResponseEntity<?> actual = controller.read(catererAfterCreate.getId().toHexString());
 		assertNotNull(actual);
@@ -97,7 +97,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererService.read(anyString())).thenReturn(Optional.empty());
+		when(catererService.read(isA(String.class))).thenReturn(Optional.empty());
 
 		ResponseEntity<?> actual = controller.read(catererAfterCreate.getId().toHexString());
 		assertNotNull(actual);
@@ -133,7 +133,7 @@ public class CatererControllerTest {
 		List<Dish> dishes = new ArrayList<>();
 		dishes.add(dish);
 
-		when(dishService.searchDishesForOneCaterer(anyString())).thenReturn(dishes);
+		when(dishService.searchDishesForOneCaterer(isA(String.class))).thenReturn(dishes);
 
 		ResponseEntity<?> actual = controller.readDishes(caterer.getId().toHexString());
 		assertNotNull(actual);
@@ -164,7 +164,7 @@ public class CatererControllerTest {
 	public void testDelete() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
-		when(catererService.delete(anyString())).thenReturn(true);
+		when(catererService.delete(isA(String.class))).thenReturn(true);
 
 		ResponseEntity<?> actual = controller.delete(caterer.getId().toHexString());
 		assertNotNull(actual);
@@ -179,7 +179,7 @@ public class CatererControllerTest {
 	public void testDeleteCatererNotFound() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
-		when(catererService.delete(anyString())).thenReturn(false);
+		when(catererService.delete(isA(String.class))).thenReturn(false);
 
 		ResponseEntity<?> actual = controller.delete(caterer.getId().toHexString());
 		assertNotNull(actual);
@@ -199,8 +199,8 @@ public class CatererControllerTest {
 			List<Order> orders = new ArrayList<>();
 			orders.add(order);
 
-			when(catererService.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
-			when(orderService.readAllWithCatererId(anyString(), anyObject(), anyObject())).thenReturn(orders);
+			when(catererService.read(isA(String.class))).thenReturn(Optional.of(catererAfterCreate));
+			when(orderService.readAllWithCatererId(isA(String.class), anyObject(), anyObject())).thenReturn(orders);
 			when(catererService.getTotalAmountSuccessful(anyObject())).thenReturn(150);
 			Key key = EntityGenerator.generateRandomAdminKey();
 			when(context.getAttribute("key")).thenReturn(key);
@@ -229,8 +229,8 @@ public class CatererControllerTest {
 			List<Order> orders = new ArrayList<>();
 			orders.add(order);
 
-			when(catererService.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
-			when(orderService.readAllWithCatererId(anyString(), anyObject(), anyObject())).thenReturn(orders);
+			when(catererService.read(isA(String.class))).thenReturn(Optional.of(catererAfterCreate));
+			when(orderService.readAllWithCatererId(isA(String.class), anyObject(), anyObject())).thenReturn(orders);
 			when(catererService.getTotalAmountSuccessful(anyObject())).thenReturn(150);
 			Key key = EntityGenerator.generateRandomAdminKey();
 			when(context.getAttribute("key")).thenReturn(key);

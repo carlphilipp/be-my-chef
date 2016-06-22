@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
 public class VoucherServiceTest {
@@ -43,7 +43,7 @@ public class VoucherServiceTest {
 	public void testRead() throws EpickurException {
 		Voucher voucher = EntityGenerator.generateVoucher();
 
-		when(voucherDAO.read(anyString())).thenReturn(Optional.of(voucher));
+		when(voucherDAO.read(isA(String.class))).thenReturn(Optional.of(voucher));
 
 		Optional<Voucher> actual = voucherService.read(EntityGenerator.generateRandomString());
 		assertTrue(actual.isPresent());
@@ -52,7 +52,7 @@ public class VoucherServiceTest {
 
 	@Test
 	public void testGenerate() throws EpickurException {
-		when(voucherDAO.read(anyString())).thenReturn(Optional.empty());
+		when(voucherDAO.read(isA(String.class))).thenReturn(Optional.empty());
 
 		int count = 10;
 		Set<Voucher> actuals = voucherService.generate(count, DiscountType.AMOUNT, 15, ExpirationType.ONETIME, new DateTime());

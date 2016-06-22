@@ -72,7 +72,7 @@ public class VoucherControllerTest {
 		Voucher voucher = EntityGenerator.generateVoucher();
 		Voucher voucherAfterCreate = EntityGenerator.mockVoucherAfterCreate(voucher);
 
-		when(voucherBusiness.read(anyString())).thenReturn(Optional.of(voucherAfterCreate));
+		when(voucherBusiness.read(isA(String.class))).thenReturn(Optional.of(voucherAfterCreate));
 
 		ResponseEntity<?> actual = controller.read(CommonsUtil.generateRandomCode());
 		assertNotNull(actual);
@@ -84,7 +84,7 @@ public class VoucherControllerTest {
 
 	@Test
 	public void testReadVoucherNotFound() throws EpickurException {
-		when(voucherBusiness.read(anyString())).thenReturn(Optional.empty());
+		when(voucherBusiness.read(isA(String.class))).thenReturn(Optional.empty());
 
 		ResponseEntity<?> actual = controller.read(CommonsUtil.generateRandomCode());
 		assertNotNull(actual);
