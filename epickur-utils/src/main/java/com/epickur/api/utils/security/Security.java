@@ -1,15 +1,13 @@
 package com.epickur.api.utils.security;
 
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-
+import com.epickur.api.entity.User;
+import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Hex;
 import org.bson.types.ObjectId;
 
-import com.epickur.api.entity.User;
-import com.epickur.api.exception.EpickurException;
+import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 
 /**
  * @author cph
@@ -17,91 +15,64 @@ import com.epickur.api.exception.EpickurException;
  */
 public final class Security {
 
-	/**
-	 * Constructor
-	 */
 	private Security() {
 	}
 
 	/**
 	 * Encode to sha256 the user password
-	 * 
-	 * @param str
-	 *            the password to encode
+	 *
+	 * @param str the password to encode
 	 * @return an encoded string
-	 * @throws EpickurException
-	 *             If an exception occurred while encoding the password
 	 */
-	public static String encodeToSha256(final String str) throws EpickurException {
-		String encoded;
-		try {
-			final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			final Charset charset = Charset.forName("UTF8");
-			final byte[] hash = digest.digest(str.getBytes(charset));
-			encoded = Hex.encodeHexString(hash);
-		} catch (final NoSuchAlgorithmException e) {
-			throw new EpickurException("Error while encoding string: " + e.getMessage(), e);
-		}
-		return encoded;
+	@SneakyThrows
+	public static String encodeToSha256(final String str) {
+		final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+		final Charset charset = Charset.forName("UTF8");
+		final byte[] hash = digest.digest(str.getBytes(charset));
+		return Hex.encodeHexString(hash);
 	}
 
 	/**
 	 * Encode to md5 the user password
-	 * 
-	 * @param str
-	 *            the password to encode
+	 *
+	 * @param str the password to encode
 	 * @return The string encoded
-	 * @throws EpickurException
-	 * @throws EpickurException
-	 *             If an exception occurred while encoding the password
 	 */
-	public static String encodeToMd5(final String str) throws EpickurException {
-		String encoded;
-		try {
-			final MessageDigest digest = MessageDigest.getInstance("MD5");
-			final Charset charset = Charset.forName("UTF8");
-			final byte[] hash = digest.digest(str.getBytes(charset));
-			encoded = Hex.encodeHexString(hash);
-		} catch (final NoSuchAlgorithmException e) {
-			throw new EpickurException("Error while encoding string: " + e.getMessage(), e);
-		}
-		return encoded;
+	@SneakyThrows
+	public static String encodeToMd5(final String str) {
+		final MessageDigest digest = MessageDigest.getInstance("MD5");
+		final Charset charset = Charset.forName("UTF8");
+		final byte[] hash = digest.digest(str.getBytes(charset));
+		return Hex.encodeHexString(hash);
 	}
 
 	/**
 	 * Generate a salt, a random key, en encrypt it
-	 * 
+	 *
 	 * @return a key encrypted
-	 * @throws EpickurException
-	 *             If an exception occurred while encoding the password
 	 */
-	public static String generateSalt() throws EpickurException {
+	public static String generateSalt() {
 		final SecureRandom random = new SecureRandom();
 		return Security.encodeToSha256(random.toString());
 	}
 
 	/**
 	 * Generate random md5
-	 * 
+	 *
 	 * @return A md5 String
-	 * @throws EpickurException
-	 *             If an exception occurred while encoding the password
 	 */
-	public static String generateRandomMd5() throws EpickurException {
+	public static String generateRandomMd5() {
 		final SecureRandom random = new SecureRandom();
 		return Security.encodeToMd5(random.toString());
 	}
 
 	/**
 	 * Get Hashed Key
-	 * 
-	 * @param user
-	 *            The User
+	 *
+	 * @param user The User
 	 * @return A hashed password
-	 * @throws EpickurException
-	 *             If an exception occurred while encoding the password
 	 */
-	public static String getUserCode(final User user) throws EpickurException {
+	public static String getUserCode(final User user) {
 		final int sixtyFour = 64;
 		final String email = user.getEmail();
 		final String saltHashed = user.getPassword().substring(0, sixtyFour);
@@ -111,47 +82,32 @@ public final class Security {
 
 	/**
 	 * Get code from input parameters
-	 * 
-	 * @param name
-	 *            The name of the User
-	 * @param saltHashed
-	 *            The SaltHashed string
-	 * @param encryptedPasswordSalt
-	 *            The encrypted password salt
-	 * @param email
-	 *            The Email
+	 *
+	 * @param name                  The name of the User
+	 * @param saltHashed            The SaltHashed string
+	 * @param encryptedPasswordSalt The encrypted password salt
+	 * @param email                 The Email
 	 * @return A Code
-	 * @throws EpickurException
-	 *             If an exception occurred while encoding the password
 	 */
-	public static String createUserCode(final String name, final String saltHashed, final String encryptedPasswordSalt, final String email)
-			throws EpickurException {
+	public static String createUserCode(final String name, final String saltHashed, final String encryptedPasswordSalt, final String email) {
 		return Security.encodeToSha256(name + saltHashed + encryptedPasswordSalt + email);
 	}
 
 	/**
-	 * @param orderId
-	 *            The order id
-	 * @param cardToken
-	 *            The card token
+	 * @param orderId   The order id
+	 * @param cardToken The card token
 	 * @return A order code
-	 * @throws EpickurException
-	 *             If an exception occurred
 	 */
-	public static String createOrderCode(final ObjectId orderId, final String cardToken) throws EpickurException {
+	public static String createOrderCode(final ObjectId orderId, final String cardToken) {
 		return Security.encodeToSha256(orderId.toHexString() + cardToken);
 	}
 
 	/**
-	 * @param orderId
-	 *            The order Id
-	 * @param email
-	 *            The user email
+	 * @param orderId The order Id
+	 * @param email   The user email
 	 * @return A reset code
-	 * @throws EpickurException
-	 *             If an exception occurred
 	 */
-	public static String createResetCode(final ObjectId orderId, final String email) throws EpickurException {
+	public static String createResetCode(final ObjectId orderId, final String email) {
 		return Security.encodeToSha256(orderId.toHexString() + email);
 	}
 }
