@@ -12,11 +12,11 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
 public class CatererServiceTest {
@@ -57,10 +57,12 @@ public class CatererServiceTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererDAOMock.read(anyString())).thenReturn(catererAfterCreate);
+		when(catererDAOMock.read(isA(String.class))).thenReturn(Optional.of(catererAfterCreate));
 
-		Caterer actual = catererService.read(EntityGenerator.generateRandomString());
+		Optional<Caterer> actualCaterer = catererService.read(EntityGenerator.generateRandomString());
 
+		assertTrue(actualCaterer.isPresent());
+		Caterer actual = actualCaterer.get();
 		assertNotNull("Caterer is null", actual);
 		assertNotNull("Id not generated", actual.getId());
 		assertNotNull("CreatedAt is null", actual.getCreatedAt());
@@ -95,7 +97,7 @@ public class CatererServiceTest {
 		Caterer catererAfterUpdate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterUpdate.setDescription("new desc");
 
-		when(catererDAOMock.read(anyString())).thenReturn(catererAfterUpdate);
+		when(catererDAOMock.read(isA(String.class))).thenReturn(Optional.of(catererAfterUpdate));
 		when(catererDAOMock.update(caterer)).thenReturn(catererAfterUpdate);
 
 		Caterer actual = catererService.update(caterer);

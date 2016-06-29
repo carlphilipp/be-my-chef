@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.KEY_COLL;
 
@@ -45,7 +46,7 @@ public class KeyDAO extends CrudDAO<Key> {
 	}
 
 	@Override
-	public Key read(final String key) throws EpickurException {
+	public Optional<Key> read(final String key) throws EpickurException {
 		log.debug("Read key: " + key);
 		final Document query = convertAttributeToDocument("key", key);
 		final Document find = findDocument(query);
@@ -63,7 +64,12 @@ public class KeyDAO extends CrudDAO<Key> {
 		log.debug("Read key with name: " + userName);
 		final Document query = convertAttributeToDocument("userName", userName);
 		final Document find = findDocument(query);
-		return processAfterQuery(find);
+		final Optional<Key> keyOptional = processAfterQuery(find);
+		if (keyOptional.isPresent()) {
+			return keyOptional.get();
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -76,11 +82,11 @@ public class KeyDAO extends CrudDAO<Key> {
 	 * @return The key.
 	 * @throws EpickurParsingException If an EpickurParsingException occurred.
 	 */
-	private Key processAfterQuery(final Document key) throws EpickurParsingException {
+	private Optional<Key> processAfterQuery(final Document key) throws EpickurParsingException {
 		if (key != null) {
-			return Key.getDocumentAsKey(key);
+			return Optional.of(Key.getDocumentAsKey(key));
 		} else {
-			return null;
+			return Optional.empty();
 		}
 	}
 

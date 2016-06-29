@@ -30,9 +30,9 @@ public class EntityGenerator {
 
 	public static final String STRIPE_MESSAGE = "Fail while acquiring Stripe token. Internet issue?";
 
-	private static final String[] pickupdateDays = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
+	private static final String[] pickupdateDays = new String[]{"mon", "tue", "wed", "thu", "fri", "sat", "sun"};
 
-	public static Caterer getCaererObject(final String json) throws EpickurException {
+	public static Caterer getCatererObject(final String json) throws EpickurException {
 		Caterer caterer;
 		try {
 			final ObjectMapper mapper = ObjectMapperWrapperAPI.getInstance();

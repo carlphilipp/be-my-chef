@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
 public class LoginControllerTest {
@@ -41,7 +41,7 @@ public class LoginControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userBusiness.login(anyString(), anyString())).thenReturn(userAfterCreate);
+		when(userBusiness.login(isA(String.class), isA(String.class))).thenReturn(userAfterCreate);
 
 		ResponseEntity<?> actual = controller.login(user.getEmail(), user.getPassword());
 		assertNotNull(actual);

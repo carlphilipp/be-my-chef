@@ -9,10 +9,10 @@ import com.epickur.api.exception.EpickurDuplicateKeyException;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurNotFoundException;
 import com.epickur.api.utils.ErrorConstants;
-import com.epickur.api.utils.security.PasswordManager;
-import com.epickur.api.utils.security.Security;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.EmailUtils;
+import com.epickur.api.utils.security.PasswordManager;
+import com.epickur.api.utils.security.Security;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.enumeration.EndpointType.USER;
 import static com.epickur.api.enumeration.Operation.READ;
@@ -90,7 +91,7 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	@ValidateComplexAccessRights(operation = READ, type = USER)
-	public User read(final String id) throws EpickurException {
+	public Optional<User> read(final String id) throws EpickurException {
 		return userDAO.read(id);
 	}
 
@@ -101,7 +102,7 @@ public class UserService {
 	 * @return The User
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	public User readWithEmail(final String email) throws EpickurException {
+	public Optional<User> readWithEmail(final String email) throws EpickurException {
 		return userDAO.readWithEmail(email);
 	}
 
@@ -150,30 +151,31 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User login(final String email, final String password) throws EpickurException {
-		final User userFound = readWithEmail(email);
-		if (userFound != null) {
-			if (!utils.isPasswordCorrect(password, userFound)) {
+		final Optional<User> userFoundOptional = readWithEmail(email);
+		if (userFoundOptional.isPresent()) {
+			final User user = userFoundOptional.get();
+			if (!utils.isPasswordCorrect(password, user)) {
 				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
-			} else if (userFound.getAllow() == 1) {
+			} else if (user.getAllow() == 1) {
 				final String tempKey = Security.generateRandomMd5();
-				userFound.setKey(tempKey);
-				final Key currentKey = keyService.readWithName(userFound.getName());
+				user.setKey(tempKey);
+				final Key currentKey = keyService.readWithName(user.getName());
 				if (currentKey != null) {
 					keyService.delete(currentKey.getId().toHexString());
 				}
 				final Key key = new Key();
 				key.setCreatedAt(new DateTime());
-				key.setUserId(userFound.getId());
-				key.setKey(userFound.getKey());
-				key.setRole(userFound.getRole());
+				key.setUserId(user.getId());
+				key.setKey(user.getKey());
+				key.setRole(user.getRole());
 				keyService.create(key);
 			} else {
 				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 			}
+			return user;
 		} else {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 		}
-		return userFound;
 	}
 
 	/**
@@ -184,11 +186,11 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User injectNewPassword(final User user) throws EpickurException {
-		final User userFound = readWithEmail(user.getEmail());
-		if (userFound == null) {
+		final Optional<User> userFoundOptional = readWithEmail(user.getEmail());
+		if (!userFoundOptional.isPresent()) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, user.getEmail());
 		} else {
-			if (!utils.isPasswordCorrect(user.getPassword(), userFound)) {
+			if (!utils.isPasswordCorrect(user.getPassword(), userFoundOptional.get())) {
 				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, user.getEmail());
 			} else {
 				final String newEnryptedPassword = PasswordManager.createPasswordManager(user.getNewPassword()).createDBPassword();
@@ -207,8 +209,9 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User checkCode(final String email, final String code) throws EpickurException {
-		User userFound = readWithEmail(email);
-		if (userFound != null) {
+		Optional<User> userFoundOptional = readWithEmail(email);
+		if (userFoundOptional.isPresent()) {
+			User userFound = userFoundOptional.get();
 			final String codeFound = Security.getUserCode(userFound);
 			if (!codeFound.equals(code)) {
 				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
@@ -217,10 +220,10 @@ public class UserService {
 				userFound.prepareForUpdateIntoDB();
 				userFound = userDAO.update(userFound);
 			}
+			return userFound;
 		} else {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 		}
-		return userFound;
 	}
 
 	/**
@@ -228,10 +231,11 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public void resetPasswordFirstStep(final String email) throws EpickurException {
-		final User user = readWithEmail(email);
-		if (user == null) {
+		final Optional<User> userOptional = readWithEmail(email);
+		if (!userOptional.isPresent()) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email);
 		}
+		final User user = userOptional.get();
 		final String resetCode = Security.createResetCode(user.getId(), email);
 		emailUtils.resetPassword(user, resetCode);
 	}
@@ -244,10 +248,11 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User resetPasswordSecondStep(final String id, final String newPassword, final String resetCode) throws EpickurException {
-		final User user = userDAO.read(id);
-		if (user == null) {
+		final Optional<User> userOptional = userDAO.read(id);
+		if (!userOptional.isPresent()) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, id);
 		}
+		final User user = userOptional.get();
 		final String resetCodeDB = Security.createResetCode(user.getId(), user.getEmail());
 		if (!resetCodeDB.equals(resetCode)) {
 			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, id);

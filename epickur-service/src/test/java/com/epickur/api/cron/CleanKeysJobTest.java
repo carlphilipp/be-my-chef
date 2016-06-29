@@ -58,7 +58,7 @@ public class CleanKeysJobTest {
 
 		keyJob.execute();
 
-		verify(keyDao, times(1)).readAll();
+		verify(keyDao).readAll();
 		verify(keyDao, never()).delete(anyObject());
 	}
 
@@ -75,8 +75,8 @@ public class CleanKeysJobTest {
 
 		keyJob.execute();
 
-		verify(keyDao, times(1)).readAll();
-		verify(keyDao, times(1)).delete(key.getId().toHexString());
+		verify(keyDao).readAll();
+		verify(keyDao).delete(key.getId().toHexString());
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class CleanKeysJobTest {
 		try {
 			keyJob.execute();
 		} finally {
-			verify(keyDao, times(1)).readAll();
+			verify(keyDao).readAll();
 			verify(keyDao, never()).delete(anyObject());
 		}
 	}

@@ -1,27 +1,5 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.dao.CollectionsName.VOUCHER_COLL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
@@ -32,6 +10,23 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.util.List;
+import java.util.Optional;
+
+import static com.epickur.api.dao.CollectionsName.VOUCHER_COLL;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class VoucherDAOTest {
 	
@@ -62,7 +57,7 @@ public class VoucherDAOTest {
 		Voucher actual = dao.create(voucher);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).insertOne(document);
+		verify(collection).insertOne(document);
 	}
 
 	@Test
@@ -77,7 +72,7 @@ public class VoucherDAOTest {
 		Voucher actual = dao.create(voucher);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).insertOne(document);
+		verify(collection).insertOne(document);
 	}
 
 	@Test
@@ -89,10 +84,10 @@ public class VoucherDAOTest {
 		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
-		Voucher actual = dao.read(code);
+		Optional<Voucher> actual = dao.read(code);
 
-		assertNotNull(actual);
-		verify(collection, times(1)).find(query);
+		assertTrue(actual.isPresent());
+		verify(collection).find(query);
 	}
 
 	@Test
@@ -120,7 +115,7 @@ public class VoucherDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collection, times(1)).find(any(Document.class));
+		verify(collection).find(any(Document.class));
 	}
 	
 	@Test
@@ -149,7 +144,7 @@ public class VoucherDAOTest {
 		Voucher actual = dao.update(voucher);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
@@ -161,7 +156,7 @@ public class VoucherDAOTest {
 		Voucher actual = dao.update(voucher);
 
 		assertNull(actual);
-		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
@@ -170,8 +165,7 @@ public class VoucherDAOTest {
 
 		Voucher voucher = EntityGenerator.generateVoucher();
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
-				.thenThrow(new MongoException(""));
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenThrow(new MongoException(""));
 
 		dao.update(voucher);
 	}

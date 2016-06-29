@@ -10,17 +10,14 @@ import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.BsonArray;
-import org.bson.BsonDocument;
-import org.bson.BsonInt32;
-import org.bson.BsonString;
-import org.bson.Document;
+import org.bson.*;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.DISH_COLL;
 
@@ -48,7 +45,7 @@ public class DishDAO extends CrudDAO<Dish> {
 	}
 
 	@Override
-	public Dish read(final String id) throws EpickurException {
+	public Optional<Dish> read(final String id) throws EpickurException {
 		log.debug("Read dish with id: {}", id);
 		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
 		final Document find = findDocument(query);
@@ -61,7 +58,12 @@ public class DishDAO extends CrudDAO<Dish> {
 		final Document filter = convertAttributeToDocument("_id", dish.getId());
 		final Document update = dish.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		return processAfterQuery(updated);
+		final Optional<Dish> dishOptional = processAfterQuery(updated);
+		if (dishOptional.isPresent()) {
+			return dishOptional.get();
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -69,11 +71,11 @@ public class DishDAO extends CrudDAO<Dish> {
 	 * @return The dish.
 	 * @throws EpickurParsingException If an EpickurException occurred.
 	 */
-	private Dish processAfterQuery(final Document document) throws EpickurParsingException {
+	private Optional<Dish> processAfterQuery(final Document document) throws EpickurParsingException {
 		if (document != null) {
-			return Dish.getDocumentAsDish(document);
+			return Optional.of(Dish.getDocumentAsDish(document));
 		} else {
-			return null;
+			return Optional.empty();
 		}
 	}
 
@@ -110,7 +112,7 @@ public class DishDAO extends CrudDAO<Dish> {
 	 * @throws EpickurException if an epickur exception occurred
 	 */
 	public List<Dish> search(final String day, final Integer pickupdateMinutes, final List<DishType> types, final Integer limit, final Geo geo,
-			final Integer distance) throws EpickurException {
+							 final Integer distance) throws EpickurException {
 		final Document find = new Document();
 		if (types.size() == 1) {
 			find.append("type", types.get(0).getType());

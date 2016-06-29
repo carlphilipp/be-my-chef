@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.USER_COLL;
 
@@ -45,7 +46,7 @@ UserDAO extends CrudDAO<User> {
 	}
 
 	@Override
-	public User read(final String id) throws EpickurException {
+	public Optional<User> read(final String id) throws EpickurException {
 		log.debug("Read user with id: " + id);
 		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
 		final Document find = findDocument(query);
@@ -59,7 +60,7 @@ UserDAO extends CrudDAO<User> {
 	 * @return The User
 	 * @throws EpickurException if an epickur exception occurred
 	 */
-	public User readWithName(final String name) throws EpickurException {
+	public Optional<User> readWithName(final String name) throws EpickurException {
 		log.debug("Read user with name: " + name);
 		final Document query = convertAttributeToDocument("name", name);
 		final Document find = findDocument(query);
@@ -73,7 +74,7 @@ UserDAO extends CrudDAO<User> {
 	 * @return The User
 	 * @throws EpickurException if an epickur exception occurred
 	 */
-	public User readWithEmail(final String email) throws EpickurException {
+	public Optional<User> readWithEmail(final String email) throws EpickurException {
 		log.debug("Read user with email: " + email);
 		final Document query = convertAttributeToDocument("email", email);
 		final Document find = findDocument(query);
@@ -86,14 +87,19 @@ UserDAO extends CrudDAO<User> {
 		final Document filter = convertAttributeToDocument("_id", user.getId());
 		final Document update = user.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		return processAfterQuery(updated);
-	}
-
-	private User processAfterQuery(final Document user) throws EpickurParsingException {
-		if (user != null) {
-			return User.getDocumentAsUser(user);
+		final Optional<User> userOptional = processAfterQuery(updated);
+		if (userOptional.isPresent()) {
+			return userOptional.get();
 		} else {
 			return null;
+		}
+	}
+
+	private Optional<User> processAfterQuery(final Document user) throws EpickurParsingException {
+		if (user != null) {
+			return Optional.of(User.getDocumentAsUser(user));
+		} else {
+			return Optional.empty();
 		}
 	}
 

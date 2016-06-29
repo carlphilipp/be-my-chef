@@ -1,28 +1,5 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.dao.CollectionsName.DISH_COLL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import com.epickur.api.entity.Dish;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.times.Hours;
@@ -38,6 +15,24 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static com.epickur.api.dao.CollectionsName.DISH_COLL;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class DishDAOTest {
 	
@@ -68,7 +63,7 @@ public class DishDAOTest {
 		Dish actual = dao.create(dish);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).insertOne(document);
+		verify(collection).insertOne(document);
 	}
 
 	@Test
@@ -83,7 +78,7 @@ public class DishDAOTest {
 		Dish actual = dao.create(dish);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).insertOne(document);
+		verify(collection).insertOne(document);
 	}
 
 	@Test
@@ -95,10 +90,10 @@ public class DishDAOTest {
 		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
-		Dish actual = dao.read(dishId);
+		Optional<Dish> actual = dao.read(dishId);
 
-		assertNotNull(actual);
-		verify(collection, times(1)).find(query);
+		assertTrue(actual.isPresent());
+		verify(collection).find(query);
 	}
 
 	@Test
@@ -135,8 +130,8 @@ public class DishDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collection, times(1)).find();
-		verify(cursor, times(1)).close();
+		verify(collection).find();
+		verify(cursor).close();
 	}
 
 	@Test
@@ -158,7 +153,7 @@ public class DishDAOTest {
 		Dish actual = dao.update(dish);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
@@ -170,7 +165,7 @@ public class DishDAOTest {
 		Dish actual = dao.update(dish);
 
 		assertNull(actual);
-		verify(collection, times(1)).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
@@ -214,8 +209,8 @@ public class DishDAOTest {
 		
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collection, times(1)).find(any(Document.class));
-		verify(cursor, times(1)).close();
+		verify(collection).find(any(Document.class));
+		verify(cursor).close();
 	}
 	
 	@Test
@@ -248,8 +243,8 @@ public class DishDAOTest {
 		
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collection, times(1)).find(any(Document.class));
-		verify(cursor, times(1)).close();
+		verify(collection).find(any(Document.class));
+		verify(cursor).close();
 	}
 	
 	@Test
@@ -279,8 +274,8 @@ public class DishDAOTest {
 		
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collection, times(1)).find(any(Document.class));
-		verify(cursor, times(1)).close();
+		verify(collection).find(any(Document.class));
+		verify(cursor).close();
 	}
 	
 	@Test

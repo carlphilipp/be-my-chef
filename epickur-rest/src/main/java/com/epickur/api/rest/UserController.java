@@ -5,10 +5,10 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.service.OrderService;
-import com.epickur.api.service.UserService;
 import com.epickur.api.operation.Create;
 import com.epickur.api.operation.Update;
+import com.epickur.api.service.OrderService;
+import com.epickur.api.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.enumeration.EndpointType.ORDER;
 import static com.epickur.api.enumeration.EndpointType.USER;
@@ -148,8 +149,12 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = READ, endpoint = USER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
-		final User user = userService.read(id);
-		return new ResponseEntity<>(user, HttpStatus.OK);
+		final Optional<User> user = userService.read(id);
+		if (user.isPresent()) {
+			return new ResponseEntity<>(user.get(), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	// @formatter:off
@@ -349,8 +354,12 @@ public class UserController {
 	public ResponseEntity<?> readOneOrder(
 			@PathVariable("id") final String id,
 			@PathVariable("orderId") final String orderId) throws EpickurException {
-		final Order order = orderService.readOrder(orderId);
-		return new ResponseEntity<>(order, HttpStatus.OK);
+		final Optional<Order> order = orderService.readOrder(orderId);
+		if (order.isPresent()) {
+			return new ResponseEntity<>(order.get(), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	// @formatter:off

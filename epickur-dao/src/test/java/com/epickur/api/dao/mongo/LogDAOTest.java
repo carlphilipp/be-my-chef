@@ -1,11 +1,11 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.dao.CollectionsName.LOG_COLL;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import com.epickur.api.entity.Log;
+import com.epickur.api.exception.EpickurException;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.Document;
 import org.junit.Before;
@@ -16,12 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.epickur.api.entity.Log;
-import com.epickur.api.exception.EpickurException;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
+import static com.epickur.api.dao.CollectionsName.LOG_COLL;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class LogDAOTest {
 	
@@ -52,7 +50,7 @@ public class LogDAOTest {
 		Log actual = dao.create(log);
 
 		assertNull(actual);
-		verify(collection, times(1)).insertOne(document);
+		verify(collection).insertOne(document);
 	}
 	
 	@Test

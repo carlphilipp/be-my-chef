@@ -17,11 +17,7 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.times;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,10 +62,10 @@ public class MongoDBDumpTest {
 
 		boolean actual = mongoDBDump.exportMongo();
 
-		verify(backupFolder, times(1)).exists();
-		verify(backupFolder, times(1)).mkdir();
-		verify(runtime, times(1)).exec(mongoDBDump.buildDumpCommand());
-		verify(process, times(1)).waitFor();
+		verify(backupFolder).exists();
+		verify(backupFolder).mkdir();
+		verify(runtime).exec(mongoDBDump.buildDumpCommand());
+		verify(process).waitFor();
 		assertTrue(actual);
 	}
 
@@ -80,9 +76,9 @@ public class MongoDBDumpTest {
 
 		boolean actual = mongoDBDump.exportMongo();
 
-		verify(backupFolder, times(1)).exists();
-		verify(backupFolder, times(1)).mkdir();
-		verify(process, times(1)).waitFor();
+		verify(backupFolder).exists();
+		verify(backupFolder).mkdir();
+		verify(process).waitFor();
 		assertFalse(actual);
 	}
 
@@ -113,7 +109,7 @@ public class MongoDBDumpTest {
 
 		mongoDBDump.deleteDumpFile();
 
-		verify(dumpFile, times(1)).delete();
+		verify(dumpFile).delete();
 	}
 
 	@Test
@@ -122,7 +118,7 @@ public class MongoDBDumpTest {
 
 		mongoDBDump.deleteDumpFile();
 
-		verify(dumpFile, times(1)).delete();
+		verify(dumpFile).delete();
 	}
 
 //	@Test
@@ -151,9 +147,9 @@ public class MongoDBDumpTest {
 
 		List<String> actuals = mongoDBDump.getListFiles();
 
-		verify(dumpDirectory, times(1)).listFiles();
-		verify(fileFound, times(1)).isFile();
-		verify(fileFound, times(1)).getAbsolutePath();
+		verify(dumpDirectory).listFiles();
+		verify(fileFound).isFile();
+		verify(fileFound).getAbsolutePath();
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
 	}

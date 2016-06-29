@@ -106,9 +106,11 @@ The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/co
 
 MongoDB must be started.
 
-Unit testing: `mvn test`
+Unit testing: `mvnw test`
 
-Integration testing: `mvn integration-test`
+
+Integration testing: `mvnw integration-test`
+
 
 
 ###Build
@@ -116,7 +118,7 @@ Integration testing: `mvn integration-test`
 
 Generate war with Maven: 
 
-`mvn clean package [-DskipTests] [-Dpmd.skip=true]` 
+`mvnw clean package [-DskipTests] [-Dpmd.skip=true]` 
 
 The generated jar will be in their respective project target directory. The final war in `epickur-rest/target`.
 
@@ -130,7 +132,7 @@ Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.b
 
 To deploy on AWS:
 
-`mvn clean package "antrun:run@upload" -P aws`
+`mvnw clean package "antrun:run@upload" -P aws`
 
 The ant plugin run several commands:
 

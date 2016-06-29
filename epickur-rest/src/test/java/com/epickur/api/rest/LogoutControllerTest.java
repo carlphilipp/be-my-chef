@@ -44,6 +44,6 @@ public class LogoutControllerTest {
 		SuccessMessage message = (SuccessMessage)  actual.getBody();
 		assertNotNull(message);
 		assertEquals("success", message.getResult());
-		verify(keyService, times(1)).deleteWithKey(key);
+		verify(keyService).deleteWithKey(key);
 	}
 }

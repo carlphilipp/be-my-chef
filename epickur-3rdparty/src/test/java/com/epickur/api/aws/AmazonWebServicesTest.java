@@ -58,7 +58,7 @@ public class AmazonWebServicesTest {
 	public void testUploadFile() {
 		amazonWS.uploadFile(filePath);
 
-		verify(s3clientMock, times(1)).putObject(any(PutObjectRequest.class));
+		verify(s3clientMock).putObject(any(PutObjectRequest.class));
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class AmazonWebServicesTest {
 
 		amazonWS.uploadFile(filePath);
 
-		verify(s3clientMock, times(1)).putObject(any(PutObjectRequest.class));
+		verify(s3clientMock).putObject(any(PutObjectRequest.class));
 	}
 
 	@Test
@@ -76,12 +76,12 @@ public class AmazonWebServicesTest {
 
 		amazonWS.uploadFile(filePath);
 
-		verify(s3clientMock, times(1)).putObject(any(PutObjectRequest.class));
+		verify(s3clientMock).putObject(any(PutObjectRequest.class));
 	}
 
 	@Test
 	public void testDeleteOldFile() {
-		when(s3clientMock.listObjects(anyString())).thenReturn(listingMock);
+		when(s3clientMock.listObjects(isA(String.class))).thenReturn(listingMock);
 		when(listingMock.isTruncated()).thenReturn(true, false);
 		when(listingMock.getObjectSummaries()).thenReturn(summariesMock);
 		when(s3clientMock.listNextBatchOfObjects(listingMock)).thenReturn(listingMock);
@@ -95,8 +95,8 @@ public class AmazonWebServicesTest {
 
 		amazonWS.deleteOldFile();
 
-		verify(s3clientMock, times(1)).deleteObject(anyString(), anyString());
-		verify(summariesMock, times(1)).addAll(summariesMock);
-		verify(s3clientMock, times(1)).listNextBatchOfObjects(listingMock);
+		verify(s3clientMock).deleteObject(isA(String.class), isA(String.class));
+		verify(summariesMock).addAll(summariesMock);
+		verify(s3clientMock).listNextBatchOfObjects(listingMock);
 	}
 }

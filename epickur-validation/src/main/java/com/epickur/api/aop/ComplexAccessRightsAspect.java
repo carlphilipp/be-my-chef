@@ -4,11 +4,7 @@ import com.epickur.api.annotation.ValidateComplexAccessRights;
 import com.epickur.api.dao.mongo.DishDAO;
 import com.epickur.api.dao.mongo.OrderDAO;
 import com.epickur.api.dao.mongo.UserDAO;
-import com.epickur.api.entity.Caterer;
-import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Key;
-import com.epickur.api.entity.Order;
-import com.epickur.api.entity.User;
+import com.epickur.api.entity.*;
 import com.epickur.api.enumeration.EndpointType;
 import com.epickur.api.enumeration.Operation;
 import com.epickur.api.exception.EpickurException;
@@ -19,17 +15,12 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 
-import static com.epickur.api.enumeration.EndpointType.CATERER;
-import static com.epickur.api.enumeration.EndpointType.DISH;
-import static com.epickur.api.enumeration.EndpointType.ORDER;
-import static com.epickur.api.enumeration.EndpointType.USER;
+import static com.epickur.api.enumeration.EndpointType.*;
 import static com.epickur.api.enumeration.Operation.READ;
 import static com.epickur.api.enumeration.Operation.UPDATE;
-import static com.epickur.api.utils.ErrorConstants.CATERER_NOT_FOUND;
-import static com.epickur.api.utils.ErrorConstants.DISH_NOT_FOUND;
-import static com.epickur.api.utils.ErrorConstants.ORDER_NOT_FOUND;
-import static com.epickur.api.utils.ErrorConstants.USER_NOT_FOUND;
+import static com.epickur.api.utils.ErrorConstants.*;
 
 @Aspect
 public class ComplexAccessRightsAspect extends AccessRightsAspect {
@@ -70,21 +61,21 @@ public class ComplexAccessRightsAspect extends AccessRightsAspect {
 		} else {
 			userId = ((User) objects[0]).getId().toHexString();
 		}
-		final User user = userDAO.read(userId);
-		if (user == null) {
+		final Optional<User> user = userDAO.read(userId);
+		if (!user.isPresent()) {
 			throw new EpickurNotFoundException(USER_NOT_FOUND, userId);
 		}
-		userValidation.checkUserRightsAfter(key.getRole(), key.getUserId(), user, operation);
+		userValidation.checkUserRightsAfter(key.getRole(), key.getUserId(), user.get(), operation);
 	}
 
 	protected void handleCaterer(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
 		final Caterer caterer = (Caterer) objects[0];
 		final String catererId = caterer.getId().toHexString();
-		final Caterer read = catererDAO.read(catererId);
-		if (read == null) {
+		final Optional<Caterer> read = catererDAO.read(catererId);
+		if (!read.isPresent()) {
 			throw new EpickurNotFoundException(CATERER_NOT_FOUND, catererId);
 		}
-		catererValidation.checkRightsAfter(key.getRole(), key.getUserId(), read, operation);
+		catererValidation.checkRightsAfter(key.getRole(), key.getUserId(), read.get(), operation);
 	}
 
 	protected void handleDish(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
@@ -94,11 +85,11 @@ public class ComplexAccessRightsAspect extends AccessRightsAspect {
 		} else {
 			dishId = (String) objects[0];
 		}
-		final Dish read = dishDAO.read(dishId);
-		if (read == null) {
+		final Optional<Dish> read = dishDAO.read(dishId);
+		if (!read.isPresent()) {
 			throw new EpickurNotFoundException(DISH_NOT_FOUND, dishId);
 		}
-		dishValidation.checkRightsAfter(key.getRole(), key.getUserId(), read, operation);
+		dishValidation.checkRightsAfter(key.getRole(), key.getUserId(), read.get(), operation);
 	}
 
 	protected void handleOrder(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
@@ -108,13 +99,14 @@ public class ComplexAccessRightsAspect extends AccessRightsAspect {
 		} else {
 			orderId = ((Order) objects[0]).getId().toHexString();
 		}
-		final Order read = orderDAO.read(orderId);
-		if (read == null) {
+		final Optional<Order> read = orderDAO.read(orderId);
+		if (!read.isPresent()) {
 			throw new EpickurNotFoundException(ORDER_NOT_FOUND, orderId);
 		}
-		userValidation.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, operation);
+		final Order order = read.get();
+		userValidation.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, operation);
 		if (operation == UPDATE) {
-			userValidation.checkOrderStatus(read);
+			userValidation.checkOrderStatus(order);
 		}
 	}
 }

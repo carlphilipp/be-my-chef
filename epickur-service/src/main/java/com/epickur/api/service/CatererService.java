@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.epickur.api.enumeration.EndpointType.CATERER;
@@ -49,7 +50,7 @@ public class CatererService {
 	 * @return a {@link Caterer}
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	public Caterer read(final String id) throws EpickurException {
+	public Optional<Caterer> read(final String id) throws EpickurException {
 		return dao.read(id);
 	}
 

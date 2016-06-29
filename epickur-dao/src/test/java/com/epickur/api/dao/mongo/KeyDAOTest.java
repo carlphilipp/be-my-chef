@@ -1,27 +1,5 @@
 package com.epickur.api.dao.mongo;
 
-import static com.epickur.api.dao.CollectionsName.KEY_COLL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurDBException;
 import com.epickur.api.exception.EpickurException;
@@ -32,6 +10,22 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.util.List;
+import java.util.Optional;
+
+import static com.epickur.api.dao.CollectionsName.KEY_COLL;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class KeyDAOTest {
 	
@@ -64,7 +58,7 @@ public class KeyDAOTest {
 		Key actual = dao.create(key);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).insertOne(document);
+		verify(collection).insertOne(document);
 	}
 
 	@Test
@@ -79,7 +73,7 @@ public class KeyDAOTest {
 		Key actual = dao.create(key);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).insertOne(document);
+		verify(collection).insertOne(document);
 	}
 
 	@Test
@@ -91,10 +85,10 @@ public class KeyDAOTest {
 		when(collection.find(query)).thenReturn(findIteratble);
 		when(findIteratble.first()).thenReturn(found);
 
-		Key actual = dao.read(key);
+		Optional<Key> actual = dao.read(key);
 
-		assertNotNull(actual);
-		verify(collection, times(1)).find(query);
+		assertTrue(actual.isPresent());
+		verify(collection).find(query);
 	}
 
 	@Test
@@ -121,7 +115,7 @@ public class KeyDAOTest {
 		Key actual = dao.readWithName(userName);
 
 		assertNotNull(actual);
-		verify(collection, times(1)).find(query);
+		verify(collection).find(query);
 	}
 
 	@Test
@@ -137,8 +131,8 @@ public class KeyDAOTest {
 
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
-		verify(collection, times(1)).find();
-		verify(cursor, times(1)).close();
+		verify(collection).find();
+		verify(cursor).close();
 	}
 	
 	@Test
@@ -170,7 +164,7 @@ public class KeyDAOTest {
 		boolean actual = dao.deleteWithKey(key);
 
 		assertTrue(actual);
-		verify(collection, times(1)).deleteOne(query);
+		verify(collection).deleteOne(query);
 	}
 	
 	@Test
@@ -184,7 +178,7 @@ public class KeyDAOTest {
 		boolean actual = dao.deleteWithKey(key);
 
 		assertFalse(actual);
-		verify(collection, times(1)).deleteOne(query);
+		verify(collection).deleteOne(query);
 	}
 	
 	@Test

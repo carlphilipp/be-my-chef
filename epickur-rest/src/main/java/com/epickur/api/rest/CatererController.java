@@ -8,12 +8,12 @@ import com.epickur.api.entity.Order;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.entity.message.PayementInfoMessage;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.utils.report.Report;
 import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
+import com.epickur.api.utils.report.Report;
 import com.epickur.api.web.ResponseError;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.enumeration.EndpointType.CATERER;
 import static com.epickur.api.enumeration.Operation.*;
@@ -189,11 +190,11 @@ public class CatererController {
 	@ValidateSimpleAccessRights(operation = READ, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
-		final Caterer caterer = catererService.read(id);
-		if (caterer == null) {
-			return ResponseError.notFound(ErrorConstants.CATERER_NOT_FOUND, id);
+		final Optional<Caterer> caterer = catererService.read(id);
+		if (caterer.isPresent()) {
+			return new ResponseEntity<>(caterer.get(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(caterer, HttpStatus.OK);
+			return ResponseError.notFound(ErrorConstants.CATERER_NOT_FOUND, id);
 		}
 	}
 
@@ -541,8 +542,8 @@ public class CatererController {
 	 * @throws EpickurException If an EpickurException occured
 	 */
 	@ValidateSimpleAccessRights(operation = PAYEMENT_INFO, endpoint = CATERER)
-	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/paymentInfo", method = RequestMethod.GET, consumes = { MediaType.APPLICATION_JSON_VALUE,
-			"application/pdf" }, produces = { MediaType.APPLICATION_JSON_VALUE, "application/pdf" })
+	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/paymentInfo", method = RequestMethod.GET, consumes = {MediaType.APPLICATION_JSON_VALUE,
+			"application/pdf"}, produces = {MediaType.APPLICATION_JSON_VALUE, "application/pdf"})
 	public ResponseEntity<?> paymentInfo(
 			@PathVariable("id") final String id,
 			@RequestParam("startDate") final String start,
@@ -556,36 +557,40 @@ public class CatererController {
 		if (end != null) {
 			endDate = utils.parseDate(start, format);
 		}
-		final Caterer caterer = catererService.read(id);
-		final List<Order> orders = orderService.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
-		final Integer amount = catererService.getTotalAmountSuccessful(orders);
-		if (request.getContentType() != null && request.getContentType().equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
-			final PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
-			payementInfoMessage.setId(caterer.getId().toHexString());
-			payementInfoMessage.setName(caterer.getName());
-			payementInfoMessage.setAmount(amount);
-			payementInfoMessage.setStart(start);
-			payementInfoMessage.setEnd(end);
-			payementInfoMessage.setFormat(format);
-			//				List<String> list = new ArrayList<>();
-			//				for (Order order : orders) {
-			//					order.setDish(null);
-			//					list.add(order.getDocumentAPIView().toJson());
-			//				}
-			final HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			return new ResponseEntity<>(payementInfoMessage, headers, HttpStatus.OK);
-			//return Response.ok().entity(payementInfoMessage).type(MediaType.APPLICATION_JSON).build();
-		} else {
-			final Report report = new Report();
-			report.addParam("caterer", caterer);
-			report.addParam("orders", orders);
-			report.addParam("amount", amount);
+		final Optional<Caterer> catererOptional = catererService.read(id);
+		if (catererOptional.isPresent()) {
+			final Caterer caterer = catererOptional.get();
+			final List<Order> orders = orderService.readAllWithCatererId(caterer.getId().toHexString(), startDate, endDate);
+			final Integer amount = catererService.getTotalAmountSuccessful(orders);
+			if (request.getContentType() != null && request.getContentType().equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
+				final PayementInfoMessage payementInfoMessage = new PayementInfoMessage();
+				payementInfoMessage.setId(caterer.getId().toHexString());
+				payementInfoMessage.setName(caterer.getName());
+				payementInfoMessage.setAmount(amount);
+				payementInfoMessage.setStart(start);
+				payementInfoMessage.setEnd(end);
+				payementInfoMessage.setFormat(format);
+				//				List<String> list = new ArrayList<>();
+				//				for (Order order : orders) {
+				//					order.setDish(null);
+				//					list.add(order.getDocumentAPIView().toJson());
+				//				}
+				final HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				return new ResponseEntity<>(payementInfoMessage, headers, HttpStatus.OK);
+				//return Response.ok().entity(payementInfoMessage).type(MediaType.APPLICATION_JSON).build();
+			} else {
+				final Report report = new Report();
+				report.addParam("caterer", caterer);
+				report.addParam("orders", orders);
+				report.addParam("amount", amount);
 
-			final HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.parseMediaType("application/pdf"));
-			headers.add("content-disposition", "attachment; filename =" + caterer.getId().toHexString() + ".pdf");
-			return new ResponseEntity<>(report.getReport(), headers, HttpStatus.OK);
+				final HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.parseMediaType("application/pdf"));
+				headers.add("content-disposition", "attachment; filename =" + caterer.getId().toHexString() + ".pdf");
+				return new ResponseEntity<>(report.getReport(), headers, HttpStatus.OK);
+			}
 		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.ORDER_COLL;
 
@@ -43,7 +44,7 @@ public class OrderDAO extends CrudDAO<Order> {
 	}
 
 	@Override
-	public Order read(final String id) throws EpickurException {
+	public Optional<Order> read(final String id) throws EpickurException {
 		log.debug("Read order with id: {}", id);
 		final Document query = convertAttributeToDocument("_id", new ObjectId(id));
 		final Document find = findDocument(query);
@@ -56,14 +57,19 @@ public class OrderDAO extends CrudDAO<Order> {
 		final Document filter = convertAttributeToDocument("_id", order.getId());
 		final Document update = order.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		return processAfterQuery(updated);
-	}
-
-	private Order processAfterQuery(final Document document) throws EpickurParsingException {
-		if (document != null) {
-			return Order.getDocumentAsOrder(document);
+		final Optional<Order> orderOptional = processAfterQuery(updated);
+		if (orderOptional.isPresent()) {
+			return orderOptional.get();
 		} else {
 			return null;
+		}
+	}
+
+	private Optional<Order> processAfterQuery(final Document document) throws EpickurParsingException {
+		if (document != null) {
+			return Optional.of(Order.getDocumentAsOrder(document));
+		} else {
+			return Optional.empty();
 		}
 	}
 
