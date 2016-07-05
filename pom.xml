@@ -71,7 +71,7 @@
 		<lombok.version>1.16.8</lombok.version>
 		<log4j2.version>2.6</log4j2.version>
 		<mongo.version>3.1.1</mongo.version>
-		<spring.version>4.3.0.RELEASE</spring.version>
+		<spring.version>4.3.1.RELEASE</spring.version>
 	</properties>
 
 	<build>
