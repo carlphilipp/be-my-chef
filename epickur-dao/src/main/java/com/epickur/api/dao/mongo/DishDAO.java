@@ -81,20 +81,14 @@ public class DishDAO extends CrudDAO<Dish> {
 
 	@Override
 	public List<Dish> readAll() throws EpickurException {
-		MongoCursor<Document> cursor = null;
 		final List<Dish> dishes = new ArrayList<>();
-		try {
-			cursor = getColl().find().iterator();
+		try (final MongoCursor<Document> cursor = getColl().find().iterator()) {
 			while (cursor.hasNext()) {
 				final Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
 		} catch (final MongoException e) {
 			throw new EpickurDBException("readAll", e.getMessage(), e);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
 		}
 		return dishes;
 	}
@@ -157,8 +151,8 @@ public class DishDAO extends CrudDAO<Dish> {
 		// Should be doable in MongoDB.
 		final List<Dish> res = new ArrayList<>();
 		dishes.stream()
-				.filter(dish -> dish.getCaterer().getWorkingTimes().canBePickup(day, pickupdateMinutes))
-				.forEach(res::add);
+			.filter(dish -> dish.getCaterer().getWorkingTimes().canBePickup(day, pickupdateMinutes))
+			.forEach(res::add);
 		return res;
 	}
 
