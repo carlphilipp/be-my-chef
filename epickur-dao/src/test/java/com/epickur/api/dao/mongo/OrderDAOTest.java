@@ -26,8 +26,6 @@ import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.ORDER_COLL;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
 
 public class OrderDAOTest {

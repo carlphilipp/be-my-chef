@@ -24,19 +24,19 @@ package com.epickur.api.dao;
  */
 public final class CollectionsName {
 
-	public static String ORDER_COLL = "orders";
+	public static final String ORDER_COLL = "orders";
 
-	public static String USER_COLL = "users";
+	public static final String USER_COLL = "users";
 
-	public static String DISH_COLL = "dishes";
+	public static final String DISH_COLL = "dishes";
 
-	public static String CATERER_COLL = "caterers";
+	public static final String CATERER_COLL = "caterers";
 
-	public static String VOUCHER_COLL = "vouchers";
+	public static final String VOUCHER_COLL = "vouchers";
 
-	public static String KEY_COLL = "keys";
+	public static final String KEY_COLL = "keys";
 
-	public static String LOG_COLL = "logs";
+	public static final String LOG_COLL = "logs";
 
-	public static String SEQUENCE_COLL = "seq";
+	public static final String SEQUENCE_COLL = "seq";
 }

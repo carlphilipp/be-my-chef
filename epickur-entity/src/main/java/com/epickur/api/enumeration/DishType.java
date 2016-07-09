@@ -16,7 +16,7 @@ public enum DishType {
 
 	/**
 	 * The constructor
-	 * 
+	 *
 	 * @param type
 	 *            The type
 	 */
@@ -54,6 +54,6 @@ public enum DishType {
 	}
 
 	/** The type */
-	private String type;
+	private final String type;
 
 }

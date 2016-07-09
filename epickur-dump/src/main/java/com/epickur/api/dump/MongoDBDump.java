@@ -53,7 +53,7 @@ public final class MongoDBDump {
 	/**
 	 * Date
 	 */
-	private String date;
+	private final String date;
 	/**
 	 * Run time object for execute mongo
 	 */
@@ -152,9 +152,7 @@ public final class MongoDBDump {
 
 	protected String buildDumpCommand() {
 		final StringBuilder dumpCommand = new StringBuilder();
-		dumpCommand
-				.append(properties.getMongodPath() + " -d " + properties.getMongoDbName() + " -h " + properties.getMongoAddress() + ":" + properties
-						.getMongoPort());
+		dumpCommand.append(properties.getMongodPath() + " -d " + properties.getMongoDbName() + " -h " + properties.getMongoAddress() + ":" + properties.getMongoPort());
 		if (StringUtils.isNotBlank(properties.getMongoLogin())) {
 			dumpCommand.append(" -u " + properties.getMongoLogin() + " -p" + properties.getMongoPassword());
 		}

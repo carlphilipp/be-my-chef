@@ -43,7 +43,7 @@ public class Utils {
 	 * @return True if the password is correct
 	 * @throws EpickurException If someting went bad
 	 */
-	public boolean isPasswordCorrect(final String password, final User user) throws EpickurException {
+	public boolean isPasswordCorrect(final String password, final User user) {
 		boolean res = true;
 		final int sixtyFour = 64;
 		final String passwordHashed = Security.encodeToSha256(password);

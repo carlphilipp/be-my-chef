@@ -14,10 +14,10 @@ public enum ExpirationType {
 	 * Until voucher
 	 */
 	UNTIL("until");
-	
+
 	/**
 	 * The constructor
-	 * 
+	 *
 	 * @param type
 	 *            The type
 	 */
@@ -55,5 +55,5 @@ public enum ExpirationType {
 	}
 
 	/** The type */
-	private String type;
+	private final String type;
 }

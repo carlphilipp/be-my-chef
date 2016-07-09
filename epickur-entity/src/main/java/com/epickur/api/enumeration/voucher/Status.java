@@ -14,10 +14,10 @@ public enum Status {
 	 * Valid
 	 */
 	VALID("valid");
-	
+
 	/**
 	 * The constructor
-	 * 
+	 *
 	 * @param type
 	 *            The type
 	 */
@@ -55,5 +55,5 @@ public enum Status {
 	}
 
 	/** The type */
-	private String type;
+	private final String type;
 }

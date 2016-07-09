@@ -384,8 +384,7 @@ public class EntityGenerator {
 		return orderMock;
 	}
 
-	public static Token generateRandomToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException,
-			APIException {
+	public static Token generateRandomToken() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		Map<String, Object> tokenParams = new HashMap<>();
 		Map<String, Object> cardParams = new HashMap<>();
 		cardParams.put("number", "4242424242424242");

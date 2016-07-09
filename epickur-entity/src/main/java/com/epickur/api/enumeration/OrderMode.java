@@ -2,7 +2,7 @@ package com.epickur.api.enumeration;
 
 /**
  * Order Mode
- * 
+ *
  * @author cph
  * @version 1.0
  *
@@ -15,7 +15,7 @@ public enum OrderMode {
 
 	/**
 	 * The constructor
-	 * 
+	 *
 	 * @param type
 	 *            The type
 	 */
@@ -53,5 +53,5 @@ public enum OrderMode {
 	}
 
 	/** The type */
-	private String type;
+	private final String type;
 }

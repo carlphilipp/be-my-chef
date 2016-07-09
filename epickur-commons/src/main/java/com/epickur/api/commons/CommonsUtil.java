@@ -13,7 +13,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Properties;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -168,14 +167,6 @@ public class CommonsUtil {
 		stb.append(getRandomConsonants(3));
 		stb.append(getRandomNumber());
 		return stb.toString();
-	}
-
-	public static Properties getProperties(final Class<?> clazz, final String resource) throws IOException {
-		try (final InputStream in = clazz.getResource(resource).openStream()) {
-			final Properties prop = new Properties();
-			prop.load(in);
-			return prop;
-		}
 	}
 
 	/**

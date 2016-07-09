@@ -99,7 +99,7 @@ public class Here {
 	 * @throws HereException If we could not access the coordinates
 	 */
 	@SneakyThrows(UnsupportedEncodingException.class)
-	protected final String urlBuilder() throws HereException {
+	protected final String urlBuilder() {
 		final StringBuilder stb = new StringBuilder();
 		stb.append(URL_BASE);
 		stb.append('/').append(properties.getHereApiVersion());

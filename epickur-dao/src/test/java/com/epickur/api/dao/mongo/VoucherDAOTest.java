@@ -25,11 +25,10 @@ import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.VOUCHER_COLL;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class VoucherDAOTest {
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
@@ -101,7 +100,7 @@ public class VoucherDAOTest {
 
 		dao.read(code);
 	}
-	
+
 	@Test
 	public void testReadToClean() throws EpickurException {
 		Document found = EntityGenerator.generateVoucher().getDocumentDBView();
@@ -117,11 +116,11 @@ public class VoucherDAOTest {
 		assertEquals(1, actuals.size());
 		verify(collection).find(any(Document.class));
 	}
-	
+
 	@Test
 	public void testReadToCleanMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
-		
+
 		when(collection.find(any(Document.class))).thenThrow(new MongoException(""));
 
 		dao.readToClean();
@@ -130,7 +129,7 @@ public class VoucherDAOTest {
 	@Test
 	public void testReadAll() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		
+
 		dao.readAll();
 	}
 

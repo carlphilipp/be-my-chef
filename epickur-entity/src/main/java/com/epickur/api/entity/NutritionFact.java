@@ -6,11 +6,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.ToString;
 
 /**
  * NutritionFacts enumeration
- * 
+ *
  * @author cph
  * @version 1.0
  */
@@ -29,7 +30,9 @@ public final class NutritionFact implements Cloneable {
 	private MeasurementUnit unit;
 
 	@Override
-	public NutritionFact clone() throws CloneNotSupportedException {
+	@SneakyThrows(CloneNotSupportedException.class)
+	public NutritionFact clone() {
+		super.clone();
 		final NutritionFact nutritionFact = new NutritionFact();
 		nutritionFact.setName(this.name);
 		nutritionFact.setUnit(this.unit);

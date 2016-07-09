@@ -7,7 +7,7 @@ public final class PasswordManager {
 	private final String saltHashed;
 	private final String cryptedPasswordSalt;
 
-	PasswordManager(final String password) throws EpickurException {
+	PasswordManager(final String password) {
 		final String passwordHashed = Security.encodeToSha256(password);
 		saltHashed = Security.generateSalt();
 		cryptedPasswordSalt = Security.encodeToSha256(passwordHashed + saltHashed);
@@ -27,7 +27,7 @@ public final class PasswordManager {
 		return saltHashed + cryptedPasswordSalt;
 	}
 
-	public String getCode(final String name, final String email) throws EpickurException {
+	public String getCode(final String name, final String email) {
 		return Security.createUserCode(name, saltHashed, cryptedPasswordSalt, email);
 	}
 }

@@ -88,7 +88,7 @@ public class OrderService {
 		order.prepareForInsertionIntoDB();
 	}
 
-	protected void postCreation(final Order order, final User user) throws EpickurException {
+	protected void postCreation(final Order order, final User user) {
 		final String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 		emailUtils.emailNewOrder(user, order, orderCode);
 		jobs.addTemporaryOrderJob(user, order);
@@ -229,7 +229,7 @@ public class OrderService {
 		return order.get();
 	}
 
-	protected void checkAutorization(final String orderCode, final Order order) throws EpickurException {
+	protected void checkAutorization(final String orderCode, final Order order) {
 		if (!orderCode.equals(Security.createOrderCode(order.getId(), order.getCardToken()))) {
 			throw new EpickurForbiddenException();
 		}
