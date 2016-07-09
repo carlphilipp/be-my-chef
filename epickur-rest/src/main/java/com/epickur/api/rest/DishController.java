@@ -7,7 +7,6 @@ import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
@@ -20,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Optional;
@@ -37,13 +35,9 @@ import static com.epickur.api.enumeration.Operation.*;
 @RestController
 @RequestMapping(value = "/dishes")
 public class DishController {
-
-	@Autowired
-	private HttpServletRequest request;
+	
 	@Autowired
 	private DishService dishService;
-	@Autowired
-	private CatererService catererService;
 	@Autowired
 	private Utils utils;
 
@@ -54,7 +48,7 @@ public class DishController {
 	 * @apiName CreateDish
 	 * @apiGroup Dishes
 	 * @apiPermission admin, super_user (own caterer)
-	 * 
+	 *
 	 * @apiParam (Request: JSON Object) {Dish} dish Dish JSON Object.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the Dish.
@@ -70,7 +64,7 @@ public class DishController {
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
@@ -100,7 +94,7 @@ public class DishController {
 	 *				},
 	 *			},
 	 *		},
-	 * 		"ingredients": 
+	 * 		"ingredients":
 	 * 		[{
 	 * 			"name": "Fish",
 	 *			"sequence": 1,
@@ -111,7 +105,7 @@ public class DishController {
 	 *			"sequence": 2,
 	 *			"quantity": 1.0
 	 *		}],
-	 *		"nutritionFacts": 
+	 *		"nutritionFacts":
 	 *		[{
 	 *			"name": "Calories",
 	 *			"value": 1250.0,
@@ -153,7 +147,7 @@ public class DishController {
 	 * @apiName ReadDish
 	 * @apiGroup Dishes
 	 * @apiPermission admin, super_user, user
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Dish.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the Dish.
@@ -169,7 +163,7 @@ public class DishController {
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
@@ -199,7 +193,7 @@ public class DishController {
 	 *				},
 	 *			},
 	 *		},
-	 * 		"ingredients": 
+	 * 		"ingredients":
 	 * 		[{
 	 * 			"name": "Fish",
 	 *			"sequence": 1,
@@ -210,7 +204,7 @@ public class DishController {
 	 *			"sequence": 2,
 	 *			"quantity": 1.0
 	 *		}],
-	 *		"nutritionFacts": 
+	 *		"nutritionFacts":
 	 *		[{
 	 *			"name": "Calories",
 	 *			"value": 1250.0,
@@ -360,7 +354,7 @@ public class DishController {
 	 * @apiName UpdateDish
 	 * @apiGroup Dishes
 	 * @apiPermission admin, super_user (own dish)
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Dish.
 	 *
 	 * @apiParam (Request: JSON Object) {String} id Id of the Dish.
@@ -388,7 +382,7 @@ public class DishController {
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
@@ -418,7 +412,7 @@ public class DishController {
 	 *				},
 	 *			},
 	 *		},
-	 * 		"ingredients": 
+	 * 		"ingredients":
 	 * 		[{
 	 * 			"name": "Fish",
 	 *			"sequence": 1,
@@ -429,7 +423,7 @@ public class DishController {
 	 *			"sequence": 2,
 	 *			"quantity": 1.0
 	 *		}],
-	 *		"nutritionFacts": 
+	 *		"nutritionFacts":
 	 *		[{
 	 *			"name": "Calories",
 	 *			"value": 1250.0,
@@ -474,13 +468,13 @@ public class DishController {
 	 * @apiName DeleteDish
 	 * @apiGroup Dishes
 	 * @apiPermission admin, super_user (own dish)
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Dish.
 	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
-	 *		"id" : "54e0f713731eff3fe01641d5" , 
+	 *		"id" : "54e0f713731eff3fe01641d5" ,
 	 *		"deleted" : true
 	 *	}
 	 *
@@ -510,15 +504,15 @@ public class DishController {
 	}
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /dishes?types=:type1,type2,...,typeN&limit=:limit&at=:lat,:long&searchtext=:searchtext&distance=:distance Search a dish
 	 * @apiVersion 1.0.0
 	 * @apiName SearchDish
 	 * @apiGroup Dishes
 	 * @apiDescription Search a dish.
 	 * @apiPermission admin, super_user, user
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} types list of Dish type to search.
 	 * @apiParam (Request: URL Parameter) {String} limit Limit of number of result (default is 50).
 	 * @apiParam (Request: URL Parameter) {String} at Geocoordinates to use (latitude, longitude).
