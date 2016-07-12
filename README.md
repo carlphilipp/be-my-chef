@@ -139,10 +139,10 @@ The ant plugin run several commands:
 * Stop tomcat
 * Clean webbapps directory
 * Clean other temp directory
-* Push ROOT.war (war generatered) to $CATALINA_BASE/webapps
+* Push ROOT.war (war generated) to $CATALINA_BASE/webapps
 * Start tomcat
 
-To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml`
+To be able to deploy on AWS server, need to add to `~/.m2/settings.xml`
 
 ```
 <profiles>
