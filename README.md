@@ -21,7 +21,7 @@ ASCII dependency graph:
                       |____________|
                       |
                     Utils
-           ___________|____________ 
+           ___________|____________
           |           |            |
       3rd Party      Dump         DAO
           |___________|____________|
@@ -36,9 +36,9 @@ ASCII dependency graph:
 When adding a new module, be careful with cyclic dependency error: Two modules must not depends on each other.
 
 * Logging: Contains all the logging dependencies and configuration used everywhere in the project.
-* Commons: Contains basic functionalities that do not need any knowledge of main entity objects. Example: String or Date manipulation.
-* Test: Contains test utilities for Stripe payement. Might be merged in the futur with 3rd party.
-* Entity: Contains all basic entity objects needed in the application. No logic there, just entitied and Serializer/Desrializer classes.
+* Commons: Contains basic functionality that do not need any knowledge of main entity objects. Example: String or Date manipulation.
+* Test: Contains test utilities for Stripe payement. Might be merged in the future with 3rd party.
+* Entity: Contains all basic entity objects needed in the application. No logic there, just entities and Serializer/Deserializer classes.
 * Utils: Contains reports, security, access rights and emails features.
 * DAO: Access Mongo DB.
 * 3rd Party: Access Amazon, Here and Stripe.
@@ -100,7 +100,7 @@ The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/co
 
 ###Maven profiles
 * local: The default one that should be used in local
-* aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production server
+* aws: The Amazon Web Service profile, used to deploy documentation and .war file on the production server
 
 ###Test
 
@@ -116,9 +116,9 @@ Integration testing: `mvnw integration-test`
 ###Build
 ####From Maven:
 
-Generate war with Maven: 
+Generate war with Maven:
 
-`mvnw clean package [-DskipTests] [-Dpmd.skip=true]` 
+`mvnw clean package [-DskipTests] [-Dpmd.skip=true]`
 
 The generated jar will be in their respective project target directory. The final war in `epickur-rest/target`.
 
