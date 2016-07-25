@@ -165,7 +165,7 @@
 							<target>
 								<echo message="Creating API doc"/>
 								<!-- Does not work on linux/mac. Need to fix that -->
-								<exec executable="${basedir}/src/main/scripts/windows/generate-api.bat"/>
+								<exec executable="src/main/scripts/linux/generate-api.sh"/>
 							</target>
 						</configuration>
 					</execution>
@@ -345,7 +345,7 @@
 								<configuration>
 									<target>
 										<echo message="Creating API doc"/>
-										<exec executable="src/main/scripts/windows/generate-api.bat"/>
+										<exec executable="src/main/scripts/linux/generate-api.sh"/>
 									</target>
 								</configuration>
 							</execution>

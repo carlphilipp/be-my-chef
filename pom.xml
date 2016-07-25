@@ -290,7 +290,7 @@
 					<printFailingErrors>true</printFailingErrors>
 					<failOnViolation>true</failOnViolation>
 					<rulesets>
-						<ruleset>${project.basedir}\src\main\resources\lombokRuleset.xml</ruleset>
+						<ruleset>${project.basedir}/src/main/resources/lombokRuleset.xml</ruleset>
 					</rulesets>
 				</configuration>
 				<reportSets>

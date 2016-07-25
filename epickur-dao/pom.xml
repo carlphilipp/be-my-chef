@@ -43,7 +43,7 @@
 					<printFailingErrors>true</printFailingErrors>
 					<failOnViolation>true</failOnViolation>
 					<rulesets>
-						<ruleset>${project.parent.basedir}\src\main\resources\lombokRuleset.xml</ruleset>
+						<ruleset>${project.parent.basedir}/src/main/resources/lombokRuleset.xml</ruleset>
 					</rulesets>
 				</configuration>
 			</plugin>
@@ -53,7 +53,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.4</version>
 				<configuration>
-					<stylesheetfile>${project.parent.basedir}\src\main\resources\stylesheet.css</stylesheetfile>
+					<stylesheetfile>${project.parent.basedir}/src/main/resources/stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
