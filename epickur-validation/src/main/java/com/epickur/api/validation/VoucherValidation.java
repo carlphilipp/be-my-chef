@@ -69,17 +69,14 @@ public class VoucherValidation extends Validation {
 	 * @param format         The date format
 	 * @throws EpickurParsingException If a an epickur parsinf exception occures
 	 */
-	public void checkVoucherGenerate(
-			final ExpirationType expirationType,
-			final String expirationDate,
-			final String format) throws EpickurParsingException {
+	public void checkVoucherGenerate(final ExpirationType expirationType, final String expirationDate, final String format) throws EpickurParsingException {
 		if (expirationType.equals(ExpirationType.UNTIL)) {
 			if (StringUtils.isBlank(expirationDate)) {
 				throw new EpickurIllegalArgument("The param expirationDate is not allowed to be null or empty when expirationType is until");
 			} else {
 				try {
 					CommonsUtil.parseDate(expirationDate, format);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					throw new EpickurParsingException("Error while parsing date '" + expirationDate + "' with format '" + format + "'", e);
 				}
 			}
