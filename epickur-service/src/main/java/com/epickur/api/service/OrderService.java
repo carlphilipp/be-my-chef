@@ -172,11 +172,10 @@ public class OrderService {
 	 * @return The Updated order
 	 * @throws EpickurException If an EpickurException occurred
 	 */
-	public Order executeOrder(final String userId, final String orderId, final boolean confirm,
-							  final boolean shouldCharge, final String orderCode) throws EpickurException {
+	public Order executeOrder(final String userId, final String orderId, final boolean confirm, final boolean shouldCharge, final String orderCode) throws EpickurException {
 		final User user = readUser(userId);
 		Order order = read(orderId);
-		checkAutorization(orderCode, order);
+		checkAuthorization(orderCode, order);
 		if (confirm) {
 			if (shouldCharge) {
 				order = chargeUser(order, user);
@@ -229,7 +228,7 @@ public class OrderService {
 		return order.get();
 	}
 
-	protected void checkAutorization(final String orderCode, final Order order) {
+	protected void checkAuthorization(final String orderCode, final Order order) {
 		if (!orderCode.equals(Security.createOrderCode(order.getId(), order.getCardToken()))) {
 			throw new EpickurForbiddenException();
 		}

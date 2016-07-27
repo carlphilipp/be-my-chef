@@ -38,8 +38,7 @@ import java.io.IOException;
  */
 @Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "code", "discount", "discountType", "expirationType", "expiration", "status", "usedCount", "createdAt",
-		"updatedAt" })
+@JsonPropertyOrder(value = {"id", "code", "discount", "discountType", "expirationType", "expiration", "status", "usedCount", "createdAt", "updatedAt"})
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)

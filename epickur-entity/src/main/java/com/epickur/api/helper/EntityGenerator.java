@@ -348,28 +348,30 @@ public class EntityGenerator {
 
 		String pickupdate = generateRandomPickupDate();
 		order.setPickupdate(pickupdate);
-		Object[] parsedPickupdate = parsePickupdate(pickupdate);
-		String day = (String) parsedPickupdate[0];
-		Integer pickupdateMinutes = (Integer) parsedPickupdate[1];
+		Optional<Object[]> parsedPickupdateOptional = CommonsUtil.parsePickupdate(pickupdate);
+		if (parsedPickupdateOptional.isPresent()) {
+			Object[] parsedPickupdate = parsedPickupdateOptional.get();
+			String day = (String) parsedPickupdate[0];
+			Integer pickupdateMinutes = (Integer) parsedPickupdate[1];
 
-		WorkingTimes workingTimes = order.getDish().getCaterer().getWorkingTimes();
-		while (!workingTimes.canBePickup(day, pickupdateMinutes)) {
-			WorkingTimes temp = generateRandomWorkingTimes();
-			order.getDish().getCaterer().setWorkingTimes(temp);
-			workingTimes = order.getDish().getCaterer().getWorkingTimes();
+			WorkingTimes workingTimes = order.getDish().getCaterer().getWorkingTimes();
+			while (!workingTimes.canBePickup(day, pickupdateMinutes)) {
+				WorkingTimes temp = generateRandomWorkingTimes();
+				order.getDish().getCaterer().setWorkingTimes(temp);
+				workingTimes = order.getDish().getCaterer().getWorkingTimes();
 
-			pickupdate = generateRandomPickupDate();
-			order.setPickupdate(pickupdate);
-			parsedPickupdate = parsePickupdate(pickupdate);
-			day = (String) parsedPickupdate[0];
-			pickupdateMinutes = (Integer) parsedPickupdate[1];
+				pickupdate = generateRandomPickupDate();
+				order.setPickupdate(pickupdate);
+				parsedPickupdateOptional = CommonsUtil.parsePickupdate(pickupdate);
+				if (parsedPickupdateOptional.isPresent()) {
+					parsedPickupdate = parsedPickupdateOptional.get();
+					day = (String) parsedPickupdate[0];
+					pickupdateMinutes = (Integer) parsedPickupdate[1];
+				}
+			}
+			order.setStatus(OrderStatus.SUCCESSFUL);
 		}
-		order.setStatus(OrderStatus.SUCCESSFUL);
 		return order;
-	}
-
-	public static Object[] parsePickupdate(final String pickupdate) {
-		return CommonsUtil.parsePickupdate(pickupdate);
 	}
 
 	public static Order generateRandomOrderWithId() {

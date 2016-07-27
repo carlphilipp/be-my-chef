@@ -1,5 +1,6 @@
 package com.epickur.api.commons;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.joda.time.DateTime;
@@ -13,6 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,20 +31,18 @@ public class CommonsUtil {
 	 * @param pickupdate The pickup date
 	 * @return An array of object containing in the first cell the day and in the second cell the time.
 	 */
-	public static Object[] parsePickupdate(final String pickupdate) {
+	public static Optional<Object[]> parsePickupdate(@NonNull final String pickupdate) {
 		Object[] result = null;
-		if (pickupdate != null) {
-			final Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):([0-5][0-9]))$");
-			final Matcher matcher = pattern.matcher(pickupdate);
-			if (matcher.matches()) {
-				result = new Object[2];
-				// Extract the day of the week
-				result[0] = matcher.group(1).toLowerCase();
-				// Convert in minutes the given time
-				result[1] = Integer.parseInt(matcher.group(3)) * 60 + Integer.parseInt(matcher.group(4));
-			}
+		final Pattern pattern = Pattern.compile("^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):([0-5][0-9]))$");
+		final Matcher matcher = pattern.matcher(pickupdate);
+		if (matcher.matches()) {
+			result = new Object[2];
+			// Extract the day of the week
+			result[0] = matcher.group(1).toLowerCase();
+			// Convert in minutes the given time
+			result[1] = Integer.parseInt(matcher.group(3)) * 60 + Integer.parseInt(matcher.group(4));
 		}
-		return result;
+		return Optional.ofNullable(result);
 	}
 
 	public static String convertToReadableDate(final String pickupdate) {

@@ -124,13 +124,10 @@ public class DishService {
 	 * @return A list of Dish
 	 * @throws EpickurException If an epickur exception occurred
 	 */
-	public List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, final Geo geo,
-			final String searchtext, final int distance) throws EpickurException {
+	public List<Dish> search(final String day, final Integer minutes, final List<DishType> type, final Integer limit, Geo geo, final String searchtext, final int distance) throws EpickurException {
 		if (geo == null) {
-			final Geo geoFound = geocoder.getPosition(searchtext);
-			return dao.search(day, minutes, type, limit, geoFound, distance);
-		} else {
-			return dao.search(day, minutes, type, limit, geo, distance);
+			geo = geocoder.getPosition(searchtext);
 		}
+		return dao.search(day, minutes, type, limit, geo, distance);
 	}
 }

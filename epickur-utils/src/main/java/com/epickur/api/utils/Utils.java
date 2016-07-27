@@ -119,7 +119,7 @@ public class Utils {
 	public List<DishType> stringToListDishType(final String types) {
 		final List<DishType> res = new ArrayList<>();
 		final List<String> typesArray = Arrays.asList(types.split(","));
-		typesArray.stream().forEach(temp -> res.add(DishType.fromString(temp)));
+		typesArray.forEach(temp -> res.add(DishType.fromString(temp)));
 		return res;
 	}
 

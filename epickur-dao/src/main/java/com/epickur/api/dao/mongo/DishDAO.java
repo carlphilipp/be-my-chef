@@ -132,20 +132,14 @@ public class DishDAO extends CrudDAO<Dish> {
 		openClose.put("$elemMatch", elementMatch);
 		find.put("caterer.workingTimes.hours." + day, openClose);
 		final List<Dish> dishes = new ArrayList<>();
-		MongoCursor<Document> cursor = null;
 		log.debug("Searching: {}", find);
-		try {
-			cursor = getColl().find(find).limit(limit).iterator();
+		try (MongoCursor<Document> cursor = getColl().find(find).limit(limit).iterator()) {
 			while (cursor.hasNext()) {
 				final Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
 		} catch (final MongoException e) {
 			throw new EpickurDBException("search", e.getMessage(), find, e);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
 		}
 		// TODO See how to optimize that and avoid doing that here.
 		// Should be doable in MongoDB.

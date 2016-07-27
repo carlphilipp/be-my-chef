@@ -1,7 +1,6 @@
 package com.epickur.api.dump;
 
 import com.epickur.api.config.EpickurProperties;
-import com.epickur.api.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -14,7 +13,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Create a MongoDB dump.
@@ -34,8 +35,6 @@ public final class MongoDBDump {
 	 */
 	private static final String TARGZEXT = ".tar.gz";
 
-	@Autowired
-	private Utils utils;
 	@Autowired
 	private EpickurProperties properties;
 	/**
@@ -98,14 +97,14 @@ public final class MongoDBDump {
 	 * @return the file name
 	 */
 	public String getCurrentNameFile() {
-		String computername;
+		String computerName;
 		try {
-			computername = InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
+			computerName = InetAddress.getLocalHost().getHostName();
+		} catch (final UnknownHostException e) {
 			log.warn("Host not found: {}", e.getLocalizedMessage());
-			computername = "unknown";
+			computerName = "unknown";
 		}
-		return "epickur_" + computername + "_" + date + TARGZEXT;
+		return "epickur_" + computerName + "_" + date + TARGZEXT;
 	}
 
 	/**
@@ -119,16 +118,15 @@ public final class MongoDBDump {
 	 * @return The list files
 	 */
 	public List<String> getListFiles() {
-		List<String> files = new ArrayList<>();
-		File[] listOfFiles = dumpDirectory.listFiles();
+		final File[] listOfFiles = dumpDirectory.listFiles();
 		if (listOfFiles != null) {
-			for (File file : listOfFiles) {
-				if (file.isFile()) {
-					files.add(file.getAbsolutePath());
-				}
-			}
+			return Arrays.stream(listOfFiles)
+				.filter(File::isFile)
+				.map(File::getAbsolutePath)
+				.collect(Collectors.toList());
+		} else {
+			return new ArrayList<>();
 		}
-		return files;
 	}
 
 	/**
@@ -144,7 +142,7 @@ public final class MongoDBDump {
 			process.waitFor();
 			logExportResult(process);
 			success = true;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.error("Error while trying to mongodump: {}", e.getLocalizedMessage(), e);
 		}
 		return success;
@@ -152,11 +150,24 @@ public final class MongoDBDump {
 
 	protected String buildDumpCommand() {
 		final StringBuilder dumpCommand = new StringBuilder();
-		dumpCommand.append(properties.getMongodPath() + " -d " + properties.getMongoDbName() + " -h " + properties.getMongoAddress() + ":" + properties.getMongoPort());
+		dumpCommand
+			.append(properties.getMongodPath())
+			.append(" -d ")
+			.append(properties.getMongoDbName())
+			.append(" -h ")
+			.append(properties.getMongoAddress())
+			.append(":")
+			.append(properties.getMongoPort());
 		if (StringUtils.isNotBlank(properties.getMongoLogin())) {
-			dumpCommand.append(" -u " + properties.getMongoLogin() + " -p" + properties.getMongoPassword());
+			dumpCommand
+				.append(" -u ")
+				.append(properties.getMongoLogin())
+				.append(" -p")
+				.append(properties.getMongoPassword());
 		}
-		dumpCommand.append(" -o " + properties.getMongoBackupPath());
+		dumpCommand
+			.append(" -o ")
+			.append(properties.getMongoBackupPath());
 		return dumpCommand.toString();
 	}
 

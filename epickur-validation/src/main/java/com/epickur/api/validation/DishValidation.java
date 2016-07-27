@@ -16,6 +16,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The Dish Validator class
@@ -164,10 +165,9 @@ public class DishValidation extends Validation {
 	 * @param searchtext The address to search
 	 */
 	public void checkSearch(final String pickupdate, final String types, final String at, final String searchtext) {
-		final Object[] result = CommonsUtil.parsePickupdate(pickupdate);
-		if (result == null) {
-			throw new EpickurIllegalArgument(
-					"The parameter pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: " + pickupdate);
+		final Optional<Object[]> resultOptional = CommonsUtil.parsePickupdate(pickupdate);
+		if (!resultOptional.isPresent()) {
+			throw new EpickurIllegalArgument("The parameter pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: " + pickupdate);
 		}
 		final String[] typesArray = types.split(",");
 		for (final String temp : typesArray) {

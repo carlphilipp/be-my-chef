@@ -50,8 +50,7 @@ public class VoucherService {
 	 * @return a Set of vouchers generated
 	 * @throws EpickurException If an EpickurException occurred
 	 */
-	public Set<Voucher> generate(final int count, final DiscountType discountType, final int discount, final ExpirationType expirationType,
-			final DateTime expiration) throws EpickurException {
+	public Set<Voucher> generate(final int count, final DiscountType discountType, final int discount, final ExpirationType expirationType, final DateTime expiration) throws EpickurException {
 		final Set<Voucher> result = new HashSet<>();
 		do {
 			final Voucher voucher = new Voucher();

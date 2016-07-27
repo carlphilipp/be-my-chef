@@ -1,16 +1,16 @@
 package com.epickur.api.entity;
 
-import static org.junit.Assert.assertFalse;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
-
+import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.entity.times.Hours;
 import com.epickur.api.entity.times.TimeFrame;
 import com.epickur.api.entity.times.WorkingTimes;
-import com.epickur.api.helper.EntityGenerator;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.assertFalse;
 
 public class WorkingTimesTest {
 
@@ -32,7 +32,10 @@ public class WorkingTimesTest {
 		workingTimes.setHours(hours);
 
 		String pickupdate = "sat-07:12";
-		Object[] object = EntityGenerator.parsePickupdate(pickupdate);
-		assertFalse(workingTimes.canBePickup((String) object[0], (Integer) object[1]));
+		Optional<Object[]> objectOptional = CommonsUtil.parsePickupdate(pickupdate);
+		if (objectOptional.isPresent()) {
+			Object[] object = objectOptional.get();
+			assertFalse(workingTimes.canBePickup((String) object[0], (Integer) object[1]));
+		}
 	}
 }

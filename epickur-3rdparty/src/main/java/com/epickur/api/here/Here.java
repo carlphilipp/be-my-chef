@@ -3,7 +3,6 @@ package com.epickur.api.here;
 import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Geo;
 import com.epickur.api.exception.HereException;
-import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Cleanup;
@@ -33,8 +32,6 @@ import java.util.Map;
 @Component
 public class Here {
 
-	@Autowired
-	private Utils utils;
 	@Autowired
 	public EpickurProperties properties;
 	@Autowired
@@ -126,18 +123,18 @@ public class Here {
 	 */
 	protected final String connectUrl(final String address) throws HereException {
 		log.debug("URL: " + address);
-		String toreturn;
+		String toReturn;
 		try {
 			final URL url = new URL(address);
 			final URLConnection uc = url.openConnection();
 			uc.setConnectTimeout(1000);
 			final Charset charset = Charset.forName("UTF8");
 			@Cleanup final InputStreamReader in = new InputStreamReader(uc.getInputStream(), charset);
-			toreturn = IOUtils.toString(in);
+			toReturn = IOUtils.toString(in);
 		} catch (final IOException e) {
 			throw new HereException("Error: " + HereException.CONNECT_ERROR, e);
 		}
-		return toreturn;
+		return toReturn;
 	}
 
 	/**
@@ -152,6 +149,8 @@ public class Here {
 		Geo geo = null;
 		try {
 			log.info(data);
+
+			// FIXME: Dafuck? Use a POJO to handle that, this 'if else' are ridiculous
 			final Map<String, Object> mapObject = mapper.readValue(data, new TypeReference<Map<String, Object>>() {
 			});
 
