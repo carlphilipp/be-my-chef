@@ -18,6 +18,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.epickur.api.dao.CollectionsName.DISH_COLL;
 
@@ -143,11 +144,9 @@ public class DishDAO extends CrudDAO<Dish> {
 		}
 		// TODO See how to optimize that and avoid doing that here.
 		// Should be doable in MongoDB.
-		final List<Dish> res = new ArrayList<>();
-		dishes.stream()
+		return dishes.stream()
 			.filter(dish -> dish.getCaterer().getWorkingTimes().canBePickup(day, pickupdateMinutes))
-			.forEach(res::add);
-		return res;
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -156,22 +155,16 @@ public class DishDAO extends CrudDAO<Dish> {
 	 * @throws EpickurException if an epickur exception occurred
 	 */
 	public List<Dish> searchWithCatererId(final String catererId) throws EpickurException {
-		MongoCursor<Document> cursor = null;
 		final List<Dish> dishes = new ArrayList<>();
 		final Document find = new Document();
 		find.append("caterer._id", new ObjectId(catererId));
-		try {
-			cursor = getColl().find(find).iterator();
+		try (MongoCursor<Document> cursor = getColl().find(find).iterator()) {
 			while (cursor.hasNext()) {
 				final Dish dish = Dish.getDocumentAsDish(cursor.next());
 				dishes.add(dish);
 			}
 		} catch (final MongoException e) {
 			throw new EpickurDBException("readAllForOneCaterer", e.getMessage(), find, e);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
 		}
 		return dishes;
 	}
