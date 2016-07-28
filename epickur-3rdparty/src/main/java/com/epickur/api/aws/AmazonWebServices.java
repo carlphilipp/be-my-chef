@@ -45,8 +45,7 @@ public final class AmazonWebServices {
 			log.info("Upload done");
 		} catch (AmazonServiceException ase) {
 			final StringBuilder stb = new StringBuilder();
-			stb.append(
-					"Caught an AmazonServiceException, which means your request made it to Amazon S3, but was rejected with an error response for some reason.");
+			stb.append("Caught an AmazonServiceException, which means your request made it to Amazon S3, but was rejected with an error response for some reason.");
 			stb.append("\nError Message:    ").append(ase.getMessage());
 			stb.append("\nHTTP Status Code: ").append(ase.getStatusCode());
 			stb.append("\nAWS Error Code:   ").append(ase.getErrorCode());
@@ -66,7 +65,7 @@ public final class AmazonWebServices {
 		log.info("Deleting old file in AWS...");
 		ObjectListing listing = s3client.listObjects(properties.getAwsBucket());
 		final List<S3ObjectSummary> summaries = listing.getObjectSummaries();
-		// Get absolutly all items
+		// Get absolutely all items
 		while (listing.isTruncated()) {
 			listing = s3client.listNextBatchOfObjects(listing);
 			summaries.addAll(listing.getObjectSummaries());
@@ -75,8 +74,8 @@ public final class AmazonWebServices {
 		if (summaries.size() > MAX_DUMP_KEPT) {
 			S3ObjectSummary entry = null;
 			DateTime dateTimeEntry = null;
-			for (S3ObjectSummary summary : summaries) {
-				DateTime dateTime = new DateTime(summary.getLastModified());
+			for (final S3ObjectSummary summary : summaries) {
+				final DateTime dateTime = new DateTime(summary.getLastModified());
 				if (dateTimeEntry == null || dateTime.isBefore(dateTimeEntry)) {
 					entry = summary;
 					dateTimeEntry = dateTime;

@@ -26,7 +26,6 @@ import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.USER_COLL;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class UserDAOTest {

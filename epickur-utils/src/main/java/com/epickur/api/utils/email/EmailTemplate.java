@@ -36,7 +36,7 @@ public class EmailTemplate {
 	private Utils utils;
 	@Autowired
 	private ObjectMapper mapper;
-	private Map<String, Map<String, String>> templates;
+	private final Map<String, Map<String, String>> templates;
 
 	/**
 	 * The constructor

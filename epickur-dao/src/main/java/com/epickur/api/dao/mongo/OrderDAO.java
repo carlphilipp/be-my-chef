@@ -88,19 +88,13 @@ public class OrderDAO extends CrudDAO<Order> {
 	public List<Order> readAllWithUserId(final String userId) throws EpickurException {
 		final List<Order> orders = new ArrayList<>();
 		final Document query = new Document().append("createdBy", userId);
-		MongoCursor<Document> cursor = null;
-		try {
-			cursor = getColl().find(query).iterator();
+		try (final MongoCursor<Document> cursor = getColl().find(query).iterator()) {
 			while (cursor.hasNext()) {
 				final Order user = Order.getDocumentAsOrder(cursor.next());
 				orders.add(user);
 			}
 		} catch (final MongoException e) {
 			throw new EpickurDBException("readAllWithUserId", e.getMessage(), userId, e);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
 		}
 		return orders;
 	}
@@ -125,19 +119,13 @@ public class OrderDAO extends CrudDAO<Order> {
 		if (filter.keySet().size() != 0) {
 			query.put("createdAt", filter);
 		}
-		MongoCursor<Document> cursor = null;
-		try {
-			cursor = getColl().find(query).iterator();
+		try (final MongoCursor<Document> cursor = getColl().find(query).iterator()) {
 			while (cursor.hasNext()) {
 				final Order user = Order.getDocumentAsOrder(cursor.next());
 				orders.add(user);
 			}
 		} catch (final MongoException e) {
 			throw new EpickurDBException("readAllWithCatererId", e.getMessage(), catererId, e);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
 		}
 		return orders;
 	}

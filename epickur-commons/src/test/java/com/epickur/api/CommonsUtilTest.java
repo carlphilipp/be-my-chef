@@ -6,6 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 
 public class CommonsUtilTest {
@@ -15,11 +17,11 @@ public class CommonsUtilTest {
 
 	@Test
 	public void testParsePickupdate() {
-		Object[] actual = CommonsUtil.parsePickupdate("mon-10:30");
-		assertNotNull(actual);
-		assertEquals(2, actual.length);
-		assertEquals("mon", actual[0]);
-		assertEquals(630, actual[1]);
+		Optional<Object[]> actual = CommonsUtil.parsePickupdate("mon-10:30");
+		assertTrue(actual.isPresent());
+		assertEquals(2, actual.get().length);
+		assertEquals("mon", actual.get()[0]);
+		assertEquals(630, actual.get()[1]);
 	}
 
 	@Test
@@ -45,14 +47,14 @@ public class CommonsUtilTest {
 
 	@Test
 	public void testParsPickupdateNull() {
-		Object[] actual = CommonsUtil.parsePickupdate(null);
-		assertNull(actual);
+		thrown.expect(NullPointerException.class);
+		CommonsUtil.parsePickupdate(null);
 	}
 
 	@Test
 	public void testParsPickupdateNoMatch() {
-		Object[] actual = CommonsUtil.parsePickupdate("eeeee");
-		assertNull(actual);
+		Optional<Object[]> actual = CommonsUtil.parsePickupdate("eeeee");
+		assertTrue(!actual.isPresent());
 	}
 
 	@Test

@@ -2,7 +2,7 @@ package com.epickur.api.enumeration;
 
 /**
  * MeasurementUnit
- * 
+ *
  * @author cph
  * @version 1.0
  */
@@ -26,13 +26,13 @@ public enum MeasurementUnit {
 	/** KiloJoules */
 	KJ("kJ", "KiloJoules", "kJ", true);
 	/** Short description */
-	private String shortDescription;
+	private final String shortDescription;
 	/** Description */
-	private String description;
+	private final String description;
 	/** Symbol */
-	private String symbol;
+	private final String symbol;
 	/** Metric */
-	private boolean metric;
+	private final boolean metric;
 
 	/**
 	 * @param shortDescription

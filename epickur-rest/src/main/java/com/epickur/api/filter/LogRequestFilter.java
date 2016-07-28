@@ -30,8 +30,7 @@ public class LogRequestFilter extends OncePerRequestFilter {
 	private LogDAO logDAO;
 
 	@Override
-	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws
-			ServletException, IOException {
+	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
 		final Log logEntity = new Log();
 		logEntity.setTime(new DateTime());
 		logEntity.setUrl(request.getRequestURL().toString());
@@ -50,7 +49,7 @@ public class LogRequestFilter extends OncePerRequestFilter {
 		logEntity.setUserAgent(request.getHeader("User-Agent"));
 		try {
 			logDAO.create(logEntity);
-		} catch (EpickurException e) {
+		} catch (final EpickurException e) {
 			log.warn("Can not put log into DB. {}", e.getLocalizedMessage());
 		}
 		filterChain.doFilter(request, response);

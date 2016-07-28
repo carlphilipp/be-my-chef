@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ResponseError {
 
-	private static HttpHeaders headers;
+	private static final HttpHeaders headers;
 
 	static {
 		headers = new HttpHeaders();

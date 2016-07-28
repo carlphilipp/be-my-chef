@@ -29,8 +29,7 @@ import static com.epickur.api.dao.CollectionsName.USER_COLL;
  */
 @Slf4j
 @Repository
-public class
-UserDAO extends CrudDAO<User> {
+public class UserDAO extends CrudDAO<User> {
 
 	@PostConstruct
 	protected void initCollection() {
@@ -106,19 +105,13 @@ UserDAO extends CrudDAO<User> {
 	@Override
 	public List<User> readAll() throws EpickurException {
 		final List<User> users = new ArrayList<>();
-		MongoCursor<Document> cursor = null;
-		try {
-			cursor = getColl().find().iterator();
+		try (final MongoCursor<Document> cursor = getColl().find().iterator()) {
 			while (cursor.hasNext()) {
 				final User user = User.getDocumentAsUser(cursor.next());
 				users.add(user);
 			}
 		} catch (final MongoException e) {
 			throw new EpickurDBException("readAll", e.getMessage(), e);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
 		}
 		return users;
 	}

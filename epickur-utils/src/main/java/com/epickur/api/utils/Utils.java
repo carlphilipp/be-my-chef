@@ -43,7 +43,7 @@ public class Utils {
 	 * @return True if the password is correct
 	 * @throws EpickurException If someting went bad
 	 */
-	public boolean isPasswordCorrect(final String password, final User user) throws EpickurException {
+	public boolean isPasswordCorrect(final String password, final User user) {
 		boolean res = true;
 		final int sixtyFour = 64;
 		final String passwordHashed = Security.encodeToSha256(password);
@@ -119,7 +119,7 @@ public class Utils {
 	public List<DishType> stringToListDishType(final String types) {
 		final List<DishType> res = new ArrayList<>();
 		final List<String> typesArray = Arrays.asList(types.split(","));
-		typesArray.stream().forEach(temp -> res.add(DishType.fromString(temp)));
+		typesArray.forEach(temp -> res.add(DishType.fromString(temp)));
 		return res;
 	}
 

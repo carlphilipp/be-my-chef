@@ -24,7 +24,6 @@ import com.cribbstechnologies.clients.mandrill.request.MandrillMessagesRequest;
 import com.cribbstechnologies.clients.mandrill.request.MandrillRESTRequest;
 import com.cribbstechnologies.clients.mandrill.util.MandrillConfiguration;
 import com.epickur.api.config.EpickurProperties;
-import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,8 +49,6 @@ public class Email {
 	private EmailTemplate emailTemplate;
 	@Autowired
 	public EpickurProperties properties;
-	@Autowired
-	private Utils utils;
 	@Autowired
 	private MandrillMessagesRequest messagesRequest;
 	@Autowired
@@ -98,7 +95,7 @@ public class Email {
 		}
 		mess.setTo(recipients);
 		mess.setTrack_clicks(true);
-		final String[] tags = new String[] { "bmc", "bemychef", "be my chef" };
+		final String[] tags = new String[]{"bmc", "bemychef", "be my chef"};
 		mess.setTags(tags);
 		mmr.setMessage(mess);
 		if (properties.getSend()) {

@@ -31,11 +31,10 @@ import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.DISH_COLL;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class DishDAOTest {
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
@@ -48,13 +47,13 @@ public class DishDAOTest {
 	private MongoCursor<Document> cursor;
 	@InjectMocks
 	private DishDAO dao;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		when(db.getCollection(DISH_COLL)).thenReturn(collection);
 	}
-	
+
 	@Test
 	public void testCreate() throws EpickurException {
 		Dish dish = EntityGenerator.generateRandomDish();
@@ -179,7 +178,7 @@ public class DishDAOTest {
 
 		dao.update(dish);
 	}
-	
+
 	@Test
 	public void testSearchOneType() throws EpickurException{
 		Dish dish = EntityGenerator.generateRandomDish();
@@ -198,21 +197,21 @@ public class DishDAOTest {
 		List<DishType> dishTypes = new ArrayList<>();
 		dishTypes.add(DishType.MAIN);
 		Geo geo = EntityGenerator.generateGeo();
-		
+
 		when(collection.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.limit(10)).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
-		
+
 		List<Dish> actuals = dao.search("mon", 5, dishTypes, 10, geo, 20);
-		
+
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
 		verify(collection).find(any(Document.class));
 		verify(cursor).close();
 	}
-	
+
 	@Test
 	public void testSearchMultipleType() throws EpickurException{
 		Dish dish = EntityGenerator.generateRandomDish();
@@ -232,31 +231,31 @@ public class DishDAOTest {
 		dishTypes.add(DishType.MAIN);
 		dishTypes.add(DishType.DESSERT);
 		Geo geo = EntityGenerator.generateGeo();
-		
+
 		when(collection.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.limit(10)).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
-		
+
 		List<Dish> actuals = dao.search("mon", 5, dishTypes, 10, geo, 20);
-		
+
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
 		verify(collection).find(any(Document.class));
 		verify(cursor).close();
 	}
-	
+
 	@Test
 	public void testSearchMongoException() throws EpickurException{
 		thrown.expect(EpickurDBException.class);
-		
+
 		List<DishType> dishTypes = new ArrayList<>();
 		dishTypes.add(DishType.MAIN);
 		Geo geo = EntityGenerator.generateGeo();
-		
+
 		when(collection.find(any(Document.class))).thenThrow(new MongoException(""));
-		
+
 		dao.search("mon", 5, dishTypes, 10, geo, 20);
 	}
 
@@ -264,28 +263,28 @@ public class DishDAOTest {
 	public void testSearchWithCatererId() throws EpickurException{
 		String catererId = new ObjectId().toHexString();
 		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
-		
+
 		when(collection.find(any(Document.class))).thenReturn(findIteratble);
 		when(findIteratble.iterator()).thenReturn(cursor);
 		when(cursor.hasNext()).thenReturn(true, false);
 		when(cursor.next()).thenReturn(found);
-		
+
 		List<Dish> actuals = dao.searchWithCatererId(catererId);
-		
+
 		assertNotNull(actuals);
 		assertEquals(1, actuals.size());
 		verify(collection).find(any(Document.class));
 		verify(cursor).close();
 	}
-	
+
 	@Test
 	public void testSearchWithCatererIdMongoException() throws EpickurException{
 		thrown.expect(EpickurDBException.class);
-		
+
 		String catererId = new ObjectId().toHexString();
-		
+
 		when(collection.find(any(Document.class))).thenThrow(new MongoException(""));
-		
+
 		dao.searchWithCatererId(catererId);
 	}
 }

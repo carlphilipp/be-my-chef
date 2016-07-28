@@ -25,11 +25,10 @@ import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.CATERER_COLL;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class CatererDAOTest {
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
@@ -42,13 +41,13 @@ public class CatererDAOTest {
 	private MongoCursor<Document> cursor;
 	@InjectMocks
 	private CatererDAO dao;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		when(db.getCollection(CATERER_COLL)).thenReturn(collection);
 	}
-	
+
 	@Test
 	public void testCreate() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();

@@ -165,7 +165,7 @@
 							<target>
 								<echo message="Creating API doc"/>
 								<!-- Does not work on linux/mac. Need to fix that -->
-								<exec executable="${basedir}/src/main/scripts/windows/generate-api.bat"/>
+								<exec executable="src/main/scripts/linux/generate-api.sh"/>
 							</target>
 						</configuration>
 					</execution>
@@ -198,7 +198,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
+				<version>2.10.4</version>
 				<configuration>
 					<stylesheetfile>../src/main/resources/stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
@@ -345,7 +345,7 @@
 								<configuration>
 									<target>
 										<echo message="Creating API doc"/>
-										<exec executable="src/main/scripts/windows/generate-api.bat"/>
+										<exec executable="src/main/scripts/linux/generate-api.sh"/>
 									</target>
 								</configuration>
 							</execution>

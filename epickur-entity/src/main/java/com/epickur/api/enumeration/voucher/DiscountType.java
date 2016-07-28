@@ -13,7 +13,7 @@ public enum DiscountType {
 
 	/**
 	 * The constructor
-	 * 
+	 *
 	 * @param type
 	 *            The type
 	 */
@@ -51,5 +51,5 @@ public enum DiscountType {
 	}
 
 	/** The type */
-	private String type;
+	private final String type;
 }

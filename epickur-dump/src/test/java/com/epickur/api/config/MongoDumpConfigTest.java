@@ -4,7 +4,6 @@ import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.dump.MongoDBDump;
 import com.epickur.api.utils.Utils;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @PropertySource("classpath:dump-test-data.properties")

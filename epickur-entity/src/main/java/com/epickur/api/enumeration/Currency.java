@@ -2,7 +2,7 @@ package com.epickur.api.enumeration;
 
 /**
  * Currency enumeration
- * 
+ *
  * @author cph
  * @version 1.0
  */
@@ -12,7 +12,7 @@ public enum Currency {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param n
 	 *            the name
 	 * @param sy
@@ -28,7 +28,7 @@ public enum Currency {
 
 	/**
 	 * Get the name
-	 * 
+	 *
 	 * @return the name
 	 */
 	public final String getName() {
@@ -37,7 +37,7 @@ public enum Currency {
 
 	/**
 	 * Get Symbol
-	 * 
+	 *
 	 * @return the symbol
 	 */
 	public final String getSymbol() {
@@ -46,7 +46,7 @@ public enum Currency {
 
 	/**
 	 * Get the code
-	 * 
+	 *
 	 * @return the code
 	 */
 	public final String getCode() {
@@ -55,7 +55,7 @@ public enum Currency {
 
 	/**
 	 * Get enum from str
-	 * 
+	 *
 	 * @param value
 	 *            The str value.
 	 * @return The currency
@@ -73,9 +73,9 @@ public enum Currency {
 	}
 
 	/** name */
-	private String name;
+	private final String name;
 	/** symbol */
-	private String symbol;
+	private final String symbol;
 	/** code */
-	private String code;
+	private final String code;
 }

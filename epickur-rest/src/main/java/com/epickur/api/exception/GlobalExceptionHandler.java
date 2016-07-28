@@ -43,7 +43,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Autowired
 	private HttpServletRequest request;
 
-	@ExceptionHandler({ Throwable.class, Exception.class })
+	@ExceptionHandler({Throwable.class, Exception.class})
 	public ResponseEntity<ErrorMessage> handleThrowable(final Throwable throwable) {
 		log.error("Fatal Error: {} {}", throwable.getLocalizedMessage(), throwable.getClass(), throwable);
 		return ResponseError.error(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,7 +99,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseError.error(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase(), descriptions);
 	}
 
-	@ExceptionHandler({ IllegalArgumentException.class })
+	@ExceptionHandler({IllegalArgumentException.class})
 	public ResponseEntity<ErrorMessage> handleIllegalArgumentException(final IllegalArgumentException exception) {
 		if (!StringUtils.isBlank(exception.getMessage())) {
 			log.error("Error: {}", exception.getMessage(), exception);
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		}
 	}
 
-	@ExceptionHandler({ EpickurForbiddenException.class })
+	@ExceptionHandler({EpickurForbiddenException.class})
 	public ResponseEntity<ErrorMessage> handleEpickurForbiddenException(final EpickurForbiddenException exception) {
 		final Key key = (Key) request.getAttribute("key");
 		log.warn("Forbidden : {} {}", exception.getMessage(), key.getId() != null ? " - User Id " + key.getId().toHexString() : "");
@@ -119,16 +119,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@Override
 	protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException ex, final HttpHeaders headers,
-			final HttpStatus status,
-			final WebRequest request) {
+																   final HttpStatus status,
+																   final WebRequest request) {
 		log.warn("Fatal Error: {} {}", ex.getMessage(), ex.getClass(), ex);
 		return changeResponseTypeToObject(ResponseError.error(HttpStatus.BAD_REQUEST));
 	}
 
 	@Override
 	protected ResponseEntity<Object> handleExceptionInternal(final Exception ex, final Object body, final HttpHeaders headers,
-			final HttpStatus status,
-			final WebRequest request) {
+															 final HttpStatus status,
+															 final WebRequest request) {
 		final Key key = (Key) this.request.getAttribute("key");
 		log.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getLocalizedMessage(), key.getKey(), key.getUserId(), key.getRole());
 		return changeResponseTypeToObject(ResponseError.error(status));
@@ -136,8 +136,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers,
-			final HttpStatus status,
-			final WebRequest request) {
+																  final HttpStatus status,
+																  final WebRequest request) {
 		final BindingResult bidingResult = ex.getBindingResult();
 		final List<ObjectError> errors = bidingResult.getAllErrors();
 		final List<String> descriptions = errors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
@@ -147,20 +147,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers,
-			final HttpStatus status,
-			final WebRequest request) {
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
+																  final HttpHeaders headers,
+																  final HttpStatus status,
+																  final WebRequest request) {
 		final Key key = (Key) this.request.getAttribute("key");
 		log.warn("{} - {} - {} {} {}", ex.getClass().getSimpleName(), ex.getMessage(), key.getKey(), key.getUserId(), key.getRole());
 		return changeResponseTypeToObject(ResponseError.error(status, status.getReasonPhrase(), "Required request body is probably missing"));
 	}
 
-	private ResponseEntity<Object> changeResponseTypeToObject(ResponseEntity<ErrorMessage> responseEntity) {
-		return new ResponseEntity<>((Object) responseEntity.getBody(), responseEntity.getHeaders(), responseEntity.getStatusCode());
+	private ResponseEntity<Object> changeResponseTypeToObject(final ResponseEntity<ErrorMessage> responseEntity) {
+		return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getHeaders(), responseEntity.getStatusCode());
 	}
 
 	private HttpHeaders getHeaders() {
-		HttpHeaders headers = new HttpHeaders();
+		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		return headers;
 	}

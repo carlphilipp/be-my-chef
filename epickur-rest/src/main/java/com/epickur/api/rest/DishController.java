@@ -7,7 +7,6 @@ import com.epickur.api.entity.Geo;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
-import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
@@ -20,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Optional;
@@ -39,11 +37,7 @@ import static com.epickur.api.enumeration.Operation.*;
 public class DishController {
 
 	@Autowired
-	private HttpServletRequest request;
-	@Autowired
 	private DishService dishService;
-	@Autowired
-	private CatererService catererService;
 	@Autowired
 	private Utils utils;
 
@@ -54,7 +48,7 @@ public class DishController {
 	 * @apiName CreateDish
 	 * @apiGroup Dishes
 	 * @apiPermission admin, super_user (own caterer)
-	 * 
+	 *
 	 * @apiParam (Request: JSON Object) {Dish} dish Dish JSON Object.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the Dish.
@@ -70,12 +64,12 @@ public class DishController {
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
 	 *		"id": "54e12a60731e59c612c5fac7",
- 	 *		"name": "Fish and Chips",
+	 *		"name": "Fish and Chips",
 	 *		"description": "Fresh fish and chips",
 	 *		"type": "Fish",
 	 *		"price": 5.0,
@@ -100,7 +94,7 @@ public class DishController {
 	 *				},
 	 *			},
 	 *		},
-	 * 		"ingredients": 
+	 * 		"ingredients":
 	 * 		[{
 	 * 			"name": "Fish",
 	 *			"sequence": 1,
@@ -111,7 +105,7 @@ public class DishController {
 	 *			"sequence": 2,
 	 *			"quantity": 1.0
 	 *		}],
-	 *		"nutritionFacts": 
+	 *		"nutritionFacts":
 	 *		[{
 	 *			"name": "Calories",
 	 *			"value": 1250.0,
@@ -153,7 +147,7 @@ public class DishController {
 	 * @apiName ReadDish
 	 * @apiGroup Dishes
 	 * @apiPermission admin, super_user, user
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Dish.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the Dish.
@@ -169,12 +163,12 @@ public class DishController {
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
 	 *		"id": "54e12a60731e59c612c5fac7",
- 	 *		"name": "Fish and Chips",
+	 *		"name": "Fish and Chips",
 	 *		"description": "Fresh fish and chips",
 	 *		"type": "Fish",
 	 *		"price": 5.0,
@@ -199,7 +193,7 @@ public class DishController {
 	 *				},
 	 *			},
 	 *		},
-	 * 		"ingredients": 
+	 * 		"ingredients":
 	 * 		[{
 	 * 			"name": "Fish",
 	 *			"sequence": 1,
@@ -210,7 +204,7 @@ public class DishController {
 	 *			"sequence": 2,
 	 *			"quantity": 1.0
 	 *		}],
-	 *		"nutritionFacts": 
+	 *		"nutritionFacts":
 	 *		[{
 	 *			"name": "Calories",
 	 *			"value": 1250.0,
@@ -341,6 +335,7 @@ public class DishController {
 	 * @apiUse InternalError
 	 */
 	// @formatter:on
+
 	/**
 	 * Read all dishes.
 	 *
@@ -360,7 +355,7 @@ public class DishController {
 	 * @apiName UpdateDish
 	 * @apiGroup Dishes
 	 * @apiPermission admin, super_user (own dish)
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Dish.
 	 *
 	 * @apiParam (Request: JSON Object) {String} id Id of the Dish.
@@ -388,12 +383,12 @@ public class DishController {
 	 * @apiSuccess (Response: JSON Object) {String} videoUrl Video URL of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} createdAt Creation date of the Dish.
 	 * @apiSuccess (Response: JSON Object) {Date} updatedAt Last update of the Dish.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
 	 *		"id": "54e12a60731e59c612c5fac7",
- 	 *		"name": "Fish and Chips",
+	 *		"name": "Fish and Chips",
 	 *		"description": "Fresh fish and chips",
 	 *		"type": "Fish",
 	 *		"price": 5.0,
@@ -418,7 +413,7 @@ public class DishController {
 	 *				},
 	 *			},
 	 *		},
-	 * 		"ingredients": 
+	 * 		"ingredients":
 	 * 		[{
 	 * 			"name": "Fish",
 	 *			"sequence": 1,
@@ -429,7 +424,7 @@ public class DishController {
 	 *			"sequence": 2,
 	 *			"quantity": 1.0
 	 *		}],
-	 *		"nutritionFacts": 
+	 *		"nutritionFacts":
 	 *		[{
 	 *			"name": "Calories",
 	 *			"value": 1250.0,
@@ -461,8 +456,8 @@ public class DishController {
 	@ValidateSimpleAccessRights(operation = UPDATE, endpoint = DISH)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(
-			@PathVariable("id") final String id,
-			@RequestBody final Dish dish) throws EpickurException {
+		@PathVariable("id") final String id,
+		@RequestBody final Dish dish) throws EpickurException {
 		final Dish result = dishService.update(dish);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
@@ -474,13 +469,13 @@ public class DishController {
 	 * @apiName DeleteDish
 	 * @apiGroup Dishes
 	 * @apiPermission admin, super_user (own dish)
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Dish.
 	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
-	 *		"id" : "54e0f713731eff3fe01641d5" , 
+	 *		"id" : "54e0f713731eff3fe01641d5" ,
 	 *		"deleted" : true
 	 *	}
 	 *
@@ -510,15 +505,15 @@ public class DishController {
 	}
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /dishes?types=:type1,type2,...,typeN&limit=:limit&at=:lat,:long&searchtext=:searchtext&distance=:distance Search a dish
 	 * @apiVersion 1.0.0
 	 * @apiName SearchDish
 	 * @apiGroup Dishes
 	 * @apiDescription Search a dish.
 	 * @apiPermission admin, super_user, user
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} types list of Dish type to search.
 	 * @apiParam (Request: URL Parameter) {String} limit Limit of number of result (default is 50).
 	 * @apiParam (Request: URL Parameter) {String} at Geocoordinates to use (latitude, longitude).
@@ -602,6 +597,7 @@ public class DishController {
 	 * @apiUse ForbiddenError
 	 */
 	// @formatter:on
+
 	/**
 	 * @param pickupdate The pickup date.
 	 * @param types      The list of Dish type.
@@ -615,22 +611,26 @@ public class DishController {
 	@ValidateSimpleAccessRights(operation = SEARCH_DISH, endpoint = DISH)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> search(
-			@RequestParam("pickupdate") @NotBlank(message = "{dish.search.pickupdate}") final String pickupdate,
-			@RequestParam("types") @NotBlank(message = "{dish.search.types}") final String types,
-			@RequestParam(value = "limit", defaultValue = "50") @Min(value = 1, message = "{dish.search.limit}") final Integer limit,
-			@RequestParam(value = "at", required = false) final String at,
-			@RequestParam(value = "searchtext", required = false) final String searchtext,
-			@RequestParam(value = "distance", defaultValue = "500") @Min(value = 50, message = "{dish.search.distance}") final Integer distance)
-			throws EpickurException {
+		@RequestParam("pickupdate") @NotBlank(message = "{dish.search.pickupdate}") final String pickupdate,
+		@RequestParam("types") @NotBlank(message = "{dish.search.types}") final String types,
+		@RequestParam(value = "limit", defaultValue = "50") @Min(value = 1, message = "{dish.search.limit}") final Integer limit,
+		@RequestParam(value = "at", required = false) final String at,
+		@RequestParam(value = "searchtext", required = false) final String searchtext,
+		@RequestParam(value = "distance", defaultValue = "500") @Min(value = 50, message = "{dish.search.distance}") final Integer distance)
+		throws EpickurException {
 		final List<DishType> dishTypes = utils.stringToListDishType(types);
 		Geo geo = null;
 		if (!StringUtils.isBlank(at)) {
 			geo = utils.stringToGeo(at);
 		}
-		final Object[] result = CommonsUtil.parsePickupdate(pickupdate);
-		final String day = (String) result[0];
-		final Integer minutes = (Integer) result[1];
-		final List<Dish> dishes = dishService.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
-		return new ResponseEntity<>(dishes, HttpStatus.OK);
+		final Optional<Object[]> pickupdateOptional = CommonsUtil.parsePickupdate(pickupdate);
+		if (pickupdateOptional.isPresent()) {
+			final String day = (String) pickupdateOptional.get()[0];
+			final Integer minutes = (Integer) pickupdateOptional.get()[1];
+			final List<Dish> dishes = dishService.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
+			return new ResponseEntity<>(dishes, HttpStatus.OK);
+		} else {
+			throw new EpickurException("Wrong pickupdate");
+		}
 	}
 }

@@ -41,8 +41,7 @@ public class KeyRequestFilter extends OncePerRequestFilter {
 	private ObjectMapper mapper;
 
 	@Override
-	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
-			throws IOException, ServletException {
+	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
 		final String urlPath = request.getRequestURI();
 		if (urlPath != null && !StringUtils.contains(urlPath, "/nokey/")) {
 			final String paramKey = request.getParameter("key");
@@ -70,7 +69,7 @@ public class KeyRequestFilter extends OncePerRequestFilter {
 							  final String paramKey) throws IOException, ServletException {
 		try {
 			handleKey(request, response, filterChain, paramKey);
-		} catch (EpickurException e) {
+		} catch (final EpickurException e) {
 			log.error(e.getLocalizedMessage(), e);
 			abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 		}
@@ -86,8 +85,7 @@ public class KeyRequestFilter extends OncePerRequestFilter {
 		}
 	}
 
-	protected void handleAPIKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
-			throws IOException, ServletException {
+	protected void handleAPIKey(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
 		final Key readKey = new Key();
 		readKey.setRole(Role.EPICKUR_WEB);
 		request.setAttribute("key", readKey);

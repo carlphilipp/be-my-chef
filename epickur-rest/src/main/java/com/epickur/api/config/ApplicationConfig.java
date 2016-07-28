@@ -12,16 +12,16 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableAspectJAutoProxy
 @EnableScheduling
 @Import({
-				AopConfig.class,
-				AmazonWSConfig.class,
-				EmailConfig.class,
-				GeoCoder.class,
-				MongoConfig.class,
-				PropertySourcesConfig.class,
-				StripeConfig.class,
-				SchedulerConfig.class,
-				ValidationConfig.class
-		})
+	AopConfig.class,
+	AmazonWSConfig.class,
+	EmailConfig.class,
+	GeoCoder.class,
+	MongoConfig.class,
+	PropertySourcesConfig.class,
+	StripeConfig.class,
+	SchedulerConfig.class,
+	ValidationConfig.class
+})
 public class ApplicationConfig {
 
 	@Bean

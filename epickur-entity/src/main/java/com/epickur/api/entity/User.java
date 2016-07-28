@@ -165,7 +165,7 @@ public class User extends AbstractMainDBEntity {
 		try {
 			final ObjectMapper mapper = ObjectMapperWrapperDB.getInstance();
 			return mapper.readValue(json, User.class);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new EpickurParsingException("Can not convert string to User: " + json, e);
 		}
 	}

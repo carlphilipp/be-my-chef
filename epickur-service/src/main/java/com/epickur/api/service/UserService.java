@@ -58,11 +58,7 @@ public class UserService {
 	 */
 	public User create(final User user, final boolean autoValidate) throws EpickurException {
 		checkIfUserExists(user);
-		if (autoValidate) {
-			user.setAllow(1);
-		} else {
-			user.setAllow(0);
-		}
+		user.setAllow(autoValidate ? 1 : 0);
 		final PasswordManager passwordManager = PasswordManager.createPasswordManager(user.getPassword());
 		final String dbPassword = passwordManager.createDBPassword();
 		final String code = passwordManager.getCode(user.getName(), user.getEmail());
@@ -193,8 +189,8 @@ public class UserService {
 			if (!utils.isPasswordCorrect(user.getPassword(), userFoundOptional.get())) {
 				throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, user.getEmail());
 			} else {
-				final String newEnryptedPassword = PasswordManager.createPasswordManager(user.getNewPassword()).createDBPassword();
-				user.setPassword(newEnryptedPassword);
+				final String newEncryptedPassword = PasswordManager.createPasswordManager(user.getNewPassword()).createDBPassword();
+				user.setPassword(newEncryptedPassword);
 			}
 		}
 		return user;
@@ -209,7 +205,7 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User checkCode(final String email, final String code) throws EpickurException {
-		Optional<User> userFoundOptional = readWithEmail(email);
+		final Optional<User> userFoundOptional = readWithEmail(email);
 		if (userFoundOptional.isPresent()) {
 			User userFound = userFoundOptional.get();
 			final String codeFound = Security.getUserCode(userFound);
@@ -271,19 +267,19 @@ public class UserService {
 	 */
 	public void suscribeToNewsletter(final User user) {
 		final String url = buildNewsletterUrl(user);
-		suscribeUserToNewsletter(url, user.getEmail());
+		subscribeUserToNewsletter(url, user.getEmail());
 	}
 
 	protected String buildNewsletterUrl(final User user) {
 		String url = "https://bemychef.us10.list-manage.com/subscribe/post-json"
-				+ "?u=b0fe27a209ea8ffa59b813767"
-				+ "&id=10d0ff2b3b"
-				+ "&FNAME=@@FIRST@@"
-				+ "&LNAME=@@LAST@@"
-				+ "&EMAIL=@@EMAIL@@"
-				+ "&ZCODE=@@ZIP@@"
-				+ "&STATE=@@STATE@@"
-				+ "&COUNTRY=@@COUNTRY@@";
+			+ "?u=b0fe27a209ea8ffa59b813767"
+			+ "&id=10d0ff2b3b"
+			+ "&FNAME=@@FIRST@@"
+			+ "&LNAME=@@LAST@@"
+			+ "&EMAIL=@@EMAIL@@"
+			+ "&ZCODE=@@ZIP@@"
+			+ "&STATE=@@STATE@@"
+			+ "&COUNTRY=@@COUNTRY@@";
 		if (StringUtils.isBlank(user.getFirst())) {
 			url = url.replaceFirst("@@FIRST@@", "-");
 		} else {
@@ -301,12 +297,12 @@ public class UserService {
 		return url;
 	}
 
-	protected void suscribeUserToNewsletter(final String url, final String email) {
+	protected void subscribeUserToNewsletter(final String url, final String email) {
 		try {
 			final HttpPost request = new HttpPost(url);
 			HttpClientBuilder.create().build().execute(request);
 		} catch (IOException ioe) {
-			log.error("Could not suscribe {} to our newsletter", email, ioe);
+			log.error("Could not subscribe {} to our newsletter", email, ioe);
 		}
 	}
 }

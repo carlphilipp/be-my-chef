@@ -13,6 +13,7 @@ import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Optional;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -43,16 +44,17 @@ public @interface PickupdateValidate {
 			}
 			boolean isValid = true;
 			if (order.getPickupdate() != null) {
-				Object[] result = CommonsUtil.parsePickupdate(order.getPickupdate());
-				if (result == null) {
+				final Optional<Object[]> result = CommonsUtil.parsePickupdate(order.getPickupdate());
+				if (!result.isPresent()) {
 					constraintContext.buildConstraintViolationWithTemplate(
 							"The field order.pickupdate has a wrong format. Should be: ddd-hh:mm, with ddd: mon|tue|wed|thu|fri|sat|sun. Found: "
 									+ order.getPickupdate()).addConstraintViolation();
 					isValid = false;
 				} else {
-					Caterer caterer = order.getDish().getCaterer();
-					WorkingTimes workingTimes = caterer.getWorkingTimes();
-					if (!workingTimes.canBePickup((String) result[0], (Integer) result[1])) {
+					final Object[] pickupdate = result.get();
+					final Caterer caterer = order.getDish().getCaterer();
+					final WorkingTimes workingTimes = caterer.getWorkingTimes();
+					if (!workingTimes.canBePickup((String) pickupdate[0], (Integer) pickupdate[1])) {
 						constraintContext.buildConstraintViolationWithTemplate("The order has a wrong pickupdate").addConstraintViolation();
 						isValid = false;
 					}

@@ -18,7 +18,7 @@ public class Report {
 	/**
 	 * Parameters sent to Jasper APIs
 	 **/
-	private Map<String, Object> parameters;
+	private final Map<String, Object> parameters;
 
 	/**
 	 * Construct a report

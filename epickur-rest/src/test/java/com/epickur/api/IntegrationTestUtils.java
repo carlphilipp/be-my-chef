@@ -142,10 +142,10 @@ public class IntegrationTestUtils {
 
 	public String generateRandomCorrectPickupDate(final WorkingTimes workingTimes) {
 		String pickupdate = EntityGenerator.generateRandomPickupDate();
-		Object[] parsedPickupdate = CommonsUtil.parsePickupdate(pickupdate);
+		Object[] parsedPickupdate = CommonsUtil.parsePickupdate(pickupdate).get();
 		while (!workingTimes.canBePickup((String) parsedPickupdate[0], (Integer) parsedPickupdate[1])) {
 			pickupdate = EntityGenerator.generateRandomPickupDate();
-			parsedPickupdate = CommonsUtil.parsePickupdate(pickupdate);
+			parsedPickupdate = CommonsUtil.parsePickupdate(pickupdate).get();
 		}
 		return pickupdate;
 	}

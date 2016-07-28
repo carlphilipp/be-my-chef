@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = AmazonConfigTest.class)
 public class AmazonWebServicesTest {
 
-	private String filePath = "/path";
+	private final String filePath = "/path";
 	@Mock
 	private BasicAWSCredentials awsCreds;
 	@Mock

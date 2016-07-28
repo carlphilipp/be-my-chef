@@ -104,7 +104,7 @@ public class Caterer extends AbstractMainDBEntity {
 		final Document found = Document.parse(apiView);
 		final Map<String, Object> result = new HashMap<>();
 		final Set<Entry<String, Object>> entrySet = found.entrySet();
-		for (Entry<String, Object> en : entrySet) {
+		for (final Entry<String, Object> en : entrySet) {
 			final String key = en.getKey();
 			if (!key.equals("id")) {
 				if (key.equals("location")) {

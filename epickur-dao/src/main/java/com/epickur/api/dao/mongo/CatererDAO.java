@@ -79,19 +79,13 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	@Override
 	public List<Caterer> readAll() throws EpickurException {
 		final List<Caterer> caterers = new ArrayList<>();
-		MongoCursor<Document> cursor = null;
-		try {
-			cursor = getColl().find().iterator();
+		try (final MongoCursor<Document> cursor = getColl().find().iterator()) {
 			while (cursor.hasNext()) {
 				final Caterer user = Caterer.getDocumentAsCatererDBView(cursor.next());
 				caterers.add(user);
 			}
 		} catch (final MongoException e) {
 			throw new EpickurDBException("readAll", e.getLocalizedMessage(), e);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
 		}
 		return caterers;
 	}

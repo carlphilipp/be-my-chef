@@ -26,9 +26,9 @@ public class SchedulerConfig {
 
 	@Bean
 	public SchedulerFactoryBean schedulerFactoryBean() {
-		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
+		final SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
 		schedulerFactoryBean.setAutoStartup(true);
-		AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
+		final AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
 		jobFactory.setApplicationContext(applicationContext);
 		schedulerFactoryBean.setJobFactory(jobFactory);
 		return schedulerFactoryBean;

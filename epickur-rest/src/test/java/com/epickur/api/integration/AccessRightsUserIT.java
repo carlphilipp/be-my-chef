@@ -1,13 +1,10 @@
 package com.epickur.api.integration;
 
 import com.epickur.api.ApplicationConfigTest;
-import com.epickur.api.IntegrationTestUtils;
-import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -16,17 +13,14 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.bson.types.ObjectId;
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URI;
 
@@ -37,15 +31,6 @@ import static org.junit.Assert.*;
 public class AccessRightsUserIT extends AccessRights {
 
 	private static final String ENDPOINT = "users";
-
-	private User user;
-
-
-	@PostConstruct
-	public void postConstruct() throws IOException, EpickurException {
-		super.postConstruct();
-		user = integrationTestUtils.createUserAndLogin();
-	}
 
 	// User Administrator
 	@Test

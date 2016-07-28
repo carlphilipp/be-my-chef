@@ -16,7 +16,7 @@ public abstract class Validation {
 	public static final String NO_VOUCHER_PROVIDED = "No voucher has been provided";
 	public static final String FIELD_NULL = "The field @object@.@field@ is not allowed to be null or empty";
 
-	private String entity;
+	private final String entity;
 
 	/**
 	 * Constructor
