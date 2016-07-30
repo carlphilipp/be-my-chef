@@ -95,16 +95,14 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 			final DateTime date = new DateTime();
 			final Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()), eq("status", Status.VALID.getType()));
 			final FindIterable<Document> find = getColl().find(query);
+			final List<Voucher> res = new ArrayList<>();
 			if (find != null) {
-				final List<Voucher> res = new ArrayList<>();
 				for (final Document document : find) {
 					final Voucher current = Voucher.getDocumentAsVoucher(document);
 					res.add(current);
 				}
-				return res;
-			} else {
-				return null;
 			}
+			return res;
 		} catch (final MongoException e) {
 			throw new EpickurDBException("readToClean", e.getMessage(), e);
 		}
