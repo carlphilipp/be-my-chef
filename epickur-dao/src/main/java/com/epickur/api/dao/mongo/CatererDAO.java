@@ -55,12 +55,7 @@ public class CatererDAO extends CrudDAO<Caterer> {
 		final Document filter = convertAttributeToDocument("_id", caterer.getId());
 		final Document update = caterer.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		final Optional<Caterer> catererOptional = processAfterQuery(updated);
-		if (catererOptional.isPresent()) {
-			return catererOptional.get();
-		} else {
-			return null;
-		}
+		return processAfterQuery(updated).orElse(null);
 	}
 
 	/**
@@ -69,11 +64,9 @@ public class CatererDAO extends CrudDAO<Caterer> {
 	 * @throws EpickurParsingException If an EpickurException occurred.
 	 */
 	private Optional<Caterer> processAfterQuery(final Document caterer) throws EpickurParsingException {
-		if (caterer != null) {
-			return Optional.of(Caterer.getDocumentAsCatererDBView(caterer));
-		} else {
-			return Optional.empty();
-		}
+		return caterer != null
+			? Optional.of(Caterer.getDocumentAsCatererDBView(caterer))
+			: Optional.empty();
 	}
 
 	@Override

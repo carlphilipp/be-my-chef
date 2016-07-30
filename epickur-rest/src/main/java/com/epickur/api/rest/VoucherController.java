@@ -58,9 +58,9 @@ public class VoucherController {
 	 * @apiGroup Vouchers
 	 * @apiDescription Get Voucher details.
 	 * @apiPermission admin, super_user, user, website
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} code Voucher code.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 * HTTP/1.1 200 OK
 	 * {
@@ -90,11 +90,9 @@ public class VoucherController {
 	@RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("code") final String code) throws EpickurException {
 		final Optional<Voucher> voucher = voucherService.read(code);
-		if (!voucher.isPresent()) {
-			return ResponseError.notFound(ErrorConstants.VOUCHER_NOT_FOUND, code);
-		} else {
-			return new ResponseEntity<>(voucher.get(), HttpStatus.OK);
-		}
+		return voucher.isPresent()
+			? new ResponseEntity<>(voucher.get(), HttpStatus.OK)
+			: ResponseError.notFound(ErrorConstants.VOUCHER_NOT_FOUND, code);
 	}
 
 	// @formatter:off
@@ -105,14 +103,14 @@ public class VoucherController {
 	 * @apiGroup Vouchers
 	 * @apiDescription Generate a list of vouchers.
 	 * @apiPermission admin
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {Integer} count Number of voucher to generate.
 	 * @apiParam (Request: URL Parameter) {String} discountType Discount type. Can be amount or percentage
 	 * @apiParam (Request: URL Parameter) {Double} discount Discount amount.
 	 * @apiParam (Request: URL Parameter) {Double} expirationType Expiration type. Can be onetime or until
 	 * @apiParam (Request: URL Parameter) {Date} expiration Expiration date. (not mandatory)
 	 * @apiParam (Request: URL Parameter) {String} format Format date. Default is MM/dd/yyyy. (not mandatory)
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 * HTTP/1.1 200 OK
 	 * [{
@@ -157,12 +155,12 @@ public class VoucherController {
 	@ValidateSimpleAccessRights(operation = GENERATE_VOUCHER, endpoint = VOUCHER)
 	@RequestMapping(value = "/generate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> generate(
-			@RequestParam("count") @NotBlank(message = "{voucher.generate.count.blank}") @Min(value = 0, message = "{voucher.generate.count.positive}") final Integer count,
-			@RequestParam("discountType") @NotBlank(message = "{voucher.generate.discounttype}") final DiscountType discountType,
-			@RequestParam("discount") @NotBlank(message = "{voucher.generate.discount.blank}") @Min(value = 0, message = "{voucher.generate.discount.positive}") final Integer discount,
-			@RequestParam("expirationType") @NotNull(message = "{voucher.generate.expirationtype}") final ExpirationType expirationType,
-			@RequestParam("expiration") final String expiration,
-			@RequestParam(value = "formatDate", required = false, defaultValue = "MM/dd/yyyy") final String format) throws EpickurException {
+		@RequestParam("count") @NotBlank(message = "{voucher.generate.count.blank}") @Min(value = 0, message = "{voucher.generate.count.positive}") final Integer count,
+		@RequestParam("discountType") @NotBlank(message = "{voucher.generate.discounttype}") final DiscountType discountType,
+		@RequestParam("discount") @NotBlank(message = "{voucher.generate.discount.blank}") @Min(value = 0, message = "{voucher.generate.discount.positive}") final Integer discount,
+		@RequestParam("expirationType") @NotNull(message = "{voucher.generate.expirationtype}") final ExpirationType expirationType,
+		@RequestParam("expiration") final String expiration,
+		@RequestParam(value = "formatDate", required = false, defaultValue = "MM/dd/yyyy") final String format) throws EpickurException {
 		DateTime date = null;
 		if (expiration != null) {
 			date = utils.parseDate(expiration, format);

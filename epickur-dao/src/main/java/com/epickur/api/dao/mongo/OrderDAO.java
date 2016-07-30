@@ -57,20 +57,13 @@ public class OrderDAO extends CrudDAO<Order> {
 		final Document filter = convertAttributeToDocument("_id", order.getId());
 		final Document update = order.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		final Optional<Order> orderOptional = processAfterQuery(updated);
-		if (orderOptional.isPresent()) {
-			return orderOptional.get();
-		} else {
-			return null;
-		}
+		return processAfterQuery(updated).orElse(null);
 	}
 
 	private Optional<Order> processAfterQuery(final Document document) throws EpickurParsingException {
-		if (document != null) {
-			return Optional.of(Order.getDocumentAsOrder(document));
-		} else {
-			return Optional.empty();
-		}
+		return document != null
+			? Optional.of(Order.getDocumentAsOrder(document))
+			: Optional.empty();
 	}
 
 	@Override

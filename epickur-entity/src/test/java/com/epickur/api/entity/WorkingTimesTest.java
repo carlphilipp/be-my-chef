@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 
@@ -32,10 +31,8 @@ public class WorkingTimesTest {
 		workingTimes.setHours(hours);
 
 		String pickupdate = "sat-07:12";
-		Optional<Object[]> objectOptional = CommonsUtil.parsePickupdate(pickupdate);
-		if (objectOptional.isPresent()) {
-			Object[] object = objectOptional.get();
-			assertFalse(workingTimes.canBePickup((String) object[0], (Integer) object[1]));
-		}
+		CommonsUtil.parsePickupdate(pickupdate).ifPresent(objects -> {
+			assertFalse(workingTimes.canBePickup((String) objects[0], (Integer) objects[1]));
+		});
 	}
 }

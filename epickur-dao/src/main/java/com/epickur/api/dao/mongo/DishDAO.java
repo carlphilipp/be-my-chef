@@ -59,12 +59,7 @@ public class DishDAO extends CrudDAO<Dish> {
 		final Document filter = convertAttributeToDocument("_id", dish.getId());
 		final Document update = dish.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		final Optional<Dish> dishOptional = processAfterQuery(updated);
-		if (dishOptional.isPresent()) {
-			return dishOptional.get();
-		} else {
-			return null;
-		}
+		return processAfterQuery(updated).orElse(null);
 	}
 
 	/**
@@ -73,11 +68,9 @@ public class DishDAO extends CrudDAO<Dish> {
 	 * @throws EpickurParsingException If an EpickurException occurred.
 	 */
 	private Optional<Dish> processAfterQuery(final Document document) throws EpickurParsingException {
-		if (document != null) {
-			return Optional.of(Dish.getDocumentAsDish(document));
-		} else {
-			return Optional.empty();
-		}
+		return document != null
+			? Optional.of(Dish.getDocumentAsDish(document))
+			: Optional.empty();
 	}
 
 	@Override

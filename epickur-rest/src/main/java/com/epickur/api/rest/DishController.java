@@ -236,11 +236,9 @@ public class DishController {
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		final Optional<Dish> dish = dishService.read(id);
-		if (!dish.isPresent()) {
-			return ResponseError.notFound(ErrorConstants.DISH_NOT_FOUND, id);
-		} else {
-			return new ResponseEntity<>(dish.get(), HttpStatus.OK);
-		}
+		return dish.isPresent()
+			? new ResponseEntity<>(dish.get(), HttpStatus.OK)
+			: ResponseError.notFound(ErrorConstants.DISH_NOT_FOUND, id);
 	}
 
 	// @formatter:off
@@ -619,18 +617,11 @@ public class DishController {
 		@RequestParam(value = "distance", defaultValue = "500") @Min(value = 50, message = "{dish.search.distance}") final Integer distance)
 		throws EpickurException {
 		final List<DishType> dishTypes = utils.stringToListDishType(types);
-		Geo geo = null;
-		if (!StringUtils.isBlank(at)) {
-			geo = utils.stringToGeo(at);
-		}
-		final Optional<Object[]> pickupdateOptional = CommonsUtil.parsePickupdate(pickupdate);
-		if (pickupdateOptional.isPresent()) {
-			final String day = (String) pickupdateOptional.get()[0];
-			final Integer minutes = (Integer) pickupdateOptional.get()[1];
-			final List<Dish> dishes = dishService.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
-			return new ResponseEntity<>(dishes, HttpStatus.OK);
-		} else {
-			throw new EpickurException("Wrong pickupdate");
-		}
+		final Geo geo = !StringUtils.isBlank(at) ? utils.stringToGeo(at) : null;
+		final Object[] pickupdateResult = CommonsUtil.parsePickupdate(pickupdate).orElseThrow(() -> new EpickurException("Wrong pickupdate"));
+		final String day = (String) pickupdateResult[0];
+		final Integer minutes = (Integer) pickupdateResult[1];
+		final List<Dish> dishes = dishService.search(day, minutes, dishTypes, limit, geo, searchtext, distance);
+		return new ResponseEntity<>(dishes, HttpStatus.OK);
 	}
 }

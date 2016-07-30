@@ -106,7 +106,7 @@ public class VoucherService {
 	 * @throws EpickurException If an EpickurException occurred
 	 */
 	public Voucher revertVoucher(final String code) throws EpickurException {
-		final Voucher found = this.readAndThrowException(code);
+		final Voucher found = readAndThrowException(code);
 		if (found.getExpirationType() == ExpirationType.ONETIME) {
 			found.setStatus(Status.VALID);
 		} else if (found.getExpirationType() == ExpirationType.UNTIL) {
@@ -117,10 +117,6 @@ public class VoucherService {
 	}
 
 	protected Voucher readAndThrowException(final String code) throws EpickurException {
-		final Optional<Voucher> found = voucherDAO.read(code);
-		if (!found.isPresent()) {
-			throw new EpickurException("Voucher '" + code + "' not found");
-		}
-		return found.get();
+		return voucherDAO.read(code).orElseThrow(() -> new EpickurException("Voucher '" + code + "' not found"));
 	}
 }

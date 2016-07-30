@@ -61,8 +61,7 @@ public class CatererServiceTest {
 
 		Optional<Caterer> actualCaterer = catererService.read(EntityGenerator.generateRandomString());
 
-		assertTrue(actualCaterer.isPresent());
-		Caterer actual = actualCaterer.get();
+		Caterer actual = actualCaterer.orElseThrow(AssertionError::new);
 		assertNotNull("Caterer is null", actual);
 		assertNotNull("Id not generated", actual.getId());
 		assertNotNull("CreatedAt is null", actual.getCreatedAt());
