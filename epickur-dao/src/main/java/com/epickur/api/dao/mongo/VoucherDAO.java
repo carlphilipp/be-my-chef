@@ -93,8 +93,7 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 		try {
 			log.debug("Read all vouchers to clean");
 			final DateTime date = new DateTime();
-			final Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()),
-				eq("status", Status.VALID.getType()));
+			final Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()), eq("status", Status.VALID.getType()));
 			final FindIterable<Document> find = getColl().find(query);
 			if (find != null) {
 				final List<Voucher> res = new ArrayList<>();
