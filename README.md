@@ -86,7 +86,7 @@ Some properties need to be updated to fit your environment.
 
 ####Lombok
 
-Lombok is used in the project. Please reefer to [lombock web site](https://projectlombok.org) to make it work in your IDE.
+Lombok is used in the project. Please reefer to [lombok web site](https://projectlombok.org) to make it work in your IDE.
 
 ####Tomcat
 
