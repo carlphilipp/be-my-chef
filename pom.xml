@@ -12,7 +12,7 @@
 	<description>The API that allow users to connect to Epickur data.</description>
 
 	<prerequisites>
-		<maven>3.3.9</maven>
+		<maven>${maven.version}</maven>
 	</prerequisites>
 
 	<organization>
@@ -66,12 +66,51 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<java.version>1.8</java.version>
+		<maven.version>3.3.9</maven.version>
+
+		<!-- Dependencies -->
+		<commons-lang3.version>3.4</commons-lang3.version>
+		<commons-codec.version>1.10</commons-codec.version>
+		<commons-io.version>2.4</commons-io.version>
+		<commons-math.version>3.5</commons-math.version>
+		<commons-logging.version>1.1.3</commons-logging.version>
+		<commons-beansutils.version>1.9.0</commons-beansutils.version>
+		<hamcrest.version>1.3</hamcrest.version>
+		<httpclient.version>4.5.1</httpclient.version>
+		<hibernate-validator.version>5.2.2.Final</hibernate-validator.version>
 		<jackson.version>2.7.5</jackson.version>
 		<junit.version>4.12</junit.version>
+		<javax-servlet.version>3.1.0</javax-servlet.version>
+		<javax.el-api.version>2.2.4</javax.el-api.version>
+		<javax.validation.version>1.1.0.Final</javax.validation.version>
+		<javassist.version>3.20.0-GA</javassist.version>
+		<joda-time.version>2.9</joda-time.version>
 		<lombok.version>1.16.10</lombok.version>
 		<log4j2.version>2.6</log4j2.version>
+		<libphonenumber.version>7.1.1</libphonenumber.version>
 		<mongo.version>3.2.2</mongo.version>
+		<mockito.version>2.0.2-beta</mockito.version>
+		<powermock.version>1.6.3</powermock.version>
 		<spring.version>4.3.1.RELEASE</spring.version>
+		<stripe.version>1.38.0</stripe.version>
+		<slf4j.version>1.7.12</slf4j.version>
+		<wagon.version>2.9</wagon.version>
+		<xml-apis.version>1.4.01</xml-apis.version>
+
+		<!-- Maven plugins -->
+		<cobertura-plugin.version>2.7</cobertura-plugin.version>
+		<compiler-plugin.version>3.1</compiler-plugin.version>
+		<failsafe-plugin.version>2.19</failsafe-plugin.version>
+		<findbugs-plugin.version>3.0.2</findbugs-plugin.version>
+		<javadoc-plugin.version>2.10.4</javadoc-plugin.version>
+		<jxr-plugin.version>2.5</jxr-plugin.version>
+		<pmd-plugin.version>3.5</pmd-plugin.version>
+		<project-info-reports-plugin.version>2.8</project-info-reports-plugin.version>
+		<site-plugin.version>3.4</site-plugin.version>
+		<surefire-plugin.version>2.19</surefire-plugin.version>
+		<taglist-plugin.version>2.4</taglist-plugin.version>
+		<versions-plugin.version>2.2</versions-plugin.version>
+		<wrapper-plugin.version>0.0.4</wrapper-plugin.version>
 	</properties>
 
 	<build>
@@ -79,7 +118,7 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh</artifactId>
-				<version>2.9</version>
+				<version>${wagon.version}</version>
 			</extension>
 		</extensions>
 		<plugins>
@@ -87,7 +126,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>${compiler-plugin.version}</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -98,14 +137,14 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19</version>
+				<version>${surefire-plugin.version}</version>
 			</plugin>
 
 			<!-- Integration tests -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.19</version>
+				<version>${failsafe-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -119,7 +158,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.5</version>
+				<version>${pmd-plugin.version}</version>
 				<configuration>
 					<skipEmptyReport>false</skipEmptyReport>
 					<linkXRef>true</linkXRef>
@@ -147,10 +186,10 @@
 			<plugin>
 				<groupId>com.rimerosolutions.maven.plugins</groupId>
 				<artifactId>wrapper-maven-plugin</artifactId>
-				<version>0.0.4</version>
+				<version>${wrapper-plugin.version}</version>
 				<inherited>false</inherited>
 				<configuration>
-					<mavenVersion>3.3.1</mavenVersion>
+					<mavenVersion>${maven.version}</mavenVersion>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -171,7 +210,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.19</version>
+						<version>${surefire-plugin.version}</version>
 						<configuration>
 							<skipTests>true</skipTests>
 						</configuration>
@@ -200,7 +239,7 @@
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
-			<version>1.3</version>
+			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -208,13 +247,13 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>2.0.2-beta</version>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito</artifactId>
-			<version>1.6.3</version>
+			<version>${powermock.version}</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -226,7 +265,7 @@
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
-			<version>1.6.3</version>
+			<version>${powermock.version}</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -240,17 +279,17 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
+			<version>${commons-lang3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
+			<version>${commons-codec.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
+			<version>${commons-io.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -265,7 +304,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
-			<version>3.5</version>
+			<version>${commons-math.version}</version>
 		</dependency>
 
 		<!-- Date framework -->
@@ -280,7 +319,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.5</version>
+				<version>${pmd-plugin.version}</version>
 				<configuration>
 					<skipEmptyReport>false</skipEmptyReport>
 					<linkXRef>true</linkXRef>
@@ -332,7 +371,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
+				<version>${javadoc-plugin.version}</version>
 				<configuration>
 					<stylesheetfile>${project.basedir}\src\main\resources\stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
@@ -357,12 +396,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.4</version>
+				<version>${site-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.8</version>
+				<version>${project-info-reports-plugin.version}</version>
 				<configuration>
 					<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
 					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
@@ -372,7 +411,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.7</version>
+				<version>${cobertura-plugin.version}</version>
 				<configuration>
 					<formats>
 						<format>html</format>
@@ -395,7 +434,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.19</version>
+				<version>${surefire-plugin.version}</version>
 				<configuration>
 					<alwaysGenerateFailsafeReport>true</alwaysGenerateFailsafeReport>
 					<aggregate>true</aggregate>
@@ -433,13 +472,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.5</version>
+				<version>${jxr-plugin.version}</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
-				<version>2.4</version>
+				<version>${taglist-plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<id>taglist-report</id>
@@ -463,20 +502,15 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>3.0.2</version>
+				<version>${findbugs-plugin.version}</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.2</version>
+				<version>${versions-plugin.version}</version>
 			</plugin>
 
-			<!--<plugin>-->
-				<!--<groupId>org.codehaus.mojo</groupId>-->
-				<!--<artifactId>javancss-maven-plugin</artifactId>-->
-				<!--<version>2.1</version>-->
-			<!--</plugin>-->
 		</plugins>
 	</reporting>
 
@@ -543,10 +577,9 @@
 			<dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>javax.servlet-api</artifactId>
-				<version>3.1.0</version>
+				<version>${javax-servlet.version}</version>
 				<scope>provided</scope>
 			</dependency>
-
 
 			<!-- Spring BOM -->
 			<dependency>
@@ -568,44 +601,44 @@
 			<dependency>
 				<groupId>com.googlecode.libphonenumber</groupId>
 				<artifactId>libphonenumber</artifactId>
-				<version>7.1.1</version>
+				<version>${libphonenumber.version}</version>
 			</dependency>
 
 			<!-- Stripe payment -->
 			<dependency>
 				<groupId>com.stripe</groupId>
 				<artifactId>stripe-java</artifactId>
-				<version>1.38.0</version>
+				<version>${stripe.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.javassist</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.20.0-GA</version>
+				<version>${javassist.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
-				<version>1.1.3</version>
+				<version>${commons-logging.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
-				<version>1.9.0</version>
+				<version>${commons-beansutils.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.5.1</version>
+				<version>${httpclient.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
-				<version>2.9</version>
+				<version>${joda-time.version}</version>
 			</dependency>
 
 			<dependency>
@@ -629,14 +662,14 @@
 			<dependency>
 				<groupId>xml-apis</groupId>
 				<artifactId>xml-apis</artifactId>
-				<!-- Issue when last version is used (class not found at test exec) -->
-				<version>1.4.01</version>
+				<!-- Issue when last version is used (class not found at test exec). Do not upgrade -->
+				<version>${xml-apis.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.7.12</version>
+				<version>${slf4j.version}</version>
 			</dependency>
 
 			<!-- Logging -->
@@ -670,25 +703,25 @@
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
-				<version>5.2.2.Final</version>
+				<version>${hibernate-validator.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>javax.el</groupId>
 				<artifactId>javax.el-api</artifactId>
-				<version>2.2.4</version>
+				<version>${javax.el-api.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.glassfish.web</groupId>
 				<artifactId>javax.el</artifactId>
-				<version>2.2.4</version>
+				<version>${javax.el-api.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
-				<version>1.1.0.Final</version>
+				<version>${javax.validation.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
