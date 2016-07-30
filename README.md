@@ -106,10 +106,10 @@ The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/co
 
 MongoDB must be started.
 
-Unit testing: `mvnw test`
+Unit testing: `./mvnw test`
 
 
-Integration testing: `mvnw integration-test`
+Integration testing: `./mvnw integration-test`
 
 
 
@@ -118,13 +118,13 @@ Integration testing: `mvnw integration-test`
 
 Generate war with Maven:
 
-`mvnw clean package [-DskipTests] [-Dpmd.skip=true]`
+`./mvnw clean package [-DskipTests] [-Dpmd.skip=true]`
 
 The generated jar will be in their respective project target directory. The final war in `epickur-rest/target`.
 
-Generate documentation with Maven in local: `mvn site` and then `mvn site:stage` to aggregate all the website in one. Find the result in the parent project `target/stage`.
+Generate documentation with Maven in local: `./mvnw clean package install site` and then `./mvnw site:stage` to aggregate all the website in one. Find the result in the parent project `target/stage`.
 
-Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it.
+Generate documentation with Maven and push it to AWS: `./mvnw site-deploy` or `./mvnw site:deploy` to just push it.
 
 Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.bat` from Windows or `epickur-rest/src/main/scripts/generate-api.sh` from Linux or OSX.
 
@@ -132,7 +132,7 @@ Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.b
 
 To deploy on AWS:
 
-`mvnw clean package "antrun:run@upload" -P aws`
+`./mvnw clean package "antrun:run@upload" -P aws`
 
 The ant plugin run several commands:
 

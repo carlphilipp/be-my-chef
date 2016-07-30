@@ -4,7 +4,7 @@
 
 	<groupId>com.epickur.api</groupId>
 	<artifactId>epickur-parent</artifactId>
-	<version>3.0.3-SNAPSHOT</version>
+	<version>3.0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Parent</name>
@@ -319,7 +319,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>${pmd-plugin.version}</version>
 				<configuration>
 					<skipEmptyReport>false</skipEmptyReport>
 					<linkXRef>true</linkXRef>
@@ -371,7 +370,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${javadoc-plugin.version}</version>
 				<configuration>
 					<stylesheetfile>${project.basedir}\src\main\resources\stylesheet.css</stylesheetfile>
 					<quiet>true</quiet>
@@ -722,6 +720,18 @@
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
 				<version>${javax.validation.version}</version>
+			</dependency>
+
+			<!-- Build and Reporting dependencies -->
+			<dependency>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>${pmd-plugin.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${javadoc-plugin.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
