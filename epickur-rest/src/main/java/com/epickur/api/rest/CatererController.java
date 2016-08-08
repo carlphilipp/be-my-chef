@@ -59,8 +59,8 @@ public class CatererController {
 	 * @apiGroup Caterers
 	 * @apiDescription Create a Caterer.
 	 * @apiPermission admin only
-	 * 
-	 * 
+	 *
+	 *
 	 * @apiParam (Request: JSON Object) {String} name Name of the Caterer.
 	 * @apiParam (Request: JSON Object) {Location} location Location of the Caterer.
 	 * @apiParam (Request: JSON Object) {String} description Description of the Caterer.
@@ -135,7 +135,7 @@ public class CatererController {
 	 * @apiGroup Caterers
 	 * @apiDescription Read a Caterer.
 	 * @apiPermission admin, super_user, user
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Caterer.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the Caterer.
@@ -191,11 +191,9 @@ public class CatererController {
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		final Optional<Caterer> caterer = catererService.read(id);
-		if (caterer.isPresent()) {
-			return new ResponseEntity<>(caterer.get(), HttpStatus.OK);
-		} else {
-			return ResponseError.notFound(ErrorConstants.CATERER_NOT_FOUND, id);
-		}
+		return caterer.isPresent()
+			? new ResponseEntity<>(caterer.get(), HttpStatus.OK)
+			: ResponseError.notFound(ErrorConstants.CATERER_NOT_FOUND, id);
 	}
 
 	// @formatter:off
@@ -206,9 +204,9 @@ public class CatererController {
 	 * @apiGroup Caterers
 	 * @apiDescription Update a Caterer with the data provided in the request.
 	 * @apiPermission admin, super_user (own caterer)
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Caterer.
-	 * 
+	 *
 	 * @apiParam (Request: JSON Object) {String} id Id of the Caterer.
 	 * @apiParam (Request: JSON Object) {String} name Name of the Caterer.
 	 * @apiParam (Request: JSON Object) {String} description Description of the Caterer.
@@ -229,7 +227,7 @@ public class CatererController {
 	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
-	 *	{ 
+	 *	{
 	 *		"id": "54e13813731ec70befb77ce6",
 	 *		"name": "Super Thai",
 	 *		"description": "Super Thai - Noodles, Curry dishes",
@@ -270,8 +268,8 @@ public class CatererController {
 	@ValidateSimpleAccessRights(operation = UPDATE, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(
-			@PathVariable("id") final String id,
-			@RequestBody final Caterer caterer) throws EpickurException {
+		@PathVariable("id") final String id,
+		@RequestBody final Caterer caterer) throws EpickurException {
 		final Caterer result = catererService.update(caterer);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
@@ -284,16 +282,16 @@ public class CatererController {
 	 * @apiGroup Caterers
 	 * @apiDescription Delete a Caterer with the provided Id.
 	 * @apiPermission admin only
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Caterer.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the Caterer.
 	 * @apiSuccess (Response: JSON Object) {Boolean} deleted True when deleted.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
-	 *		"id" : "54e0f713731eff3fe01641d5" , 
+	 *		"id" : "54e0f713731eff3fe01641d5" ,
 	 *		"deleted" : true
 	 *	}
 	 *
@@ -311,7 +309,7 @@ public class CatererController {
 	@ValidateSimpleAccessRights(operation = DELETE, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> delete(
-			@PathVariable("id") final String id) throws EpickurException {
+		@PathVariable("id") final String id) throws EpickurException {
 		final boolean resBool = catererService.delete(id);
 		if (resBool) {
 			final DeletedMessage deletedMessage = new DeletedMessage();
@@ -397,7 +395,7 @@ public class CatererController {
 	 * @apiGroup Caterers
 	 * @apiDescription Return a list containing all Dishes.
 	 * @apiPermission admin, super_user, user
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Caterer.
 	 *
 	 * @apiSuccess (Response: List of JSON Object) {String} id Id of the Dish.
@@ -513,9 +511,9 @@ public class CatererController {
 	 * @apiGroup Caterers
 	 * @apiDescription Obtain payement amount for a Caterer within a time period.
 	 * @apiPermission admin
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the Caterer.
-	 * 
+	 *
 	 * @apiSuccessExample Success-Response:
 	 * HTTP/1.1 200 OK
 	 * {
@@ -543,12 +541,12 @@ public class CatererController {
 	 */
 	@ValidateSimpleAccessRights(operation = PAYEMENT_INFO, endpoint = CATERER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/paymentInfo", method = RequestMethod.GET, consumes = {MediaType.APPLICATION_JSON_VALUE,
-			"application/pdf"}, produces = {MediaType.APPLICATION_JSON_VALUE, "application/pdf"})
+		"application/pdf"}, produces = {MediaType.APPLICATION_JSON_VALUE, "application/pdf"})
 	public ResponseEntity<?> paymentInfo(
-			@PathVariable("id") final String id,
-			@RequestParam("startDate") final String start,
-			@RequestParam("endDate") final String end,
-			@RequestParam(value = "formatDate", defaultValue = "MM/dd/yyyy") final String format) throws EpickurException {
+		@PathVariable("id") final String id,
+		@RequestParam("startDate") final String start,
+		@RequestParam("endDate") final String end,
+		@RequestParam(value = "formatDate", defaultValue = "MM/dd/yyyy") final String format) throws EpickurException {
 		DateTime startDate = null;
 		DateTime endDate = null;
 		if (start != null) {

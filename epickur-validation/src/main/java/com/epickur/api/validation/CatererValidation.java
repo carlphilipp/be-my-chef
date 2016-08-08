@@ -17,7 +17,6 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author cph
@@ -203,12 +202,12 @@ public class CatererValidation extends Validation {
 	 * @param timeFrames The time frame
 	 */
 	private void checkTimeFrames(final String entity, final String suffix, final List<TimeFrame> timeFrames) {
-		final Optional<TimeFrame> timeFrame = timeFrames.stream()
-				.filter(tf -> tf.getOpen() > tf.getClose())
-				.findFirst();
-		if (timeFrame.isPresent()) {
-			throw new EpickurIllegalArgument(fieldNull(entity, "workingTimes.hours" + suffix + "[" + timeFrames.indexOf(timeFrame.get()) + "]"));
-		}
+		timeFrames.stream()
+			.filter(tf -> tf.getOpen() > tf.getClose())
+			.findFirst()
+			.ifPresent(timeFrame -> {
+				throw new EpickurIllegalArgument(fieldNull(entity, "workingTimes.hours" + suffix + "[" + timeFrames.indexOf(timeFrame) + "]"));
+			});
 	}
 
 	/**

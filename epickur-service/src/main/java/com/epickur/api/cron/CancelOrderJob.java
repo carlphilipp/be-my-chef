@@ -52,20 +52,25 @@ public class CancelOrderJob extends QuartzJobBean {
 	protected void executeInternal(final JobExecutionContext context) throws JobExecutionException {
 		try {
 			final String orderId = context.getJobDetail().getJobDataMap().getString("orderId");
-			Optional<Order> orderOptional = orderDAO.read(orderId);
 			final String userId = context.getJobDetail().getJobDataMap().getString("userId");
+
+			final Optional<Order> orderOptional = orderDAO.read(orderId);
 			final Optional<User> userOptional = userDAO.read(userId);
+
 			if (userOptional.isPresent() && orderOptional.isPresent()) {
 				log.info("Cancel order id: {} with user id: {}", orderId, userId);
 				Order order = orderOptional.get();
-				User user = userOptional.get();
 				order.setStatus(OrderStatus.CANCELED);
 				order.prepareForUpdateIntoDB();
 				order = orderDAO.update(order);
 				if (order.getVoucher() != null) {
 					voucherService.revertVoucher(order.getVoucher().getCode());
 				}
+
+				final User user = userOptional.get();
 				emailUtils.emailCancelOrder(user, order);
+			} else {
+				log.warn("Could not cancel order '" + orderId + "' for user '" + userId + "' - '" + orderOptional + "' '" + userOptional + "'");
 			}
 		} catch (final EpickurException e) {
 			log.error(e.getLocalizedMessage(), e);

@@ -18,10 +18,10 @@ public class CommonsUtilTest {
 	@Test
 	public void testParsePickupdate() {
 		Optional<Object[]> actual = CommonsUtil.parsePickupdate("mon-10:30");
-		assertTrue(actual.isPresent());
-		assertEquals(2, actual.get().length);
-		assertEquals("mon", actual.get()[0]);
-		assertEquals(630, actual.get()[1]);
+		Object[] objects = actual.orElseThrow(AssertionError::new);
+		assertEquals(2, objects.length);
+		assertEquals("mon", objects[0]);
+		assertEquals(630, objects[1]);
 	}
 
 	@Test

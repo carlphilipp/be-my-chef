@@ -52,9 +52,9 @@ public class UserController {
 	 * @apiName CreateUser
 	 * @apiGroup Users
 	 * @apiPermission admin only
-	 * 
+	 *
 	 * @apiParam (Request: Header Parameter) {Boolean} validate-agent Set as true for the user to be allowed without verification. For tests only.
-	 * 
+	 *
 	 * @apiParam (Request: JSON Object) {String} name Name of the User.
 	 * @apiParam (Request: JSON Object) {String} password Password of the User.
 	 * @apiParam (Request: JSON Object) {String} email Email of the User.
@@ -95,9 +95,9 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = CREATE, endpoint = USER)
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> create(
-			@RequestHeader(value = "validate-agent", defaultValue = "false") final boolean autoValidate,
-			@RequestBody @Validated(Create.class) final User user)
-			throws EpickurException {
+		@RequestHeader(value = "validate-agent", defaultValue = "false") final boolean autoValidate,
+		@RequestBody @Validated(Create.class) final User user)
+		throws EpickurException {
 		final User result = userService.create(user, autoValidate);
 		// We add to the header the check code. Can be useful for tests or developers.
 		final HttpHeaders headers = new HttpHeaders();
@@ -106,14 +106,14 @@ public class UserController {
 	}
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /users/:id Read a User
 	 * @apiVersion 1.0.0
 	 * @apiName GetUser
 	 * @apiGroup Users
 	 * @apiPermission admin, super_user (own user), user (own user)
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the User.
@@ -150,11 +150,9 @@ public class UserController {
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> read(@PathVariable("id") final String id) throws EpickurException {
 		final Optional<User> user = userService.read(id);
-		if (user.isPresent()) {
-			return new ResponseEntity<>(user.get(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		return user.isPresent()
+			? new ResponseEntity<>(user.get(), HttpStatus.OK)
+			: new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	// @formatter:off
@@ -164,9 +162,9 @@ public class UserController {
 	 * @apiName UpdateUser2
 	 * @apiGroup Users
 	 * @apiPermission admin, super_user (own user), user (own user)
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
-	 * 
+	 *
 	 * @apiParam (Request: JSON Object) {String} id Id of the User.
 	 * @apiParam (Request: JSON Object) {String} name Name of the User. (optional)
 	 * @apiParam (Request: JSON Object) {String} email Email of the User. (optional)
@@ -205,8 +203,8 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = UPDATE, endpoint = USER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(
-			@PathVariable("id") final String id,
-			@RequestBody @Validated(Update.class) final User user) throws EpickurException {
+		@PathVariable("id") final String id,
+		@RequestBody @Validated(Update.class) final User user) throws EpickurException {
 		if (StringUtils.isNotBlank(user.getPassword()) && StringUtils.isNotBlank(user.getNewPassword())) {
 			userService.injectNewPassword(user);
 		}
@@ -221,13 +219,13 @@ public class UserController {
 	 * @apiName DeleteUser
 	 * @apiGroup Users
 	 * @apiPermission admin only
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
 	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
-	 *		"id" : "54e0f713731eff3fe01641d5" , 
+	 *		"id" : "54e0f713731eff3fe01641d5" ,
 	 *		"deleted" : true
 	 *	}
 	 *
@@ -250,8 +248,8 @@ public class UserController {
 	}
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /users Read all Users
 	 * @apiVersion 1.0.0
 	 * @apiName GetAllUsers
@@ -297,14 +295,14 @@ public class UserController {
 	}
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /users/:id/orders/:orderId Read an Order
 	 * @apiVersion 1.0.0
 	 * @apiName GetOrder
 	 * @apiGroup Orders
 	 * @apiPermission admin, super_user (own order), user (own order)
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
 	 * @apiParam (Request: URL Parameter) {String} orderId Id of the Order.
 	 *
@@ -318,22 +316,22 @@ public class UserController {
 	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
-	 *	{ 
+	 *	{
 	 *		"id" : "54e0f996731e1b9f54451ef6",
-	 *		"userId" : "54e0f995731e1b9f54451ef5", 
-	 *		"description" : "A new order", 
-	 *		"amount" : 500 , 
-	 *		"currency" : "AUD", 
-	 *		"dish" : { 
-	 *			"name" : "Dish name", 
-	 *			"description" : "A super cool dish", 
-	 *			"type" : "Vegan", 
-	 *			"price" : 5.0, 
-	 *			"cookingTime" : 5, 
-	 *			"difficultyLevel" : 8, 
+	 *		"userId" : "54e0f995731e1b9f54451ef5",
+	 *		"description" : "A new order",
+	 *		"amount" : 500 ,
+	 *		"currency" : "AUD",
+	 *		"dish" : {
+	 *			"name" : "Dish name",
+	 *			"description" : "A super cool dish",
+	 *			"type" : "Vegan",
+	 *			"price" : 5.0,
+	 *			"cookingTime" : 5,
+	 *			"difficultyLevel" : 8,
 	 *			"videoUrl" : "http://www.google.com/videos"
-	 *		}, 
-	 *		"createdAt" : 1424030102542, 
+	 *		},
+	 *		"createdAt" : 1424030102542,
 	 *		"updatedAt" : 1424030102542
 	 *	}
 	 *
@@ -352,25 +350,23 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = READ, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> readOneOrder(
-			@PathVariable("id") final String id,
-			@PathVariable("orderId") final String orderId) throws EpickurException {
+		@PathVariable("id") final String id,
+		@PathVariable("orderId") final String orderId) throws EpickurException {
 		final Optional<Order> order = orderService.readOrder(orderId);
-		if (order.isPresent()) {
-			return new ResponseEntity<>(order.get(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		return order.isPresent()
+			? new ResponseEntity<>(order.get(), HttpStatus.OK)
+			: new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /users/:id/orders Read a list of Orders
 	 * @apiVersion 1.0.0
 	 * @apiName GetOrders
 	 * @apiGroup Orders
 	 * @apiPermission admin only
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
 	 *
 	 * @apiSuccess (Response: JSON Object) {Order} id Id of the Order.
@@ -383,39 +379,39 @@ public class UserController {
 	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
-	 *	[{ 
+	 *	[{
 	 *		"id" : "54e0f996731e1b9f54451ef6",
-	 *		"userId" : "54e0f995731e1b9f54451ef5", 
-	 *		"description" : "A new order", 
-	 *		"amount" : 500 , 
-	 *		"currency" : "AUD", 
-	 *		"dish" : { 
-	 *			"name" : "Chicken Kebab", 
-	 *			"description" : "Fresh meat, served with fries", 
-	 *			"type" : "Vegan", 
-	 *			"price" : 5.0, 
-	 *			"cookingTime" : 5, 
-	 *			"difficultyLevel" : 8, 
+	 *		"userId" : "54e0f995731e1b9f54451ef5",
+	 *		"description" : "A new order",
+	 *		"amount" : 500 ,
+	 *		"currency" : "AUD",
+	 *		"dish" : {
+	 *			"name" : "Chicken Kebab",
+	 *			"description" : "Fresh meat, served with fries",
+	 *			"type" : "Vegan",
+	 *			"price" : 5.0,
+	 *			"cookingTime" : 5,
+	 *			"difficultyLevel" : 8,
 	 *			"videoUrl" : "http://www.google.com/videos"
-	 *		}, 
-	 *		"createdAt" : 1424030102542, 
+	 *		},
+	 *		"createdAt" : 1424030102542,
 	 *		"updatedAt" : 1424030102542
-	 *	},{ 
+	 *	},{
 	 *		"id" : "54e0f996731e1b9f54451ef7",
-	 *		"userId" : "54e0f995731e1b9f54451ef6", 
-	 *		"description" : "A new order", 
-	 *		"amount" : 500 , 
-	 *		"currency" : "AUD", 
-	 *		"dish" : { 
-	 *			"name" : "Fish and Chips", 
-	 *			"description" : "Fresh fish and home made chips", 
-	 *			"type" : "Vegan", 
-	 *			"price" : 5.0, 
-	 *			"cookingTime" : 5, 
-	 *			"difficultyLevel" : 8, 
+	 *		"userId" : "54e0f995731e1b9f54451ef6",
+	 *		"description" : "A new order",
+	 *		"amount" : 500 ,
+	 *		"currency" : "AUD",
+	 *		"dish" : {
+	 *			"name" : "Fish and Chips",
+	 *			"description" : "Fresh fish and home made chips",
+	 *			"type" : "Vegan",
+	 *			"price" : 5.0,
+	 *			"cookingTime" : 5,
+	 *			"difficultyLevel" : 8,
 	 *			"videoUrl" : "http://www.google.com/videos"
-	 *		}, 
-	 *		"createdAt" : 1424030102542, 
+	 *		},
+	 *		"createdAt" : 1424030102542,
 	 *		"updatedAt" : 1424030102542
 	 *	}]
 	 *
@@ -446,11 +442,11 @@ public class UserController {
 	 * @apiName CreateOrder
 	 * @apiGroup Orders
 	 * @apiPermission admin, super_user, user
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
-	 * 
+	 *
 	 * @apiParam (Request: Header Parameter) {Boolean} charge-agent Set as false to not charge the card. For tests only.
-	 * 
+	 *
 	 * @apiParam (Request: JSON Object) {String} derp Has to be determined.
 	 *
 	 * @apiSuccess (Response: JSON Object) {Order} id Id of the Order.
@@ -466,23 +462,23 @@ public class UserController {
 	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
-	 *	{ 
+	 *	{
 	 *		"id" : "54e0f996731e1b9f54451ef6",
-	 *		"userId" : "54e0f995731e1b9f54451ef5", 
-	 *		"description" : "A new order", 
-	 *		"amount" : 500 , 
-	 *		"currency" : "AUD", 
-	 *		"dish" : { 
-	 *			"name" : "Chicken Kebab", 
-	 *			"description" : "Fresh meat, served with fries", 
-	 *			"type" : "Vegan", 
-	 *			"price" : 5.0, 
-	 *			"cookingTime" : 5, 
-	 *			"difficultyLevel" : 8, 
+	 *		"userId" : "54e0f995731e1b9f54451ef5",
+	 *		"description" : "A new order",
+	 *		"amount" : 500 ,
+	 *		"currency" : "AUD",
+	 *		"dish" : {
+	 *			"name" : "Chicken Kebab",
+	 *			"description" : "Fresh meat, served with fries",
+	 *			"type" : "Vegan",
+	 *			"price" : 5.0,
+	 *			"cookingTime" : 5,
+	 *			"difficultyLevel" : 8,
 	 *			"videoUrl" : "http://www.google.com/videos"
-	 *		}, 
+	 *		},
 	 *		"chargeId": "ch_163baS21cpKR0BKmv00GWuLK",
-	 *		"createdAt" : 1424030102542, 
+	 *		"createdAt" : 1424030102542,
 	 *		"updatedAt" : 1424030102542
 	 *	}
 	 *
@@ -504,8 +500,8 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = CREATE, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> createOneOrder(
-			@PathVariable("id") final String userId,
-			@RequestBody @Validated(Create.class) final Order order) throws EpickurException {
+		@PathVariable("id") final String userId,
+		@RequestBody @Validated(Create.class) final Order order) throws EpickurException {
 		final Order result = orderService.create(userId, order);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
@@ -517,10 +513,10 @@ public class UserController {
 	 * @apiName UpdateOrder
 	 * @apiGroup Orders
 	 * @apiPermission admin, super_user (own order), user (own order)
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
 	 * @apiParam (Request: URL Parameter) {String} orderId Id of the Order.
-	 * 
+	 *
 	 * @apiParam (Request: JSON Object) {String} id Id of the User.
 	 * @apiParam (Request: JSON Object) {String} name Name of the User. (optional)
 	 * @apiParam (Request: JSON Object) {String} email Email of the User. (optional)
@@ -535,22 +531,22 @@ public class UserController {
 	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
-	 *	{ 
+	 *	{
 	 *		"id" : "54e0f996731e1b9f54451ef6",
-	 *		"userId" : "54e0f995731e1b9f54451ef5", 
-	 *		"description" : "A new order", 
-	 *		"amount" : 500 , 
-	 *		"currency" : "AUD", 
-	 *		"dish" : { 
-	 *			"name" : "Chicken Kebab", 
-	 *			"description" : "Fresh meat, served with fries", 
-	 *			"type" : "Vegan", 
-	 *			"price" : 5.0, 
-	 *			"cookingTime" : 5, 
-	 *			"difficultyLevel" : 8, 
+	 *		"userId" : "54e0f995731e1b9f54451ef5",
+	 *		"description" : "A new order",
+	 *		"amount" : 500 ,
+	 *		"currency" : "AUD",
+	 *		"dish" : {
+	 *			"name" : "Chicken Kebab",
+	 *			"description" : "Fresh meat, served with fries",
+	 *			"type" : "Vegan",
+	 *			"price" : 5.0,
+	 *			"cookingTime" : 5,
+	 *			"difficultyLevel" : 8,
 	 *			"videoUrl" : "http://www.google.com/videos"
-	 *		}, 
-	 *		"createdAt" : 1424030102542, 
+	 *		},
+	 *		"createdAt" : 1424030102542,
 	 *		"updatedAt" : 1424030102542
 	 *	}
 	 *
@@ -570,9 +566,9 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = UPDATE, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updateOneOrder(
-			@PathVariable("id") final String id,
-			@PathVariable("orderId") final String orderId,
-			@RequestBody @Validated(Update.class) final Order order) throws EpickurException {
+		@PathVariable("id") final String id,
+		@PathVariable("orderId") final String orderId,
+		@RequestBody @Validated(Update.class) final Order order) throws EpickurException {
 		final Order result = orderService.update(order);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
@@ -584,7 +580,7 @@ public class UserController {
 	 * @apiName DeleteOrder
 	 * @apiGroup Orders
 	 * @apiPermission admin only
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
 	 * @apiParam (Request: URL Parameter) {String} orderId id Id of the Order.
 	 *
@@ -594,7 +590,7 @@ public class UserController {
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
 	 *	{
-	 *		"id" : "54e0f713731eff3fe01641d5" , 
+	 *		"id" : "54e0f713731eff3fe01641d5" ,
 	 *		"deleted" : true
 	 *	}
 	 *
@@ -613,8 +609,8 @@ public class UserController {
 	@ValidateSimpleAccessRights(operation = DELETE, endpoint = ORDER)
 	@RequestMapping(value = "/{id:^[0-9a-fA-F]{24}$}/orders/{orderId:^[0-9a-fA-F]{24}$}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> deleteOneOrder(
-			@PathVariable("id") final String id,
-			@PathVariable("orderId") final String orderId) throws EpickurException {
+		@PathVariable("id") final String id,
+		@PathVariable("orderId") final String orderId) throws EpickurException {
 		final boolean isDeleted = orderService.delete(orderId);
 		return getDeleteMessage(orderId, isDeleted);
 	}

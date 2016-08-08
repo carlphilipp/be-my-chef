@@ -69,20 +69,13 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 		final Document filter = convertAttributeToDocument("_id", voucher.getId());
 		final Document update = voucher.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		final Optional<Voucher> voucherOptional = processAfterQuery(updated);
-		if (voucherOptional.isPresent()) {
-			return voucherOptional.get();
-		} else {
-			return null;
-		}
+		return processAfterQuery(updated).orElse(null);
 	}
 
 	private Optional<Voucher> processAfterQuery(final Document voucher) throws EpickurParsingException {
-		if (voucher != null) {
-			return Optional.of(Voucher.getDocumentAsVoucher(voucher));
-		} else {
-			return Optional.empty();
-		}
+		return voucher != null
+			? Optional.of(Voucher.getDocumentAsVoucher(voucher))
+			: Optional.empty();
 	}
 
 	/**
@@ -100,19 +93,16 @@ public class VoucherDAO extends CrudDAO<Voucher> {
 		try {
 			log.debug("Read all vouchers to clean");
 			final DateTime date = new DateTime();
-			final Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()),
-					eq("status", Status.VALID.getType()));
+			final Bson query = and(eq("expirationType", ExpirationType.UNTIL.getType()), lt("expiration", date.getMillis()), eq("status", Status.VALID.getType()));
 			final FindIterable<Document> find = getColl().find(query);
+			final List<Voucher> res = new ArrayList<>();
 			if (find != null) {
-				final List<Voucher> res = new ArrayList<>();
 				for (final Document document : find) {
 					final Voucher current = Voucher.getDocumentAsVoucher(document);
 					res.add(current);
 				}
-				return res;
-			} else {
-				return null;
 			}
+			return res;
 		} catch (final MongoException e) {
 			throw new EpickurDBException("readToClean", e.getMessage(), e);
 		}

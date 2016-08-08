@@ -15,7 +15,6 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
 
 import static com.epickur.api.enumeration.EndpointType.*;
 import static com.epickur.api.enumeration.Operation.READ;
@@ -55,58 +54,36 @@ public class ComplexAccessRightsAspect extends AccessRightsAspect {
 	}
 
 	protected void handleUser(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
-		final String userId;
-		if (operation == READ) {
-			userId = (String) objects[0];
-		} else {
-			userId = ((User) objects[0]).getId().toHexString();
-		}
-		final Optional<User> user = userDAO.read(userId);
-		if (!user.isPresent()) {
-			throw new EpickurNotFoundException(USER_NOT_FOUND, userId);
-		}
-		userValidation.checkUserRightsAfter(key.getRole(), key.getUserId(), user.get(), operation);
+		final String userId = operation == READ
+			? (String) objects[0]
+			: ((User) objects[0]).getId().toHexString();
+		final User user = userDAO.read(userId).orElseThrow(() -> new EpickurNotFoundException(USER_NOT_FOUND, userId));
+		userValidation.checkUserRightsAfter(key.getRole(), key.getUserId(), user, operation);
 	}
 
 	protected void handleCaterer(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
 		final Caterer caterer = (Caterer) objects[0];
 		final String catererId = caterer.getId().toHexString();
-		final Optional<Caterer> read = catererDAO.read(catererId);
-		if (!read.isPresent()) {
-			throw new EpickurNotFoundException(CATERER_NOT_FOUND, catererId);
-		}
-		catererValidation.checkRightsAfter(key.getRole(), key.getUserId(), read.get(), operation);
+		final Caterer read = catererDAO.read(catererId).orElseThrow(() -> new EpickurNotFoundException(CATERER_NOT_FOUND, catererId));
+		catererValidation.checkRightsAfter(key.getRole(), key.getUserId(), read, operation);
 	}
 
 	protected void handleDish(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
-		final String dishId;
-		if (operation == UPDATE) {
-			dishId = ((Dish) objects[0]).getId().toHexString();
-		} else {
-			dishId = (String) objects[0];
-		}
-		final Optional<Dish> read = dishDAO.read(dishId);
-		if (!read.isPresent()) {
-			throw new EpickurNotFoundException(DISH_NOT_FOUND, dishId);
-		}
-		dishValidation.checkRightsAfter(key.getRole(), key.getUserId(), read.get(), operation);
+		final String dishId = operation == UPDATE
+			? ((Dish) objects[0]).getId().toHexString()
+			: (String) objects[0];
+		final Dish read = dishDAO.read(dishId).orElseThrow(() -> new EpickurNotFoundException(DISH_NOT_FOUND, dishId));
+		dishValidation.checkRightsAfter(key.getRole(), key.getUserId(), read, operation);
 	}
 
 	protected void handleOrder(final Operation operation, final Object[] objects, final Key key) throws EpickurException {
-		final String orderId;
-		if (operation == READ) {
-			orderId = (String) objects[0];
-		} else {
-			orderId = ((Order) objects[0]).getId().toHexString();
-		}
-		final Optional<Order> read = orderDAO.read(orderId);
-		if (!read.isPresent()) {
-			throw new EpickurNotFoundException(ORDER_NOT_FOUND, orderId);
-		}
-		final Order order = read.get();
-		userValidation.checkOrderRightsAfter(key.getRole(), key.getUserId(), order, operation);
+		final String orderId = operation == READ
+			? (String) objects[0]
+			: ((Order) objects[0]).getId().toHexString();
+		final Order read = orderDAO.read(orderId).orElseThrow(() -> new EpickurNotFoundException(ORDER_NOT_FOUND, orderId));
+		userValidation.checkOrderRightsAfter(key.getRole(), key.getUserId(), read, operation);
 		if (operation == UPDATE) {
-			userValidation.checkOrderStatus(order);
+			userValidation.checkOrderStatus(read);
 		}
 	}
 }

@@ -37,7 +37,7 @@ When adding a new module, be careful with cyclic dependency error: Two modules m
 
 * Logging: Contains all the logging dependencies and configuration used everywhere in the project.
 * Commons: Contains basic functionality that do not need any knowledge of main entity objects. Example: String or Date manipulation.
-* Test: Contains test utilities for Stripe payement. Might be merged in the future with 3rd party.
+* Test: Contains test utilities for Stripe payment. Might be merged in the future with 3rd party.
 * Entity: Contains all basic entity objects needed in the application. No logic there, just entities and Serializer/Deserializer classes.
 * Utils: Contains reports, security, access rights and emails features.
 * DAO: Access Mongo DB.
@@ -86,11 +86,11 @@ Some properties need to be updated to fit your environment.
 
 ####Lombok
 
-Lombok is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE.
+Lombok is used in the project. Please reefer to [lombok web site](https://projectlombok.org) to make it work in your IDE.
 
 ####Tomcat
 
-To be able to deploy with maven, you need to add to your computer a new environement variable:
+To be able to deploy with maven, you need to add to your computer a new environment variable:
 `CATALINA_BASE="/opt/tomcat"`
 
 The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/conf/catalina.properties`
@@ -104,12 +104,12 @@ The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/co
 
 ###Test
 
-MongoDB must be started.
+MongoDB must be started for integration tests.
 
-Unit testing: `mvnw test`
+Unit testing: `./mvnw test`
 
 
-Integration testing: `mvnw integration-test`
+Integration testing: `./mvnw integration-test`
 
 
 
@@ -118,13 +118,13 @@ Integration testing: `mvnw integration-test`
 
 Generate war with Maven:
 
-`mvnw clean package [-DskipTests] [-Dpmd.skip=true]`
+`./mvnw clean package [-DskipTests] [-Dpmd.skip=true]`
 
 The generated jar will be in their respective project target directory. The final war in `epickur-rest/target`.
 
-Generate documentation with Maven in local: `mvn site` and then `mvn site:stage` to aggregate all the website in one. Find the result in the parent project `target/stage`.
+Generate documentation with Maven in local: `./mvnw clean package install site` and then `./mvnw site:stage` to aggregate all the website in one. Find the result in the parent project `target/stage`.
 
-Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it.
+Generate documentation with Maven and push it to AWS: `./mvnw site-deploy` or `./mvnw site:deploy` to just push it.
 
 Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.bat` from Windows or `epickur-rest/src/main/scripts/generate-api.sh` from Linux or OSX.
 
@@ -132,12 +132,12 @@ Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.b
 
 To deploy on AWS:
 
-`mvnw clean package "antrun:run@upload" -P aws`
+`./mvnw clean package "antrun:run@upload" -P aws`
 
 The ant plugin run several commands:
 
 * Stop tomcat
-* Clean webbapps directory
+* Clean webapps directory
 * Clean other temp directory
 * Push ROOT.war (war generated) to $CATALINA_BASE/webapps
 * Start tomcat

@@ -100,11 +100,7 @@ public class OrderService {
 	}
 
 	protected User readUser(final String userId) throws EpickurException {
-		final Optional<User> user = userDAO.read(userId);
-		if (!user.isPresent()) {
-			throw new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, userId);
-		}
-		return user.get();
+		return userDAO.read(userId).orElseThrow(() -> new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, userId));
 	}
 
 	/**
@@ -221,11 +217,7 @@ public class OrderService {
 	}
 
 	protected Order read(final String orderId) throws EpickurException {
-		final Optional<Order> order = orderDAO.read(orderId);
-		if (!order.isPresent()) {
-			throw new EpickurNotFoundException(ErrorConstants.ORDER_NOT_FOUND, orderId);
-		}
-		return order.get();
+		return orderDAO.read(orderId).orElseThrow(() -> new EpickurNotFoundException(ErrorConstants.ORDER_NOT_FOUND, orderId));
 	}
 
 	protected void checkAuthorization(final String orderCode, final Order order) {

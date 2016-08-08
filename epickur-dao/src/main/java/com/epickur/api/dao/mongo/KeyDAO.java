@@ -64,12 +64,7 @@ public class KeyDAO extends CrudDAO<Key> {
 		log.debug("Read key with name: " + userName);
 		final Document query = convertAttributeToDocument("userName", userName);
 		final Document find = findDocument(query);
-		final Optional<Key> keyOptional = processAfterQuery(find);
-		if (keyOptional.isPresent()) {
-			return keyOptional.get();
-		} else {
-			return null;
-		}
+		return processAfterQuery(find).orElse(null);
 	}
 
 	@Override
@@ -83,11 +78,9 @@ public class KeyDAO extends CrudDAO<Key> {
 	 * @throws EpickurParsingException If an EpickurParsingException occurred.
 	 */
 	private Optional<Key> processAfterQuery(final Document key) throws EpickurParsingException {
-		if (key != null) {
-			return Optional.of(Key.getDocumentAsKey(key));
-		} else {
-			return Optional.empty();
-		}
+		return key != null
+			? Optional.of(Key.getDocumentAsKey(key))
+			: Optional.empty();
 	}
 
 	/**

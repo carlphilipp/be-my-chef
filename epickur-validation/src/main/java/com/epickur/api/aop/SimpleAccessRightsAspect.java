@@ -19,7 +19,6 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
 
 import static com.epickur.api.enumeration.EndpointType.*;
 import static com.epickur.api.enumeration.Operation.*;
@@ -73,11 +72,8 @@ public class SimpleAccessRightsAspect extends AccessRightsAspect {
 			final Dish dish = (Dish) args[0];
 			dishValidation.checkCreateData(dish);
 			final String catererId = dish.getCaterer().getId().toHexString();
-			final Optional<Caterer> caterer = catererDAO.read(catererId);
-			if (!caterer.isPresent()) {
-				throw new EpickurNotFoundException(CATERER_NOT_FOUND, catererId);
-			}
-			dishValidation.checkRightsBefore(key.getRole(), CREATE, caterer.get(), key);
+			final Caterer caterer = catererDAO.read(catererId).orElseThrow(() -> new EpickurNotFoundException(CATERER_NOT_FOUND, catererId));
+			dishValidation.checkRightsBefore(key.getRole(), CREATE, caterer, key);
 		} else if (operation == UPDATE) {
 			final String id = (String) args[0];
 			final Dish dish = (Dish) args[1];
@@ -112,12 +108,9 @@ public class SimpleAccessRightsAspect extends AccessRightsAspect {
 			final Caterer caterer = (Caterer) args[1];
 			catererValidation.checkUpdateCaterer(id, caterer);
 		} else if (operation == PAYEMENT_INFO) {
-			String id = (String) args[0];
+			final String id = (String) args[0];
 			// TODO : Find a better way to do that because the read() is done twice
-			final Optional<Caterer> caterer = catererDAO.read(id);
-			if (!caterer.isPresent()) {
-				throw new EpickurNotFoundException(CATERER_NOT_FOUND, id);
-			}
+			catererDAO.read(id).orElseThrow(() -> new EpickurNotFoundException(CATERER_NOT_FOUND, id));
 		}
 	}
 

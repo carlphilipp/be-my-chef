@@ -1,7 +1,7 @@
 Epickur RESTful API
-===================
+==================
 
-Welcome to Epickur RESTful API.
+Welcome to Epickur RESTful API!!
 
 For full endpoint documentation please go [here](epickur-rest/apidoc/index.html).
 
@@ -21,7 +21,7 @@ ASCII dependency graph:
                       |____________|
                       |
                     Utils
-           ___________|____________ 
+           ___________|____________
           |           |            |
       3rd Party      Dump         DAO
           |___________|____________|
@@ -36,9 +36,9 @@ ASCII dependency graph:
 When adding a new module, be careful with cyclic dependency error: Two modules must not depends on each other.
 
 * Logging: Contains all the logging dependencies and configuration used everywhere in the project.
-* Commons: Contains basic functionalities that do not need any knowledge of main entity objects. Example: String or Date manipulation.
-* Test: Contains test utilities for Stripe payement. Might be merged in the futur with 3rd party.
-* Entity: Contains all basic entity objects needed in the application. No logic there, just entitied and Serializer/Desrializer classes.
+* Commons: Contains basic functionality that do not need any knowledge of main entity objects. Example: String or Date manipulation.
+* Test: Contains test utilities for Stripe payment. Might be merged in the future with 3rd party.
+* Entity: Contains all basic entity objects needed in the application. No logic there, just entities and Serializer/Deserializer classes.
 * Utils: Contains reports, security, access rights and emails features.
 * DAO: Access Mongo DB.
 * 3rd Party: Access Amazon, Here and Stripe.
@@ -86,11 +86,11 @@ Some properties need to be updated to fit your environment.
 
 ####Lombok
 
-Lombok is used in the project. Please reefer to [lambock web site](https://projectlombok.org) to make it work in your IDE.
+Lombok is used in the project. Please reefer to [lombock web site](https://projectlombok.org) to make it work in your IDE.
 
 ####Tomcat
 
-To be able to deploy with maven, you need to add to your computer a new environement variable:
+To be able to deploy with maven, you need to add to your computer a new environment variable:
 `CATALINA_BASE="/opt/tomcat"`
 
 The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/conf/catalina.properties`
@@ -100,29 +100,31 @@ The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/co
 
 ###Maven profiles
 * local: The default one that should be used in local
-* aws: The Amazon Web Service profil, used to deploy documentation and .war file on the production server
+* aws: The Amazon Web Service profile, used to deploy documentation and .war file on the production server
 
 ###Test
 
-MongoDB must be started.
+MongoDB must be started for integration tests.
 
-Unit testing: `mvn test`
+Unit testing: `./mvnw test`
 
-Integration testing: `mvn integration-test`
+
+Integration testing: `./mvnw integration-test`
+
 
 
 ###Build
 ####From Maven:
 
-Generate war with Maven: 
+Generate war with Maven:
 
-`mvn clean package [-DskipTests] [-Dpmd.skip=true]` 
+`./mvnw clean package [-DskipTests] [-Dpmd.skip=true]`
 
 The generated jar will be in their respective project target directory. The final war in `epickur-rest/target`.
 
-Generate documentation with Maven in local: `mvn site` and then `mvn site:stage` to aggregate all the website in one. Find the result in the parent project `target/stage`.
+Generate documentation with Maven in local: `./mvnw clean package install site` and then `./mvnw site:stage` to aggregate all the website in one. Find the result in the parent project `target/stage`.
 
-Generate documentation with Maven and push it to AWS: `mvn site-deploy` or `mvn site:deploy` to just push it.
+Generate documentation with Maven and push it to AWS: `./mvnw site-deploy` or `./mvnw site:deploy` to just push it.
 
 Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.bat` from Windows or `epickur-rest/src/main/scripts/generate-api.sh` from Linux or OSX.
 
@@ -130,17 +132,17 @@ Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.b
 
 To deploy on AWS:
 
-`mvn clean package "antrun:run@upload" -P aws`
+`./mvnw clean package "antrun:run@upload" -P aws`
 
 The ant plugin run several commands:
 
 * Stop tomcat
-* Clean webbapps directory
+* Clean webapps directory
 * Clean other temp directory
-* Push ROOT.war (war generatered) to $CATALINA_BASE/webapps
+* Push ROOT.war (war generated) to $CATALINA_BASE/webapps
 * Start tomcat
 
-To be able to deploy on AWS server, need to add to `~home/.m2/settings.xml`
+To be able to deploy on AWS server, need to add to `~/.m2/settings.xml`
 
 ```
 <profiles>

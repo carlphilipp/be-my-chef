@@ -86,20 +86,13 @@ public class UserDAO extends CrudDAO<User> {
 		final Document filter = convertAttributeToDocument("_id", user.getId());
 		final Document update = user.getUpdateQuery();
 		final Document updated = updateDocument(filter, update);
-		final Optional<User> userOptional = processAfterQuery(updated);
-		if (userOptional.isPresent()) {
-			return userOptional.get();
-		} else {
-			return null;
-		}
+		return processAfterQuery(updated).orElse(null);
 	}
 
 	private Optional<User> processAfterQuery(final Document user) throws EpickurParsingException {
-		if (user != null) {
-			return Optional.of(User.getDocumentAsUser(user));
-		} else {
-			return Optional.empty();
-		}
+		return user != null
+			? Optional.of(User.getDocumentAsUser(user))
+			: Optional.empty();
 	}
 
 	@Override
