@@ -1,6 +1,7 @@
 package com.epickur.api.commons;
 
 import lombok.NonNull;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.joda.time.DateTime;
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
  *
  * @author cph
  */
-@Slf4j
+@Log4j2
 public class CommonsUtil {
 
 	private static String PICKUP_DATE_REGEX = "^(mon|tue|wed|thu|fri|sat|sun)\\-(([0-1][0-9]|2[0-3]):([0-5][0-9]))$";

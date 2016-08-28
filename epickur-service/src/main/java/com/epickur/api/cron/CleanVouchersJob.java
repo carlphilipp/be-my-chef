@@ -4,6 +4,7 @@ import com.epickur.api.dao.mongo.VoucherDAO;
 import com.epickur.api.entity.Voucher;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @Component
 public final class CleanVouchersJob {
 

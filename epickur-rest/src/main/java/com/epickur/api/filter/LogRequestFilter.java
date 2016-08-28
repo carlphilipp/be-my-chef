@@ -3,6 +3,7 @@ package com.epickur.api.filter;
 import com.epickur.api.dao.mongo.LogDAO;
 import com.epickur.api.entity.Log;
 import com.epickur.api.exception.EpickurException;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import java.util.Enumeration;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @Component("logRequestFilter")
 public class LogRequestFilter extends OncePerRequestFilter {
 

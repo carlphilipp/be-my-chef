@@ -13,6 +13,7 @@ import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.utils.security.PasswordManager;
 import com.epickur.api.utils.security.Security;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
@@ -35,7 +36,7 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @Service
 public class UserService {
 

@@ -8,6 +8,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -28,7 +29,7 @@ import static com.mongodb.client.model.Filters.*;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @Repository
 public class VoucherDAO extends CrudDAO<Voucher> {
 

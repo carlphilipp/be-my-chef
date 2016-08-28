@@ -4,6 +4,7 @@ import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.Utils;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 public final class CleanKeysJob {
 
 	/**

@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Ingredient entity
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "name", "sequence", "quantity", "measurementUnit" })
 @Data

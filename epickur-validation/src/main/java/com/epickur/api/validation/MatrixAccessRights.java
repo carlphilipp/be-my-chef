@@ -5,13 +5,13 @@ import com.epickur.api.enumeration.Operation;
 import com.epickur.api.enumeration.Role;
 import com.epickur.api.exception.EpickurForbiddenException;
 import com.epickur.api.exception.EpickurWrongAccessRights;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 public final class MatrixAccessRights {
 
 	/**

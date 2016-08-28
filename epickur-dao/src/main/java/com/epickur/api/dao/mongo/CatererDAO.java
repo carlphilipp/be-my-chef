@@ -6,6 +6,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -24,7 +25,7 @@ import static com.epickur.api.dao.CollectionsName.CATERER_COLL;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @Repository
 public class CatererDAO extends CrudDAO<Caterer> {
 

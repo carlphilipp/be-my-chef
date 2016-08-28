@@ -1,7 +1,7 @@
 package com.epickur.api.dump;
 
 import com.epickur.api.config.EpickurProperties;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 public final class MongoDBDump {
 
 	/**
@@ -172,8 +173,8 @@ public final class MongoDBDump {
 	}
 
 	protected void logExportResult(final Process process) throws IOException {
-		final String output = IOUtils.toString(process.getInputStream());
-		final String errorOutput = IOUtils.toString(process.getErrorStream());
+		final String output = IOUtils.toString(process.getInputStream(), Charset.forName("UTF-8"));
+		final String errorOutput = IOUtils.toString(process.getErrorStream(), Charset.forName("UTF-8"));
 		if (StringUtils.isNotBlank(output)) {
 			log.info("\n" + output);
 		}

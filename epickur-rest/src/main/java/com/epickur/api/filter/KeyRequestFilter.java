@@ -8,6 +8,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ import java.util.Optional;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @Component("keyRequestFilter")
 public class KeyRequestFilter extends OncePerRequestFilter {
 

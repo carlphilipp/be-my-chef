@@ -14,6 +14,7 @@ import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.bson.types.ObjectId;
@@ -26,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-@Slf4j
+@Log4j2
 @Component
 public class IntegrationTestUtils {
 

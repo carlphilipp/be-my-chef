@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.bson.BsonArray;
 import org.bson.BsonDouble;
 import org.bson.Document;
@@ -21,7 +21,7 @@ import java.util.Map;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(value = { "type", "coordinates" })
 @ToString(callSuper = true)

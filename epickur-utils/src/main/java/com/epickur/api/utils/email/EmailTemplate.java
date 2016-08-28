@@ -6,7 +6,7 @@ import com.epickur.api.entity.User;
 import com.epickur.api.utils.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 /**
  * @author cph
  */
-@Slf4j
+@Log4j2
 @Component
 public class EmailTemplate {
 
@@ -63,7 +63,7 @@ public class EmailTemplate {
 				final String folder = node.get("folder").asText();
 				final String file = node.get("file").asText();
 				try (final InputStream is2 = utils.getResource("templates/" + folder + "/" + file)) {
-					final String content = IOUtils.toString(is2);
+					final String content = IOUtils.toString(is2, Charset.forName("UTF-8"));
 					final String newContent = StringUtils.replace(base, "@@CONTENT@@", content);
 					final Map<String, String> res = new HashMap<>();
 					res.put("subject", subject);

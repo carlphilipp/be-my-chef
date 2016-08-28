@@ -10,6 +10,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.result.DeleteResult;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -24,7 +25,7 @@ import java.util.Optional;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 
 	/**

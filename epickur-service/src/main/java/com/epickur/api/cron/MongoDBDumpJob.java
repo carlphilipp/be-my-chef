@@ -3,6 +3,7 @@ package com.epickur.api.cron;
 import com.epickur.api.aws.AmazonWebServices;
 import com.epickur.api.commons.CommonsUtil;
 import com.epickur.api.dump.MongoDBDump;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 public class MongoDBDumpJob {
 
 	@Autowired

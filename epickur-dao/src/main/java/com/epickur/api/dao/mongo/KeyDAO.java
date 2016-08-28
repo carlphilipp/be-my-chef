@@ -6,6 +6,7 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
@@ -23,7 +24,7 @@ import static com.epickur.api.dao.CollectionsName.KEY_COLL;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @Repository
 public class KeyDAO extends CrudDAO<Key> {
 

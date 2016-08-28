@@ -3,6 +3,7 @@ package com.epickur.api.cron;
 import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.quartz.*;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @Component
 public class OrderJob {
 

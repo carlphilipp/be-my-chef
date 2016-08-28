@@ -17,49 +17,49 @@
 		</RollingRandomAccessFile>
 	</Appenders>
 	<Loggers>
-		<Logger name="com.epickur.api" level="debug" additivity="false">
+		<AsyncLogger name="com.epickur.api" level="debug" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Logger>
-		<Logger name="com.epickur.api.dao" level="warn" additivity="false">
+		</AsyncLogger>
+		<AsyncLogger name="com.epickur.api.dao" level="warn" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Logger>
-		<Logger name="com.amazonaws.http" level="info" additivity="false">
+		</AsyncLogger>
+		<AsyncLogger name="com.amazonaws.http" level="info" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Logger>
-		<Logger name="org.jboss.logging" level="info" additivity="false">
+		</AsyncLogger>
+		<AsyncLogger name="org.jboss.logging" level="info" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Logger>
-		<Logger name="org.apache.http" level="info" additivity="false">
+		</AsyncLogger>
+		<AsyncLogger name="org.apache.http" level="info" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Logger>
-		<Logger name="org.hibernate.validator" level="info" additivity="false">
+		</AsyncLogger>
+		<AsyncLogger name="org.hibernate.validator" level="info" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Logger>
+		</AsyncLogger>
 		<Logger name="org.springframework" level="info" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
 		</Logger>
-		<Logger name="com.cribbstechnologies.clients.mandrill" level="warn" additivity="false">
+		<AsyncLogger name="com.cribbstechnologies.clients.mandrill" level="warn" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Logger>
-		<Logger name="org.mongodb.driver" level="info" additivity="false">
+		</AsyncLogger>
+		<AsyncLogger name="org.mongodb.driver" level="info" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Logger>
-		<Logger name="org.quartz" level="info" additivity="false">
+		</AsyncLogger>
+		<AsyncLogger name="org.quartz" level="info" additivity="false">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Logger>
-		<Root level="debug">
+		</AsyncLogger>
+		<AsyncRoot level="debug">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="File"/>
-		</Root>
+		</AsyncRoot>
 	</Loggers>
 </Configuration>

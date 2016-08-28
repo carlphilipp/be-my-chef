@@ -2,6 +2,7 @@ package com.epickur.api.dao.mongo;
 
 import com.epickur.api.entity.Log;
 import com.epickur.api.exception.EpickurException;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.Document;
@@ -19,7 +20,7 @@ import static com.epickur.api.dao.CollectionsName.LOG_COLL;
  * @author cph
  * @version 1.0
  */
-@Slf4j
+@Log4j2
 @Repository
 public class LogDAO extends CrudDAO<Log> {
 
