@@ -91,8 +91,8 @@ public class OrderServiceTest {
 		verify(userDAOMock).read(user.getId().toHexString());
 		verify(orderDAOMock).create(order);
 		verify(order).getVoucher();
-		verify(voucherBusinessMock, never()).validateVoucher(isA(String.class));
-		verify(emailUtilsMock).emailNewOrder(eq(user), eq(orderAfterCreate), isA(String.class));
+		verify(voucherBusinessMock, never()).validateVoucher(anyString());
+		verify(emailUtilsMock).emailNewOrder(eq(user), eq(orderAfterCreate), anyString());
 	}
 
 	@Test
@@ -109,7 +109,7 @@ public class OrderServiceTest {
 
 		when(userDAOMock.read(user.getId().toHexString())).thenReturn(Optional.of(user));
 		when(orderDAOMock.create(order)).thenReturn(orderAfterCreate);
-		when(voucherBusinessMock.validateVoucher(isA(String.class))).thenReturn(voucher);
+		when(voucherBusinessMock.validateVoucher(anyString())).thenReturn(voucher);
 
 		Order actual = orderService.create(user.getId().toHexString(), order);
 		assertNotNull(actual);
@@ -124,7 +124,7 @@ public class OrderServiceTest {
 		verify(orderDAOMock).create(order);
 		verify(order).getVoucher();
 		verify(voucherBusinessMock).validateVoucher(voucher.getCode());
-		verify(emailUtilsMock).emailNewOrder(eq(user), eq(orderAfterCreate), isA(String.class));
+		verify(emailUtilsMock).emailNewOrder(eq(user), eq(orderAfterCreate), anyString());
 	}
 
 	@Test
@@ -173,7 +173,7 @@ public class OrderServiceTest {
 		verify(orderDAOMock).create(order);
 		verify(order).getVoucher();
 		verify(voucherBusinessMock).validateVoucher(voucher.getCode());
-		verify(emailUtilsMock).emailNewOrder(eq(user), eq(orderAfterCreate), isA(String.class));
+		verify(emailUtilsMock).emailNewOrder(eq(user), eq(orderAfterCreate), anyString());
 	}
 
 	@Test
@@ -242,11 +242,11 @@ public class OrderServiceTest {
 		verify(userDAOMock).read(user.getId().toHexString());
 		verify(orderDAOMock).read(order.getId().toHexString());
 		verify(stripePayementMock).chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency());
-		verify(orderAfterRead, never()).setChargeId(anyObject());
+		verify(orderAfterRead, never()).setChargeId(anyString());
 		verify(orderAfterRead).setPaid(false);
 		verify(orderAfterRead).setStatus(OrderStatus.FAILED);
-		verify(emailUtilsMock, never()).emailSuccessOrder(anyObject(), anyObject());
-		verify(emailUtilsMock).emailFailOrder(anyObject(), anyObject());
+		verify(emailUtilsMock, never()).emailSuccessOrder(isA(User.class), isA(Order.class));
+		verify(emailUtilsMock).emailFailOrder(isA(User.class), isA(Order.class));
 
 	}
 
@@ -266,7 +266,7 @@ public class OrderServiceTest {
 		} finally {
 			verify(userDAOMock).read(user.getId().toHexString());
 			verify(orderDAOMock).read(order.getId().toHexString());
-			verify(emailUtilsMock, never()).emailSuccessOrder(anyObject(), anyObject());
+			verify(emailUtilsMock, never()).emailSuccessOrder(isA(User.class), isA(Order.class));
 		}
 	}
 
@@ -284,7 +284,7 @@ public class OrderServiceTest {
 		} finally {
 			verify(userDAOMock).read(userId);
 			verify(orderDAOMock, never()).read(order.getId().toHexString());
-			verify(emailUtilsMock, never()).emailSuccessOrder(anyObject(), anyObject());
+			verify(emailUtilsMock, never()).emailSuccessOrder(isA(User.class), isA(Order.class));
 		}
 	}
 
@@ -307,13 +307,13 @@ public class OrderServiceTest {
 		orderAfterCreate = spy(orderAfterCreate);
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
-		when(userDAOMock.read(isA(String.class))).thenReturn(Optional.of(user));
-		when(orderDAOMock.read(isA(String.class))).thenReturn(Optional.of(orderAfterCreate));
-		when(orderDAOMock.update(anyObject())).thenReturn(orderAfterCreate);
+		when(userDAOMock.read(anyString())).thenReturn(Optional.of(user));
+		when(orderDAOMock.read(anyString())).thenReturn(Optional.of(orderAfterCreate));
+		when(orderDAOMock.update(isA(Order.class))).thenReturn(orderAfterCreate);
 		when(chargeMock.getPaid()).thenReturn(true);
 		when(stripePayementMock.chargeCard(orderAfterCreate.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
-				.thenReturn(chargeMock);
-		when(voucherBusinessMock.revertVoucher(isA(String.class))).thenReturn(voucher);
+			.thenReturn(chargeMock);
+		when(voucherBusinessMock.revertVoucher(anyString())).thenReturn(voucher);
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 
 		Order orderAfterCharge = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, true, orderCode);
@@ -346,9 +346,9 @@ public class OrderServiceTest {
 		orderAfterCreate.setId(order.getId());
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
-		when(userDAOMock.read(isA(String.class))).thenReturn(Optional.of(user));
-		when(orderDAOMock.read(isA(String.class))).thenReturn(Optional.of(orderAfterCreate));
-		when(orderDAOMock.update(anyObject())).thenReturn(orderAfterCreate);
+		when(userDAOMock.read(anyString())).thenReturn(Optional.of(user));
+		when(orderDAOMock.read(anyString())).thenReturn(Optional.of(orderAfterCreate));
+		when(orderDAOMock.update(isA(Order.class))).thenReturn(orderAfterCreate);
 
 		Order actual = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, false, orderCode);
 		assertEquals(OrderStatus.DECLINED, actual.getStatus());
@@ -360,7 +360,7 @@ public class OrderServiceTest {
 		verify(emailUtilsMock).emailDeclineOrder(user, orderAfterCreate);
 		verify(orderDAOMock).read(order.getId().toHexString());
 		verify(orderDAOMock).update(orderAfterCreate);
-		verify(voucherBusinessMock, never()).revertVoucher(anyObject());
+		verify(voucherBusinessMock, never()).revertVoucher(anyString());
 	}
 
 	@Test
@@ -376,9 +376,9 @@ public class OrderServiceTest {
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order, tokenMock);
 		String orderCode = "wrong code";
 
-		when(userDAOMock.read(isA(String.class))).thenReturn(Optional.of(user));
-		when(orderDAOMock.read(isA(String.class))).thenReturn(Optional.of(orderAfterCreate));
-		when(orderDAOMock.update(anyObject())).thenReturn(orderAfterCreate);
+		when(userDAOMock.read(anyString())).thenReturn(Optional.of(user));
+		when(orderDAOMock.read(anyString())).thenReturn(Optional.of(orderAfterCreate));
+		when(orderDAOMock.update(isA(Order.class))).thenReturn(orderAfterCreate);
 		try {
 			orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		} finally {
@@ -400,9 +400,9 @@ public class OrderServiceTest {
 		orderAfterRead = spy(orderAfterRead);
 		String orderCode = Security.createOrderCode(order.getId(), order.getCardToken());
 
-		when(userDAOMock.read(isA(String.class))).thenReturn(Optional.of(user));
-		when(orderDAOMock.read(isA(String.class))).thenReturn(Optional.of(orderAfterRead));
-		when(orderDAOMock.update(anyObject())).thenReturn(orderAfterRead);
+		when(userDAOMock.read(anyString())).thenReturn(Optional.of(user));
+		when(orderDAOMock.read(anyString())).thenReturn(Optional.of(orderAfterRead));
+		when(orderDAOMock.update(isA(Order.class))).thenReturn(orderAfterRead);
 		when(chargeMock.getPaid()).thenReturn(true);
 		when(stripePayementMock.chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency())).thenThrow(new APIConnectionException(""));
 		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);

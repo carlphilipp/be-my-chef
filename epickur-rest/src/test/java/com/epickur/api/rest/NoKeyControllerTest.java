@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class NoKeyControllerTest {
@@ -49,7 +49,7 @@ public class NoKeyControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		user.setCode(EntityGenerator.generateRandomString());
 
-		when(userBusiness.checkCode(isA(String.class), isA(String.class))).thenReturn(user);
+		when(userBusiness.checkCode(anyString(), anyString())).thenReturn(user);
 
 		ResponseEntity<?> actual = controller.checkUser(user.getEmail(), user.getCode());
 		assertNotNull(actual);
@@ -63,7 +63,7 @@ public class NoKeyControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		Order order = EntityGenerator.generateRandomOrderWithId();
 
-		when(orderBusiness.executeOrder(isA(String.class), isA(String.class), anyBoolean(), anyBoolean(), isA(String.class))).thenReturn(order);
+		when(orderBusiness.executeOrder(anyString(), anyString(), anyBoolean(), anyBoolean(), anyString())).thenReturn(order);
 
 		ResponseEntity<?> actual = controller
 				.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true);
@@ -78,7 +78,7 @@ public class NoKeyControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		user.setCode(EntityGenerator.generateRandomString());
 
-		when(userBusiness.resetPasswordSecondStep(isA(String.class), isA(String.class), isA(String.class))).thenReturn(user);
+		when(userBusiness.resetPasswordSecondStep(anyString(), anyString(), anyString())).thenReturn(user);
 		ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
 		objectNode.set("password", JsonNodeFactory.instance.textNode("newpassord"));
 		ResponseEntity<?> actual = controller.resetPasswordSecondStep(user.getId().toHexString(), user.getCode(), objectNode);

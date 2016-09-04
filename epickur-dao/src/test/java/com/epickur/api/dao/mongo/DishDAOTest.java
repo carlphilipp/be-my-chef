@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.DISH_COLL;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -207,7 +208,7 @@ public class DishDAOTest {
 		List<Dish> actuals = dao.search("mon", 5, dishTypes, 10, geo, 20);
 
 		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
+		assertThat(actuals, hasSize(1));
 		verify(collection).find(any(Document.class));
 		verify(cursor).close();
 	}
@@ -241,7 +242,7 @@ public class DishDAOTest {
 		List<Dish> actuals = dao.search("mon", 5, dishTypes, 10, geo, 20);
 
 		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
+		assertThat(actuals, hasSize(1));
 		verify(collection).find(any(Document.class));
 		verify(cursor).close();
 	}
@@ -272,7 +273,7 @@ public class DishDAOTest {
 		List<Dish> actuals = dao.searchWithCatererId(catererId);
 
 		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
+		assertThat(actuals, hasSize(1));
 		verify(collection).find(any(Document.class));
 		verify(cursor).close();
 	}

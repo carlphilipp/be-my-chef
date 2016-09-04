@@ -65,10 +65,10 @@ public class UserServiceTest {
 		verify(userDAOMock).exists(user.getName(), user.getEmail());
 		verify(userDAOMock).create(user);
 		verify(user).setAllow(0);
-		verify(user).setPassword(isA(String.class));
+		verify(user).setPassword(anyString());
 		verify(user).setKey(null);
 		verify(user).setRole(Role.USER);
-		verify(userAfterCreate).setCode(isA(String.class));
+		verify(userAfterCreate).setCode(anyString());
 		verify(emailUtilsMock).emailNewRegistration(userAfterCreate, actual.getCode());
 	}
 
@@ -86,7 +86,7 @@ public class UserServiceTest {
 		} finally {
 			verify(userDAOMock).exists(user.getName(), user.getEmail());
 			verify(userDAOMock, never()).create(user);
-			verify(emailUtilsMock, never()).emailNewRegistration(any(User.class), isA(String.class));
+			verify(emailUtilsMock, never()).emailNewRegistration(any(User.class), anyString());
 		}
 	}
 
@@ -115,7 +115,7 @@ public class UserServiceTest {
 		assertNotNull(actual.getUpdatedAt());
 		verify(userDAOMock).readWithEmail(user.getEmail());
 		verify(userAfterRead).getAllow();
-		verify(userAfterRead).setKey(isA(String.class));
+		verify(userAfterRead).setKey(anyString());
 		verify(keyBusinessMock).readWithName(user.getName());
 		verify(keyBusinessMock).delete(id.toHexString());
 		verify(keyBusinessMock).create(any(Key.class));
@@ -197,7 +197,7 @@ public class UserServiceTest {
 			assertNotEquals(newPassword, modified.getPassword());
 		} finally {
 			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(userAfterRead).setPassword(isA(String.class));
+			verify(userAfterRead).setPassword(anyString());
 		}
 	}
 
@@ -234,7 +234,7 @@ public class UserServiceTest {
 			service.injectNewPassword(user);
 		} finally {
 			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(userAfterRead, never()).setPassword(isA(String.class));
+			verify(userAfterRead, never()).setPassword(anyString());
 		}
 	}
 
@@ -323,7 +323,7 @@ public class UserServiceTest {
 			service.resetPasswordFirstStep(user.getEmail());
 		} finally {
 			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(emailUtilsMock).resetPassword(eq(userAfterRead), isA(String.class));
+			verify(emailUtilsMock).resetPassword(eq(userAfterRead), anyString());
 		}
 	}
 
@@ -338,7 +338,7 @@ public class UserServiceTest {
 			service.resetPasswordFirstStep(email);
 		} finally {
 			verify(userDAOMock).readWithEmail(email);
-			verify(emailUtilsMock, never()).resetPassword(any(User.class), isA(String.class));
+			verify(emailUtilsMock, never()).resetPassword(any(User.class), anyString());
 		}
 	}
 
@@ -358,7 +358,7 @@ public class UserServiceTest {
 
 		verify(userDAOMock).read(user.getId().toHexString());
 		verify(userDAOMock).update(userAfterRead);
-		verify(userAfterRead, times(2)).setPassword(isA(String.class));
+		verify(userAfterRead, times(2)).setPassword(anyString());
 	}
 
 	@Test

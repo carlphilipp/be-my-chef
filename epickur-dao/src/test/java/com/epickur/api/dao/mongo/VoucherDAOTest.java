@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.VOUCHER_COLL;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -113,7 +114,7 @@ public class VoucherDAOTest {
 		List<Voucher> actuals = dao.readToClean();
 
 		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
+		assertThat(actuals, hasSize(1));
 		verify(collection).find(any(Document.class));
 	}
 

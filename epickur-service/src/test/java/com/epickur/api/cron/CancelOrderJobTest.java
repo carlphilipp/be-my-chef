@@ -65,7 +65,7 @@ public class CancelOrderJobTest {
 		when(orderDAO.read(order.getId().toHexString())).thenReturn(Optional.of(order));
 		when(orderDAO.update(order)).thenReturn(order);
 		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.of(user));
-		when(voucherDAO.read(isA(String.class))).thenReturn(Optional.of(voucher));
+		when(voucherDAO.read(anyString())).thenReturn(Optional.of(voucher));
 
 		orderJob.execute(context);
 
@@ -105,9 +105,9 @@ public class CancelOrderJobTest {
 		verify(userDAO, never()).read(user.getId().toHexString());
 		verify(emailUtils, never()).emailCancelOrder(user, order);
 		verify(order, never()).setStatus(any(OrderStatus.class));
-		verify(order, never()).setReadableId(anyObject());
-		verify(order, never()).setCreatedAt(anyObject());
-		verify(order, never()).setUpdatedAt(anyObject());
+		verify(order, never()).setReadableId(anyString());
+		verify(order, never()).setCreatedAt(isA(DateTime.class));
+		verify(order, never()).setUpdatedAt(isA(DateTime.class));
 		verify(order, never()).prepareForUpdateIntoDB();
 	}
 }

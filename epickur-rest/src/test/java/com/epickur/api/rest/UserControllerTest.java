@@ -53,7 +53,7 @@ public class UserControllerTest {
 		User user = EntityGenerator.generateRandomUser();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userService.create(anyObject(), anyBoolean())).thenReturn(userAfterCreate);
+		when(userService.create(isA(User.class), anyBoolean())).thenReturn(userAfterCreate);
 
 		ResponseEntity<?> actual = controller.create(false, user);
 		assertNotNull(actual);
@@ -67,7 +67,7 @@ public class UserControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userService.read(isA(String.class))).thenReturn(Optional.of(userAfterRead));
+		when(userService.read(anyString())).thenReturn(Optional.of(userAfterRead));
 
 		ResponseEntity<?> actual = controller.read(user.getId().toHexString());
 		assertNotNull(actual);
@@ -81,7 +81,7 @@ public class UserControllerTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterUpdate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userService.update(anyObject())).thenReturn(userAfterUpdate);
+		when(userService.update(isA(User.class))).thenReturn(userAfterUpdate);
 
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
@@ -98,7 +98,7 @@ public class UserControllerTest {
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
 
-		when(userService.update(anyObject())).thenReturn(userAfterCreate);
+		when(userService.update(isA(User.class))).thenReturn(userAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
@@ -115,7 +115,7 @@ public class UserControllerTest {
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
 
-		when(userService.update(anyObject())).thenReturn(userAfterCreate);
+		when(userService.update(isA(User.class))).thenReturn(userAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
 		assertNotNull(actual);
@@ -129,7 +129,7 @@ public class UserControllerTest {
 	public void testDelete() throws EpickurException {
 		User user = EntityGenerator.generateRandomUserWithId();
 
-		when(userService.delete(isA(String.class))).thenReturn(true);
+		when(userService.delete(anyString())).thenReturn(true);
 
 		ResponseEntity<?> actual = controller.delete(user.getId().toHexString());
 		assertNotNull(actual);
@@ -161,7 +161,7 @@ public class UserControllerTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
 
-		when(orderService.create(isA(String.class), anyObject())).thenReturn(orderAfterCreate);
+		when(orderService.create(anyString(), isA(Order.class))).thenReturn(orderAfterCreate);
 
 		ResponseEntity<?> actual = controller.createOneOrder(orderAfterCreate.getId().toHexString(), order);
 		assertNotNull(actual);
@@ -175,7 +175,7 @@ public class UserControllerTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order);
 
-		when(orderService.readOrder(isA(String.class))).thenReturn(Optional.of(orderAfterRead));
+		when(orderService.readOrder(anyString())).thenReturn(Optional.of(orderAfterRead));
 
 		ResponseEntity<?> actual = controller.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
 		assertNotNull(actual);
@@ -191,7 +191,7 @@ public class UserControllerTest {
 		List<Order> orders = new ArrayList<>();
 		orders.add(order);
 
-		when(orderService.readAllWithUserId(isA(String.class))).thenReturn(orders);
+		when(orderService.readAllWithUserId(anyString())).thenReturn(orders);
 
 		ResponseEntity<?> actual = controller.readAllOrders(new ObjectId().toHexString());
 		assertNotNull(actual);
@@ -207,7 +207,7 @@ public class UserControllerTest {
 		order.setId(new ObjectId());
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
 
-		when(orderService.update(anyObject())).thenReturn(orderAfterCreate);
+		when(orderService.update(isA(Order.class))).thenReturn(orderAfterCreate);
 
 		ResponseEntity<?> actual = controller.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
 		assertNotNull(actual);
@@ -220,7 +220,7 @@ public class UserControllerTest {
 	public void testdeleteOneOrder() throws EpickurException {
 		Order order = EntityGenerator.generateRandomOrderWithId();
 
-		when(orderService.delete(isA(String.class))).thenReturn(true);
+		when(orderService.delete(anyString())).thenReturn(true);
 
 		ResponseEntity<?> actual = controller.deleteOneOrder(new ObjectId().toHexString(), order.getId().toHexString());
 		assertNotNull(actual);

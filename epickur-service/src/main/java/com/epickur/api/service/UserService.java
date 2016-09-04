@@ -14,7 +14,6 @@ import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.utils.security.PasswordManager;
 import com.epickur.api.utils.security.Security;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -148,7 +147,8 @@ public class UserService {
 	 * @throws EpickurException If an epickur exception occurred
 	 */
 	public User login(final String email, final String password) throws EpickurException {
-		final User user = readWithEmail(email).orElseThrow(() -> new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email));;
+		final User user = readWithEmail(email).orElseThrow(() -> new EpickurNotFoundException(ErrorConstants.USER_NOT_FOUND, email));
+		;
 		if (utils.isPasswordCorrect(password, user) && user.getAllow() == 1) {
 			final String tempKey = Security.generateRandomMd5();
 			user.setKey(tempKey);

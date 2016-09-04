@@ -54,7 +54,7 @@ public class CommonsUtilTest {
 	@Test
 	public void testParsPickupdateNoMatch() {
 		Optional<Object[]> actual = CommonsUtil.parsePickupdate("eeeee");
-		assertTrue(!actual.isPresent());
+		assertFalse(actual.isPresent());
 	}
 
 	@Test

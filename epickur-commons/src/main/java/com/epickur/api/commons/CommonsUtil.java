@@ -2,7 +2,6 @@ package com.epickur.api.commons;
 
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

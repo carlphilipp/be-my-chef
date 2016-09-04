@@ -24,11 +24,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.KEY_COLL;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class KeyDAOTest {
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
@@ -102,7 +103,7 @@ public class KeyDAOTest {
 
 		dao.read(key);
 	}
-	
+
 	@Test
 	public void testReadWithName() throws EpickurException {
 		String userName = new ObjectId().toHexString();
@@ -130,15 +131,15 @@ public class KeyDAOTest {
 		List<Key> actuals = dao.readAll();
 
 		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
+		assertThat(actuals, hasSize(1));
 		verify(collection).find();
 		verify(cursor).close();
 	}
-	
+
 	@Test
 	public void testReadAllReadMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
-		
+
 		when(collection.find()).thenThrow(new MongoException(""));
 
 		dao.readAll();
@@ -147,12 +148,12 @@ public class KeyDAOTest {
 	@Test
 	public void testUpdate() throws EpickurException {
 		thrown.expect(EpickurException.class);
-	
+
 		Key key = EntityGenerator.generateRandomAdminKey();
-		
+
 		dao.update(key);
 	}
-	
+
 	@Test
 	public void testDelete() throws EpickurException {
 		String key = new ObjectId().toHexString();
@@ -166,7 +167,7 @@ public class KeyDAOTest {
 		assertTrue(actual);
 		verify(collection).deleteOne(query);
 	}
-	
+
 	@Test
 	public void testDeleteFail() throws EpickurException {
 		String key = new ObjectId().toHexString();
@@ -180,11 +181,11 @@ public class KeyDAOTest {
 		assertFalse(actual);
 		verify(collection).deleteOne(query);
 	}
-	
+
 	@Test
 	public void testDeleteMongoException() throws EpickurException {
 		thrown.expect(EpickurException.class);
-		
+
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
 

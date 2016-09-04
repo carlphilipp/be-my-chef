@@ -20,6 +20,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +54,7 @@ public class StripePaymentTest {
 		when(charge.getAmount()).thenReturn(value);
 
 		Charge charge = stripePayment.chargeCard(token.getId(), value, Currency.AUD);
-		assertEquals(true, charge.getPaid());
+		assertTrue(charge.getPaid());
 		assertEquals(value.intValue(), charge.getAmount().intValue());
 	}
 

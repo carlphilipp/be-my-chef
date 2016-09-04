@@ -81,7 +81,7 @@ public class AmazonWebServicesTest {
 
 	@Test
 	public void testDeleteOldFile() {
-		when(s3clientMock.listObjects(isA(String.class))).thenReturn(listingMock);
+		when(s3clientMock.listObjects(anyString())).thenReturn(listingMock);
 		when(listingMock.isTruncated()).thenReturn(true, false);
 		when(listingMock.getObjectSummaries()).thenReturn(summariesMock);
 		when(s3clientMock.listNextBatchOfObjects(listingMock)).thenReturn(listingMock);
@@ -95,7 +95,7 @@ public class AmazonWebServicesTest {
 
 		amazonWS.deleteOldFile();
 
-		verify(s3clientMock).deleteObject(isA(String.class), isA(String.class));
+		verify(s3clientMock).deleteObject(anyString(), anyString());
 		verify(summariesMock).addAll(summariesMock);
 		verify(s3clientMock).listNextBatchOfObjects(listingMock);
 	}

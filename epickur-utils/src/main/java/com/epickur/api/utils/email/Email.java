@@ -26,7 +26,6 @@ import com.cribbstechnologies.clients.mandrill.util.MandrillConfiguration;
 import com.epickur.api.config.EpickurProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;

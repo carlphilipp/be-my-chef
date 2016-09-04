@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 
 public class PickupdateValidateTest {
 
@@ -44,7 +46,7 @@ public class PickupdateValidateTest {
 		workingTimes.setHours(hours);
 		order.setPickupdate("mon-10:30");
 		Set<ConstraintViolation<Order>> violations = validator.validate(order, Update.class);
-		assertTrue(violations.isEmpty());
+		assertThat(violations, is(empty()));
 	}
 
 	@Test
@@ -52,7 +54,7 @@ public class PickupdateValidateTest {
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setPickupdate("mon-10:30eeee");
 		Set<ConstraintViolation<Order>> violations = validator.validate(order, Update.class);
-		assertFalse(violations.isEmpty());
+		assertThat(violations, is(not(empty())));
 	}
 
 	@Test
@@ -69,6 +71,6 @@ public class PickupdateValidateTest {
 		workingTimes.setHours(hours);
 		order.setPickupdate("mon-10:30");
 		Set<ConstraintViolation<Order>> violations = validator.validate(order, Update.class);
-		assertFalse(violations.isEmpty());
+		assertThat(violations, is(not(empty())));
 	}
 }

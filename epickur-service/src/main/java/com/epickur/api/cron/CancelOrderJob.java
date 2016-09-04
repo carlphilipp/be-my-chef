@@ -9,7 +9,6 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.email.EmailUtils;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;

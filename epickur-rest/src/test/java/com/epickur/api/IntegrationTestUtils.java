@@ -15,7 +15,6 @@ import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +51,13 @@ public class IntegrationTestUtils {
 
 	public static void setupDB() throws IOException {
 		final String cmd = staticProperties.getMongoPath() + " " + staticProperties.getMongoAddress() + ":" + staticProperties.getMongoPort() + "/"
-				+ staticProperties.getMongoDbName() + " " + staticProperties.getSetupDB();
+			+ staticProperties.getMongoDbName() + " " + staticProperties.getSetupDB();
 		runShellCommand(cmd);
 	}
 
 	public static void cleanDB() throws IOException {
 		final String cmd = staticProperties.getMongoPath() + " " + staticProperties.getMongoAddress() + ":" + staticProperties.getMongoPort() + "/"
-				+ staticProperties.getMongoDbName() + " " + staticProperties.getCleanDB();
+			+ staticProperties.getMongoDbName() + " " + staticProperties.getCleanDB();
 		runShellCommand(cmd);
 	}
 

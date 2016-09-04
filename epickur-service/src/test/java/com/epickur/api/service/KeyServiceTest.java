@@ -13,18 +13,20 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyObject;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
 public class KeyServiceTest {
-	
+
 	@Mock
 	private KeyDAO keyDAOMock;
 	@InjectMocks
 	private KeyService keyBusiness;
-	
+
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
@@ -35,7 +37,7 @@ public class KeyServiceTest {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterCreate = EntityGenerator.mockKeyAfterCreate(key);
 
-		when(keyDAOMock.create(anyObject())).thenReturn(keyAfterCreate);
+		when(keyDAOMock.create(isA(Key.class))).thenReturn(keyAfterCreate);
 
 		Key actual = keyBusiness.create(key);
 		assertNotNull(actual.getId());
@@ -50,7 +52,7 @@ public class KeyServiceTest {
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterRead = EntityGenerator.mockKeyAfterCreate(key);
 
-		when(keyDAOMock.readWithName(isA(String.class))).thenReturn(keyAfterRead);
+		when(keyDAOMock.readWithName(anyString())).thenReturn(keyAfterRead);
 
 		Key actual = keyBusiness.readWithName(EntityGenerator.generateRandomString());
 		assertNotNull(actual);
@@ -58,7 +60,7 @@ public class KeyServiceTest {
 
 	@Test
 	public void testDelete() throws EpickurException {
-		when(keyDAOMock.delete(isA(String.class))).thenReturn(true);
+		when(keyDAOMock.delete(anyString())).thenReturn(true);
 
 		boolean actual = keyBusiness.delete(EntityGenerator.generateRandomString());
 		assertTrue(actual);
@@ -66,7 +68,7 @@ public class KeyServiceTest {
 
 	@Test
 	public void testDeleteWithKey() throws EpickurException {
-		when(keyDAOMock.deleteWithKey(isA(String.class))).thenReturn(true);
+		when(keyDAOMock.deleteWithKey(anyString())).thenReturn(true);
 
 		boolean actual = keyBusiness.deleteWithKey(EntityGenerator.generateRandomString());
 		assertTrue(actual);

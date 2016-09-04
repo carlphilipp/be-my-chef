@@ -25,8 +25,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.USER_COLL;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class UserDAOTest {
 
@@ -153,7 +160,7 @@ public class UserDAOTest {
 		List<User> actuals = dao.readAll();
 
 		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
+		assertThat(actuals, hasSize(1));
 		verify(collection).find();
 		verify(cursor).close();
 	}
@@ -198,8 +205,7 @@ public class UserDAOTest {
 
 		User user = EntityGenerator.generateRandomUser();
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
-				.thenThrow(new MongoException(""));
+		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenThrow(new MongoException(""));
 
 		dao.update(user);
 	}

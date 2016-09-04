@@ -13,8 +13,10 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 
 public class PhoneNumberValidateTest {
 
@@ -31,7 +33,7 @@ public class PhoneNumberValidateTest {
 		User user = new User();
 		user.setId(new ObjectId());
 		Set<ConstraintViolation<User>> violations = validator.validate(user, Update.class);
-		assertTrue(violations.isEmpty());
+		assertThat(violations, is(empty()));
 	}
 
 	@Test
@@ -43,7 +45,7 @@ public class PhoneNumberValidateTest {
 		phoneNumber.setNationalNumber(383400775);
 		user.setPhoneNumber(phoneNumber);
 		Set<ConstraintViolation<User>> violations = validator.validate(user, Update.class);
-		assertTrue(violations.isEmpty());
+		assertThat(violations, is(empty()));
 	}
 
 	@Test
@@ -55,7 +57,6 @@ public class PhoneNumberValidateTest {
 		phoneNumber.setNationalNumber(383);
 		user.setPhoneNumber(phoneNumber);
 		Set<ConstraintViolation<User>> violations = validator.validate(user, Update.class);
-		assertFalse(violations.isEmpty());
+		assertThat(violations, is(not(empty())));
 	}
-
 }

@@ -9,7 +9,6 @@ import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.joda.time.DateTime;
@@ -21,7 +20,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.VOUCHER_COLL;
-import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.lt;
 
 /**
  * Voucher DAO access with CRUD operations.

@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +56,7 @@ public class LogRequestFilterTest {
 		when(request.getRequestURL()).thenReturn(new StringBuffer());
 		when(request.getParameterNames()).thenReturn(params);
 		when(request.getHeader("X-FORWARDED-FOR")).thenReturn(null);
-		when(dao.create(any(Log.class))).thenThrow(EpickurException.class);
+		when(dao.create(isA(Log.class))).thenThrow(new EpickurException());
 
 		filter.doFilterInternal(request, response, filterChain);
 	}

@@ -12,6 +12,9 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 public class ChangePasswordValidateTest {
@@ -31,7 +34,7 @@ public class ChangePasswordValidateTest {
 		user.setNewPassword("new password");
 		user.setPassword("password");
 		Set<ConstraintViolation<User>> violations = validator.validate(user, Update.class);
-		assertTrue(violations.isEmpty());
+		assertThat(violations, is(empty()));
 	}
 
 	@Test
@@ -40,7 +43,7 @@ public class ChangePasswordValidateTest {
 		user.setId(new ObjectId());
 		user.setNewPassword("new password");
 		Set<ConstraintViolation<User>> violations = validator.validate(user, Update.class);
-		assertFalse(violations.isEmpty());
+		assertThat(violations, is(not(empty())));
 		ConstraintViolation<User> next = violations.iterator().next();
 		assertEquals("The field user.password is mandatory when a new password is provided", next.getMessage());
 	}

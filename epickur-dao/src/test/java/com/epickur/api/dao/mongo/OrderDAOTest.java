@@ -9,6 +9,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -25,7 +26,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.ORDER_COLL;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class OrderDAOTest {
@@ -116,25 +121,24 @@ public class OrderDAOTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		Document document = order.getDocumentDBView();
 
-		when(collection.findOneAndUpdate(anyObject(), anyObject(), anyObject()))
-				.thenReturn(document);
+		when(collection.findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class))).thenReturn(document);
 
 		Order actual = dao.update(order);
 
 		assertNotNull(actual);
-		verify(collection).findOneAndUpdate(anyObject(), anyObject(), anyObject());
+		verify(collection).findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateNotFound() throws EpickurException {
 		Order order = EntityGenerator.generateRandomOrder();
 
-		when(collection.findOneAndUpdate( anyObject(), anyObject(), anyObject())).thenReturn(null);
+		when(collection.findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class))).thenReturn(null);
 
 		Order actual = dao.update(order);
 
 		assertNull(actual);
-		verify(collection).findOneAndUpdate(anyObject(), anyObject(), anyObject());
+		verify(collection).findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
@@ -142,7 +146,7 @@ public class OrderDAOTest {
 		thrown.expect(EpickurDBException.class);
 		Order order = EntityGenerator.generateRandomOrder();
 
-		when(collection.findOneAndUpdate(anyObject(), anyObject(), anyObject())).thenThrow(new MongoException(""));
+		when(collection.findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class))).thenThrow(new MongoException(""));
 
 		dao.update(order);
 
@@ -169,7 +173,7 @@ public class OrderDAOTest {
 		List<Order> actuals = dao.readAllWithUserId(userId);
 
 		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
+		assertThat(actuals, hasSize(1));
 		verify(collection).find(query);
 		verify(cursor).close();
 	}
@@ -201,8 +205,8 @@ public class OrderDAOTest {
 		List<Order> actuals = dao.readAllWithCatererId(catererId, start, end);
 
 		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
-		verify(collection).find((Document) anyObject());
+		assertThat(actuals, hasSize(1));
+		verify(collection).find(isA(Document.class));
 		verify(cursor).close();
 	}
 
@@ -212,7 +216,7 @@ public class OrderDAOTest {
 
 		String catererId = new ObjectId().toHexString();
 
-		when(collection.find((Document) anyObject())).thenThrow(new MongoException(""));
+		when(collection.find(isA(Document.class))).thenThrow(new MongoException(""));
 
 		DateTime start = new DateTime().minusDays(5);
 		DateTime end = new DateTime().plusDays(5);

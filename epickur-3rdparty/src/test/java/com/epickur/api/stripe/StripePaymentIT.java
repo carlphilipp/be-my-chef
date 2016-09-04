@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = StripeConfigTest.class)
@@ -28,12 +29,12 @@ public class StripePaymentIT {
 	private EpickurProperties properties;
 
 	@Before
-	public void setUpBeforeClass() {
+	public void setUp() {
 		Stripe.apiKey = properties.getStripeKey();
 	}
 
 	@After
-	public void tearDownAfterClass() throws Exception {
+	public void tearDown() throws Exception {
 		Stripe.apiKey = null;
 	}
 
@@ -42,7 +43,7 @@ public class StripePaymentIT {
 		Map<String, Object> tokenParams = new HashMap<>();
 		Map<String, Object> cardParams = new HashMap<>();
 		cardParams.put("number", "4242424242424242");
-		cardParams.put("exp_month", 2);
+		cardParams.put("exp_month", 12);
 		cardParams.put("exp_year", 2016);
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
@@ -50,7 +51,8 @@ public class StripePaymentIT {
 
 		StripePayment payment = new StripePayment();
 		Charge charge = payment.chargeCard(token.getId(), 1500, Currency.AUD);
-		assertEquals(true, charge.getPaid());
+
+		assertTrue(charge.getPaid());
 		assertEquals(1500, charge.getAmount().intValue());
 	}
 

@@ -4,7 +4,6 @@ import com.epickur.api.config.EpickurProperties;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +38,14 @@ public class OrderJob {
 		final DateTime scheduleCancelDate = orderDate.plusMinutes(properties.getOrderTimeLimit());
 		final String identity = "cancelOrder_" + orderId;
 		final JobDetail cancelOrder = JobBuilder.newJob(CancelOrderJob.class)
-				.withIdentity(identity)
-				.usingJobData("orderId", orderId)
-				.usingJobData("userId", userId)
-				.build();
+			.withIdentity(identity)
+			.usingJobData("orderId", orderId)
+			.usingJobData("userId", userId)
+			.build();
 		final Trigger triggerCancelOrder = TriggerBuilder.newTrigger()
-				.withIdentity(identity)
-				.startAt(scheduleCancelDate.toDate())
-				.build();
+			.withIdentity(identity)
+			.startAt(scheduleCancelDate.toDate())
+			.build();
 		try {
 			final Scheduler scheduler = schedulerFactoryBean.getObject();
 			scheduler.scheduleJob(cancelOrder, triggerCancelOrder);

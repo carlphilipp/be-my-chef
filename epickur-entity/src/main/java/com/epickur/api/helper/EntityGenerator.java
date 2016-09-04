@@ -17,7 +17,6 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stripe.exception.*;
 import com.stripe.model.Token;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;

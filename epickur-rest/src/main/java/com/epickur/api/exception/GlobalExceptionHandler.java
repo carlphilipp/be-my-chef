@@ -4,7 +4,6 @@ import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.web.ResponseError;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

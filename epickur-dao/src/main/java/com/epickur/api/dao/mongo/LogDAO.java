@@ -3,7 +3,6 @@ package com.epickur.api.dao.mongo;
 import com.epickur.api.entity.Log;
 import com.epickur.api.exception.EpickurException;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;

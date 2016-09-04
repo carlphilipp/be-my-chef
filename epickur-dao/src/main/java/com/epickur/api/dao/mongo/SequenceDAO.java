@@ -5,7 +5,6 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonInt32;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;

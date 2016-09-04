@@ -15,6 +15,7 @@ import com.epickur.api.service.OrderService;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.report.Report;
 import com.stripe.exception.*;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +32,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyObject;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -69,7 +73,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererService.create(anyObject())).thenReturn(catererAfterCreate);
+		when(catererService.create(isA(Caterer.class))).thenReturn(catererAfterCreate);
 
 		ResponseEntity<?> actual = controller.create(caterer);
 		assertNotNull(actual);
@@ -83,7 +87,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererService.read(isA(String.class))).thenReturn(Optional.of(catererAfterCreate));
+		when(catererService.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
 
 		ResponseEntity<?> actual = controller.read(catererAfterCreate.getId().toHexString());
 		assertNotNull(actual);
@@ -97,7 +101,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 
-		when(catererService.read(isA(String.class))).thenReturn(Optional.empty());
+		when(catererService.read(anyString())).thenReturn(Optional.empty());
 
 		ResponseEntity<?> actual = controller.read(catererAfterCreate.getId().toHexString());
 		assertNotNull(actual);
@@ -133,7 +137,7 @@ public class CatererControllerTest {
 		List<Dish> dishes = new ArrayList<>();
 		dishes.add(dish);
 
-		when(dishService.searchDishesForOneCaterer(isA(String.class))).thenReturn(dishes);
+		when(dishService.searchDishesForOneCaterer(anyString())).thenReturn(dishes);
 
 		ResponseEntity<?> actual = controller.readDishes(caterer.getId().toHexString());
 		assertNotNull(actual);
@@ -149,7 +153,7 @@ public class CatererControllerTest {
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterCreate.setDescription("new desc");
 
-		when(catererService.update(anyObject())).thenReturn(catererAfterCreate);
+		when(catererService.update(isA(Caterer.class))).thenReturn(catererAfterCreate);
 
 		ResponseEntity<?> actual = controller.update(caterer.getId().toHexString(), caterer);
 		assertNotNull(actual);
@@ -164,7 +168,7 @@ public class CatererControllerTest {
 	public void testDelete() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
-		when(catererService.delete(isA(String.class))).thenReturn(true);
+		when(catererService.delete(anyString())).thenReturn(true);
 
 		ResponseEntity<?> actual = controller.delete(caterer.getId().toHexString());
 		assertNotNull(actual);
@@ -179,7 +183,7 @@ public class CatererControllerTest {
 	public void testDeleteCatererNotFound() throws EpickurException {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 
-		when(catererService.delete(isA(String.class))).thenReturn(false);
+		when(catererService.delete(anyString())).thenReturn(false);
 
 		ResponseEntity<?> actual = controller.delete(caterer.getId().toHexString());
 		assertNotNull(actual);
@@ -199,9 +203,9 @@ public class CatererControllerTest {
 			List<Order> orders = new ArrayList<>();
 			orders.add(order);
 
-			when(catererService.read(isA(String.class))).thenReturn(Optional.of(catererAfterCreate));
-			when(orderService.readAllWithCatererId(isA(String.class), anyObject(), anyObject())).thenReturn(orders);
-			when(catererService.getTotalAmountSuccessful(anyObject())).thenReturn(150);
+			when(catererService.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
+			when(orderService.readAllWithCatererId(anyString(), isA(DateTime.class), isA(DateTime.class))).thenReturn(orders);
+			when(catererService.getTotalAmountSuccessful(isA(List.class))).thenReturn(150);
 			Key key = EntityGenerator.generateRandomAdminKey();
 			when(context.getAttribute("key")).thenReturn(key);
 			when(context.getContentType()).thenReturn(MediaType.APPLICATION_XML.toString());
@@ -229,9 +233,9 @@ public class CatererControllerTest {
 			List<Order> orders = new ArrayList<>();
 			orders.add(order);
 
-			when(catererService.read(isA(String.class))).thenReturn(Optional.of(catererAfterCreate));
-			when(orderService.readAllWithCatererId(isA(String.class), anyObject(), anyObject())).thenReturn(orders);
-			when(catererService.getTotalAmountSuccessful(anyObject())).thenReturn(150);
+			when(catererService.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
+			when(orderService.readAllWithCatererId(anyString(), isA(DateTime.class), isA(DateTime.class))).thenReturn(orders);
+			when(catererService.getTotalAmountSuccessful(isA(List.class))).thenReturn(150);
 			Key key = EntityGenerator.generateRandomAdminKey();
 			when(context.getAttribute("key")).thenReturn(key);
 			when(context.getContentType()).thenReturn(MediaType.APPLICATION_JSON.toString());

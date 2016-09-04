@@ -46,6 +46,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfigTest.class)
@@ -404,7 +405,7 @@ public class DishIT {
 
 		assertEquals(JSON_MIME_TYPE, mimeType);
 		assertEquals(id, jsonResult.get("id").asText());
-		assertEquals(true, Boolean.valueOf(jsonResult.get("deleted").toString()));
+		assertTrue(Boolean.parseBoolean(jsonResult.get("deleted").toString()));
 
 		// Read
 		uriComponents = UriComponentsBuilder.newInstance()

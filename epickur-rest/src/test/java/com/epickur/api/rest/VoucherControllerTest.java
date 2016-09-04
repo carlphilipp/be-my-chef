@@ -26,7 +26,10 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
 public class VoucherControllerTest {
@@ -57,7 +60,7 @@ public class VoucherControllerTest {
 		Set<Voucher> vouchers = new HashSet<>();
 		vouchers.add(voucherAfterCreate);
 
-		when(voucherBusiness.generate(anyInt(), anyObject(), anyInt(), anyObject(), anyObject())).thenReturn(vouchers);
+		when(voucherBusiness.generate(anyInt(), isA(DiscountType.class), anyInt(), isA(ExpirationType.class), anyObject())).thenReturn(vouchers);
 
 		ResponseEntity<?> actual = controller.generate(1, DiscountType.AMOUNT, 1, ExpirationType.ONETIME, "05/05/2020", "MM/dd/yyyy");
 		assertNotNull(actual);
@@ -72,7 +75,7 @@ public class VoucherControllerTest {
 		Voucher voucher = EntityGenerator.generateVoucher();
 		Voucher voucherAfterCreate = EntityGenerator.mockVoucherAfterCreate(voucher);
 
-		when(voucherBusiness.read(isA(String.class))).thenReturn(Optional.of(voucherAfterCreate));
+		when(voucherBusiness.read(anyString())).thenReturn(Optional.of(voucherAfterCreate));
 
 		ResponseEntity<?> actual = controller.read(CommonsUtil.generateRandomCode());
 		assertNotNull(actual);
@@ -84,7 +87,7 @@ public class VoucherControllerTest {
 
 	@Test
 	public void testReadVoucherNotFound() throws EpickurException {
-		when(voucherBusiness.read(isA(String.class))).thenReturn(Optional.empty());
+		when(voucherBusiness.read(anyString())).thenReturn(Optional.empty());
 
 		ResponseEntity<?> actual = controller.read(CommonsUtil.generateRandomCode());
 		assertNotNull(actual);
