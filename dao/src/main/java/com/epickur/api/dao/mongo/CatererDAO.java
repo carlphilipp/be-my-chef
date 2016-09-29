@@ -58,11 +58,6 @@ public class CatererDAO extends CrudDAO<Caterer> {
 		return processAfterQuery(updated).orElse(null);
 	}
 
-	/**
-	 * @param caterer The caterer.
-	 * @return A Caterer
-	 * @throws EpickurParsingException If an EpickurException occurred.
-	 */
 	private Optional<Caterer> processAfterQuery(final Document caterer) throws EpickurParsingException {
 		return caterer != null
 			? Optional.of(Caterer.getDocumentAsCatererDBView(caterer))

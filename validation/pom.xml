@@ -18,7 +18,7 @@
 		<!-- Entity -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-dao</artifactId>
+			<artifactId>dao</artifactId>
 		</dependency>
 
 		<!-- Servlet 3.1 -->

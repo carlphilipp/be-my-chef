@@ -18,15 +18,15 @@
 		<!-- Epickur -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-dao</artifactId>
+			<artifactId>dao</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-3rdparty</artifactId>
+			<artifactId>3rdparty</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-dump</artifactId>
+			<artifactId>dump</artifactId>
 		</dependency>
 
 		<!-- Scheduler -->

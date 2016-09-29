@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" shutdownHook="disable">
 	<Properties>
-		<Property name="logs_directory">$${env:CATALINA_BASE}/logs</Property>
+		<Property name="logs_directory">/opt/tomcat/logs</Property>
 	</Properties>
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout pattern="%d{dd/MM/yyyy HH:mm:ss}{America/Chicago} - %-5p [%c:%L] %m%n"/>
 		</Console>
-		<RollingRandomAccessFile name="File" fileName="${logs_directory}/epickur.log"
-								 filePattern="${logs_directory}/archive/epickur-%d{yyyy-MM-dd}-%i.log.gz">
+		<RollingRandomAccessFile name="File" fileName="${logs_directory}/epickur.log" filePattern="${logs_directory}/archive/epickur-%d{yyyy-MM-dd}-%i.log.gz">
 			<PatternLayout pattern="%d %p %c{1.} [%t] %m%n"/>
 			<Policies>
 				<TimeBasedTriggeringPolicy/>
