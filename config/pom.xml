@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -8,37 +8,41 @@
 		<version>3.0.4-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>epickur-3rdparty</artifactId>
+	<artifactId>config</artifactId>
 	<packaging>jar</packaging>
 
-	<name>3rd Party</name>
-	<description>Connect to 3rd party providers.</description>
+	<name>Config</name>
+	<description>Modules configuration</description>
 
 	<dependencies>
-		<!-- Epickur -->
-		<dependency>
-			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-utils</artifactId>
-		</dependency>
-
-		<!-- Amazon API -->
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk</artifactId>
-			<version>1.10.32</version>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
+			<artifactId>spring-context</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
-		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<!-- Remove resources env and log4j.xml -->
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>epickur-dev.template.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+	</build>
 
 	<reporting>
 		<plugins>

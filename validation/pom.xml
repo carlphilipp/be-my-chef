@@ -8,7 +8,7 @@
 		<version>3.0.4-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>epickur-validation</artifactId>
+	<artifactId>validation</artifactId>
 	<packaging>jar</packaging>
 
 	<name>Validation</name>

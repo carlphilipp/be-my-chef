@@ -8,17 +8,29 @@
 		<version>3.0.4-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>epickur-dao</artifactId>
+	<artifactId>3rdparty</artifactId>
 	<packaging>jar</packaging>
 
-	<name>DAO</name>
-	<description>Data Access Object layer. Connect to MongoDB and retrieve data.</description>
+	<name>3rd Party</name>
+	<description>Connect to 3rd party providers.</description>
 
 	<dependencies>
 		<!-- Epickur -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
 			<artifactId>epickur-utils</artifactId>
+		</dependency>
+
+		<!-- Amazon API -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.10.32</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Lombok -->

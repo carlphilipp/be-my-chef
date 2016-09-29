@@ -8,7 +8,7 @@
 		<version>3.0.4-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>epickur-service</artifactId>
+	<artifactId>service</artifactId>
 	<packaging>jar</packaging>
 
 	<name>Service</name>

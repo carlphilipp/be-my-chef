@@ -8,41 +8,32 @@
 		<version>3.0.4-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>epickur-config</artifactId>
+	<artifactId>commons</artifactId>
 	<packaging>jar</packaging>
 
-	<name>Config</name>
-	<description>Modules configuration</description>
+	<name>Commons</name>
+	<description>Collection of function used anywhere in the application.</description>
 
 	<dependencies>
+		<!-- Epickur -->
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>com.epickur.api</groupId>
+			<artifactId>epickur-logging</artifactId>
 		</dependency>
+
+		<!--Compress -->
+		<dependency>
+			<groupId>org.xeustechnologies</groupId>
+			<artifactId>jtar</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<!-- Remove resources env and log4j.xml -->
-		<resources>
-			<resource>
-				<directory>${project.basedir}/src/main/resources</directory>
-				<filtering>true</filtering>
-				<excludes>
-					<exclude>epickur-dev.template.properties</exclude>
-				</excludes>
-			</resource>
-		</resources>
-	</build>
 
 	<reporting>
 		<plugins>
