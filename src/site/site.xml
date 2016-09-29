@@ -27,12 +27,12 @@
 		</links>
 
 		<menu ref="modules" />
-		
+
 		<menu name="Overview">
-			<!-- <item name="APT Format" href="format.html" /> <item name="Xdoc Example" 
+			<!-- <item name="APT Format" href="format.html" /> <item name="Xdoc Example"
 				href="xdoc.html" /> <item name="FAQ" href="faq.html" /> -->
 			<item name="Introduction" href="index.html" />
-			<item name="Api Doc" href="epickur-rest/apidoc/index.html" />
+			<item name="Api Doc" href="rest/apidoc/index.html" />
 		</menu>
 
 		<menu ref="reports" />

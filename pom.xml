@@ -517,57 +517,57 @@
 			<!-- Epickur -->
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-3rdparty</artifactId>
+				<artifactId>3rdparty</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-commons</artifactId>
+				<artifactId>commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-config</artifactId>
+				<artifactId>config</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-dao</artifactId>
+				<artifactId>dao</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-dump</artifactId>
+				<artifactId>dump</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-entity</artifactId>
+				<artifactId>entity</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-logging</artifactId>
+				<artifactId>logging</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-rest</artifactId>
+				<artifactId>rest</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-service</artifactId>
+				<artifactId>service</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-utils</artifactId>
+				<artifactId>utils</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.epickur.api</groupId>
-				<artifactId>epickur-validation</artifactId>
+				<artifactId>validation</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

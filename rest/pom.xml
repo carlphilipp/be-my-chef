@@ -18,11 +18,11 @@
 		<!-- Epickur -->
 		<dependency>
 			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-service</artifactId>
+			<artifactId>service</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.epickur.api</groupId>
-			<artifactId>epickur-validation</artifactId>
+			<artifactId>validation</artifactId>
 		</dependency>
 
 		<!-- Servlet -->
@@ -126,7 +126,7 @@
 					<deployables>
 						<deployable>
 							<groupId>com.epickur.api</groupId>
-							<artifactId>epickur-rest</artifactId>
+							<artifactId>rest</artifactId>
 							<type>war</type>
 						</deployable>
 					</deployables>
@@ -257,9 +257,9 @@
 								</goals>
 								<configuration>
 									<target>
-										<delete file="${env.CATALINA_BASE}/webapps/${war.name}.war"/>
-										<delete dir="${env.CATALINA_BASE}/webapps/${war.name}"/>
-										<copy file="target/${war.name}.war" todir="${env.CATALINA_BASE}/webapps/"/>
+										<delete file="/opt/tomcat/webapps/${war.name}.war"/>
+										<delete dir="$/opt/tomcat/webapps/${war.name}"/>
+										<copy file="target/${war.name}.war" todir="/opt/tomcat/webapps/"/>
 									</target>
 								</configuration>
 							</execution>

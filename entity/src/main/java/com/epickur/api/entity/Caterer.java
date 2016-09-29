@@ -37,8 +37,8 @@ import java.util.Set;
  */
 @Log4j2
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(value = { "id", "name", "description", "manager", "email", "phone", "location", "workingTimes", "createdBy", "createdAt",
-		"updatedAt" })
+@JsonPropertyOrder(value = {"id", "name", "description", "manager", "email", "phone", "location", "workingTimes", "createdBy", "createdAt",
+	"updatedAt"})
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
@@ -150,14 +150,11 @@ public class Caterer extends AbstractMainDBEntity {
 	private static Caterer getObject(final String json, final View view) throws EpickurParsingException {
 		Caterer caterer;
 		try {
-			ObjectMapper om;
-			if (view == View.API) {
-				om = ObjectMapperWrapperAPI.getInstance();
-			} else {
-				om = ObjectMapperWrapperDB.getInstance();
-			}
+			final ObjectMapper om = view == View.API
+				? ObjectMapperWrapperAPI.getInstance()
+				: ObjectMapperWrapperDB.getInstance();
 			caterer = om.readValue(json, Caterer.class);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new EpickurParsingException("Can not convert string to Caterer: " + json, e);
 		}
 		return caterer;
