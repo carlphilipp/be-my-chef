@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.epickur.api</groupId>
+		<artifactId>epickur-parent</artifactId>
+		<version>3.0.4-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>dao</artifactId>
+	<packaging>jar</packaging>
+
+	<name>DAO</name>
+	<description>Data Access Object layer. Connect to MongoDB and retrieve data.</description>
+
+	<dependencies>
+		<!-- Epickur -->
+		<dependency>
+			<groupId>com.epickur.api</groupId>
+			<artifactId>epickur-utils</artifactId>
+		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+	</dependencies>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<skipEmptyReport>false</skipEmptyReport>
+					<linkXRef>true</linkXRef>
+					<sourceEncoding>utf-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<targetJdk>${java.version}</targetJdk>
+					<printFailingErrors>true</printFailingErrors>
+					<failOnViolation>true</failOnViolation>
+					<rulesets>
+						<ruleset>${project.parent.basedir}/src/main/resources/lombokRuleset.xml</ruleset>
+					</rulesets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<stylesheetfile>${project.parent.basedir}/src/main/resources/stylesheet.css</stylesheetfile>
+					<quiet>true</quiet>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+</project>

@@ -1,0 +1,178 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.epickur.api</groupId>
+		<artifactId>epickur-parent</artifactId>
+		<version>3.0.4-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>utils</artifactId>
+	<packaging>jar</packaging>
+
+	<name>Utils</name>
+	<description>Epickur Utils.</description>
+
+	<dependencies>
+		<!-- Epickur -->
+		<dependency>
+			<groupId>com.epickur.api</groupId>
+			<artifactId>epickur-entity</artifactId>
+		</dependency>
+
+		<!-- Generate PDF -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>2.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.7</version>
+		</dependency>
+
+		<!-- Mandrill Mails -->
+		<dependency>
+			<groupId>com.cribbstechnologies.clients</groupId>
+			<artifactId>mandrillClient</artifactId>
+			<version>1.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-utils</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Validation -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.epickur.api</groupId>
+			<artifactId>epickur-config</artifactId>
+		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<skipEmptyReport>false</skipEmptyReport>
+					<linkXRef>true</linkXRef>
+					<sourceEncoding>utf-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<targetJdk>${java.version}</targetJdk>
+					<printFailingErrors>true</printFailingErrors>
+					<failOnViolation>true</failOnViolation>
+					<rulesets>
+						<ruleset>${project.parent.basedir}/src/main/resources/lombokRuleset.xml</ruleset>
+					</rulesets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<stylesheetfile>${project.parent.basedir}/src/main/resources/stylesheet.css</stylesheetfile>
+					<quiet>true</quiet>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+						<excludes>
+							<exclude>apidoc/**</exclude>
+							<exclude>env/aws.properties</exclude>
+							<exclude>env/local.template.properties</exclude>
+							<exclude>env/log4j2.prod.xml</exclude>
+							<exclude>epickur-checkstyle.xml</exclude>
+							<exclude>epickur-eclipse-profil.xml</exclude>
+							<exclude>epickur.template.properties</exclude>
+							<exclude>stylesheet.css</exclude>
+						</excludes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+
+		<profile>
+			<id>aws</id>
+			<properties>
+				<war.name>ROOT</war.name>
+			</properties>
+			<build>
+				<!-- Remove resources env and log4j.xml -->
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+						<excludes>
+							<exclude>apidoc/**</exclude>
+							<exclude>env/**</exclude>
+							<exclude>epickur-checkstyle.xml</exclude>
+							<exclude>epickur-eclipse-profil.xml</exclude>
+							<exclude>epickur.template.properties</exclude>
+							<exclude>stylesheet.css</exclude>
+							<exclude>log4j2.xml</exclude>
+						</excludes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

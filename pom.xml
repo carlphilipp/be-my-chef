@@ -21,17 +21,17 @@
 	</organization>
 
 	<modules>
-		<module>epickur-3rdparty</module>
-		<module>epickur-commons</module>
-		<module>epickur-config</module>
-		<module>epickur-dao</module>
-		<module>epickur-dump</module>
-		<module>epickur-entity</module>
-		<module>epickur-logging</module>
-		<module>epickur-rest</module>
-		<module>epickur-service</module>
-		<module>epickur-utils</module>
-		<module>epickur-validation</module>
+		<module>3rdparty</module>
+		<module>commons</module>
+		<module>config</module>
+		<module>dao</module>
+		<module>dump</module>
+		<module>entity</module>
+		<module>logging</module>
+		<module>rest</module>
+		<module>service</module>
+		<module>utils</module>
+		<module>validation</module>
 	</modules>
 
 	<developers>
