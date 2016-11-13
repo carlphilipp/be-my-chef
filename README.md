@@ -49,27 +49,24 @@ When adding a new module, be careful with cyclic dependency error: Two modules m
 
 ###Prerequisites:
 * Java SDK 8 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-* Tomcat8 https://tomcat.apache.org/download-80.cgi
 * MongoDB 3.0 http://www.mongodb.org
-* Any IDE with Maven https://eclipse.org
+* Any IDE
 
 ###Install
 Clone the Git repository in working directory:
 
 `git clone ssh://carlphilipp@git.code.sf.net/p/epickurapi/code epickur-api`
 
-Add Tomcat8 in Eclipse as a server.
-
 ###Configure
 
 ## Project files
 Two files need to be duplicated and renamed:
 
-`epickur-config/src/main/resources/epickur-dev.template.properties`
+`config/src/main/resources/epickur-dev.template.properties`
 
 to
 
-`epickur-config/src/main/resources/epickur-dev.properties`
+`config/src/main/resources/epickur-dev.properties`
 
 
 This file contains all the properties of the application. Some are linked with your environment like:
@@ -88,19 +85,9 @@ Some properties need to be updated to fit your environment.
 
 Lombok is used in the project. Please reefer to [lombok web site](https://projectlombok.org) to make it work in your IDE.
 
-####Tomcat
-
-To be able to deploy with maven, you need to add to your computer a new environment variable:
-`CATALINA_BASE="/opt/tomcat"`
-
-The spring profile needs to be added to Tomcat configuration. `$CATALINA_BASE/conf/catalina.properties`
-
-`spring.profiles.active=dev`
-
-
 ###Maven profiles
 * local: The default one that should be used in local
-* aws: The Amazon Web Service profile, used to deploy documentation and .war file on the production server
+* aws: The Amazon Web Service profile, used to deploy documentation and archive on the production server
 
 ###Test
 
@@ -108,10 +95,7 @@ MongoDB must be started for integration tests.
 
 Unit testing: `./mvnw test`
 
-
 Integration testing: `./mvnw integration-test`
-
-
 
 ###Build
 ####From Maven:
@@ -128,35 +112,30 @@ Generate documentation with Maven and push it to AWS: `./mvnw site-deploy` or `.
 
 Generate ApiDoc documentation, run `epickur-rest/src/main/scripts/generate-api.bat` from Windows or `epickur-rest/src/main/scripts/generate-api.sh` from Linux or OSX.
 
-###Amazon Web Services
+###Run
 
-To deploy on AWS:
+To run the server in local, just start `com.epickur.api.Application.java` from your ide.
+You can also run it from the console: `java -Dspring.profiles.active=dev -jar rest/target/epickur-version.jar`
 
-`./mvnw clean package "antrun:run@upload" -P aws`
+###Deploy and run on Amazon Web Services
 
-The ant plugin run several commands:
+To deploy on AWS, start by packaging the app:
 
-* Stop tomcat
-* Clean webapps directory
-* Clean other temp directory
-* Push ROOT.war (war generated) to $CATALINA_BASE/webapps
-* Start tomcat
+`./mvnw clean package -P aws`
 
-To be able to deploy on AWS server, need to add to `~/.m2/settings.xml`
+Copy file on server:
 
-```
-<profiles>
-    <profile>
-      <id>aws</id>
-      <properties>
-        <server.address>ADDRESS</server.address>
-        <server.login>LOGIN_SSH</server.login>
-        <server.password>PASSWORD_SSH</server.password>
-        <server.base>TOMCAT_BASE</server.base>
-      </properties>
-    </profile>
-</profiles>
-```
+`scp rest/target/epickur-version.jar ec2-user@52.64.19.117:~/api`
+
+Kill current instance running:
+
+`ssh ec2-user@52.64.19.117 pkill java`
+
+Start new instance:
+
+`ssh ec2-user@52.64.19.117 'nohup java -Dspring.profiles.active=prod -jar ~/api/epickur-version.jar &'`
+
+Connect to the server and clean the old .jar if can.
 
 ###Known issue with Eclipse
 Issue with Maven dependencies not deployed

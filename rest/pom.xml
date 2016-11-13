@@ -216,52 +216,12 @@
 				</resources>
 
 				<plugins>
-					<!-- Inject log4j.prod.xml into build directory -->
+					<!-- Generate API script -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
 						<version>1.8</version>
 						<executions>
-							<execution>
-								<id>upload</id>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<target>
-										<echo message="Connecting to ${server.login}@${server.address}:${server.base}"/>
-
-										<echo message="Push ${war.name}.war to /home/tomcat7"/>
-										<scp trust="yes"
-											 todir="${server.login}:${server.password}@${server.address}:/home/tomcat7"
-											 file="${basedir}/target/${war.name}.war">
-										</scp>
-
-										<echo message="Stoping tomcat..."/>
-										<sshexec host="${server.address}" username="${server.login}"
-												 password="${server.password}" command="${server.base}/bin/shutdown.sh"/>
-
-										<echo message="Cleaning webapps directory..."/>
-										<sshexec host="${server.address}" username="${server.login}"
-												 password="${server.password}" command="rm -f -R ${server.base}/webapps/*"/>
-
-										<echo message="Cleaning temporary files..."/>
-										<sshexec host="${server.address}" username="${server.login}"
-												 password="${server.password}"
-												 command="rm -f -R ${server.base}/work/*;rm -f -R ${server.base}/temp/*"/>
-
-										<echo
-												message="Move ${war.name}.war from /home/tomcat7 to ${server.base}/webapps"/>
-										<sshexec host="${server.address}" username="${server.login}"
-												 password="${server.password}"
-												 command="mv /home/tomcat7/${war.name}.war ${server.base}/webapps"/>
-
-										<echo message="Starting tomcat..."/>
-										<sshexec host="${server.address}" username="${server.login}"
-												 password="${server.password}" command="/opt/tomcat8/bin/startup.sh"/>
-									</target>
-								</configuration>
-							</execution>
 							<execution>
 								<id>create-apidoc</id>
 								<goals>
