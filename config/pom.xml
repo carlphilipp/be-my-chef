@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>3.0.4-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>config</artifactId>
@@ -32,6 +32,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>epickur-config-${version}</finalName>
 		<!-- Remove resources env and log4j.xml -->
 		<resources>
 			<resource>

@@ -51,7 +51,7 @@ public class StripePaymentTest {
 	public void testChargeCard() throws StripeException {
 		Integer value = 1500;
 		when(charge.getPaid()).thenReturn(true);
-		when(charge.getAmount()).thenReturn(value);
+		when(charge.getAmount()).thenReturn(value.longValue());
 
 		Charge charge = stripePayment.chargeCard(token.getId(), value, Currency.AUD);
 		assertTrue(charge.getPaid());

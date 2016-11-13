@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" shutdownHook="disable">
 	<Properties>
-		<Property name="logs_directory">/opt/tomcat/logs</Property>
+		<Property name="logs_directory">/home/ec2-user/api/logs</Property>
 	</Properties>
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">

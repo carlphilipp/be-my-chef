@@ -4,8 +4,14 @@
 
 	<groupId>com.epickur.api</groupId>
 	<artifactId>epickur-parent</artifactId>
-	<version>3.0.4-SNAPSHOT</version>
+	<version>4.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.2.RELEASE</version>
+	</parent>
 
 	<name>Parent</name>
 	<url>https://api.bemychef.com.au</url>
@@ -67,46 +73,47 @@
 
 		<java.version>1.8</java.version>
 		<maven.version>3.3.9</maven.version>
+		<spring-boot.version>1.4.2.RELEASE</spring-boot.version>
 
 		<!-- Dependencies -->
-		<commons-lang3.version>3.4</commons-lang3.version>
+		<commons-lang3.version>3.5</commons-lang3.version>
 		<commons-codec.version>1.10</commons-codec.version>
 		<commons-io.version>2.5</commons-io.version>
-		<commons-math.version>3.5</commons-math.version>
+		<commons-math.version>3.6.1</commons-math.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<commons-beansutils.version>1.9.2</commons-beansutils.version>
+		<commons-beansutils.version>1.9.3</commons-beansutils.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<httpclient.version>4.5.2</httpclient.version>
-		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
-		<jackson.version>2.8.1</jackson.version>
+		<hibernate-validator.version>5.3.1.Final</hibernate-validator.version>
+		<jackson.version>2.8.4</jackson.version>
 		<junit.version>4.12</junit.version>
 		<javax-servlet.version>3.1.0</javax-servlet.version>
 		<javax.el-api.version>2.2.5</javax.el-api.version>
 		<javax.validation.version>1.1.0.Final</javax.validation.version>
-		<javassist.version>3.20.0-GA</javassist.version>
-		<joda-time.version>2.9.4</joda-time.version>
+		<javassist.version>3.22.0-CR1</javassist.version>
+		<joda-time.version>2.9.5</joda-time.version>
 		<lombok.version>1.16.10</lombok.version>
-		<log4j2.version>2.6.2</log4j2.version>
-		<libphonenumber.version>7.5.1</libphonenumber.version>
+		<log4j2.version>2.7</log4j2.version>
+		<libphonenumber.version>7.7.4</libphonenumber.version>
 		<mongo.version>3.3.0</mongo.version>
 		<mockito.version>2.0.2-beta</mockito.version>
-		<powermock.version>1.6.5</powermock.version>
-		<spring.version>4.3.2.RELEASE</spring.version>
-		<stripe.version>2.7.0</stripe.version>
+		<powermock.version>1.6.3</powermock.version>
+		<spring.version>4.3.3.RELEASE</spring.version>
+		<stripe.version>3.2.0</stripe.version>
 		<slf4j.version>1.7.21</slf4j.version>
 		<wagon.version>2.9</wagon.version>
 		<xml-apis.version>1.4.01</xml-apis.version>
 
 		<!-- Maven plugins -->
 		<cobertura-plugin.version>2.7</cobertura-plugin.version>
-		<compiler-plugin.version>3.1</compiler-plugin.version>
+		<compiler-plugin.version>3.6.0</compiler-plugin.version>
 		<failsafe-plugin.version>2.19</failsafe-plugin.version>
 		<findbugs-plugin.version>3.0.2</findbugs-plugin.version>
 		<javadoc-plugin.version>2.10.4</javadoc-plugin.version>
 		<jxr-plugin.version>2.5</jxr-plugin.version>
-		<pmd-plugin.version>3.6</pmd-plugin.version>
+		<pmd-plugin.version>3.7</pmd-plugin.version>
 		<project-info-reports-plugin.version>2.8</project-info-reports-plugin.version>
-		<site-plugin.version>3.4</site-plugin.version>
+		<site-plugin.version>3.5.1</site-plugin.version>
 		<surefire-plugin.version>2.19</surefire-plugin.version>
 		<taglist-plugin.version>2.4</taglist-plugin.version>
 		<versions-plugin.version>2.2</versions-plugin.version>
@@ -221,6 +228,27 @@
 	</profiles>
 
 	<dependencies>
+
+		<!-- Spring boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+
 		<!-- Unit testing -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -246,7 +274,7 @@
 		<!-- Mock framework -->
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
+			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -256,6 +284,10 @@
 			<version>${powermock.version}</version>
 			<scope>test</scope>
 			<exclusions>
+				<exclusion>
+					<groupId>org.mockito</groupId>
+					<artifactId>mockito-core</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>org.mockito</groupId>
 					<artifactId>mockito-all</artifactId>
