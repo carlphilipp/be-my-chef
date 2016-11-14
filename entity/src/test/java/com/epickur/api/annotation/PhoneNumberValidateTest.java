@@ -30,33 +30,48 @@ public class PhoneNumberValidateTest {
 
 	@Test
 	public void testValidateNewPasswordSuccess() {
+		// Given
 		User user = new User();
 		user.setId(new ObjectId());
+		// When
+
 		Set<ConstraintViolation<User>> violations = validator.validate(user, Update.class);
+
+		// Then
 		assertThat(violations, is(empty()));
 	}
 
 	@Test
 	public void testValidateNewPasswordSuccess2() {
+		// Given
 		User user = new User();
 		user.setId(new ObjectId());
 		Phonenumber.PhoneNumber phoneNumber = new Phonenumber.PhoneNumber();
 		phoneNumber.setCountryCode(33);
 		phoneNumber.setNationalNumber(383400775);
 		user.setPhoneNumber(phoneNumber);
+
+		// When
 		Set<ConstraintViolation<User>> violations = validator.validate(user, Update.class);
+
+		// Then
 		assertThat(violations, is(empty()));
 	}
 
 	@Test
 	public void testValidateNewPasswordFail() {
+		// Given
 		User user = new User();
 		user.setId(new ObjectId());
 		Phonenumber.PhoneNumber phoneNumber = new Phonenumber.PhoneNumber();
 		phoneNumber.setCountryCode(1);
 		phoneNumber.setNationalNumber(383);
 		user.setPhoneNumber(phoneNumber);
+
+		// When
 		Set<ConstraintViolation<User>> violations = validator.validate(user, Update.class);
+
+		// Then
 		assertThat(violations, is(not(empty())));
 	}
 }

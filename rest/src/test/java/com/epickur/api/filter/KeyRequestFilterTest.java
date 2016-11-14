@@ -24,7 +24,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KeyRequestFilterTest {
@@ -52,123 +59,155 @@ public class KeyRequestFilterTest {
 
 	@Test
 	public void testHandlePrivateKey() throws EpickurException, IOException, ServletException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(dao.read(key.getKey())).thenReturn(Optional.of(key));
-		when(utils.isValid(key)).thenReturn(true);
+		given(dao.read(key.getKey())).willReturn(Optional.of(key));
+		given(utils.isValid(key)).willReturn(true);
 
+		// When
 		filter.handlePrivateKey(request, response, filterChain, key.getKey());
 
-		verify(request).setAttribute(KEY_PROPERTY, key);
-		verify(filterChain).doFilter(request, response);
+		// Then
+		then(request).should().setAttribute(KEY_PROPERTY, key);
+		then(filterChain).should().doFilter(request, response);
 	}
 
 	@Test
 	public void testHandlePrivateKeyAbort() throws EpickurException, IOException, ServletException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(dao.read(key.getKey())).thenReturn(Optional.of(key));
-		when(utils.isValid(key)).thenReturn(false);
-		doNothing().when(filter).abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.INVALID_KEY);
+		given(dao.read(key.getKey())).willReturn(Optional.of(key));
+		given(utils.isValid(key)).willReturn(false);
+		willDoNothing().given(filter).abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.INVALID_KEY);
 
+		// When
 		filter.handlePrivateKey(request, response, filterChain, key.getKey());
 
-		verify(request, never()).setAttribute(KEY_PROPERTY, key);
-		verify(filterChain, never()).doFilter(request, response);
+		// Then
+		then(request).should(never()).setAttribute(KEY_PROPERTY, key);
+		then(filterChain).should(never()).doFilter(request, response);
 	}
 
 	@Test
 	public void testHandleAPIKey() throws IOException, ServletException {
+		// When
 		filter.handleAPIKey(request, response, filterChain);
 
-		verify(request).setAttribute(eq(KEY_PROPERTY), any(Key.class));
-		verify(filterChain).doFilter(request, response);
+		// Then
+		then(request).should().setAttribute(eq(KEY_PROPERTY), any(Key.class));
+		then(filterChain).should().doFilter(request, response);
 	}
 
 	@Test
 	public void testHandleKeyPrivate() throws ServletException, IOException, EpickurException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
 		String apiKey = EntityGenerator.generateRandomString();
-		when(utils.getAPIKey()).thenReturn(apiKey);
-		doNothing().when(filter).handlePrivateKey(request, response, filterChain, key.getKey());
+		given(utils.getAPIKey()).willReturn(apiKey);
+		willDoNothing().given(filter).handlePrivateKey(request, response, filterChain, key.getKey());
 
+		// When
 		filter.handleKey(request, response, filterChain, key.getKey());
 
-		verify(filter).handlePrivateKey(request, response, filterChain, key.getKey());
+		// Then
+		then(filter).should().handlePrivateKey(request, response, filterChain, key.getKey());
 	}
 
 	@Test
 	public void testHandleKeyAPI() throws ServletException, IOException, EpickurException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(utils.getAPIKey()).thenReturn(key.getKey());
-		doNothing().when(filter).handleAPIKey(request, response, filterChain);
+		given(utils.getAPIKey()).willReturn(key.getKey());
+		willDoNothing().given(filter).handleAPIKey(request, response, filterChain);
 
+		// When
 		filter.handleKey(request, response, filterChain, key.getKey());
 
-		verify(filter).handleAPIKey(request, response, filterChain);
+		// Then
+		then(filter).should().handleAPIKey(request, response, filterChain);
 	}
 
 	@Test
 	public void testProcessKey() throws IOException, ServletException, EpickurException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
-		doNothing().when(filter).handleKey(request, response, filterChain, key.getKey());
+		willDoNothing().given(filter).handleKey(request, response, filterChain, key.getKey());
 
+		// When
 		filter.processKey(request, response, filterChain, key.getKey());
 
-		verify(filter).handleKey(request, response, filterChain, key.getKey());
+		// Then
+		then(filter).should().handleKey(request, response, filterChain, key.getKey());
 	}
 
 	@Test
 	public void testProcessKeyException() throws IOException, ServletException, EpickurException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
-		doThrow(EpickurException.class).when(filter).handleKey(request, response, filterChain, key.getKey());
-		doNothing().when(filter).abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+		willThrow(EpickurException.class).given(filter).handleKey(request, response, filterChain, key.getKey());
+		willDoNothing().given(filter).abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 
+		// When
 		filter.processKey(request, response, filterChain, key.getKey());
 
-		verify(filter).abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+		// Then
+		then(filter).should().abortRequest(response, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 	}
 
 	@Test
 	public void testAbortRequest() throws IOException {
-		when(response.getWriter()).thenReturn(printWriter);
-		when(mapper.writeValueAsString(any(ErrorMessage.class))).thenReturn("");
+		// Given
+		given(response.getWriter()).willReturn(printWriter);
+		given(mapper.writeValueAsString(any(ErrorMessage.class))).willReturn("");
 
+		// When
 		filter.abortRequest(response, HttpStatus.OK, "error");
 
-		verify(printWriter).write(anyString());
+		// Then
+		then(printWriter).should().write(anyString());
 	}
 
 	@Test
 	public void testDoFilterInternalProcessKey() throws IOException, ServletException {
+		// Given
 		String url = "localhost";
-		when(request.getRequestURI()).thenReturn(url);
-		when(request.getParameter(KEY_PROPERTY)).thenReturn(KEY_VALUE);
-		doNothing().when(filter).processKey(request, response, filterChain, KEY_VALUE);
+		given(request.getRequestURI()).willReturn(url);
+		given(request.getParameter(KEY_PROPERTY)).willReturn(KEY_VALUE);
+		willDoNothing().given(filter).processKey(request, response, filterChain, KEY_VALUE);
 
+		// When
 		filter.doFilterInternal(request, response, filterChain);
 
-		verify(filter).processKey(request, response, filterChain, KEY_VALUE);
+		// Then
+		then(filter).should().processKey(request, response, filterChain, KEY_VALUE);
 	}
 
 	@Test
 	public void testDoFilterInternalAbortRequest() throws IOException, ServletException {
+		// Given
 		String url = "localhost";
-		when(request.getRequestURI()).thenReturn(url);
-		when(request.getParameter(KEY_PROPERTY)).thenReturn(null);
-		doNothing().when(filter).abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.MISSING_KEY);
+		given(request.getRequestURI()).willReturn(url);
+		given(request.getParameter(KEY_PROPERTY)).willReturn(null);
+		willDoNothing().given(filter).abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.MISSING_KEY);
 
+		// When
 		filter.doFilterInternal(request, response, filterChain);
 
-		verify(filter).abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.MISSING_KEY);
+		// Then
+		then(filter).should().abortRequest(response, HttpStatus.UNAUTHORIZED, ErrorConstants.MISSING_KEY);
 	}
 
 	@Test
 	public void testDoFilterInternalNoKey() throws IOException, ServletException {
+		// Given
 		String url = "localhost/nokey/";
-		when(request.getRequestURI()).thenReturn(url);
-		doNothing().when(filterChain).doFilter(request, response);
+		given(request.getRequestURI()).willReturn(url);
+		willDoNothing().given(filterChain).doFilter(request, response);
 
+		// When
 		filter.doFilterInternal(request, response, filterChain);
 
-		verify(filterChain).doFilter(request, response);
+		// Then
+		then(filterChain).should().doFilter(request, response);
 	}
 }

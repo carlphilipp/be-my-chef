@@ -17,9 +17,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +31,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UserDAOTest {
 
 	@Rule
@@ -52,177 +54,202 @@ public class UserDAOTest {
 
 	@Before
 	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		when(db.getCollection(USER_COLL)).thenReturn(collection);
+		given(db.getCollection(USER_COLL)).willReturn(collection);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
 
+		// When
 		User actual = dao.create(user);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).insertOne(document);
+		then(collection).should().insertOne(document);
 	}
 
 	@Test
 	public void testCreateMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
+		willThrow(new MongoException("")).given(collection).insertOne(document);
 
-		doThrow(new MongoException("")).when(collection).insertOne(document);
-
-		User actual = dao.create(user);
-
-		assertNotNull(actual);
-		verify(collection).insertOne(document);
+		// When
+		dao.create(user);
 	}
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		String userId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(userId));
 		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
+		given(collection.find(query)).willReturn(findIteratble);
+		given(findIteratble.first()).willReturn(found);
 
-		when(collection.find(query)).thenReturn(findIteratble);
-		when(findIteratble.first()).thenReturn(found);
-
+		// When
 		Optional<User> actual = dao.read(userId);
 
+		// Then
 		assertTrue(actual.isPresent());
-		verify(collection).find(query);
+		then(collection).should().find(query);
 	}
 
 	@Test
 	public void testReadMongoException() throws Exception {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		String userId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(userId));
+		given(collection.find(query)).willThrow(new MongoException(""));
 
-		when(collection.find(query)).thenThrow(new MongoException(""));
-
+		// When
 		dao.read(userId);
 	}
 
 	@Test
 	public void testReadWrongIdFormat() throws Exception {
+		// Then
 		thrown.expect(IllegalArgumentException.class);
 
+		// Given
 		String userId = "myId";
 
+		// When
 		dao.read(userId);
 	}
 
 	@Test
 	public void testReadWithName() throws EpickurException {
+		// Given
 		String name = new ObjectId().toHexString();
 		Document query = new Document().append("name", name);
 		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
+		given(collection.find(query)).willReturn(findIteratble);
+		given(findIteratble.first()).willReturn(found);
 
-		when(collection.find(query)).thenReturn(findIteratble);
-		when(findIteratble.first()).thenReturn(found);
-
+		// When
 		Optional<User> actual = dao.readWithName(name);
 
+		// Then
 		assertTrue(actual.isPresent());
-		verify(collection).find(query);
+		then(collection).should().find(query);
 	}
 
 	@Test
 	public void testReadWithEmail() throws EpickurException {
+		// Given
 		String email = new ObjectId().toHexString();
 		Document query = new Document().append("email", email);
 		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
+		given(collection.find(query)).willReturn(findIteratble);
+		given(findIteratble.first()).willReturn(found);
 
-		when(collection.find(query)).thenReturn(findIteratble);
-		when(findIteratble.first()).thenReturn(found);
-
+		// When
 		Optional<User> actual = dao.readWithEmail(email);
 
+		// Then
 		assertTrue(actual.isPresent());
-		verify(collection).find(query);
+		then(collection).should().find(query);
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
+		// Given
 		Document found = EntityGenerator.generateRandomUser().getDocumentDBView();
+		given(collection.find()).willReturn(findIteratble);
+		given(findIteratble.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 
-		when(collection.find()).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
-
+		// When
 		List<User> actuals = dao.readAll();
 
+		// Then
 		assertNotNull(actuals);
 		assertThat(actuals, hasSize(1));
-		verify(collection).find();
-		verify(cursor).close();
+		then(collection).should().find();
+		then(cursor).should().close();
 	}
 
 	@Test
 	public void testReadAllMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
-		when(collection.find()).thenThrow(new MongoException(""));
+		// Given
+		given(collection.find()).willThrow(new MongoException(""));
 
+		// When
 		dao.readAll();
 	}
 
 	@Test
 	public void testUpdate() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).willReturn(document);
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
-
+		// When
 		User actual = dao.update(user);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		then(collection).should().findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
+		// Given
 		User user = EntityGenerator.generateRandomUser();
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).willReturn(null);
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
-
+		// When
 		User actual = dao.update(user);
 
+		// Then
 		assertNull(actual);
-		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		then(collection).should().findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateMongoException() throws Exception {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		User user = EntityGenerator.generateRandomUser();
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).willThrow(new MongoException(""));
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenThrow(new MongoException(""));
-
+		// When
 		dao.update(user);
 	}
 
 	@Test
 	public void testExists() throws EpickurDBException, EpickurParsingException {
+		// Given
 		String name = EntityGenerator.generateRandomString();
 		String email = EntityGenerator.generateRandomString();
-
 		User user = EntityGenerator.generateRandomUser();
 		Document document = user.getDocumentDBView();
+		given(collection.find(any(Document.class))).willReturn(findIteratble);
+		given(findIteratble.first()).willReturn(document);
 
-		when(collection.find(any(Document.class))).thenReturn(findIteratble);
-		when(findIteratble.first()).thenReturn(document);
-
+		// When
 		boolean actual = dao.exists(name, email);
+
+		// Then
 		assertTrue(actual);
-		verify(collection).find(any(Document.class));
+		then(collection).should().find(any(Document.class));
 	}
 }

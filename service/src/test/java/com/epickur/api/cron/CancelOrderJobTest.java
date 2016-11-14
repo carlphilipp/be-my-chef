@@ -12,17 +12,20 @@ import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.email.EmailUtils;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.quartz.*;
 
 import java.util.Optional;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CancelOrderJobTest {
 
 	@Mock
@@ -42,13 +45,9 @@ public class CancelOrderJobTest {
 	@InjectMocks
 	private CancelOrderJob orderJob;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
-
 	@Test
 	public void testExecute() throws JobExecutionException, EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		Voucher voucher = EntityGenerator.generateVoucher();
 		order.setVoucher(voucher);
@@ -57,31 +56,34 @@ public class CancelOrderJobTest {
 		user = spy(user);
 		JobDetail jobDetail = mock(JobDetail.class);
 		JobDataMap jobDataMap = mock(JobDataMap.class);
-		when(context.getJobDetail()).thenReturn(jobDetail);
-		when(context.getScheduler()).thenReturn(scheduler);
-		when(jobDetail.getJobDataMap()).thenReturn(jobDataMap);
-		when(jobDataMap.getString("orderId")).thenReturn(order.getId().toHexString());
-		when(jobDataMap.getString("userId")).thenReturn(user.getId().toHexString());
-		when(orderDAO.read(order.getId().toHexString())).thenReturn(Optional.of(order));
-		when(orderDAO.update(order)).thenReturn(order);
-		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.of(user));
-		when(voucherDAO.read(anyString())).thenReturn(Optional.of(voucher));
+		given(context.getJobDetail()).willReturn(jobDetail);
+		given(context.getScheduler()).willReturn(scheduler);
+		given(jobDetail.getJobDataMap()).willReturn(jobDataMap);
+		given(jobDataMap.getString("orderId")).willReturn(order.getId().toHexString());
+		given(jobDataMap.getString("userId")).willReturn(user.getId().toHexString());
+		given(orderDAO.read(order.getId().toHexString())).willReturn(Optional.of(order));
+		given(orderDAO.update(order)).willReturn(order);
+		given(userDAO.read(user.getId().toHexString())).willReturn(Optional.of(user));
+		given(voucherDAO.read(anyString())).willReturn(Optional.of(voucher));
 
+		// When
 		orderJob.execute(context);
 
-		verify(orderDAO).read(order.getId().toHexString());
-		verify(userDAO).read(user.getId().toHexString());
-		verify(emailUtils).emailCancelOrder(user, order);
-		verify(order).setStatus(OrderStatus.CANCELED);
-		verify(order).setReadableId(null);
-		verify(order).setCreatedAt(null);
-		verify(order).setUpdatedAt(any(DateTime.class));
-		verify(order).prepareForUpdateIntoDB();
-		//verify(voucherBusiness).revertVoucher(voucher.getCode());
+		// Then
+		then(orderDAO).should().read(order.getId().toHexString());
+		then(userDAO).should().read(user.getId().toHexString());
+		then(emailUtils).should().emailCancelOrder(user, order);
+		then(order).should().setStatus(OrderStatus.CANCELED);
+		then(order).should().setReadableId(null);
+		then(order).should().setCreatedAt(null);
+		then(order).should().setUpdatedAt(any(DateTime.class));
+		then(order).should().prepareForUpdateIntoDB();
+		//then(voucherBusiness).should().revertVoucher(voucher.getCode());
 	}
 
 	@Test
 	public void testExecuteEpickurException() throws JobExecutionException, EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		Voucher voucher = EntityGenerator.generateVoucher();
 		order.setVoucher(voucher);
@@ -90,24 +92,26 @@ public class CancelOrderJobTest {
 		user = spy(user);
 		JobDetail jobDetail = mock(JobDetail.class);
 		JobDataMap jobDataMap = mock(JobDataMap.class);
-		when(context.getJobDetail()).thenReturn(jobDetail);
-		when(context.getScheduler()).thenReturn(scheduler);
-		when(jobDetail.getJobDataMap()).thenReturn(jobDataMap);
-		when(jobDataMap.getString("orderId")).thenReturn(order.getId().toHexString());
-		when(jobDataMap.getString("userId")).thenReturn(user.getId().toHexString());
-		when(orderDAO.read(order.getId().toHexString())).thenThrow(new EpickurException());
-		when(orderDAO.update(order)).thenReturn(order);
-		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.of(user));
+		given(context.getJobDetail()).willReturn(jobDetail);
+		given(context.getScheduler()).willReturn(scheduler);
+		given(jobDetail.getJobDataMap()).willReturn(jobDataMap);
+		given(jobDataMap.getString("orderId")).willReturn(order.getId().toHexString());
+		given(jobDataMap.getString("userId")).willReturn(user.getId().toHexString());
+		given(orderDAO.read(order.getId().toHexString())).willThrow(new EpickurException());
+		given(orderDAO.update(order)).willReturn(order);
+		given(userDAO.read(user.getId().toHexString())).willReturn(Optional.of(user));
 
+		// When
 		orderJob.execute(context);
 
-		verify(orderDAO).read(order.getId().toHexString());
-		verify(userDAO, never()).read(user.getId().toHexString());
-		verify(emailUtils, never()).emailCancelOrder(user, order);
-		verify(order, never()).setStatus(any(OrderStatus.class));
-		verify(order, never()).setReadableId(anyString());
-		verify(order, never()).setCreatedAt(isA(DateTime.class));
-		verify(order, never()).setUpdatedAt(isA(DateTime.class));
-		verify(order, never()).prepareForUpdateIntoDB();
+		// Then
+		then(orderDAO).should().read(order.getId().toHexString());
+		then(userDAO).should(never()).read(user.getId().toHexString());
+		then(emailUtils).should(never()).emailCancelOrder(user, order);
+		then(order).should(never()).setStatus(any(OrderStatus.class));
+		then(order).should(never()).setReadableId(anyString());
+		then(order).should(never()).setCreatedAt(isA(DateTime.class));
+		then(order).should(never()).setUpdatedAt(isA(DateTime.class));
+		then(order).should(never()).prepareForUpdateIntoDB();
 	}
 }

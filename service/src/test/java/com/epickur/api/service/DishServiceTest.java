@@ -27,10 +27,10 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.when;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(PowerMockRunner.class)
@@ -61,12 +61,15 @@ public class DishServiceTest {
 
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
+		given(dishDAOMock.create(isA(Dish.class))).willReturn(dishAfterCreate);
 
-		when(dishDAOMock.create(isA(Dish.class))).thenReturn(dishAfterCreate);
-
+		// When
 		Dish actual = dishService.create(dish);
+
+		// Then
 		assertNotNull("Dish is null", actual);
 		assertNotNull("Id not generated", actual.getId());
 		assertNotNull("CreatedAt is null", actual.getCreatedAt());
@@ -76,82 +79,100 @@ public class DishServiceTest {
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
+		given(dishDAOMock.read(anyString())).willReturn(Optional.of(dishAfterRead));
 
-		when(dishDAOMock.read(anyString())).thenReturn(Optional.of(dishAfterRead));
-
+		// When
 		Optional<Dish> actual = dishService.read(dish.getId().toHexString());
+
+		// Then
 		assertTrue(actual.isPresent());
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
+		given(dishDAOMock.readAll()).willReturn(listDishes);
 
-		when(dishDAOMock.readAll()).thenReturn(listDishes);
-
+		// When
 		List<Dish> listActual = dishService.readAll();
+
+		// Then
 		Dish actual = listActual.get(0);
 		assertNotNull("Dish is null", actual);
 	}
 
 	@Test
 	public void testUpdate() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		Dish dishAfterUpdate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterUpdate.setName("new name");
+		given(dishDAOMock.read(anyString())).willReturn(Optional.of(dishAfterRead));
+		given(dishDAOMock.update(isA(Dish.class))).willReturn(dishAfterUpdate);
 
-		when(dishDAOMock.read(anyString())).thenReturn(Optional.of(dishAfterRead));
-		when(dishDAOMock.update(isA(Dish.class))).thenReturn(dishAfterUpdate);
-
+		// When
 		Dish actual = dishService.update(dish);
+
+		// Then
 		assertNotNull("Dish is null", actual);
 		assertEquals("new name", actual.getName());
 	}
 
 	@Test
 	public void testDelete() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
+		given(dishDAOMock.read(anyString())).willReturn(Optional.of(dishAfterRead));
+		given(dishDAOMock.delete(dish.getId().toHexString())).willReturn(true);
 
-		when(dishDAOMock.read(anyString())).thenReturn(Optional.of(dishAfterRead));
-		when(dishDAOMock.delete(dish.getId().toHexString())).thenReturn(true);
-
+		// When
 		boolean actual = dishService.delete(dish.getId().toHexString());
+
+		// Then
 		assertTrue(actual);
 	}
 
 	@Test
 	public void testSearchDishesForOneCaterer() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
+		given(dishDAOMock.searchWithCatererId(anyString())).willReturn(listDishes);
 
-		when(dishDAOMock.searchWithCatererId(anyString())).thenReturn(listDishes);
-
+		// When
 		List<Dish> listActual = dishService.searchDishesForOneCaterer(UUID.randomUUID().toString());
+
+		// Then
 		Dish actual = listActual.get(0);
 		assertNotNull("Dish is null", actual);
 	}
 
 	@Test
 	public void testSearch() throws Exception {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
+		given(dishDAOMock.search(anyString(), anyInt(), isA(List.class), anyInt(), isA(Geo.class), anyInt())).willReturn(listDishes);
+		//givenNew(GeocoderHereImpl.class).withNoArguments().willReturn(geoCoder);
+		given(geoCoder.getPosition(anyString())).willReturn(geo);
 
-		when(dishDAOMock.search(anyString(), anyInt(), isA(List.class), anyInt(), isA(Geo.class), anyInt())).thenReturn(listDishes);
-		//whenNew(GeocoderHereImpl.class).withNoArguments().thenReturn(geoCoder);
-		when(geoCoder.getPosition(anyString())).thenReturn(geo);
-
+		// When
 		List<Dish> listActual = dishService.search("", 0, new ArrayList<>(), 0, new Geo(), "", 0);
+
+		// Then
 		Dish actual = listActual.get(0);
 		assertNotNull("Dish is null", actual);
 	}

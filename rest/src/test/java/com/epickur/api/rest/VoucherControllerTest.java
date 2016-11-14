@@ -12,9 +12,10 @@ import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.Utils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +27,13 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VoucherControllerTest {
 
 	@Mock
@@ -45,24 +47,25 @@ public class VoucherControllerTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(context.getAttribute("key")).thenReturn(key);
-		when(context.getContentType()).thenReturn(MediaType.APPLICATION_JSON_VALUE);
+		given(context.getAttribute("key")).willReturn(key);
+		given(context.getContentType()).willReturn(MediaType.APPLICATION_JSON_VALUE);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGenerate() throws EpickurException {
+		// Given
 		Voucher voucher = EntityGenerator.generateVoucher();
 		Voucher voucherAfterCreate = EntityGenerator.mockVoucherAfterCreate(voucher);
 		Set<Voucher> vouchers = new HashSet<>();
 		vouchers.add(voucherAfterCreate);
+		given(voucherBusiness.generate(anyInt(), isA(DiscountType.class), anyInt(), isA(ExpirationType.class), anyObject())).willReturn(vouchers);
 
-		when(voucherBusiness.generate(anyInt(), isA(DiscountType.class), anyInt(), isA(ExpirationType.class), anyObject())).thenReturn(vouchers);
-
+		// When
 		ResponseEntity<?> actual = controller.generate(1, DiscountType.AMOUNT, 1, ExpirationType.ONETIME, "05/05/2020", "MM/dd/yyyy");
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Set<Voucher> actualVoucher = (Set<Voucher>) actual.getBody();
@@ -72,12 +75,15 @@ public class VoucherControllerTest {
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		Voucher voucher = EntityGenerator.generateVoucher();
 		Voucher voucherAfterCreate = EntityGenerator.mockVoucherAfterCreate(voucher);
+		given(voucherBusiness.read(anyString())).willReturn(Optional.of(voucherAfterCreate));
 
-		when(voucherBusiness.read(anyString())).thenReturn(Optional.of(voucherAfterCreate));
-
+		// When
 		ResponseEntity<?> actual = controller.read(CommonsUtil.generateRandomCode());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Voucher actualVoucher = (Voucher) actual.getBody();
@@ -87,9 +93,13 @@ public class VoucherControllerTest {
 
 	@Test
 	public void testReadVoucherNotFound() throws EpickurException {
-		when(voucherBusiness.read(anyString())).thenReturn(Optional.empty());
+		// Given
+		given(voucherBusiness.read(anyString())).willReturn(Optional.empty());
 
+		// When
 		ResponseEntity<?> actual = controller.read(CommonsUtil.generateRandomCode());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatusCode().value());
 		ErrorMessage error = (ErrorMessage) actual.getBody();

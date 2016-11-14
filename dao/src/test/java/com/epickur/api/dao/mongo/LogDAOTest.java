@@ -12,17 +12,19 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.epickur.api.dao.CollectionsName.LOG_COLL;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LogDAOTest {
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
@@ -30,55 +32,65 @@ public class LogDAOTest {
 	@Mock
 	private MongoCollection<Document> collection;
 	@Mock
-	private FindIterable<Document> findIteratble;
+	private FindIterable<Document> documentFindIterable;
 	@Mock
 	private MongoCursor<Document> cursor;
 	@InjectMocks
 	private LogDAO dao;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		when(db.getCollection(LOG_COLL)).thenReturn(collection);
+		given(db.getCollection(LOG_COLL)).willReturn(collection);
 	}
-	
+
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		Log log = new Log();
 		Document document = log.getDocumentDBView();
 
+		// When
 		Log actual = dao.create(log);
 
+		// Then
 		assertNull(actual);
-		verify(collection).insertOne(document);
+		then(collection).should().insertOne(document);
 	}
-	
+
 	@Test
-	public void testRead() throws EpickurException{
+	public void testRead() throws EpickurException {
+		// Then
 		thrown.expect(NotImplementedException.class);
-		
+
+		// When
 		dao.read("");
 	}
-	
+
 	@Test
-	public void testUpdate() throws EpickurException{
+	public void testUpdate() throws EpickurException {
+		// Then
 		thrown.expect(NotImplementedException.class);
-		
+
+		// When
 		Log log = new Log();
 		dao.update(log);
 	}
-	
+
 	@Test
-	public void testDelete() throws EpickurException{
+	public void testDelete() throws EpickurException {
+		// Then
 		thrown.expect(NotImplementedException.class);
-		
+
+		// When
 		dao.delete("");
 	}
-	
+
 	@Test
-	public void testReadAll() throws EpickurException{
+	public void testReadAll() throws EpickurException {
+		// Then
 		thrown.expect(NotImplementedException.class);
-		
+
+		// When
 		dao.readAll();
 	}
 }

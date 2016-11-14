@@ -4,11 +4,11 @@ import com.epickur.api.dao.mongo.CatererDAO;
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,11 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CatererServiceTest {
 
 	@Mock
@@ -27,18 +28,14 @@ public class CatererServiceTest {
 	@InjectMocks
 	private CatererService catererService;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
-
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
+		given(catererDAOMock.create(isA(Caterer.class))).willReturn(catererAfterCreate);
 
-		when(catererDAOMock.create(isA(Caterer.class))).thenReturn(catererAfterCreate);
-
+		// When
 		Caterer actual = catererService.create(caterer);
 
 		assertNotNull("Caterer is null", actual);
@@ -55,13 +52,15 @@ public class CatererServiceTest {
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
+		given(catererDAOMock.read(anyString())).willReturn(Optional.of(catererAfterCreate));
 
-		when(catererDAOMock.read(anyString())).thenReturn(Optional.of(catererAfterCreate));
-
+		// When
 		Optional<Caterer> actualCaterer = catererService.read(EntityGenerator.generateRandomString());
 
+		// Then
 		Caterer actual = actualCaterer.orElseThrow(AssertionError::new);
 		assertNotNull("Caterer is null", actual);
 		assertNotNull("Id not generated", actual.getId());
@@ -77,14 +76,17 @@ public class CatererServiceTest {
 
 	@Test
 	public void testReadAll() throws EpickurException {
+		// Given
 		Caterer caterer1 = EntityGenerator.generateRandomCatererWithId();
 		Caterer caterer2 = EntityGenerator.generateRandomCatererWithId();
 		List<Caterer> caterers = new ArrayList<>();
 		caterers.add(caterer1);
 		caterers.add(caterer2);
 
-		when(catererDAOMock.readAll()).thenReturn(caterers);
+		// When
+		given(catererDAOMock.readAll()).willReturn(caterers);
 
+		// Then
 		List<Caterer> actual = catererService.readAll();
 		assertNotNull("Caterer is null", actual);
 		assertEquals(caterer1.getId(), actual.get(0).getId());
@@ -93,16 +95,18 @@ public class CatererServiceTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Caterer catererAfterUpdate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterUpdate.setDescription("new desc");
+		given(catererDAOMock.read(anyString())).willReturn(Optional.of(catererAfterUpdate));
+		given(catererDAOMock.update(caterer)).willReturn(catererAfterUpdate);
 
-		when(catererDAOMock.read(anyString())).thenReturn(Optional.of(catererAfterUpdate));
-		when(catererDAOMock.update(caterer)).thenReturn(catererAfterUpdate);
-
+		// When
 		Caterer actual = catererService.update(caterer);
-		assertNotNull("Caterer is null", actual);
 
+		// Then
+		assertNotNull("Caterer is null", actual);
 		assertNotNull("CreatedAt is null", actual.getCreatedAt());
 		assertNotNull("UpdatedAt is null", actual.getUpdatedAt());
 		assertEquals("new desc", actual.getDescription());

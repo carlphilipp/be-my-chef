@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LogRequestFilterTest {
@@ -38,26 +38,30 @@ public class LogRequestFilterTest {
 
 	@Test
 	public void testDoFilterInternal() throws IOException, ServletException {
+		// Given
 		Enumeration params = mock(Enumeration.class);
-		when(params.hasMoreElements()).thenReturn(true, false);
-		when(params.nextElement()).thenReturn("param");
-		when(request.getRequestURL()).thenReturn(new StringBuffer());
-		when(request.getParameterNames()).thenReturn(params);
-		when(request.getHeader("X-FORWARDED-FOR")).thenReturn(null);
+		given(params.hasMoreElements()).willReturn(true, false);
+		given(params.nextElement()).willReturn("param");
+		given(request.getRequestURL()).willReturn(new StringBuffer());
+		given(request.getParameterNames()).willReturn(params);
+		given(request.getHeader("X-FORWARDED-FOR")).willReturn(null);
 
+		// When
 		filter.doFilterInternal(request, response, filterChain);
 	}
 
 	@Test
 	public void testDoFilterInternalFail() throws IOException, ServletException, EpickurException {
+		// Given
 		Enumeration params = mock(Enumeration.class);
-		when(params.hasMoreElements()).thenReturn(true, false);
-		when(params.nextElement()).thenReturn("param");
-		when(request.getRequestURL()).thenReturn(new StringBuffer());
-		when(request.getParameterNames()).thenReturn(params);
-		when(request.getHeader("X-FORWARDED-FOR")).thenReturn(null);
-		when(dao.create(isA(Log.class))).thenThrow(new EpickurException());
+		given(params.hasMoreElements()).willReturn(true, false);
+		given(params.nextElement()).willReturn("param");
+		given(request.getRequestURL()).willReturn(new StringBuffer());
+		given(request.getParameterNames()).willReturn(params);
+		given(request.getHeader("X-FORWARDED-FOR")).willReturn(null);
+		given(dao.create(isA(Log.class))).willThrow(new EpickurException());
 
+		// When
 		filter.doFilterInternal(request, response, filterChain);
 	}
 }
