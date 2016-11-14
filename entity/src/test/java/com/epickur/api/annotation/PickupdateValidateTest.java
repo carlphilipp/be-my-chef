@@ -34,6 +34,7 @@ public class PickupdateValidateTest {
 
 	@Test
 	public void testValidateNewPasswordSuccessGoodTime() {
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		WorkingTimes workingTimes = order.getDish().getCaterer().getWorkingTimes();
 		Hours hours = new Hours();
@@ -45,20 +46,30 @@ public class PickupdateValidateTest {
 		hours.setMon(hoursMonday);
 		workingTimes.setHours(hours);
 		order.setPickupdate("mon-10:30");
+
+		// When
 		Set<ConstraintViolation<Order>> violations = validator.validate(order, Update.class);
+
+		// Then
 		assertThat(violations, is(empty()));
 	}
 
 	@Test
 	public void testValidateNewPasswordFailWrongPickuptDateFormat() {
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setPickupdate("mon-10:30eeee");
+
+		// When
 		Set<ConstraintViolation<Order>> violations = validator.validate(order, Update.class);
+
+		// Then
 		assertThat(violations, is(not(empty())));
 	}
 
 	@Test
 	public void testValidateNewPasswordFailWrongTime() {
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		WorkingTimes workingTimes = order.getDish().getCaterer().getWorkingTimes();
 		Hours hours = new Hours();
@@ -70,7 +81,11 @@ public class PickupdateValidateTest {
 		hours.setMon(hoursMonday);
 		workingTimes.setHours(hours);
 		order.setPickupdate("mon-10:30");
+
+		// When
 		Set<ConstraintViolation<Order>> violations = validator.validate(order, Update.class);
+
+		// Then
 		assertThat(violations, is(not(empty())));
 	}
 }

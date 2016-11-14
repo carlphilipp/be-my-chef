@@ -5,11 +5,15 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>3.0.4-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>entity</artifactId>
 	<packaging>jar</packaging>
+
+	<build>
+		<finalName>epickur-entity-${version}</finalName>
+	</build>
 
 	<name>Entity</name>
 	<description>Entity data.</description>

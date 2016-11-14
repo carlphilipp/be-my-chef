@@ -21,9 +21,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,12 @@ import java.util.Optional;
 import static com.epickur.api.dao.CollectionsName.DISH_COLL;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.any;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DishDAOTest {
 
 	@Rule
@@ -51,137 +56,156 @@ public class DishDAOTest {
 
 	@Before
 	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		when(db.getCollection(DISH_COLL)).thenReturn(collection);
+		given(db.getCollection(DISH_COLL)).willReturn(collection);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		Document document = dish.getDocumentDBView();
 
+		// When
 		Dish actual = dao.create(dish);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).insertOne(document);
+		then(collection).should().insertOne(document);
 	}
 
 	@Test
 	public void testCreateMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		Document document = dish.getDocumentDBView();
+		willThrow(new MongoException("")).given(collection).insertOne(document);
 
-		doThrow(new MongoException("")).when(collection).insertOne(document);
-
-		Dish actual = dao.create(dish);
-
-		assertNotNull(actual);
-		verify(collection).insertOne(document);
+		// When
+		dao.create(dish);
 	}
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		String dishId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(dishId));
 		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
+		given(collection.find(query)).willReturn(findIteratble);
+		given(findIteratble.first()).willReturn(found);
 
-		when(collection.find(query)).thenReturn(findIteratble);
-		when(findIteratble.first()).thenReturn(found);
-
+		// When
 		Optional<Dish> actual = dao.read(dishId);
 
+		// Then
 		assertTrue(actual.isPresent());
-		verify(collection).find(query);
+		then(collection).should().find(query);
 	}
 
 	@Test
 	public void testReadMongoException() throws Exception {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		String dishId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(dishId));
+		given(collection.find(query)).willThrow(new MongoException(""));
 
-		when(collection.find(query)).thenThrow(new MongoException(""));
-
+		// When
 		dao.read(dishId);
 	}
 
 	@Test
 	public void testReadWrongIdFormat() throws Exception {
+		// Then
 		thrown.expect(IllegalArgumentException.class);
 
+		// Given
 		String dishId = "myId";
 
+		// When
 		dao.read(dishId);
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
+		// Given
 		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
+		given(collection.find()).willReturn(findIteratble);
+		given(findIteratble.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 
-		when(collection.find()).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
+		// When
+		List<Dish> actual = dao.readAll();
 
-		List<Dish> actuals = dao.readAll();
-
-		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
-		verify(collection).find();
-		verify(cursor).close();
+		// Then
+		assertNotNull(actual);
+		assertEquals(1, actual.size());
+		then(collection).should().find();
+		then(cursor).should().close();
 	}
 
 	@Test
 	public void testReadAllMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
-		when(collection.find()).thenThrow(new MongoException(""));
+		// Given
+		given(collection.find()).willThrow(new MongoException(""));
 
+		// When
 		dao.readAll();
 	}
 
 	@Test
 	public void testUpdate() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		Document document = dish.getDocumentDBView();
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).willReturn(document);
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
-
+		// When
 		Dish actual = dao.update(dish);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		then(collection).should().findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).willReturn(null);
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
-
+		// When
 		Dish actual = dao.update(dish);
 
+		// Then
 		assertNull(actual);
-		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		then(collection).should().findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateMongoException() throws Exception {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).willThrow(new MongoException(""));
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class)))
-				.thenThrow(new MongoException(""));
-
+		// When
 		dao.update(dish);
 	}
 
 	@Test
-	public void testSearchOneType() throws EpickurException{
+	public void testSearchOneType() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		WorkingTimes wt = new WorkingTimes();
 		Hours hours = new Hours();
@@ -198,23 +222,25 @@ public class DishDAOTest {
 		List<DishType> dishTypes = new ArrayList<>();
 		dishTypes.add(DishType.MAIN);
 		Geo geo = EntityGenerator.generateGeo();
+		given(collection.find(any(Document.class))).willReturn(findIteratble);
+		given(findIteratble.limit(10)).willReturn(findIteratble);
+		given(findIteratble.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 
-		when(collection.find(any(Document.class))).thenReturn(findIteratble);
-		when(findIteratble.limit(10)).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
-
+		// When
 		List<Dish> actuals = dao.search("mon", 5, dishTypes, 10, geo, 20);
 
+		// Then
 		assertNotNull(actuals);
 		assertThat(actuals, hasSize(1));
-		verify(collection).find(any(Document.class));
-		verify(cursor).close();
+		then(collection).should().find(any(Document.class));
+		then(cursor).should().close();
 	}
 
 	@Test
-	public void testSearchMultipleType() throws EpickurException{
+	public void testSearchMultipleType() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		WorkingTimes wt = new WorkingTimes();
 		Hours hours = new Hours();
@@ -232,60 +258,67 @@ public class DishDAOTest {
 		dishTypes.add(DishType.MAIN);
 		dishTypes.add(DishType.DESSERT);
 		Geo geo = EntityGenerator.generateGeo();
+		given(collection.find(any(Document.class))).willReturn(findIteratble);
+		given(findIteratble.limit(10)).willReturn(findIteratble);
+		given(findIteratble.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 
-		when(collection.find(any(Document.class))).thenReturn(findIteratble);
-		when(findIteratble.limit(10)).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
-
+		// When
 		List<Dish> actuals = dao.search("mon", 5, dishTypes, 10, geo, 20);
 
+		// Then
 		assertNotNull(actuals);
 		assertThat(actuals, hasSize(1));
-		verify(collection).find(any(Document.class));
-		verify(cursor).close();
+		then(collection).should().find(any(Document.class));
+		then(cursor).should().close();
 	}
 
 	@Test
-	public void testSearchMongoException() throws EpickurException{
+	public void testSearchMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		List<DishType> dishTypes = new ArrayList<>();
 		dishTypes.add(DishType.MAIN);
 		Geo geo = EntityGenerator.generateGeo();
+		given(collection.find(any(Document.class))).willThrow(new MongoException(""));
 
-		when(collection.find(any(Document.class))).thenThrow(new MongoException(""));
-
+		// When
 		dao.search("mon", 5, dishTypes, 10, geo, 20);
 	}
 
 	@Test
-	public void testSearchWithCatererId() throws EpickurException{
+	public void testSearchWithCatererId() throws EpickurException {
+		// Given
 		String catererId = new ObjectId().toHexString();
 		Document found = EntityGenerator.generateRandomDish().getDocumentDBView();
+		given(collection.find(any(Document.class))).willReturn(findIteratble);
+		given(findIteratble.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 
-		when(collection.find(any(Document.class))).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
+		// When
+		List<Dish> actual = dao.searchWithCatererId(catererId);
 
-		List<Dish> actuals = dao.searchWithCatererId(catererId);
-
-		assertNotNull(actuals);
-		assertThat(actuals, hasSize(1));
-		verify(collection).find(any(Document.class));
-		verify(cursor).close();
+		// Then
+		assertNotNull(actual);
+		assertThat(actual, hasSize(1));
+		then(collection).should().find(any(Document.class));
+		then(cursor).should().close();
 	}
 
 	@Test
-	public void testSearchWithCatererIdMongoException() throws EpickurException{
+	public void testSearchWithCatererIdMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		String catererId = new ObjectId().toHexString();
+		given(collection.find(any(Document.class))).willThrow(new MongoException(""));
 
-		when(collection.find(any(Document.class))).thenThrow(new MongoException(""));
-
+		// When
 		dao.searchWithCatererId(catererId);
 	}
 }

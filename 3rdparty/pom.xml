@@ -5,11 +5,15 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>3.0.4-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>3rdparty</artifactId>
 	<packaging>jar</packaging>
+
+	<build>
+		<finalName>epickur-3rdparty-${version}</finalName>
+	</build>
 
 	<name>3rd Party</name>
 	<description>Connect to 3rd party providers.</description>

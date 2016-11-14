@@ -8,13 +8,13 @@ import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Optional;
 import java.util.Set;
@@ -23,10 +23,11 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VoucherServiceTest {
 
 	@Rule
@@ -36,16 +37,11 @@ public class VoucherServiceTest {
 	@InjectMocks
 	private VoucherService voucherService;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
-
 	@Test
 	public void testRead() throws EpickurException {
 		Voucher voucher = EntityGenerator.generateVoucher();
 
-		when(voucherDAO.read(anyString())).thenReturn(Optional.of(voucher));
+		given(voucherDAO.read(anyString())).willReturn(Optional.of(voucher));
 
 		Optional<Voucher> actual = voucherService.read(EntityGenerator.generateRandomString());
 		assertTrue(actual.isPresent());
@@ -54,7 +50,7 @@ public class VoucherServiceTest {
 
 	@Test
 	public void testGenerate() throws EpickurException {
-		when(voucherDAO.read(anyString())).thenReturn(Optional.empty());
+		given(voucherDAO.read(anyString())).willReturn(Optional.empty());
 
 		int count = 10;
 		Set<Voucher> actuals = voucherService.generate(count, DiscountType.AMOUNT, 15, ExpirationType.ONETIME, new DateTime());
@@ -69,8 +65,8 @@ public class VoucherServiceTest {
 		voucherAfter.setStatus(Status.VALID);
 		voucherAfter.setExpirationType(ExpirationType.ONETIME);
 
-		when(voucherDAO.read(voucher.getCode())).thenReturn(Optional.of(voucherAfter));
-		when(voucherDAO.update(isA(Voucher.class))).thenReturn(voucherAfter);
+		given(voucherDAO.read(voucher.getCode())).willReturn(Optional.of(voucherAfter));
+		given(voucherDAO.update(isA(Voucher.class))).willReturn(voucherAfter);
 
 		Voucher actual = voucherService.validateVoucher(voucher.getCode());
 		assertNotNull(actual);
@@ -83,7 +79,7 @@ public class VoucherServiceTest {
 		UUID uuid = UUID.randomUUID();
 		thrown.expectMessage("Voucher '" + uuid.toString() + "' not found");
 
-		when(voucherDAO.read(uuid.toString())).thenReturn(Optional.empty());
+		given(voucherDAO.read(uuid.toString())).willReturn(Optional.empty());
 
 		voucherService.validateVoucher(uuid.toString());
 	}
@@ -98,7 +94,7 @@ public class VoucherServiceTest {
 		Voucher voucherAfter = EntityGenerator.mockVoucherAfterCreate(voucher);
 		voucherAfter.setStatus(Status.EXPIRED);
 
-		when(voucherDAO.read(uuid.toString())).thenReturn(Optional.of(voucherAfter));
+		given(voucherDAO.read(uuid.toString())).willReturn(Optional.of(voucherAfter));
 
 		Voucher actual = voucherService.validateVoucher(uuid.toString());
 		assertNotNull(actual);
@@ -119,8 +115,8 @@ public class VoucherServiceTest {
 		voucherAfterUpdate.setCreatedAt(now);
 		voucherAfterUpdate.setUpdatedAt(now);
 
-		when(voucherDAO.read(voucher.getCode())).thenReturn(Optional.of(voucherAfterRead));
-		when(voucherDAO.update(isA(Voucher.class))).thenReturn(voucherAfterUpdate);
+		given(voucherDAO.read(voucher.getCode())).willReturn(Optional.of(voucherAfterRead));
+		given(voucherDAO.update(isA(Voucher.class))).willReturn(voucherAfterUpdate);
 
 		Voucher actual = voucherService.validateVoucher(voucher.getCode());
 		assertNotNull(actual);
@@ -145,8 +141,8 @@ public class VoucherServiceTest {
 		voucherAfterUpdate.setUpdatedAt(now);
 		voucherAfterUpdate.setUsedCount(4);
 
-		when(voucherDAO.read(voucher.getCode())).thenReturn(Optional.of(voucherAfterCreate));
-		when(voucherDAO.update(isA(Voucher.class))).thenReturn(voucherAfterUpdate);
+		given(voucherDAO.read(voucher.getCode())).willReturn(Optional.of(voucherAfterCreate));
+		given(voucherDAO.update(isA(Voucher.class))).willReturn(voucherAfterUpdate);
 
 		Voucher actual = voucherService.validateVoucher(voucher.getCode());
 		assertNotNull(actual);
@@ -165,8 +161,8 @@ public class VoucherServiceTest {
 		voucherAfterUpdate.setStatus(Status.VALID);
 		voucherAfterUpdate.setUsedCount(0);
 
-		when(voucherDAO.read(voucher.getCode())).thenReturn(Optional.of(voucherAfterRead));
-		when(voucherDAO.update(isA(Voucher.class))).thenReturn(voucherAfterUpdate);
+		given(voucherDAO.read(voucher.getCode())).willReturn(Optional.of(voucherAfterRead));
+		given(voucherDAO.update(isA(Voucher.class))).willReturn(voucherAfterUpdate);
 
 		Voucher actual = voucherService.revertVoucher(voucher.getCode());
 		assertNotNull(actual);
@@ -184,8 +180,8 @@ public class VoucherServiceTest {
 		voucherAfterUpdate.setStatus(Status.VALID);
 		voucherAfterUpdate.setUsedCount(9);
 
-		when(voucherDAO.read(voucher.getCode())).thenReturn(Optional.of(voucherAfterRead));
-		when(voucherDAO.update(isA(Voucher.class))).thenReturn(voucherAfterUpdate);
+		given(voucherDAO.read(voucher.getCode())).willReturn(Optional.of(voucherAfterRead));
+		given(voucherDAO.update(isA(Voucher.class))).willReturn(voucherAfterUpdate);
 
 		Voucher actual = voucherService.revertVoucher(voucher.getCode());
 		assertNotNull(actual);

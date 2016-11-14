@@ -97,5 +97,4 @@ public class EpickurProperties {
 	private String setupDB;
 	@Value("${script.clean}")
 	private String cleanDB;
-
 }

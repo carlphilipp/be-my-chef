@@ -7,17 +7,20 @@ import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.KeyService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LogoutControllerTest {
 
 	@Mock
@@ -29,21 +32,24 @@ public class LogoutControllerTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-		
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(context.getAttribute("key")).thenReturn(key);
+		given(context.getAttribute("key")).willReturn(key);
 	}
 
 	@Test
 	public void testLogout() throws EpickurException {
+		// Given
 		String key = EntityGenerator.generateRandomString();
+
+		// When
 		ResponseEntity<?> actual = controller.logout(key);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
-		SuccessMessage message = (SuccessMessage)  actual.getBody();
+		SuccessMessage message = (SuccessMessage) actual.getBody();
 		assertNotNull(message);
 		assertEquals("success", message.getResult());
-		verify(keyService).deleteWithKey(key);
+		then(keyService).should().deleteWithKey(key);
 	}
 }

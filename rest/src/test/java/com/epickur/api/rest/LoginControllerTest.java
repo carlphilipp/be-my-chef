@@ -7,18 +7,20 @@ import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LoginControllerTest {
 
 	@Mock
@@ -30,20 +32,21 @@ public class LoginControllerTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(context.getAttribute("key")).thenReturn(key);
+		given(context.getAttribute("key")).willReturn(key);
 	}
 
 	@Test
 	public void testLogin() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
+		given(userBusiness.login(anyString(), anyString())).willReturn(userAfterCreate);
 
-		when(userBusiness.login(anyString(), anyString())).thenReturn(userAfterCreate);
-
+		// When
 		ResponseEntity<?> actual = controller.login(user.getEmail(), user.getPassword());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		User actualUser = (User) actual.getBody();

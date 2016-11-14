@@ -1,5 +1,6 @@
 package com.epickur.api.filter;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -14,13 +15,14 @@ import java.io.IOException;
  * @author cph
  * @version 1.0
  */
+@Component("corsFilter")
 public final class HeaderResponseFilter extends OncePerRequestFilter {
 
 	@Override
-	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws
-			ServletException, IOException {
+	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
+		throws ServletException, IOException {
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
+		response.setHeader("Access-Control-Allow-Methods", "HEAD,GET,POST,PUT,DELETE");
 		response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 		filterChain.doFilter(request, response);
 	}

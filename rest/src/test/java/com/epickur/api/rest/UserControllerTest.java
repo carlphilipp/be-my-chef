@@ -14,10 +14,10 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,10 +25,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.isA;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest {
 
 	@Mock
@@ -42,20 +48,21 @@ public class UserControllerTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-
 		Key key = EntityGenerator.generateRandomAdminKey();
-		Mockito.when(context.getAttribute("key")).thenReturn(key);
+		given(context.getAttribute("key")).willReturn(key);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUser();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
+		given(userService.create(isA(User.class), anyBoolean())).willReturn(userAfterCreate);
 
-		when(userService.create(isA(User.class), anyBoolean())).thenReturn(userAfterCreate);
-
+		// When
 		ResponseEntity<?> actual = controller.create(false, user);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		User actualUser = (User) actual.getBody();
@@ -64,12 +71,15 @@ public class UserControllerTest {
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
+		given(userService.read(anyString())).willReturn(Optional.of(userAfterRead));
 
-		when(userService.read(anyString())).thenReturn(Optional.of(userAfterRead));
-
+		// When
 		ResponseEntity<?> actual = controller.read(user.getId().toHexString());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		User actualUser = (User) actual.getBody();
@@ -78,12 +88,15 @@ public class UserControllerTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterUpdate = EntityGenerator.mockUserAfterCreate(user);
+		given(userService.update(isA(User.class))).willReturn(userAfterUpdate);
 
-		when(userService.update(isA(User.class))).thenReturn(userAfterUpdate);
-
+		// When
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		User actualUser = (User) actual.getBody();
@@ -92,15 +105,18 @@ public class UserControllerTest {
 
 	@Test
 	public void testUpdatePassword() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		user.setNewPassword("newpassword");
 		user.setPassword("oldpassword");
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
+		given(userService.update(isA(User.class))).willReturn(userAfterCreate);
 
-		when(userService.update(isA(User.class))).thenReturn(userAfterCreate);
-
+		// When
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		User actualUser = (User) actual.getBody();
@@ -110,14 +126,17 @@ public class UserControllerTest {
 
 	@Test
 	public void testUpdatePasswordFail() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		user.setPassword("oldpassword");
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
+		given(userService.update(isA(User.class))).willReturn(userAfterCreate);
 
-		when(userService.update(isA(User.class))).thenReturn(userAfterCreate);
-
+		// When
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		User actualUser = (User) actual.getBody();
@@ -127,11 +146,14 @@ public class UserControllerTest {
 
 	@Test
 	public void testDelete() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
+		given(userService.delete(anyString())).willReturn(true);
 
-		when(userService.delete(anyString())).thenReturn(true);
-
+		// When
 		ResponseEntity<?> actual = controller.delete(user.getId().toHexString());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getBody();
@@ -143,13 +165,16 @@ public class UserControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadAll() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		List<User> usersAfterReadAll = new ArrayList<>();
 		usersAfterReadAll.add(user);
+		given(userService.readAll()).willReturn(usersAfterReadAll);
 
-		when(userService.readAll()).thenReturn(usersAfterReadAll);
-
+		// When
 		ResponseEntity<?> actual = controller.readAll();
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		List<User> actualUsers = (List<User>) actual.getBody();
@@ -158,12 +183,15 @@ public class UserControllerTest {
 
 	@Test
 	public void testAddOneOrder() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
+		given(orderService.create(anyString(), isA(Order.class))).willReturn(orderAfterCreate);
 
-		when(orderService.create(anyString(), isA(Order.class))).thenReturn(orderAfterCreate);
-
+		// When
 		ResponseEntity<?> actual = controller.createOneOrder(orderAfterCreate.getId().toHexString(), order);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Order actualUser = (Order) actual.getBody();
@@ -172,12 +200,15 @@ public class UserControllerTest {
 
 	@Test
 	public void testReadOneOrder() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order);
+		given(orderService.readOrder(anyString())).willReturn(Optional.of(orderAfterRead));
 
-		when(orderService.readOrder(anyString())).thenReturn(Optional.of(orderAfterRead));
-
+		// When
 		ResponseEntity<?> actual = controller.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Order actualUser = (Order) actual.getBody();
@@ -187,13 +218,16 @@ public class UserControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadAllOrderAdmin() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrder();
 		List<Order> orders = new ArrayList<>();
 		orders.add(order);
+		given(orderService.readAllWithUserId(anyString())).willReturn(orders);
 
-		when(orderService.readAllWithUserId(anyString())).thenReturn(orders);
-
+		// When
 		ResponseEntity<?> actual = controller.readAllOrders(new ObjectId().toHexString());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		List<Order> actualUsers = (List<Order>) actual.getBody();
@@ -203,13 +237,16 @@ public class UserControllerTest {
 
 	@Test
 	public void testUpdateOneOrder() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setId(new ObjectId());
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
+		given(orderService.update(isA(Order.class))).willReturn(orderAfterCreate);
 
-		when(orderService.update(isA(Order.class))).thenReturn(orderAfterCreate);
-
+		// When
 		ResponseEntity<?> actual = controller.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Order actualUser = (Order) actual.getBody();
@@ -218,11 +255,14 @@ public class UserControllerTest {
 
 	@Test
 	public void testdeleteOneOrder() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
+		given(orderService.delete(anyString())).willReturn(true);
 
-		when(orderService.delete(anyString())).thenReturn(true);
-
+		// When
 		ResponseEntity<?> actual = controller.deleteOneOrder(new ObjectId().toHexString(), order.getId().toHexString());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getBody();
@@ -233,11 +273,15 @@ public class UserControllerTest {
 
 	@Test
 	public void testResetPasswordFirstStep() throws EpickurException {
+		// Given
 		ObjectNode node = JsonNodeFactory.instance.objectNode();
 		TextNode emailNode = JsonNodeFactory.instance.textNode("name@example.com");
 		node.set("email", emailNode);
 
+		// When
 		ResponseEntity<?> actual = controller.resetPasswordFirstStep(node);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		ObjectNode actualNode = (ObjectNode) actual.getBody();

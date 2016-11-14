@@ -29,11 +29,18 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-import static com.epickur.api.enumeration.EndpointType.*;
+import static com.epickur.api.enumeration.EndpointType.CATERER;
+import static com.epickur.api.enumeration.EndpointType.DISH;
+import static com.epickur.api.enumeration.EndpointType.ORDER;
+import static com.epickur.api.enumeration.EndpointType.USER;
 import static com.epickur.api.enumeration.Operation.READ;
 import static com.epickur.api.enumeration.Operation.UPDATE;
 import static com.epickur.api.enumeration.Role.ADMIN;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComplexAccessRightsAspectTest {
@@ -66,197 +73,221 @@ public class ComplexAccessRightsAspectTest {
 
 	@Test
 	public void testHandleOrderRead() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		ObjectId userId = new ObjectId();
-		when(orderDAO.read(order.getId().toHexString())).thenReturn(Optional.of(order));
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(orderDAO.read(order.getId().toHexString())).willReturn(Optional.of(order));
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = order.getId().toHexString();
 
+		// When
 		accessRightsAspect.handleOrder(READ, args, key);
 
-		verify(userValidator).checkOrderRightsAfter(ADMIN, userId, order, READ);
+		// Then
+		then(userValidator).should().checkOrderRightsAfter(ADMIN, userId, order, READ);
 	}
 
 	@Test
 	public void testHandleOrderUpdate() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		ObjectId userId = new ObjectId();
-		when(orderDAO.read(order.getId().toHexString())).thenReturn(Optional.of(order));
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(orderDAO.read(order.getId().toHexString())).willReturn(Optional.of(order));
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = order;
 
+		// When
 		accessRightsAspect.handleOrder(UPDATE, args, key);
 
-		verify(userValidator).checkOrderRightsAfter(ADMIN, userId, order, UPDATE);
-		verify(userValidator).checkOrderStatus(order);
+		// Then
+		then(userValidator).should().checkOrderRightsAfter(ADMIN, userId, order, UPDATE);
+		then(userValidator).should().checkOrderStatus(order);
 	}
 
 	@Test
 	public void testHandleOrderUpdateNotFound() throws EpickurException {
+		// Then
 		thrown.expect(EpickurNotFoundException.class);
 
+		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		ObjectId userId = new ObjectId();
-		when(orderDAO.read(order.getId().toHexString())).thenReturn(Optional.empty());
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(orderDAO.read(order.getId().toHexString())).willReturn(Optional.empty());
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = order;
 
+		// When
 		accessRightsAspect.handleOrder(UPDATE, args, key);
 	}
 
 	@Test
 	public void testHandleDishRead() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		ObjectId userId = new ObjectId();
-		when(dishDAO.read(dish.getId().toHexString())).thenReturn(Optional.of(dish));
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(dishDAO.read(dish.getId().toHexString())).willReturn(Optional.of(dish));
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = dish.getId().toHexString();
 
+		// When
 		accessRightsAspect.handleDish(READ, args, key);
 
-		verify(dishValidator).checkRightsAfter(ADMIN, userId, dish, READ);
+		// Then
+		then(dishValidator).should().checkRightsAfter(ADMIN, userId, dish, READ);
 	}
 
 	@Test
 	public void testHandleDishUpdate() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		ObjectId userId = new ObjectId();
-		when(dishDAO.read(dish.getId().toHexString())).thenReturn(Optional.of(dish));
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(dishDAO.read(dish.getId().toHexString())).willReturn(Optional.of(dish));
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = dish;
 
+		// When
 		accessRightsAspect.handleDish(UPDATE, args, key);
 
-		verify(dishValidator).checkRightsAfter(ADMIN, userId, dish, UPDATE);
+		// Then
+		then(dishValidator).should().checkRightsAfter(ADMIN, userId, dish, UPDATE);
 	}
 
 	@Test
 	public void testHandleDishUpdateNotFound() throws EpickurException {
+		// Then
 		thrown.expect(EpickurNotFoundException.class);
 
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		ObjectId userId = new ObjectId();
-		when(dishDAO.read(dish.getId().toHexString())).thenReturn(Optional.empty());
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(dishDAO.read(dish.getId().toHexString())).willReturn(Optional.empty());
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = dish;
 
+		// When
 		accessRightsAspect.handleDish(UPDATE, args, key);
 	}
 
 	@Test
 	public void testHandleCatererRead() throws EpickurException {
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		ObjectId userId = new ObjectId();
-		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(Optional.of(caterer));
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(catererDAO.read(caterer.getId().toHexString())).willReturn(Optional.of(caterer));
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = caterer;
 
+		// When
 		accessRightsAspect.handleCaterer(READ, args, key);
 
-		verify(catererValidator).checkRightsAfter(ADMIN, userId, caterer, READ);
+		// Then
+		then(catererValidator).should().checkRightsAfter(ADMIN, userId, caterer, READ);
 	}
 
 	@Test
 	public void testHandleCatererReadNotFound() throws EpickurException {
+		// Then
 		thrown.expect(EpickurNotFoundException.class);
 
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		ObjectId userId = new ObjectId();
-		when(catererDAO.read(caterer.getId().toHexString())).thenReturn(Optional.empty());
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(catererDAO.read(caterer.getId().toHexString())).willReturn(Optional.empty());
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = caterer;
 
+		// When
 		accessRightsAspect.handleCaterer(READ, args, key);
 	}
 
 	@Test
 	public void testHandleUserRead() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		ObjectId userId = new ObjectId();
-		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.of(user));
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(userDAO.read(user.getId().toHexString())).willReturn(Optional.of(user));
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = user.getId().toHexString();
 
+		// When
 		accessRightsAspect.handleUser(READ, args, key);
 
-		verify(userValidator).checkUserRightsAfter(ADMIN, userId, user, READ);
+		// Then
+		then(userValidator).should().checkUserRightsAfter(ADMIN, userId, user, READ);
 	}
 
 	@Test
 	public void testHandleUserUpdate() throws EpickurException {
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		ObjectId userId = new ObjectId();
-		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.of(user));
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(userDAO.read(user.getId().toHexString())).willReturn(Optional.of(user));
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = user;
 
+		// When
 		accessRightsAspect.handleUser(UPDATE, args, key);
 
-		verify(userValidator).checkUserRightsAfter(ADMIN, userId, user, UPDATE);
+		// Then
+		then(userValidator).should().checkUserRightsAfter(ADMIN, userId, user, UPDATE);
 	}
 
 	@Test
 	public void testHandleUserUpdateNotFound() throws EpickurException {
 		thrown.expect(EpickurNotFoundException.class);
 
+		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		ObjectId userId = new ObjectId();
-		when(userDAO.read(user.getId().toHexString())).thenReturn(Optional.empty());
-		when(key.getRole()).thenReturn(ADMIN);
-		when(key.getUserId()).thenReturn(userId);
-
+		given(userDAO.read(user.getId().toHexString())).willReturn(Optional.empty());
+		given(key.getRole()).willReturn(ADMIN);
+		given(key.getUserId()).willReturn(userId);
 		Object[] args = new Object[1];
 		args[0] = user;
 
+		// When
 		accessRightsAspect.handleUser(UPDATE, args, key);
 
-		verify(userValidator).checkUserRightsAfter(ADMIN, userId, user, UPDATE);
+		// Then
+		then(userValidator).should().checkUserRightsAfter(ADMIN, userId, user, UPDATE);
 	}
 
 	@Test
 	public void testCheckAccessRightsUser() throws Throwable {
+		// Given
 		MethodSignature signature = mock(MethodSignature.class);
 		Method method = ComplexAccessRightsAspectTest.class.getMethod("exampleRead", String.class);
-		when(signature.getMethod()).thenReturn(method);
-		when(joinPoint.getSignature()).thenReturn(signature);
-		when(request.getAttribute("key")).thenReturn(key);
-		when(key.getRole()).thenReturn(Role.ADMIN);
+		given(signature.getMethod()).willReturn(method);
+		given(joinPoint.getSignature()).willReturn(signature);
+		given(request.getAttribute("key")).willReturn(key);
+		given(key.getRole()).willReturn(Role.ADMIN);
+		willDoNothing().given(accessRightsAspect).handleUser(any(), any(), any());
 
-		doNothing().when(accessRightsAspect).handleUser(any(), any(), any());
-
+		// When
 		accessRightsAspect.checkUserAccessRightsBefore(joinPoint);
 
-		verify(accessRightsAspect).getMethodFromJointPoint(joinPoint);
+		// Then
+		then(accessRightsAspect).should().getMethodFromJointPoint(joinPoint);
 	}
 
 	@ValidateComplexAccessRights(operation = READ, type = USER)
@@ -265,18 +296,20 @@ public class ComplexAccessRightsAspectTest {
 
 	@Test
 	public void testCheckAccessRightsCaterer() throws Throwable {
+		// Given
 		MethodSignature signature = mock(MethodSignature.class);
 		Method method = ComplexAccessRightsAspectTest.class.getMethod("exampleUpdate", Caterer.class);
-		when(signature.getMethod()).thenReturn(method);
-		when(joinPoint.getSignature()).thenReturn(signature);
-		when(request.getAttribute("key")).thenReturn(key);
-		when(key.getRole()).thenReturn(Role.ADMIN);
+		given(signature.getMethod()).willReturn(method);
+		given(joinPoint.getSignature()).willReturn(signature);
+		given(request.getAttribute("key")).willReturn(key);
+		given(key.getRole()).willReturn(Role.ADMIN);
+		willDoNothing().given(accessRightsAspect).handleCaterer(any(), any(), any());
 
-		doNothing().when(accessRightsAspect).handleCaterer(any(), any(), any());
-
+		// When
 		accessRightsAspect.checkUserAccessRightsBefore(joinPoint);
 
-		verify(accessRightsAspect).getMethodFromJointPoint(joinPoint);
+		// Then
+		then(accessRightsAspect).should().getMethodFromJointPoint(joinPoint);
 	}
 
 	@ValidateComplexAccessRights(operation = UPDATE, type = CATERER)
@@ -285,18 +318,20 @@ public class ComplexAccessRightsAspectTest {
 
 	@Test
 	public void testCheckAccessRightsDish() throws Throwable {
+		// Given
 		MethodSignature signature = mock(MethodSignature.class);
 		Method method = ComplexAccessRightsAspectTest.class.getMethod("exampleUpdateDish", Dish.class);
-		when(signature.getMethod()).thenReturn(method);
-		when(joinPoint.getSignature()).thenReturn(signature);
-		when(request.getAttribute("key")).thenReturn(key);
-		when(key.getRole()).thenReturn(Role.ADMIN);
+		given(signature.getMethod()).willReturn(method);
+		given(joinPoint.getSignature()).willReturn(signature);
+		given(request.getAttribute("key")).willReturn(key);
+		given(key.getRole()).willReturn(Role.ADMIN);
+		willDoNothing().given(accessRightsAspect).handleDish(any(), any(), any());
 
-		doNothing().when(accessRightsAspect).handleDish(any(), any(), any());
-
+		// When
 		accessRightsAspect.checkUserAccessRightsBefore(joinPoint);
 
-		verify(accessRightsAspect).getMethodFromJointPoint(joinPoint);
+		// Then
+		then(accessRightsAspect).should().getMethodFromJointPoint(joinPoint);
 	}
 
 	@ValidateComplexAccessRights(operation = UPDATE, type = DISH)
@@ -305,18 +340,20 @@ public class ComplexAccessRightsAspectTest {
 
 	@Test
 	public void testCheckAccessRightsOrder() throws Throwable {
+		// Given
 		MethodSignature signature = mock(MethodSignature.class);
 		Method method = ComplexAccessRightsAspectTest.class.getMethod("exampleReadOrder", String.class);
-		when(signature.getMethod()).thenReturn(method);
-		when(joinPoint.getSignature()).thenReturn(signature);
-		when(request.getAttribute("key")).thenReturn(key);
-		when(key.getRole()).thenReturn(Role.ADMIN);
+		given(signature.getMethod()).willReturn(method);
+		given(joinPoint.getSignature()).willReturn(signature);
+		given(request.getAttribute("key")).willReturn(key);
+		given(key.getRole()).willReturn(Role.ADMIN);
+		willDoNothing().given(accessRightsAspect).handleOrder(any(), any(), any());
 
-		doNothing().when(accessRightsAspect).handleOrder(any(), any(), any());
-
+		// When
 		accessRightsAspect.checkUserAccessRightsBefore(joinPoint);
 
-		verify(accessRightsAspect).getMethodFromJointPoint(joinPoint);
+		// Then
+		then(accessRightsAspect).should().getMethodFromJointPoint(joinPoint);
 	}
 
 	@ValidateComplexAccessRights(operation = READ, type = ORDER)

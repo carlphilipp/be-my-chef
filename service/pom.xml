@@ -5,11 +5,15 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>3.0.4-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>service</artifactId>
 	<packaging>jar</packaging>
+
+	<build>
+		<finalName>epickur-service-${version}</finalName>
+	</build>
 
 	<name>Service</name>
 	<description>Service layer. This is where logic is done.</description>

@@ -13,19 +13,25 @@ import com.epickur.api.utils.security.PasswordManager;
 import com.epickur.api.utils.security.Security;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
 	@Rule
@@ -41,11 +47,6 @@ public class UserServiceTest {
 	@InjectMocks
 	private UserService service;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
-
 	@Test
 	public void testCreate() throws EpickurException {
 		User user = EntityGenerator.generateRandomUser();
@@ -53,7 +54,7 @@ public class UserServiceTest {
 		user = spy(user);
 		userAfterCreate = spy(userAfterCreate);
 
-		when(userDAOMock.create(user)).thenReturn(userAfterCreate);
+		given(userDAOMock.create(user)).willReturn(userAfterCreate);
 
 		User actual = service.create(user, false);
 
@@ -62,14 +63,14 @@ public class UserServiceTest {
 		assertNotNull(actual.getUpdatedAt());
 		assertNull(actual.getKey());
 		assertNotNull(actual.getCode());
-		verify(userDAOMock).exists(user.getName(), user.getEmail());
-		verify(userDAOMock).create(user);
-		verify(user).setAllow(0);
-		verify(user).setPassword(anyString());
-		verify(user).setKey(null);
-		verify(user).setRole(Role.USER);
-		verify(userAfterCreate).setCode(anyString());
-		verify(emailUtilsMock).emailNewRegistration(userAfterCreate, actual.getCode());
+		then(userDAOMock).should().exists(user.getName(), user.getEmail());
+		then(userDAOMock).should().create(user);
+		then(user).should().setAllow(0);
+		then(user).should().setPassword(anyString());
+		then(user).should().setKey(null);
+		then(user).should().setRole(Role.USER);
+		then(userAfterCreate).should().setCode(anyString());
+		then(emailUtilsMock).should().emailNewRegistration(userAfterCreate, actual.getCode());
 	}
 
 	@Test
@@ -79,14 +80,14 @@ public class UserServiceTest {
 
 		User user = EntityGenerator.generateRandomUser();
 
-		when(userDAOMock.exists(user.getName(), user.getEmail())).thenReturn(true);
+		given(userDAOMock.exists(user.getName(), user.getEmail())).willReturn(true);
 
 		try {
 			service.create(user, true);
 		} finally {
-			verify(userDAOMock).exists(user.getName(), user.getEmail());
-			verify(userDAOMock, never()).create(user);
-			verify(emailUtilsMock, never()).emailNewRegistration(any(User.class), anyString());
+			then(userDAOMock).should().exists(user.getName(), user.getEmail());
+			then(userDAOMock).should(never()).create(user);
+			then(emailUtilsMock).should(never()).emailNewRegistration(any(User.class), anyString());
 		}
 	}
 
@@ -104,21 +105,21 @@ public class UserServiceTest {
 		ObjectId id = new ObjectId();
 		keyMock.setId(id);
 
-		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(Optional.of(userAfterRead));
-		when(keyBusinessMock.readWithName(user.getName())).thenReturn(keyMock);
-		when(utilsMock.isPasswordCorrect(user.getPassword(), userAfterRead)).thenReturn(true);
+		given(userDAOMock.readWithEmail(user.getEmail())).willReturn(Optional.of(userAfterRead));
+		given(keyBusinessMock.readWithName(user.getName())).willReturn(keyMock);
+		given(utilsMock.isPasswordCorrect(user.getPassword(), userAfterRead)).willReturn(true);
 
 		User actual = service.login(user.getEmail(), user.getPassword());
 
 		assertNotNull(actual.getId());
 		assertNotNull(actual.getCreatedAt());
 		assertNotNull(actual.getUpdatedAt());
-		verify(userDAOMock).readWithEmail(user.getEmail());
-		verify(userAfterRead).getAllow();
-		verify(userAfterRead).setKey(anyString());
-		verify(keyBusinessMock).readWithName(user.getName());
-		verify(keyBusinessMock).delete(id.toHexString());
-		verify(keyBusinessMock).create(any(Key.class));
+		then(userDAOMock).should().readWithEmail(user.getEmail());
+		then(userAfterRead).should().getAllow();
+		then(userAfterRead).should().setKey(anyString());
+		then(keyBusinessMock).should().readWithName(user.getName());
+		then(keyBusinessMock).should().delete(id.toHexString());
+		then(keyBusinessMock).should().create(any(Key.class));
 	}
 
 	@Test
@@ -126,12 +127,12 @@ public class UserServiceTest {
 		thrown.expect(EpickurException.class);
 
 		String randomLogin = EntityGenerator.generateRandomString();
-		when(userDAOMock.readWithEmail(randomLogin)).thenReturn(Optional.empty());
+		given(userDAOMock.readWithEmail(randomLogin)).willReturn(Optional.empty());
 
 		try {
 			service.login(randomLogin, EntityGenerator.generateRandomString());
 		} finally {
-			verify(userDAOMock).readWithEmail(randomLogin);
+			then(userDAOMock).should().readWithEmail(randomLogin);
 		}
 	}
 
@@ -146,13 +147,13 @@ public class UserServiceTest {
 		String dbPassword = PasswordManager.createPasswordManager(EntityGenerator.generateRandomString()).createDBPassword();
 		userAfterRead.setPassword(dbPassword);
 
-		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(Optional.of(userAfterRead));
+		given(userDAOMock.readWithEmail(user.getEmail())).willReturn(Optional.of(userAfterRead));
 
 		try {
 			service.login(user.getEmail(), EntityGenerator.generateRandomString());
 		} finally {
-			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(userAfterRead, never()).getAllow();
+			then(userDAOMock).should().readWithEmail(user.getEmail());
+			then(userAfterRead).should(never()).getAllow();
 		}
 	}
 
@@ -167,14 +168,14 @@ public class UserServiceTest {
 		String dbPassword = PasswordManager.createPasswordManager(user.getPassword()).createDBPassword();
 		userAfterRead.setPassword(dbPassword);
 
-		when(utilsMock.isPasswordCorrect(user.getPassword(), userAfterRead)).thenReturn(true);
-		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(Optional.of(userAfterRead));
+		given(utilsMock.isPasswordCorrect(user.getPassword(), userAfterRead)).willReturn(true);
+		given(userDAOMock.readWithEmail(user.getEmail())).willReturn(Optional.of(userAfterRead));
 
 		try {
 			service.login(user.getEmail(), user.getPassword());
 		} finally {
-			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(userAfterRead).getAllow();
+			then(userDAOMock).should().readWithEmail(user.getEmail());
+			then(userAfterRead).should().getAllow();
 		}
 	}
 
@@ -187,8 +188,8 @@ public class UserServiceTest {
 		String dbPassword = PasswordManager.createPasswordManager(user.getPassword()).createDBPassword();
 		userAfterRead.setPassword(dbPassword);
 
-		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(Optional.of(userAfterRead));
-		when(utilsMock.isPasswordCorrect(user.getPassword(), userAfterRead)).thenReturn(true);
+		given(userDAOMock.readWithEmail(user.getEmail())).willReturn(Optional.of(userAfterRead));
+		given(utilsMock.isPasswordCorrect(user.getPassword(), userAfterRead)).willReturn(true);
 
 		try {
 			User modified = service.injectNewPassword(user);
@@ -196,8 +197,8 @@ public class UserServiceTest {
 			// Must be different because the salt is random
 			assertNotEquals(newPassword, modified.getPassword());
 		} finally {
-			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(userAfterRead).setPassword(anyString());
+			then(userDAOMock).should().readWithEmail(user.getEmail());
+			then(userAfterRead).should().setPassword(anyString());
 		}
 	}
 
@@ -207,12 +208,12 @@ public class UserServiceTest {
 		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		User user = EntityGenerator.generateRandomUser();
-		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(Optional.empty());
+		given(userDAOMock.readWithEmail(user.getEmail())).willReturn(Optional.empty());
 
 		try {
 			service.injectNewPassword(user);
 		} finally {
-			verify(userDAOMock).readWithEmail(user.getEmail());
+			then(userDAOMock).should().readWithEmail(user.getEmail());
 		}
 	}
 
@@ -228,13 +229,13 @@ public class UserServiceTest {
 		userAfterRead.setPassword(wrongPassword);
 		userAfterRead = spy(userAfterRead);
 
-		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(Optional.of(userAfterRead));
+		given(userDAOMock.readWithEmail(user.getEmail())).willReturn(Optional.of(userAfterRead));
 
 		try {
 			service.injectNewPassword(user);
 		} finally {
-			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(userAfterRead, never()).setPassword(anyString());
+			then(userDAOMock).should().readWithEmail(user.getEmail());
+			then(userAfterRead).should(never()).setPassword(anyString());
 		}
 	}
 
@@ -248,20 +249,20 @@ public class UserServiceTest {
 		String code = Security.getUserCode(userAfterRead);
 		userAfterRead.setCode(code);
 
-		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(Optional.of(userAfterRead));
-		when(userDAOMock.update(userAfterRead)).thenReturn(userAfterRead);
+		given(userDAOMock.readWithEmail(user.getEmail())).willReturn(Optional.of(userAfterRead));
+		given(userDAOMock.update(userAfterRead)).willReturn(userAfterRead);
 
 		try {
 			User actual = service.checkCode(user.getEmail(), code);
 			assertEquals(1, actual.getAllow().intValue());
 		} finally {
-			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(userDAOMock).update(userAfterRead);
-			verify(userAfterRead).setAllow(1);
-			verify(userAfterRead).setCreatedAt(null);
-			verify(userAfterRead).setUpdatedAt(any(DateTime.class));
-			verify(userAfterRead).setKey(null);
-			verify(userDAOMock).update(userAfterRead);
+			then(userDAOMock).should().readWithEmail(user.getEmail());
+			then(userDAOMock).should().update(userAfterRead);
+			then(userAfterRead).should().setAllow(1);
+			then(userAfterRead).should().setCreatedAt(null);
+			then(userAfterRead).should().setUpdatedAt(any(DateTime.class));
+			then(userAfterRead).should().setKey(null);
+			then(userDAOMock).should().update(userAfterRead);
 		}
 	}
 
@@ -273,14 +274,14 @@ public class UserServiceTest {
 		String email = EntityGenerator.generateRandomString();
 		String code = EntityGenerator.generateRandomString();
 
-		when(userDAOMock.readWithEmail(email)).thenReturn(Optional.empty());
+		given(userDAOMock.readWithEmail(email)).willReturn(Optional.empty());
 
 		try {
 			service.checkCode(email, code);
 		} finally {
-			verify(userDAOMock).readWithEmail(email);
-			verify(userDAOMock, never()).update(any());
-			verify(userDAOMock, never()).update(any());
+			then(userDAOMock).should().readWithEmail(email);
+			then(userDAOMock).should(never()).update(any());
+			then(userDAOMock).should(never()).update(any());
 		}
 	}
 
@@ -297,18 +298,18 @@ public class UserServiceTest {
 		String code = "fail";
 		userAfterRead.setCode(code);
 
-		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(Optional.of(userAfterRead));
-		when(userDAOMock.update(userAfterRead)).thenReturn(userAfterRead);
+		given(userDAOMock.readWithEmail(user.getEmail())).willReturn(Optional.of(userAfterRead));
+		given(userDAOMock.update(userAfterRead)).willReturn(userAfterRead);
 		try {
 			service.checkCode(user.getEmail(), code);
 		} finally {
-			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(userDAOMock, never()).update(userAfterRead);
-			verify(userAfterRead, never()).setAllow(1);
-			verify(userAfterRead, never()).setCreatedAt(null);
-			verify(userAfterRead, never()).setUpdatedAt(any(DateTime.class));
-			verify(userAfterRead, never()).setKey(null);
-			verify(userDAOMock, never()).update(userAfterRead);
+			then(userDAOMock).should().readWithEmail(user.getEmail());
+			then(userDAOMock).should(never()).update(userAfterRead);
+			then(userAfterRead).should(never()).setAllow(1);
+			then(userAfterRead).should(never()).setCreatedAt(null);
+			then(userAfterRead).should(never()).setUpdatedAt(any(DateTime.class));
+			then(userAfterRead).should(never()).setKey(null);
+			then(userDAOMock).should(never()).update(userAfterRead);
 		}
 	}
 
@@ -317,13 +318,13 @@ public class UserServiceTest {
 		User user = EntityGenerator.generateRandomUser();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userDAOMock.readWithEmail(user.getEmail())).thenReturn(Optional.of(userAfterRead));
+		given(userDAOMock.readWithEmail(user.getEmail())).willReturn(Optional.of(userAfterRead));
 
 		try {
 			service.resetPasswordFirstStep(user.getEmail());
 		} finally {
-			verify(userDAOMock).readWithEmail(user.getEmail());
-			verify(emailUtilsMock).resetPassword(eq(userAfterRead), anyString());
+			then(userDAOMock).should().readWithEmail(user.getEmail());
+			then(emailUtilsMock).should().resetPassword(eq(userAfterRead), anyString());
 		}
 	}
 
@@ -333,12 +334,12 @@ public class UserServiceTest {
 		thrown.expectMessage(ErrorConstants.USER_NOT_FOUND);
 
 		String email = EntityGenerator.generateRandomString();
-		when(userDAOMock.readWithEmail(email)).thenReturn(Optional.empty());
+		given(userDAOMock.readWithEmail(email)).willReturn(Optional.empty());
 		try {
 			service.resetPasswordFirstStep(email);
 		} finally {
-			verify(userDAOMock).readWithEmail(email);
-			verify(emailUtilsMock, never()).resetPassword(any(User.class), anyString());
+			then(userDAOMock).should().readWithEmail(email);
+			then(emailUtilsMock).should(never()).resetPassword(any(User.class), anyString());
 		}
 	}
 
@@ -351,14 +352,14 @@ public class UserServiceTest {
 		String newPassword = PasswordManager.createPasswordManager(user.getPassword()).createDBPassword();
 		userAfterRead.setPassword(newPassword);
 
-		when(userDAOMock.read(user.getId().toHexString())).thenReturn(Optional.of(userAfterRead));
-		when(userDAOMock.update(userAfterRead)).thenReturn(userAfterRead);
+		given(userDAOMock.read(user.getId().toHexString())).willReturn(Optional.of(userAfterRead));
+		given(userDAOMock.update(userAfterRead)).willReturn(userAfterRead);
 
 		service.resetPasswordSecondStep(user.getId().toHexString(), "newPass", resetCode);
 
-		verify(userDAOMock).read(user.getId().toHexString());
-		verify(userDAOMock).update(userAfterRead);
-		verify(userAfterRead, times(2)).setPassword(anyString());
+		then(userDAOMock).should().read(user.getId().toHexString());
+		then(userDAOMock).should().update(userAfterRead);
+		then(userAfterRead).should(times(2)).setPassword(anyString());
 	}
 
 	@Test
@@ -369,12 +370,12 @@ public class UserServiceTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userDAOMock.read(user.getId().toHexString())).thenReturn(Optional.of(userAfterCreate));
+		given(userDAOMock.read(user.getId().toHexString())).willReturn(Optional.of(userAfterCreate));
 		try {
 			service.resetPasswordSecondStep(user.getId().toHexString(), "", "");
 		} finally {
-			verify(userDAOMock).read(user.getId().toHexString());
-			verify(userDAOMock, never()).update(any(User.class));
+			then(userDAOMock).should().read(user.getId().toHexString());
+			then(userDAOMock).should(never()).update(any(User.class));
 		}
 	}
 
@@ -386,12 +387,12 @@ public class UserServiceTest {
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 
-		when(userDAOMock.read(user.getId().toHexString())).thenReturn(Optional.of(userAfterCreate));
+		given(userDAOMock.read(user.getId().toHexString())).willReturn(Optional.of(userAfterCreate));
 		try {
 			service.resetPasswordSecondStep(user.getId().toHexString(), "", "");
 		} finally {
-			verify(userDAOMock).read(user.getId().toHexString());
-			verify(userDAOMock, never()).update(any(User.class));
+			then(userDAOMock).should().read(user.getId().toHexString());
+			then(userDAOMock).should(never()).update(any(User.class));
 		}
 	}
 
@@ -402,12 +403,12 @@ public class UserServiceTest {
 
 		service.suscribeToNewsletter(user);
 
-		verify(user, times(2)).getFirst();
-		verify(user, times(2)).getLast();
-		verify(user, times(2)).getEmail();
-		verify(user).getCountry();
-		verify(user).getState();
-		verify(user).getZipcode();
+		then(user).should(times(2)).getFirst();
+		then(user).should(times(2)).getLast();
+		then(user).should(times(2)).getEmail();
+		then(user).should().getCountry();
+		then(user).should().getState();
+		then(user).should().getZipcode();
 	}
 
 	@Test
@@ -419,11 +420,11 @@ public class UserServiceTest {
 
 		service.suscribeToNewsletter(user);
 
-		verify(user).getFirst();
-		verify(user).getLast();
-		verify(user, times(2)).getEmail();
-		verify(user).getCountry();
-		verify(user).getState();
-		verify(user).getZipcode();
+		then(user).should().getFirst();
+		then(user).should().getLast();
+		then(user).should(times(2)).getEmail();
+		then(user).should().getCountry();
+		then(user).should().getState();
+		then(user).should().getZipcode();
 	}
 }

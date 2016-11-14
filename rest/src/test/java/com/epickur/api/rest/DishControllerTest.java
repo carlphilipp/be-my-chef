@@ -13,9 +13,10 @@ import com.epickur.api.utils.Utils;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -27,12 +28,13 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DishControllerTest {
 
 	@Mock
@@ -48,24 +50,25 @@ public class DishControllerTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-
 		Key key = EntityGenerator.generateRandomAdminKey();
-		when(context.getAttribute("key")).thenReturn(key);
+		given(context.getAttribute("key")).willReturn(key);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
+		given(catererService.read(anyString())).willReturn(Optional.of(caterer));
+		given(dishService.create(isA(Dish.class))).willReturn(dishAfterCreate);
 
-		when(catererService.read(anyString())).thenReturn(Optional.of(caterer));
-		when(dishService.create(isA(Dish.class))).thenReturn(dishAfterCreate);
-
+		// When
 		ResponseEntity<?> actual = controller.create(dish);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Dish actualDish = (Dish) actual.getBody();
@@ -74,15 +77,18 @@ public class DishControllerTest {
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
+		given(dishService.read(anyString())).willReturn(Optional.of(dishAfterCreate));
 
-		when(dishService.read(anyString())).thenReturn(Optional.of(dishAfterCreate));
-
+		// When
 		ResponseEntity actual = controller.read(new ObjectId().toHexString());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Dish actualDish = (Dish) actual.getBody();
@@ -91,14 +97,17 @@ public class DishControllerTest {
 
 	@Test
 	public void testReadDishNotFound() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
+		given(dishService.read(anyString())).willReturn(Optional.empty());
 
-		when(dishService.read(anyString())).thenReturn(Optional.empty());
-
+		// When
 		ResponseEntity actual = controller.read(new ObjectId().toHexString());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatusCode().value());
 		ErrorMessage error = (ErrorMessage) actual.getBody();
@@ -108,16 +117,19 @@ public class DishControllerTest {
 
 	@Test
 	public void testUpdate() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterCreate.setDescription("desc");
+		given(dishService.update(isA(Dish.class))).willReturn(dishAfterCreate);
 
-		when(dishService.update(isA(Dish.class))).thenReturn(dishAfterCreate);
-
+		// When
 		ResponseEntity<?> actual = controller.update(dish.getId().toHexString(), dish);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		Dish actualDish = (Dish) actual.getBody();
@@ -127,14 +139,17 @@ public class DishControllerTest {
 
 	@Test
 	public void testDelete() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
+		given(dishService.delete(anyString())).willReturn(true);
 
-		when(dishService.delete(anyString())).thenReturn(true);
-
+		// When
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		DeletedMessage actualDeletedMessage = (DeletedMessage) actual.getBody();
@@ -145,14 +160,17 @@ public class DishControllerTest {
 
 	@Test
 	public void testDeleteFail() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
+		given(dishService.delete(anyString())).willReturn(false);
 
-		when(dishService.delete(anyString())).thenReturn(false);
-
+		// When
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(404, actual.getStatusCode().value());
 		ErrorMessage error = (ErrorMessage) actual.getBody();
@@ -164,6 +182,7 @@ public class DishControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSearch() throws EpickurException {
+		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
@@ -171,16 +190,18 @@ public class DishControllerTest {
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> dishes = new ArrayList<>();
 		dishes.add(dishAfterCreate);
+		given(dishService.search(anyString(), anyInt(), isA(List.class), anyInt(), anyObject(), anyString(), anyInt()))
+			.willReturn(dishes);
 
-		when(dishService.search(anyString(), anyInt(), isA(List.class), anyInt(), anyObject(), anyString(), anyInt()))
-			.thenReturn(dishes);
-
+		// When
 		ResponseEntity<?> actual = controller
 			.search(EntityGenerator.generateRandomPickupDate(),
 				EntityGenerator.generateRandomDishType().toString(),
 				1,
 				"1,1",
 				EntityGenerator.generateRandomString(), 5);
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(200, actual.getStatusCode().value());
 		assertNotNull(actual.getBody());

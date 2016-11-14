@@ -16,17 +16,25 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.CATERER_COLL;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.any;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CatererDAOTest {
 
 	@Rule
@@ -36,7 +44,7 @@ public class CatererDAOTest {
 	@Mock
 	private MongoCollection<Document> collection;
 	@Mock
-	private FindIterable<Document> findIteratble;
+	private FindIterable<Document> findIterable;
 	@Mock
 	private MongoCursor<Document> cursor;
 	@InjectMocks
@@ -44,132 +52,150 @@ public class CatererDAOTest {
 
 	@Before
 	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		when(db.getCollection(CATERER_COLL)).thenReturn(collection);
+		given(db.getCollection(CATERER_COLL)).willReturn(collection);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Document document = caterer.getDocumentDBView();
 
+		// When
 		Caterer actual = dao.create(caterer);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).insertOne(document);
+		then(collection).should().insertOne(document);
 	}
 
 	@Test
 	public void testCreateMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Document document = caterer.getDocumentDBView();
+		willThrow(new MongoException("")).given(collection).insertOne(document);
 
-		doThrow(new MongoException("")).when(collection).insertOne(document);
-
+		// When
 		Caterer actual = dao.create(caterer);
-
-		assertNotNull(actual);
-		verify(collection).insertOne(document);
 	}
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		String catererId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(catererId));
 		Document found = EntityGenerator.generateRandomCatererWithId().getDocumentDBView();
+		given(collection.find(query)).willReturn(findIterable);
+		given(findIterable.first()).willReturn(found);
 
-		when(collection.find(query)).thenReturn(findIteratble);
-		when(findIteratble.first()).thenReturn(found);
-
+		// When
 		Optional<Caterer> actual = dao.read(catererId);
 
+		// Then
 		assertTrue(actual.isPresent());
-		verify(collection).find(query);
+		then(collection).should().find(query);
 	}
 
 	@Test
 	public void testReadMongoException() throws Exception {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		String catererId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(catererId));
+		given(collection.find(query)).willThrow(new MongoException(""));
 
-		when(collection.find(query)).thenThrow(new MongoException(""));
-
+		// When
 		dao.read(catererId);
 	}
 
 	@Test
 	public void testReadWrongIdFormat() throws Exception {
+		// Then
 		thrown.expect(IllegalArgumentException.class);
 
+		// Given
 		String catererId = "myId";
 
+		// When
 		dao.read(catererId);
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
+		// Given
 		Document found = EntityGenerator.generateRandomCatererWithId().getDocumentDBView();
+		given(collection.find()).willReturn(findIterable);
+		given(findIterable.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 
-		when(collection.find()).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
+		// When
+		List<Caterer> actual = dao.readAll();
 
-		List<Caterer> actuals = dao.readAll();
-
-		assertNotNull(actuals);
-		assertEquals(1, actuals.size());
-		verify(collection).find();
-		verify(cursor).close();
+		// Then
+		assertNotNull(actual);
+		assertEquals(1, actual.size());
+		then(collection).should().find();
+		then(cursor).should().close();
 	}
 
 	@Test
 	public void testReadAllMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
-		when(collection.find()).thenThrow(new MongoException(""));
+		// Given
+		given(collection.find()).willThrow(new MongoException(""));
 
+		// When
 		dao.readAll();
 	}
 
 	@Test
 	public void testUpdate() throws EpickurException {
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Document document = caterer.getDocumentDBView();
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).willReturn(document);
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(document);
-
+		// When
 		Caterer actual = dao.update(caterer);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		then(collection).should().findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateNotFound() throws Exception {
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).willReturn(null);
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenReturn(null);
-
+		// When
 		Caterer actual = dao.update(caterer);
 
+		// Then
 		assertNull(actual);
-		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
+		then(collection).should().findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateMongoException() throws Exception {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).willThrow(new MongoException(""));
 
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class), any(FindOneAndUpdateOptions.class))).thenThrow(new MongoException(""));
-
+		// When
 		dao.update(caterer);
 	}
-
 }

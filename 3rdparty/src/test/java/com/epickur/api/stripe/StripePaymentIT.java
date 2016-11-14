@@ -40,6 +40,7 @@ public class StripePaymentIT {
 
 	@Test
 	public void testChargeCard() throws StripeException {
+		// Given
 		Map<String, Object> tokenParams = new HashMap<>();
 		Map<String, Object> cardParams = new HashMap<>();
 		cardParams.put("number", "4242424242424242");
@@ -48,16 +49,19 @@ public class StripePaymentIT {
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
 		Token token = Token.create(tokenParams);
-
 		StripePayment payment = new StripePayment();
+
+		// When
 		Charge charge = payment.chargeCard(token.getId(), 1500, Currency.AUD);
 
+		// Then
 		assertTrue(charge.getPaid());
 		assertEquals(1500, charge.getAmount().intValue());
 	}
 
 	@Test(expected = StripeException.class)
 	public void testChargeCardFail() throws StripeException {
+		// Given
 		Map<String, Object> tokenParams = new HashMap<>();
 		Map<String, Object> cardParams = new HashMap<>();
 		cardParams.put("number", "4242424242424242");
@@ -66,8 +70,9 @@ public class StripePaymentIT {
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
 		Token token = Token.create(tokenParams);
-
 		StripePayment payment = new StripePayment();
+
+		// When
 		payment.chargeCard(token.getId(), -1500, Currency.AUD);
 	}
 }

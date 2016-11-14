@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ServiceConfigTest.class)
@@ -43,27 +46,31 @@ public class CleanKeysJobTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		initMocks(this);
 	}
 
 	@Test
 	public void testExecuteValid() throws JobExecutionException, EpickurException {
+		// Given
 		List<Key> keys = new ArrayList<>();
 		Key key = EntityGenerator.generateRandomAdminKey();
 		DateTime now = new DateTime();
 		key.setCreatedAt(now);
 		keys.add(key);
-		when(keyDao.readAll()).thenReturn(keys);
-		when(utils.isValid(key)).thenReturn(true);
+		given(keyDao.readAll()).willReturn(keys);
+		given(utils.isValid(key)).willReturn(true);
 
+		// When
 		keyJob.execute();
 
-		verify(keyDao).readAll();
-		verify(keyDao, never()).delete(anyString());
+		// Then
+		then(keyDao).should().readAll();
+		then(keyDao).should(never()).delete(anyString());
 	}
 
 	@Test
 	public void testExecuteNotValid() throws JobExecutionException, EpickurException {
+		// Given
 		List<Key> keys = new ArrayList<>();
 		Key key = EntityGenerator.generateRandomAdminKey();
 		key.setId(new ObjectId());
@@ -71,22 +78,27 @@ public class CleanKeysJobTest {
 		now = now.plusDays(epickurProperties.getSessionTimeout() + 10);
 		key.setCreatedAt(now);
 		keys.add(key);
-		when(keyDao.readAll()).thenReturn(keys);
+		given(keyDao.readAll()).willReturn(keys);
 
+		// When
 		keyJob.execute();
 
-		verify(keyDao).readAll();
-		verify(keyDao).delete(key.getId().toHexString());
+		// Then
+		then(keyDao).should().readAll();
+		then(keyDao).should().delete(key.getId().toHexString());
 	}
 
 	@Test
 	public void testExecuteEpickurException() throws JobExecutionException, EpickurException {
-		when(keyDao.readAll()).thenThrow(new EpickurException());
+		// Given
+		given(keyDao.readAll()).willThrow(new EpickurException());
 		try {
+			// When
 			keyJob.execute();
 		} finally {
-			verify(keyDao).readAll();
-			verify(keyDao, never()).delete(anyString());
+			// Then
+			then(keyDao).should().readAll();
+			then(keyDao).should(never()).delete(anyString());
 		}
 	}
 }

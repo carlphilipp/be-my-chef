@@ -16,18 +16,25 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.KEY_COLL;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
 
+@RunWith(MockitoJUnitRunner.class)
 public class KeyDAOTest {
 
 	@Rule
@@ -47,149 +54,171 @@ public class KeyDAOTest {
 
 	@Before
 	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		when(db.getCollection(KEY_COLL)).thenReturn(collection);
+		given(db.getCollection(KEY_COLL)).willReturn(collection);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Document document = key.getDocumentDBView();
 
+		// When
 		Key actual = dao.create(key);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).insertOne(document);
+		then(collection).should().insertOne(document);
 	}
 
 	@Test
 	public void testCreateMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Document document = key.getDocumentDBView();
+		willThrow(new MongoException("")).given(collection).insertOne(document);
 
-		doThrow(new MongoException("")).when(collection).insertOne(document);
-
+		// When
 		Key actual = dao.create(key);
-
-		assertNotNull(actual);
-		verify(collection).insertOne(document);
 	}
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
 		Document found = EntityGenerator.generateRandomAdminKey().getDocumentDBView();
+		given(collection.find(query)).willReturn(findIteratble);
+		given(findIteratble.first()).willReturn(found);
 
-		when(collection.find(query)).thenReturn(findIteratble);
-		when(findIteratble.first()).thenReturn(found);
-
+		// When
 		Optional<Key> actual = dao.read(key);
 
+		// Then
 		assertTrue(actual.isPresent());
-		verify(collection).find(query);
+		then(collection).should().find(query);
 	}
 
 	@Test
 	public void testReadMongoException() throws Exception {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
+		given(collection.find(query)).willThrow(new MongoException(""));
 
-		when(collection.find(query)).thenThrow(new MongoException(""));
-
+		// When
 		dao.read(key);
 	}
 
 	@Test
 	public void testReadWithName() throws EpickurException {
+		// Given
 		String userName = new ObjectId().toHexString();
 		Document query = new Document().append("userName", userName);
 		Document found = EntityGenerator.generateRandomAdminKey().getDocumentDBView();
+		given(collection.find(query)).willReturn(findIteratble);
+		given(findIteratble.first()).willReturn(found);
 
-		when(collection.find(query)).thenReturn(findIteratble);
-		when(findIteratble.first()).thenReturn(found);
-
+		// When
 		Key actual = dao.readWithName(userName);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).find(query);
+		then(collection).should().find(query);
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
+		// Given
 		Document found = EntityGenerator.generateRandomAdminKey().getDocumentDBView();
+		given(collection.find()).willReturn(findIteratble);
+		given(findIteratble.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 
-		when(collection.find()).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
+		// When
+		List<Key> actual = dao.readAll();
 
-		List<Key> actuals = dao.readAll();
-
-		assertNotNull(actuals);
-		assertThat(actuals, hasSize(1));
-		verify(collection).find();
-		verify(cursor).close();
+		// Then
+		assertNotNull(actual);
+		assertThat(actual, hasSize(1));
+		then(collection).should().find();
+		then(cursor).should().close();
 	}
 
 	@Test
 	public void testReadAllReadMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
-		when(collection.find()).thenThrow(new MongoException(""));
+		// Given
+		given(collection.find()).willThrow(new MongoException(""));
 
+		// When
 		dao.readAll();
 	}
 
 	@Test
 	public void testUpdate() throws EpickurException {
+		// Then
 		thrown.expect(EpickurException.class);
 
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
 
+		// When
 		dao.update(key);
 	}
 
 	@Test
 	public void testDelete() throws EpickurException {
+		// Given
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
+		given(collection.deleteOne(query)).willReturn(deleteResult);
+		given(deleteResult.getDeletedCount()).willReturn(1L);
 
-		when(collection.deleteOne(query)).thenReturn(deleteResult);
-		when(deleteResult.getDeletedCount()).thenReturn(1L);
-
+		// When
 		boolean actual = dao.deleteWithKey(key);
 
+		// Then
 		assertTrue(actual);
-		verify(collection).deleteOne(query);
+		then(collection).should().deleteOne(query);
 	}
 
 	@Test
 	public void testDeleteFail() throws EpickurException {
+		// Given
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
+		given(collection.deleteOne(query)).willReturn(deleteResult);
+		given(deleteResult.getDeletedCount()).willReturn(0L);
 
-		when(collection.deleteOne(query)).thenReturn(deleteResult);
-		when(deleteResult.getDeletedCount()).thenReturn(0L);
-
+		// When
 		boolean actual = dao.deleteWithKey(key);
 
+		// Then
 		assertFalse(actual);
-		verify(collection).deleteOne(query);
+		then(collection).should().deleteOne(query);
 	}
 
 	@Test
 	public void testDeleteMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurException.class);
 
+		// Given
 		String key = new ObjectId().toHexString();
 		Document query = new Document().append("key", key);
+		given(collection.deleteOne(query)).willThrow(new MongoException(""));
 
-		when(collection.deleteOne(query)).thenThrow(new MongoException(""));
+		// When
 		dao.deleteWithKey(key);
 	}
 }

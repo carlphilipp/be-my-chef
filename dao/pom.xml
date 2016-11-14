@@ -5,11 +5,15 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>3.0.4-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>dao</artifactId>
 	<packaging>jar</packaging>
+
+	<build>
+		<finalName>epickur-dao-${version}</finalName>
+	</build>
 
 	<name>DAO</name>
 	<description>Data Access Object layer. Connect to MongoDB and retrieve data.</description>

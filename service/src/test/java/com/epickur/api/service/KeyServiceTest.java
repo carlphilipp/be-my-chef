@@ -4,11 +4,11 @@ import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,11 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class KeyServiceTest {
 
 	@Mock
@@ -27,19 +28,17 @@ public class KeyServiceTest {
 	@InjectMocks
 	private KeyService keyBusiness;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
-
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterCreate = EntityGenerator.mockKeyAfterCreate(key);
+		given(keyDAOMock.create(isA(Key.class))).willReturn(keyAfterCreate);
 
-		when(keyDAOMock.create(isA(Key.class))).thenReturn(keyAfterCreate);
-
+		// When
 		Key actual = keyBusiness.create(key);
+
+		// Then
 		assertNotNull(actual.getId());
 		assertNotNull(actual.getRole());
 		assertNotNull(actual.getCreatedAt());
@@ -49,41 +48,55 @@ public class KeyServiceTest {
 
 	@Test
 	public void testReadWithName() throws EpickurException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterRead = EntityGenerator.mockKeyAfterCreate(key);
+		given(keyDAOMock.readWithName(anyString())).willReturn(keyAfterRead);
 
-		when(keyDAOMock.readWithName(anyString())).thenReturn(keyAfterRead);
-
+		// When
 		Key actual = keyBusiness.readWithName(EntityGenerator.generateRandomString());
+
+		// Then
 		assertNotNull(actual);
 	}
 
 	@Test
 	public void testDelete() throws EpickurException {
-		when(keyDAOMock.delete(anyString())).thenReturn(true);
+		// Given
+		given(keyDAOMock.delete(anyString())).willReturn(true);
 
+		// When
 		boolean actual = keyBusiness.delete(EntityGenerator.generateRandomString());
+
+		// Then
 		assertTrue(actual);
 	}
 
 	@Test
 	public void testDeleteWithKey() throws EpickurException {
-		when(keyDAOMock.deleteWithKey(anyString())).thenReturn(true);
+		// Given
+		given(keyDAOMock.deleteWithKey(anyString())).willReturn(true);
 
+		// When
 		boolean actual = keyBusiness.deleteWithKey(EntityGenerator.generateRandomString());
+
+		// Then
 		assertTrue(actual);
 	}
 
 	@Test
 	public void testReadAll() throws EpickurException {
+		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterRead = EntityGenerator.mockKeyAfterCreate(key);
 		List<Key> keyList = new ArrayList<>();
 		keyList.add(keyAfterRead);
+		given(keyDAOMock.readAll()).willReturn(keyList);
 
-		when(keyDAOMock.readAll()).thenReturn(keyList);
-
+		// When
 		List<Key> actual = keyBusiness.readAll();
+
+		// Then
 		assertNotNull(actual);
 		assertEquals(1, actual.size());
 	}

@@ -5,11 +5,15 @@
 	<parent>
 		<groupId>com.epickur.api</groupId>
 		<artifactId>epickur-parent</artifactId>
-		<version>3.0.4-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>commons</artifactId>
 	<packaging>jar</packaging>
+
+	<build>
+		<finalName>epickur-commons-${version}</finalName>
+	</build>
 
 	<name>Commons</name>
 	<description>Collection of function used anywhere in the application.</description>

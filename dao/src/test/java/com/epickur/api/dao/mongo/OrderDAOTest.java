@@ -18,9 +18,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +32,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.isA;
 
+@RunWith(MockitoJUnitRunner.class)
 public class OrderDAOTest {
 
 	@Rule
@@ -50,60 +56,70 @@ public class OrderDAOTest {
 
 	@Before
 	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		when(db.getCollection(ORDER_COLL)).thenReturn(collection);
+		given(db.getCollection(ORDER_COLL)).willReturn(collection);
 	}
 
 	@Test
 	public void testCreate() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrder();
 		Document document = order.getDocumentDBView();
 
+		// When
 		Order actual = dao.create(order);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).insertOne(document);
+		then(collection).should().insertOne(document);
 	}
 
 	@Test
 	public void testCreateMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
+
+		// Given
 		Order order = EntityGenerator.generateRandomOrder();
 		Document document = order.getDocumentDBView();
+		willThrow(new MongoException("")).given(collection).insertOne(document);
 
-		doThrow(new MongoException("")).when(collection).insertOne(document);
-
+		// When
 		Order actual = dao.create(order);
 
+		// Then
 		assertNotNull(actual);
-		verify(db).getCollection(ORDER_COLL);
-		verify(collection).insertOne(document);
+		then(db).should().getCollection(ORDER_COLL);
+		then(collection).should().insertOne(document);
 	}
 
 	@Test
 	public void testRead() throws EpickurException {
+		// Given
 		String orderId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(orderId));
 		Document found = EntityGenerator.generateRandomOrder().getDocumentDBView();
+		given(collection.find(query)).willReturn(findIteratble);
+		given(findIteratble.first()).willReturn(found);
 
-		when(collection.find(query)).thenReturn(findIteratble);
-		when(findIteratble.first()).thenReturn(found);
-
+		// When
 		Optional<Order> actual = dao.read(orderId);
 
+		// Then
 		assertTrue(actual.isPresent());
-		verify(collection).find(query);
+		then(collection).should().find(query);
 	}
 
 	@Test
 	public void testReadMongoException() throws Exception {
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		String orderId = new ObjectId().toHexString();
 		Document query = new Document().append("_id", new ObjectId(orderId));
 
-		when(collection.find(query)).thenThrow(new MongoException(""));
+		// When
+		given(collection.find(query)).willThrow(new MongoException(""));
 
+		// Then
 		dao.read(orderId);
 	}
 
@@ -111,115 +127,133 @@ public class OrderDAOTest {
 	public void testReadWrongIdFormat() throws Exception {
 		thrown.expect(IllegalArgumentException.class);
 
+		// Given
 		String orderId = "myId";
 
+		// When
 		dao.read(orderId);
 	}
 
 	@Test
 	public void testUpdate() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrder();
 		Document document = order.getDocumentDBView();
+		given(collection.findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class))).willReturn(document);
 
-		when(collection.findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class))).thenReturn(document);
-
+		// When
 		Order actual = dao.update(order);
 
+		// Then
 		assertNotNull(actual);
-		verify(collection).findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class));
+		then(collection).should().findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateNotFound() throws EpickurException {
+		// Given
 		Order order = EntityGenerator.generateRandomOrder();
+		given(collection.findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class))).willReturn(null);
 
-		when(collection.findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class))).thenReturn(null);
-
+		// When
 		Order actual = dao.update(order);
 
+		// Then
 		assertNull(actual);
-		verify(collection).findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class));
+		then(collection).should().findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class));
 	}
 
 	@Test
 	public void testUpdateMongoException() throws EpickurException {
+		// Then
 		thrown.expect(EpickurDBException.class);
+
+		// Given
 		Order order = EntityGenerator.generateRandomOrder();
+		given(collection.findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class))).willThrow(new MongoException(""));
 
-		when(collection.findOneAndUpdate(isA(Document.class), isA(Document.class), isA(FindOneAndUpdateOptions.class))).thenThrow(new MongoException(""));
-
+		// When
 		dao.update(order);
-
-		verify(db).getCollection(ORDER_COLL);
 	}
 
 	@Test
 	public void testReadAll() throws Exception {
+		// Then
 		thrown.expect(NotImplementedException.class);
+
+		// When
 		dao.readAll();
 	}
 
 	@Test
 	public void testReadAllWithUserId() throws EpickurException {
+		// Given
 		String userId = new ObjectId().toHexString();
 		Document query = new Document().append("createdBy", userId);
 		Document found = EntityGenerator.generateRandomOrder().getDocumentDBView();
+		given(collection.find(query)).willReturn(findIteratble);
+		given(findIteratble.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 
-		when(collection.find(query)).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
+		// When
+		List<Order> actual = dao.readAllWithUserId(userId);
 
-		List<Order> actuals = dao.readAllWithUserId(userId);
-
-		assertNotNull(actuals);
-		assertThat(actuals, hasSize(1));
-		verify(collection).find(query);
-		verify(cursor).close();
+		// Then
+		assertNotNull(actual);
+		assertThat(actual, hasSize(1));
+		then(collection).should().find(query);
+		then(cursor).should().close();
 	}
 
 	@Test
 	public void testReadAllWithUserIdMongoException() throws Exception {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		String userId = new ObjectId().toHexString();
 		Document query = new Document().append("createdBy", userId);
+		given(collection.find(query)).willThrow(new MongoException(""));
 
-		when(collection.find(query)).thenThrow(new MongoException(""));
-
+		// When
 		dao.readAllWithUserId(userId);
 	}
 
 	@Test
 	public void testReadAllWithCatererId() throws EpickurException {
+		// Given
 		String catererId = new ObjectId().toHexString();
 		Document found = EntityGenerator.generateRandomOrder().getDocumentDBView();
-
-		when(collection.find(any(Document.class))).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
-
+		given(collection.find(any(Document.class))).willReturn(findIteratble);
+		given(findIteratble.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 		DateTime start = new DateTime().minusDays(5);
 		DateTime end = new DateTime().plusDays(5);
-		List<Order> actuals = dao.readAllWithCatererId(catererId, start, end);
 
-		assertNotNull(actuals);
-		assertThat(actuals, hasSize(1));
-		verify(collection).find(isA(Document.class));
-		verify(cursor).close();
+		// When
+		List<Order> actual = dao.readAllWithCatererId(catererId, start, end);
+
+		// Then
+		assertNotNull(actual);
+		assertThat(actual, hasSize(1));
+		then(collection).should().find(isA(Document.class));
+		then(cursor).should().close();
 	}
 
 	@Test
 	public void testReadAllWithCatererIdMongoException() throws Exception {
+		// Then
 		thrown.expect(EpickurDBException.class);
 
+		// Given
 		String catererId = new ObjectId().toHexString();
-
-		when(collection.find(isA(Document.class))).thenThrow(new MongoException(""));
-
+		given(collection.find(isA(Document.class))).willThrow(new MongoException(""));
 		DateTime start = new DateTime().minusDays(5);
 		DateTime end = new DateTime().plusDays(5);
+
+		// When
 		dao.readAllWithCatererId(catererId, start, end);
 	}
 }

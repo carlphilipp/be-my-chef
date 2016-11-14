@@ -1,7 +1,6 @@
 package com.epickur.api;
 
 import com.epickur.api.config.ApplicationConfig;
-import com.epickur.api.filter.HeaderResponseFilter;
 import org.quartz.ee.servlet.QuartzInitializerListener;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -15,8 +14,8 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class[] {
-				ApplicationConfig.class
+		return new Class[]{
+			ApplicationConfig.class
 		};
 	}
 
@@ -27,14 +26,15 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 
 	@Override
 	protected String[] getServletMappings() {
-		return new String[] { "/" };
+		return new String[]{"/"};
 	}
 
 	@Override
 	protected Filter[] getServletFilters() {
 		final DelegatingFilterProxy keyRequestFilter = new DelegatingFilterProxy("keyRequestFilter");
 		final DelegatingFilterProxy logRequestFilter = new DelegatingFilterProxy("logRequestFilter");
-		return new Filter[] { new HeaderResponseFilter(), logRequestFilter, keyRequestFilter };
+		final DelegatingFilterProxy corsFilter = new DelegatingFilterProxy("corsFilter");
+		return new Filter[]{corsFilter, logRequestFilter, keyRequestFilter};
 	}
 
 	@Override

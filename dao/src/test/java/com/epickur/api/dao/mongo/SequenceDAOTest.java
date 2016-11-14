@@ -8,19 +8,21 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.epickur.api.dao.CollectionsName.SEQUENCE_COLL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SequenceDAOTest {
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	@Mock
@@ -29,33 +31,32 @@ public class SequenceDAOTest {
 	private MongoCollection<Document> collection;
 	@InjectMocks
 	private SequenceDAO dao;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		when(db.getCollection(SEQUENCE_COLL)).thenReturn(collection);
+		given(db.getCollection(SEQUENCE_COLL)).willReturn(collection);
 	}
-	
+
 	@Test
 	public void testNextId() throws EpickurException {
 		Document found = new Document().append("seq", 5);
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class))).thenReturn(found);
-		
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class))).willReturn(found);
+
 		String actual = dao.getNextId();
 
 		assertNotNull(actual);
 		assertEquals("5", actual);
-		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class));
+		then(collection).should().findOneAndUpdate(any(Document.class), any(Document.class));
 	}
-	
+
 	@Test
 	public void testNextIdNotFound() throws EpickurException {
-		when(collection.findOneAndUpdate(any(Document.class), any(Document.class))).thenReturn(null);
-		
+		given(collection.findOneAndUpdate(any(Document.class), any(Document.class))).willReturn(null);
+
 		String actual = dao.getNextId();
 
 		assertNotNull(actual);
 		assertEquals("0", actual);
-		verify(collection).findOneAndUpdate(any(Document.class), any(Document.class));
+		then(collection).should().findOneAndUpdate(any(Document.class), any(Document.class));
 	}
 }
