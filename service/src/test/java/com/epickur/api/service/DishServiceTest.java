@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +31,9 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PowerMockIgnore("javax.management.*")
-@RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
+@RunWith(PowerMockRunner.class)
 @PrepareForTest(DishService.class)
 public class DishServiceTest {
 
@@ -148,7 +148,7 @@ public class DishServiceTest {
 		listDishes.add(dishAfterRead);
 
 		when(dishDAOMock.search(anyString(), anyInt(), isA(List.class), anyInt(), isA(Geo.class), anyInt())).thenReturn(listDishes);
-		whenNew(GeocoderHereImpl.class).withNoArguments().thenReturn(geoCoder);
+		//whenNew(GeocoderHereImpl.class).withNoArguments().thenReturn(geoCoder);
 		when(geoCoder.getPosition(anyString())).thenReturn(geo);
 
 		List<Dish> listActual = dishService.search("", 0, new ArrayList<>(), 0, new Geo(), "", 0);

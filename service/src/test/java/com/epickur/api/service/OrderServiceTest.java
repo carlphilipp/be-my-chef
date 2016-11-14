@@ -30,15 +30,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PowerMockIgnore("javax.management.*")
-@RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
+@RunWith(PowerMockRunner.class)
 @PrepareForTest(OrderService.class)
 public class OrderServiceTest {
 
@@ -196,7 +196,7 @@ public class OrderServiceTest {
 		when(chargeMock.getPaid()).thenReturn(true);
 		when(chargeMock.getId()).thenReturn(chargeId);
 		when(stripePayementMock.chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency())).thenReturn(chargeMock);
-		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
+		//whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 
 		Order orderAfterCharge = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertTrue(orderAfterCharge.getPaid());
@@ -235,7 +235,7 @@ public class OrderServiceTest {
 		when(orderDAOMock.update(orderAfterRead)).thenReturn(orderAfterRead);
 		when(chargeMock.getPaid()).thenReturn(false);
 		when(stripePayementMock.chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency())).thenReturn(chargeMock);
-		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
+		//whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 		Order orderAfterCharge = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());
 		assertEquals(OrderStatus.FAILED, orderAfterCharge.getStatus());
@@ -314,7 +314,7 @@ public class OrderServiceTest {
 		when(stripePayementMock.chargeCard(orderAfterCreate.getCardToken(), order.calculateTotalAmount(), order.getCurrency()))
 			.thenReturn(chargeMock);
 		when(voucherBusinessMock.revertVoucher(anyString())).thenReturn(voucher);
-		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
+		//whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 
 		Order orderAfterCharge = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), false, true, orderCode);
 		assertNull(orderAfterCharge.getPaid());
@@ -405,7 +405,7 @@ public class OrderServiceTest {
 		when(orderDAOMock.update(isA(Order.class))).thenReturn(orderAfterRead);
 		when(chargeMock.getPaid()).thenReturn(true);
 		when(stripePayementMock.chargeCard(orderAfterRead.getCardToken(), order.calculateTotalAmount(), order.getCurrency())).thenThrow(new APIConnectionException(""));
-		whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
+		//whenNew(StripePayment.class).withNoArguments().thenReturn(stripePayementMock);
 
 		Order orderAfterCharge = orderService.executeOrder(user.getId().toHexString(), order.getId().toHexString(), true, true, orderCode);
 		assertFalse(orderAfterCharge.getPaid());

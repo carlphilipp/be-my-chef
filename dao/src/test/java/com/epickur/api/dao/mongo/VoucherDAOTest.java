@@ -11,6 +11,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,8 +26,16 @@ import java.util.Optional;
 
 import static com.epickur.api.dao.CollectionsName.VOUCHER_COLL;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class VoucherDAOTest {
 
@@ -106,23 +115,23 @@ public class VoucherDAOTest {
 	public void testReadToClean() throws EpickurException {
 		Document found = EntityGenerator.generateVoucher().getDocumentDBView();
 
-		when(collection.find(any(Document.class))).thenReturn(findIteratble);
-		when(findIteratble.iterator()).thenReturn(cursor);
-		when(cursor.hasNext()).thenReturn(true, false);
-		when(cursor.next()).thenReturn(found);
+		given(collection.find(any(Bson.class))).willReturn(findIteratble);
+		given(findIteratble.iterator()).willReturn(cursor);
+		given(cursor.hasNext()).willReturn(true, false);
+		given(cursor.next()).willReturn(found);
 
-		List<Voucher> actuals = dao.readToClean();
+		List<Voucher> actual = dao.readToClean();
 
-		assertNotNull(actuals);
-		assertThat(actuals, hasSize(1));
-		verify(collection).find(any(Document.class));
+		assertNotNull(actual);
+		assertThat(actual, hasSize(1));
+		then(collection).should().find(any(Bson.class));
 	}
 
 	@Test
 	public void testReadToCleanMongoException() throws EpickurException {
 		thrown.expect(EpickurDBException.class);
 
-		when(collection.find(any(Document.class))).thenThrow(new MongoException(""));
+		when(collection.find(any(Bson.class))).thenThrow(new MongoException(""));
 
 		dao.readToClean();
 	}

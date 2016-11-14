@@ -1,12 +1,7 @@
 package com.epickur.api.stripe;
 
 import com.epickur.api.enumeration.Currency;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
-import com.stripe.exception.StripeException;
+import com.stripe.exception.*;
 import com.stripe.model.Charge;
 import com.stripe.model.Token;
 import org.junit.Before;
@@ -18,14 +13,16 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 
 @PowerMockIgnore("javax.management.*")
-@RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
+@RunWith(PowerMockRunner.class)
 @PrepareForTest(Charge.class)
 public class StripePaymentTest {
 
@@ -43,7 +40,7 @@ public class StripePaymentTest {
 	public void setUp() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		PowerMockito.mockStatic(Charge.class);
 
-		when(Charge.create(anyObject())).thenReturn(charge);
+		given(Charge.create(anyObject())).willReturn(charge);
 		stripePayment = new StripePayment();
 	}
 

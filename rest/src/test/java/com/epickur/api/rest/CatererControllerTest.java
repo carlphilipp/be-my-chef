@@ -14,7 +14,6 @@ import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.report.Report;
-import com.stripe.exception.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +35,12 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PowerMockIgnore("javax.management.*")
-@RunWith(org.powermock.modules.junit4.PowerMockRunner.class)
+@RunWith(PowerMockRunner.class)
 @PrepareForTest(CatererController.class)
 public class CatererControllerTest {
 
@@ -196,7 +194,7 @@ public class CatererControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testPaymentInfoPdf() throws Exception {
-		try {
+		//try {
 			Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 			Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 			Order order = EntityGenerator.generateRandomOrderWithId();
@@ -210,7 +208,7 @@ public class CatererControllerTest {
 			when(context.getAttribute("key")).thenReturn(key);
 			when(context.getContentType()).thenReturn(MediaType.APPLICATION_XML.toString());
 			when(report.getReport()).thenReturn(new byte[10]);
-			whenNew(Report.class).withNoArguments().thenReturn(report);
+			//whenNew(Report.class).withNoArguments().thenReturn(report);
 
 			ResponseEntity<?> actual = controller.paymentInfo(catererAfterCreate.getId().toHexString(), null, null, null);
 			assertNotNull(actual);
@@ -218,15 +216,15 @@ public class CatererControllerTest {
 			assertEquals("attachment; filename =" + catererAfterCreate.getId().toHexString() + ".pdf",
 					actual.getHeaders().getFirst("content-disposition"));
 			assertEquals("application/pdf", actual.getHeaders().getContentType().toString());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+/*		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
 			fail(EntityGenerator.STRIPE_MESSAGE);
-		}
+		}*/
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testPaymentInfoJson() throws Exception {
-		try {
+		//try {
 			Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 			Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 			Order order = EntityGenerator.generateRandomOrderWithId();
@@ -240,7 +238,7 @@ public class CatererControllerTest {
 			when(context.getAttribute("key")).thenReturn(key);
 			when(context.getContentType()).thenReturn(MediaType.APPLICATION_JSON.toString());
 			when(report.getReport()).thenReturn(new byte[10]);
-			whenNew(Report.class).withNoArguments().thenReturn(report);
+			//whenNew(Report.class).withNoArguments().thenReturn(report);
 
 			ResponseEntity<?> actual = controller.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");
 			assertNotNull(actual);
@@ -254,8 +252,8 @@ public class CatererControllerTest {
 			assertEquals("01/01/2015", actualMessage.getStart());
 			assertEquals("01/01/2016", actualMessage.getEnd());
 			assertEquals("MM/dd/yyyy", actualMessage.getFormat());
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+/*		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
 			fail(EntityGenerator.STRIPE_MESSAGE);
-		}
+		}*/
 	}
 }
