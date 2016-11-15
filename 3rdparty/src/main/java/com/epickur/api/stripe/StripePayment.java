@@ -17,7 +17,7 @@ import java.util.Map;
  * @author cph
  * @version 1.0
  */
-@AllArgsConstructor(onConstructor = @ _(@ Autowired))
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Log4j2
 public class StripePayment {
 

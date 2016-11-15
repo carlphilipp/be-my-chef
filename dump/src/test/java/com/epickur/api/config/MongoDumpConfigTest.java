@@ -12,7 +12,7 @@ public class MongoDumpConfigTest {
 
 	@Bean
 	public Utils utils() {
-		return new Utils();
+		return new Utils(properties());
 	}
 
 	@Bean

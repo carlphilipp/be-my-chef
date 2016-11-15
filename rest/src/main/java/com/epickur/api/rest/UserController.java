@@ -11,6 +11,8 @@ import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -34,15 +36,16 @@ import static com.epickur.api.enumeration.Operation.*;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
 
-	@Autowired
+	@NonNull
 	private HttpServletRequest request;
-	@Autowired
+	@NonNull
 	private UserService userService;
-	@Autowired
+	@NonNull
 	private OrderService orderService;
 
 	// @formatter:off

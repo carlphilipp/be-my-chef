@@ -41,6 +41,7 @@ public class LogDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		given(db.getCollection(LOG_COLL)).willReturn(collection);
+		dao.initCollection();
 	}
 
 	@Test

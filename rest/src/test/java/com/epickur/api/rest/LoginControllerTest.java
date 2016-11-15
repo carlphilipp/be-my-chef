@@ -1,11 +1,9 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.UserService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,12 +27,6 @@ public class LoginControllerTest {
 	private HttpServletRequest context;
 	@InjectMocks
 	private LoginController controller;
-
-	@Before
-	public void setUp() {
-		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
-	}
 
 	@Test
 	public void testLogin() throws EpickurException {

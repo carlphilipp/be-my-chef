@@ -35,6 +35,7 @@ public class SequenceDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		given(db.getCollection(SEQUENCE_COLL)).willReturn(collection);
+		dao.postConstruct();
 	}
 
 	@Test

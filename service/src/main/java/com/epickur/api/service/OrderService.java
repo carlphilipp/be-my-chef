@@ -19,6 +19,8 @@ import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.utils.security.Security;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,22 +39,23 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Service
 public class OrderService {
 
-	@Autowired
+	@NonNull
 	private OrderDAO orderDAO;
-	@Autowired
+	@NonNull
 	private UserDAO userDAO;
-	@Autowired
+	@NonNull
 	private SequenceDAO seqDAO;
-	@Autowired
+	@NonNull
 	private VoucherService voucherService;
-	@Autowired
+	@NonNull
 	private OrderJob jobs;
-	@Autowired
+	@NonNull
 	private EmailUtils emailUtils;
-	@Autowired
+	@NonNull
 	private StripePayment stripePayment;
 
 	/**

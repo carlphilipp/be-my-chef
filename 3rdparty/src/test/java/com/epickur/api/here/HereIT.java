@@ -24,10 +24,10 @@ public class HereIT {
 	public void testHereSuccess() {
 		try {
 			// Given
-			here.setSearchText("832 W. Wrightwood, Chicago");
+			final String address = "832 W. Wrightwood, Chicago";
 
 			// When
-			Geo geo = here.getGeolocation();
+			Geo geo = here.getGeolocation(address);
 
 			// Then
 			assertEquals(41.92901, geo.getLatitude().floatValue(), 0.001);
@@ -40,9 +40,9 @@ public class HereIT {
 	@Test(expected = HereException.class)
 	public void testHereFailure() throws HereException {
 		// Given
-		here.setSearchText("WTF, Paris, Turkey");
+		final String address = "WTF, Paris, Turkey";
 
 		// When
-		here.getGeolocation();
+		here.getGeolocation(address);
 	}
 }

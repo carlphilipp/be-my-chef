@@ -6,8 +6,10 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -31,6 +33,11 @@ public class KeyDAO extends CrudDAO<Key> {
 	 * Not implemented
 	 */
 	private static final String NOT_IMPLEMENTED = "Not implemented";
+
+	@Autowired
+	public KeyDAO(final MongoDatabase db) {
+		super(db);
+	}
 
 	@PostConstruct
 	protected void initCollection() {

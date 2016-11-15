@@ -13,6 +13,8 @@ import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.email.EmailUtils;
 import com.epickur.api.utils.security.PasswordManager;
 import com.epickur.api.utils.security.Security;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
@@ -35,17 +37,18 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Log4j2
 @Service
 public class UserService {
 
-	@Autowired
+	@NonNull
 	private UserDAO userDAO;
-	@Autowired
+	@NonNull
 	private KeyService keyService;
-	@Autowired
+	@NonNull
 	private EmailUtils emailUtils;
-	@Autowired
+	@NonNull
 	private Utils utils;
 
 	/**

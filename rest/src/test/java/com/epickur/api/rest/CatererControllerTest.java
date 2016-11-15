@@ -14,7 +14,6 @@ import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.report.Report;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -220,12 +219,8 @@ public class CatererControllerTest {
 		List<Order> orders = new ArrayList<>();
 		orders.add(order);
 		given(catererService.read(any())).willReturn(Optional.of(catererAfterCreate));
-		given(orderService.readAllWithCatererId(any(), any(DateTime.class), any(DateTime.class))).willReturn(orders);
 		given(catererService.getTotalAmountSuccessful(any(List.class))).willReturn(150);
-		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
 		given(context.getContentType()).willReturn(MediaType.APPLICATION_XML.toString());
-		given(report.getReport()).willReturn(new byte[10]);
 
 		// When
 		ResponseEntity<?> actual = controller.paymentInfo(catererAfterCreate.getId().toHexString(), null, null, null);
@@ -247,12 +242,9 @@ public class CatererControllerTest {
 		List<Order> orders = new ArrayList<>();
 		orders.add(order);
 		given(catererService.read(any())).willReturn(Optional.of(catererAfterCreate));
-		given(orderService.readAllWithCatererId(any(), any(DateTime.class), any(DateTime.class))).willReturn(orders);
 		given(catererService.getTotalAmountSuccessful(any(List.class))).willReturn(150);
 		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
 		given(context.getContentType()).willReturn(MediaType.APPLICATION_JSON.toString());
-		given(report.getReport()).willReturn(new byte[10]);
 
 		// When
 		ResponseEntity<?> actual = controller.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");

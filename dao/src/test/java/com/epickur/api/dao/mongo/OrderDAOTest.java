@@ -57,6 +57,7 @@ public class OrderDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		given(db.getCollection(ORDER_COLL)).willReturn(collection);
+		dao.initCollection();
 	}
 
 	@Test

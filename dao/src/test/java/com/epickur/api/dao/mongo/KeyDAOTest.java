@@ -55,6 +55,7 @@ public class KeyDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		given(db.getCollection(KEY_COLL)).willReturn(collection);
+		dao.initCollection();
 	}
 
 	@Test

@@ -8,6 +8,8 @@ import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.email.EmailUtils;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -23,6 +25,7 @@ import java.util.Optional;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Log4j2
 @Component
 public class CancelOrderJob extends QuartzJobBean {
@@ -30,22 +33,22 @@ public class CancelOrderJob extends QuartzJobBean {
 	/**
 	 * Order dao
 	 */
-	@Autowired
+	@NonNull
 	private OrderDAO orderDAO;
 	/**
 	 * User dao
 	 */
-	@Autowired
+	@NonNull
 	private UserDAO userDAO;
 	/**
 	 * Voucher Business
 	 */
-	@Autowired
+	@NonNull
 	private VoucherService voucherService;
 	/**
 	 * Email utils
 	 */
-	@Autowired
+	@NonNull
 	private EmailUtils emailUtils;
 
 	@Override

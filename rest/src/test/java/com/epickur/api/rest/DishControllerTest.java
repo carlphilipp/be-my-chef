@@ -2,7 +2,6 @@ package com.epickur.api.rest;
 
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.exception.EpickurException;
@@ -11,7 +10,6 @@ import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.utils.Utils;
 import org.bson.types.ObjectId;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -46,12 +44,6 @@ public class DishControllerTest {
 	@InjectMocks
 	private DishController controller;
 
-	@Before
-	public void setUp() {
-		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
-	}
-
 	@Test
 	public void testCreate() throws EpickurException {
 		// Given
@@ -60,7 +52,6 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
-		given(catererService.read(any())).willReturn(Optional.of(caterer));
 		given(dishService.create(any(Dish.class))).willReturn(dishAfterCreate);
 
 		// When

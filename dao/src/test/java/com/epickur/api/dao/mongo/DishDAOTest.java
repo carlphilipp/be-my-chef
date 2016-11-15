@@ -57,6 +57,7 @@ public class DishDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		given(db.getCollection(DISH_COLL)).willReturn(collection);
+		dao.initCollection();
 	}
 
 	@Test

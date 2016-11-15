@@ -19,7 +19,6 @@ public class GeocoderHereImpl implements IGeocoder {
 
 	@Override
 	public Geo getPosition(final String text) throws GeoLocationException {
-		here.setSearchText(text);
-		return here.getGeolocation();
+		return here.getGeolocation(text);
 	}
 }

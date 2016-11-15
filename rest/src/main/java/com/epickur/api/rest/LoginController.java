@@ -4,6 +4,8 @@ import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,21 +22,22 @@ import org.springframework.web.bind.annotation.RestController;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @RestController
 @RequestMapping(value = "/login")
 public class LoginController {
 
-	@Autowired
+	@NonNull
 	private UserService userService;
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /login Login
 	 * @apiVersion 1.0.0
 	 * @apiName Login
 	 * @apiGroup Connection
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} email Email of the User.
 	 * @apiParam (Request: URL Parameter) {String} password Password of the User.
 	 *
@@ -67,9 +70,9 @@ public class LoginController {
 	@JsonView(User.PublicView.class)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> login(
-			@RequestParam("email") @NotBlank(message = "{login.email}") final String email,
-			@RequestParam("password") @NotBlank(message = "{login.password}") final String password)
-			throws EpickurException {
+		@RequestParam("email") @NotBlank(message = "{login.email}") final String email,
+		@RequestParam("password") @NotBlank(message = "{login.password}") final String password)
+		throws EpickurException {
 		final User user = userService.login(email, password);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}

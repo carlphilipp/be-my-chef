@@ -6,6 +6,8 @@ import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Order;
 import com.epickur.api.enumeration.OrderStatus;
 import com.epickur.api.exception.EpickurException;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +24,14 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Service
 public class CatererService {
 
 	/**
 	 * The DAO {@link CatererDAO}
 	 */
-	@Autowired
+	@NonNull
 	private CatererDAO dao;
 
 	/**
@@ -93,8 +96,8 @@ public class CatererService {
 	public Integer getTotalAmountSuccessful(final List<Order> orders) {
 		final AtomicInteger amount = new AtomicInteger();
 		orders.stream()
-				.filter(order -> order.getStatus() == OrderStatus.SUCCESSFUL)
-				.forEach(order -> amount.addAndGet(order.getAmount()));
+			.filter(order -> order.getStatus() == OrderStatus.SUCCESSFUL)
+			.forEach(order -> amount.addAndGet(order.getAmount()));
 		return amount.get();
 	}
 }

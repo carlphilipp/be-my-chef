@@ -6,9 +6,11 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -27,6 +29,11 @@ import static com.epickur.api.dao.CollectionsName.CATERER_COLL;
 @Log4j2
 @Repository
 public class CatererDAO extends CrudDAO<Caterer> {
+
+	@Autowired
+	public CatererDAO(final MongoDatabase db) {
+		super(db);
+	}
 
 	@PostConstruct
 	protected void initCollection() {

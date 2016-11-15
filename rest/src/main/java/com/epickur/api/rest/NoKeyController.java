@@ -8,6 +8,8 @@ import com.epickur.api.service.OrderService;
 import com.epickur.api.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,25 +28,26 @@ import static com.epickur.api.enumeration.Operation.RESET_PASSWORD;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @RestController
 @RequestMapping(value = "/nokey")
 public class NoKeyController {
 
-	@Autowired
+	@NonNull
 	private UserService userService;
-	@Autowired
+	@NonNull
 	private OrderService orderService;
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /nokey/check?email=:email&check=:check Verifiy a User
 	 * @apiVersion 1.0.0
 	 * @apiName CheckUser
 	 * @apiGroup Users
 	 * @apiDescription Service called to allow or not a user to connect to the website (via the "allow" flag).
 	 * The temporary key is received by email and sent as param in the request that called this service.
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} name Name of User.
 	 * @apiParam (Request: URL Parameter) {String} check The key given by email.
 	 *
@@ -90,14 +93,14 @@ public class NoKeyController {
 	}
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /nokey/execute/users/:userId/orders/:orderId?confirm=:confirm&ordercode=:ordercode Execute an Order
 	 * @apiVersion 1.0.0
 	 * @apiName ExecuteOrder
 	 * @apiGroup Orders
 	 * @apiPermission none
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} id Id of the User.
 	 * @apiParam (Request: URL Parameter) {String} orderId Id of the Order.
 	 * @apiParam (Request: URL Parameter) {Boolean} confirm If the caterer accept the order or not
@@ -112,25 +115,25 @@ public class NoKeyController {
 	 *
 	 * @apiSuccessExample Success-Response:
 	 *	HTTP/1.1 200 OK
-	 *	{ 
+	 *	{
 	 *		"id" : "54e0f996731e1b9f54451ef6",
-	 *		"userId" : "54e0f995731e1b9f54451ef5", 
-	 *		"description" : "A new order", 
-	 *		"amount" : 500 , 
-	 *		"currency" : "AUD", 
-	 *		"dish" : { 
-	 *			"name" : "Chicken Kebab", 
-	 *			"description" : "Fresh meat, served with fries", 
-	 *			"type" : "Vegan", 
-	 *			"price" : 5.0, 
-	 *			"cookingTime" : 5, 
-	 *			"difficultyLevel" : 8, 
+	 *		"userId" : "54e0f995731e1b9f54451ef5",
+	 *		"description" : "A new order",
+	 *		"amount" : 500 ,
+	 *		"currency" : "AUD",
+	 *		"dish" : {
+	 *			"name" : "Chicken Kebab",
+	 *			"description" : "Fresh meat, served with fries",
+	 *			"type" : "Vegan",
+	 *			"price" : 5.0,
+	 *			"cookingTime" : 5,
+	 *			"difficultyLevel" : 8,
 	 *			"videoUrl" : "http://www.google.com/videos"
 	 *		},
 	 *		"paid": true,
 	 *		"chargeId": "ch_163baS21cpKR0BKmv00GWuLK",
 	 *		"cardToken": "tok_163baP21cpKR0BKmxFStdlIc",
-	 *		"createdAt" : 1424030102542, 
+	 *		"createdAt" : 1424030102542,
 	 *		"updatedAt" : 1424030102542
 	 *	}
 	 *
@@ -161,16 +164,16 @@ public class NoKeyController {
 	}
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {put} /nokey/reset/users/:userId Reset user password
 	 * @apiVersion 1.0.0
 	 * @apiName ResetPassword2
 	 * @apiGroup Users
 	 * @apiDescription Reset the current password of the user with the provided new one.
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} userId User id.
-	 * 
+	 *
 	 * @apiParam (Request: JSON Object) {String} password New user password.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} id Id of the User.

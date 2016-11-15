@@ -2,17 +2,19 @@ package com.epickur.api.config;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.epickur.api.aws.AmazonWebServices;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
 
 import static org.mockito.Mockito.mock;
 
 @Configuration
-@PropertySource("classpath:epickur-dev.properties")
-@Import(PropertySourcesConfig.class)
+@Import(EpickurPropertiesTestConfig.class)
 public class AmazonConfigTest {
+
+	@Autowired
+	private EpickurProperties epickurProperties;
 
 	@Bean
 	public AmazonS3 s3clientMock() {
@@ -21,11 +23,6 @@ public class AmazonConfigTest {
 
 	@Bean
 	public AmazonWebServices amazonWebServices() {
-		return new AmazonWebServices();
-	}
-
-	@Bean
-	public EpickurProperties epickurProperties() {
-		return new EpickurProperties();
+		return new AmazonWebServices(epickurProperties, s3clientMock());
 	}
 }
