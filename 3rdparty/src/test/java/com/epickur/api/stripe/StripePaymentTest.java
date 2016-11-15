@@ -10,23 +10,20 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyMap;
 
-@PowerMockIgnore("javax.management.*")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Charge.class)
+@RunWith(MockitoJUnitRunner.class)
 public class StripePaymentTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+	@Mock
+	private ChargeWrapper chargeWrapper;
 	@Mock
 	private Charge charge;
 	@Mock
@@ -37,10 +34,10 @@ public class StripePaymentTest {
 
 	@Before
 	public void setUp() throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
-		PowerMockito.mockStatic(Charge.class);
+		//PowerMockito.mockStatic(Charge.class);
 
-		given(Charge.create(anyObject())).willReturn(charge);
-		stripePayment = new StripePayment();
+		given(chargeWrapper.createCharge(anyMap())).willReturn(charge);
+		stripePayment = new StripePayment(chargeWrapper);
 	}
 
 	@Test
@@ -65,7 +62,7 @@ public class StripePaymentTest {
 
 		// Given
 		InvalidRequestException invalidReqException = new InvalidRequestException("error", null, null, null, new Throwable());
-		given(Charge.create(anyObject())).willThrow(invalidReqException);
+		given(chargeWrapper.createCharge(anyMap())).willThrow(invalidReqException);
 		Integer value = -1500;
 
 		// When
@@ -79,7 +76,7 @@ public class StripePaymentTest {
 
 		// Given
 		AuthenticationException authenticationException = new AuthenticationException(null, null, null);
-		given(Charge.create(anyObject())).willThrow(authenticationException);
+		given(chargeWrapper.createCharge(anyMap())).willThrow(authenticationException);
 		Integer value = -1500;
 
 		// When
@@ -93,7 +90,7 @@ public class StripePaymentTest {
 
 		// Given
 		APIConnectionException apiConnectionException = new APIConnectionException("error");
-		given(Charge.create(anyObject())).willThrow(apiConnectionException);
+		given(chargeWrapper.createCharge(anyMap())).willThrow(apiConnectionException);
 		Integer value = -1500;
 
 		// When
@@ -107,7 +104,7 @@ public class StripePaymentTest {
 
 		// Given
 		APIConnectionException apiConnectionException = new APIConnectionException("error");
-		given(Charge.create(anyObject())).willThrow(apiConnectionException);
+		given(chargeWrapper.createCharge(anyMap())).willThrow(apiConnectionException);
 		Integer value = -1500;
 
 		// When

@@ -1,5 +1,6 @@
 package com.epickur.api.config;
 
+import com.epickur.api.stripe.ChargeWrapper;
 import com.epickur.api.stripe.StripePayment;
 import com.stripe.Stripe;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,6 @@ public class StripeConfig {
 	@Bean
 	public StripePayment stripe() {
 		Stripe.apiKey = properties.getStripeKey();
-		return new StripePayment();
+		return new StripePayment(new ChargeWrapper());
 	}
 }
