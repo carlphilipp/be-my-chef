@@ -1,9 +1,9 @@
-Epickur RESTful API
+Be My Chef RESTful API
 ==================
 
-Welcome to Epickur RESTful API!!
+Welcome to Be My Chef RESTful API!!
 
-For full endpoint documentation please go [here](epickur-rest/apidoc/index.html).
+[https://www.bemychef.com.au](https://www.bemychef.com.au).
 
 ### Multi module project
 
@@ -55,7 +55,7 @@ When adding a new module, be careful with cyclic dependency error: Two modules m
 ###Install
 Clone the Git repository in working directory:
 
-`git clone ssh://carlphilipp@git.code.sf.net/p/epickurapi/code epickur-api`
+`git clone https://github.com/carlphilipp/be-my-chef.git`
 
 ###Configure
 
@@ -125,22 +125,17 @@ To deploy on AWS, start by packaging the app:
 
 Copy file on server:
 
-`scp rest/target/epickur-version.jar ec2-user@52.64.19.117:~/api`
+`scp rest/target/epickur-version.jar user@ip:~/api`
 
 Kill current instance running:
 
-`ssh ec2-user@52.64.19.117 pkill java`
+`ssh user@ip pkill java`
 
 Start new instance:
 
-`ssh ec2-user@52.64.19.117 'nohup java -Dspring.profiles.active=prod -jar ~/api/epickur-version.jar &'`
+`ssh user@ip 'nohup java -Dspring.profiles.active=prod -jar ~/api/epickur-version.jar &'`
 
 Connect to the server and clean the old .jar if can.
-
-###Known issue with Eclipse
-Issue with Maven dependencies not deployed
-
-Bug in m2Clipse
 
 ###Credits
 
