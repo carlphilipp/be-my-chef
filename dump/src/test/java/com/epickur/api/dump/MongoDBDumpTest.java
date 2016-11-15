@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -48,7 +49,7 @@ public class MongoDBDumpTest {
 	@Autowired
 	private MongoDBDump mongoDBDump;
 	private File[] listOfFiles = new File[1];
-	private InputStream inputStream = IOUtils.toInputStream("some test data for my input stream");
+	private InputStream inputStream = IOUtils.toInputStream("some test data for my input stream", Charset.defaultCharset());
 
 	@Before
 	public void setUp() throws Exception {

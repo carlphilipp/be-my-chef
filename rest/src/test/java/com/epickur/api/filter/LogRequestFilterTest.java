@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,7 +59,7 @@ public class LogRequestFilterTest {
 		given(request.getRequestURL()).willReturn(new StringBuffer());
 		given(request.getParameterNames()).willReturn(params);
 		given(request.getHeader("X-FORWARDED-FOR")).willReturn(null);
-		given(dao.create(isA(Log.class))).willThrow(new EpickurException());
+		given(dao.create(any(Log.class))).willThrow(new EpickurException());
 
 		// When
 		filter.doFilterInternal(request, response, filterChain);

@@ -28,11 +28,9 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DishControllerTest {
@@ -62,8 +60,8 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
-		given(catererService.read(anyString())).willReturn(Optional.of(caterer));
-		given(dishService.create(isA(Dish.class))).willReturn(dishAfterCreate);
+		given(catererService.read(any())).willReturn(Optional.of(caterer));
+		given(dishService.create(any(Dish.class))).willReturn(dishAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.create(dish);
@@ -83,7 +81,7 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
-		given(dishService.read(anyString())).willReturn(Optional.of(dishAfterCreate));
+		given(dishService.read(any())).willReturn(Optional.of(dishAfterCreate));
 
 		// When
 		ResponseEntity actual = controller.read(new ObjectId().toHexString());
@@ -102,7 +100,7 @@ public class DishControllerTest {
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
-		given(dishService.read(anyString())).willReturn(Optional.empty());
+		given(dishService.read(any())).willReturn(Optional.empty());
 
 		// When
 		ResponseEntity actual = controller.read(new ObjectId().toHexString());
@@ -124,7 +122,7 @@ public class DishControllerTest {
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterCreate.setDescription("desc");
-		given(dishService.update(isA(Dish.class))).willReturn(dishAfterCreate);
+		given(dishService.update(any(Dish.class))).willReturn(dishAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.update(dish.getId().toHexString(), dish);
@@ -144,7 +142,7 @@ public class DishControllerTest {
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
-		given(dishService.delete(anyString())).willReturn(true);
+		given(dishService.delete(any())).willReturn(true);
 
 		// When
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
@@ -165,7 +163,7 @@ public class DishControllerTest {
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
-		given(dishService.delete(anyString())).willReturn(false);
+		given(dishService.delete(any())).willReturn(false);
 
 		// When
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
@@ -190,8 +188,7 @@ public class DishControllerTest {
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> dishes = new ArrayList<>();
 		dishes.add(dishAfterCreate);
-		given(dishService.search(anyString(), anyInt(), isA(List.class), anyInt(), anyObject(), anyString(), anyInt()))
-			.willReturn(dishes);
+		given(dishService.search(any(String.class), any(Integer.class), any(), any(Integer.class), isNull(), any(String.class), any(Integer.class))).willReturn(dishes);
 
 		// When
 		ResponseEntity<?> actual = controller

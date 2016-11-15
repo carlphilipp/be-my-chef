@@ -16,9 +16,9 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CatererServiceTest {
@@ -55,7 +55,7 @@ public class CatererServiceTest {
 		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
-		given(catererDAOMock.read(anyString())).willReturn(Optional.of(catererAfterCreate));
+		given(catererDAOMock.read(any(String.class))).willReturn(Optional.of(catererAfterCreate));
 
 		// When
 		Optional<Caterer> actualCaterer = catererService.read(EntityGenerator.generateRandomString());
@@ -99,7 +99,7 @@ public class CatererServiceTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Caterer catererAfterUpdate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterUpdate.setDescription("new desc");
-		given(catererDAOMock.read(anyString())).willReturn(Optional.of(catererAfterUpdate));
+		given(catererDAOMock.read(any(String.class))).willReturn(Optional.of(catererAfterUpdate));
 		given(catererDAOMock.update(caterer)).willReturn(catererAfterUpdate);
 
 		// When

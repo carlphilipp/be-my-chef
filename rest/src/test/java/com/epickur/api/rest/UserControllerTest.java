@@ -1,6 +1,5 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.entity.message.DeletedMessage;
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.bson.types.ObjectId;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,10 +27,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest {
@@ -46,18 +42,12 @@ public class UserControllerTest {
 	@InjectMocks
 	private UserController controller;
 
-	@Before
-	public void setUp() {
-		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
-	}
-
 	@Test
 	public void testCreate() throws EpickurException {
 		// Given
 		User user = EntityGenerator.generateRandomUser();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
-		given(userService.create(isA(User.class), anyBoolean())).willReturn(userAfterCreate);
+		given(userService.create(any(User.class), any(Boolean.class))).willReturn(userAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.create(false, user);
@@ -74,7 +64,7 @@ public class UserControllerTest {
 		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterRead = EntityGenerator.mockUserAfterCreate(user);
-		given(userService.read(anyString())).willReturn(Optional.of(userAfterRead));
+		given(userService.read(any())).willReturn(Optional.of(userAfterRead));
 
 		// When
 		ResponseEntity<?> actual = controller.read(user.getId().toHexString());
@@ -91,7 +81,7 @@ public class UserControllerTest {
 		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterUpdate = EntityGenerator.mockUserAfterCreate(user);
-		given(userService.update(isA(User.class))).willReturn(userAfterUpdate);
+		given(userService.update(any(User.class))).willReturn(userAfterUpdate);
 
 		// When
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
@@ -111,7 +101,7 @@ public class UserControllerTest {
 		user.setPassword("oldpassword");
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
-		given(userService.update(isA(User.class))).willReturn(userAfterCreate);
+		given(userService.update(any(User.class))).willReturn(userAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
@@ -131,7 +121,7 @@ public class UserControllerTest {
 		user.setPassword("oldpassword");
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
 		userAfterCreate.setNewPassword(null);
-		given(userService.update(isA(User.class))).willReturn(userAfterCreate);
+		given(userService.update(any(User.class))).willReturn(userAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.update(user.getId().toHexString(), user);
@@ -148,7 +138,7 @@ public class UserControllerTest {
 	public void testDelete() throws EpickurException {
 		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
-		given(userService.delete(anyString())).willReturn(true);
+		given(userService.delete(any())).willReturn(true);
 
 		// When
 		ResponseEntity<?> actual = controller.delete(user.getId().toHexString());
@@ -186,7 +176,7 @@ public class UserControllerTest {
 		// Given
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
-		given(orderService.create(anyString(), isA(Order.class))).willReturn(orderAfterCreate);
+		given(orderService.create(any(), any(Order.class))).willReturn(orderAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.createOneOrder(orderAfterCreate.getId().toHexString(), order);
@@ -203,7 +193,7 @@ public class UserControllerTest {
 		// Given
 		Order order = EntityGenerator.generateRandomOrder();
 		Order orderAfterRead = EntityGenerator.mockOrderAfterCreate(order);
-		given(orderService.readOrder(anyString())).willReturn(Optional.of(orderAfterRead));
+		given(orderService.readOrder(any())).willReturn(Optional.of(orderAfterRead));
 
 		// When
 		ResponseEntity<?> actual = controller.readOneOrder(new ObjectId().toHexString(), new ObjectId().toHexString());
@@ -222,7 +212,7 @@ public class UserControllerTest {
 		Order order = EntityGenerator.generateRandomOrder();
 		List<Order> orders = new ArrayList<>();
 		orders.add(order);
-		given(orderService.readAllWithUserId(anyString())).willReturn(orders);
+		given(orderService.readAllWithUserId(any())).willReturn(orders);
 
 		// When
 		ResponseEntity<?> actual = controller.readAllOrders(new ObjectId().toHexString());
@@ -241,7 +231,7 @@ public class UserControllerTest {
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		order.setId(new ObjectId());
 		Order orderAfterCreate = EntityGenerator.mockOrderAfterCreate(order);
-		given(orderService.update(isA(Order.class))).willReturn(orderAfterCreate);
+		given(orderService.update(any(Order.class))).willReturn(orderAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.updateOneOrder(new ObjectId().toHexString(), order.getId().toHexString(), order);
@@ -257,7 +247,7 @@ public class UserControllerTest {
 	public void testdeleteOneOrder() throws EpickurException {
 		// Given
 		Order order = EntityGenerator.generateRandomOrderWithId();
-		given(orderService.delete(anyString())).willReturn(true);
+		given(orderService.delete(any())).willReturn(true);
 
 		// When
 		ResponseEntity<?> actual = controller.deleteOneOrder(new ObjectId().toHexString(), order.getId().toHexString());

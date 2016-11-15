@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginControllerTest {
@@ -41,7 +41,7 @@ public class LoginControllerTest {
 		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
-		given(userBusiness.login(anyString(), anyString())).willReturn(userAfterCreate);
+		given(userBusiness.login(any(String.class), any(String.class))).willReturn(userAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.login(user.getEmail(), user.getPassword());
