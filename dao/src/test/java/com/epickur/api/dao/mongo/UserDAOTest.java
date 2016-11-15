@@ -55,6 +55,7 @@ public class UserDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		given(db.getCollection(USER_COLL)).willReturn(collection);
+		dao.initCollection();
 	}
 
 	@Test

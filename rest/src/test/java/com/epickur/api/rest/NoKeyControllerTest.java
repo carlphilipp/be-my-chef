@@ -1,6 +1,5 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.Order;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
@@ -10,7 +9,6 @@ import com.epickur.api.service.UserService;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.bson.types.ObjectId;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,9 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NoKeyControllerTest {
@@ -38,18 +35,12 @@ public class NoKeyControllerTest {
 	@InjectMocks
 	private NoKeyController controller;
 
-	@Before
-	public void setUp() {
-		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
-	}
-
 	@Test
 	public void testCheckUserService() throws EpickurException {
 		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		user.setCode(EntityGenerator.generateRandomString());
-		given(userBusiness.checkCode(anyString(), anyString())).willReturn(user);
+		given(userBusiness.checkCode(any(), any())).willReturn(user);
 
 		// When
 		ResponseEntity<?> actual = controller.checkUser(user.getEmail(), user.getCode());
@@ -66,7 +57,7 @@ public class NoKeyControllerTest {
 		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		Order order = EntityGenerator.generateRandomOrderWithId();
-		given(orderBusiness.executeOrder(anyString(), anyString(), anyBoolean(), anyBoolean(), anyString())).willReturn(order);
+		given(orderBusiness.executeOrder(any(String.class), any(String.class), any(Boolean.class), any(Boolean.class), any(String.class))).willReturn(order);
 
 		// When
 		ResponseEntity<?> actual = controller.executeOrder(user.getId().toHexString(), new ObjectId().toHexString(), true, new ObjectId().toHexString(), true);
@@ -83,7 +74,7 @@ public class NoKeyControllerTest {
 		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		user.setCode(EntityGenerator.generateRandomString());
-		given(userBusiness.resetPasswordSecondStep(anyString(), anyString(), anyString())).willReturn(user);
+		given(userBusiness.resetPasswordSecondStep(any(), any(), any())).willReturn(user);
 		ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
 		objectNode.set("password", JsonNodeFactory.instance.textNode("newpassord"));
 

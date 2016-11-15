@@ -7,6 +7,8 @@ import com.epickur.api.enumeration.voucher.DiscountType;
 import com.epickur.api.enumeration.voucher.ExpirationType;
 import com.epickur.api.enumeration.voucher.Status;
 import com.epickur.api.exception.EpickurException;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,13 +23,14 @@ import java.util.Set;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Service
 public class VoucherService {
 
 	/**
 	 * User dao
 	 */
-	@Autowired
+	@NonNull
 	private VoucherDAO voucherDAO;
 
 	/**

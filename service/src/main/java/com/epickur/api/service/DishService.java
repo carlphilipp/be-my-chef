@@ -7,6 +7,8 @@ import com.epickur.api.entity.Geo;
 import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.here.IGeocoder;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,24 +25,14 @@ import static com.epickur.api.enumeration.Operation.UPDATE;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Service
 public class DishService {
 
-	@Autowired
+	@NonNull
 	private IGeocoder geocoder;
-	/**
-	 * The DAO {@link DishDAO}.
-	 */
-	@Autowired
+	@NonNull
 	private DishDAO dao;
-
-	public DishService() {
-
-	}
-
-	public DishService(DishDAO dao) {
-		this.dao = dao;
-	}
 
 	/**
 	 * Create a {@link Dish}

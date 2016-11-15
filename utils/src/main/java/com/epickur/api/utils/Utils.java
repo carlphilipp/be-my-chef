@@ -9,6 +9,8 @@ import com.epickur.api.enumeration.DishType;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.epickur.api.utils.security.Security;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -29,10 +31,11 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Component
 public class Utils {
 
-	@Autowired
+	@NonNull
 	public EpickurProperties properties;
 
 	/**

@@ -7,6 +7,8 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.epickur.api.config.EpickurProperties;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Log4j2
 @Component
 public final class AmazonWebServices {
@@ -29,9 +32,9 @@ public final class AmazonWebServices {
 	 * Maximum amount of dump we keep on S3
 	 */
 	private static final int MAX_DUMP_KEPT = 20;
-	@Autowired
+	@NonNull
 	public EpickurProperties properties;
-	@Autowired
+	@NonNull
 	private AmazonS3 s3client;
 
 	/**

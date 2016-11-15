@@ -11,6 +11,8 @@ import com.epickur.api.service.DishService;
 import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.web.ResponseError;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +34,14 @@ import static com.epickur.api.enumeration.Operation.*;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @RestController
 @RequestMapping(value = "/dishes")
 public class DishController {
 
-	@Autowired
+	@NonNull
 	private DishService dishService;
-	@Autowired
+	@NonNull
 	private Utils utils;
 
 	// @formatter:off

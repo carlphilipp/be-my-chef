@@ -5,7 +5,9 @@ import com.epickur.api.entity.Geo;
 import com.epickur.api.exception.HereException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.Cleanup;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
@@ -28,13 +30,14 @@ import java.util.Map;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Log4j2
 @Component
 public class Here {
 
-	@Autowired
+	@NonNull
 	public EpickurProperties properties;
-	@Autowired
+	@NonNull
 	private ObjectMapper mapper;
 	/**
 	 * Url base
@@ -80,14 +83,6 @@ public class Here {
 	 * Url option
 	 */
 	private static final double RELEVANCE_THRESHOLD = 0.85;
-	/**
-	 * The adress to find
-	 */
-	private String text;
-
-	public void setSearchText(final String text) {
-		this.text = text;
-	}
 
 	/**
 	 * This function build the URL.
@@ -96,7 +91,7 @@ public class Here {
 	 * @throws HereException If we could not access the coordinates
 	 */
 	@SneakyThrows(UnsupportedEncodingException.class)
-	protected final String urlBuilder() {
+	protected final String urlBuilder(final String text) {
 		final StringBuilder stb = new StringBuilder();
 		stb.append(URL_BASE);
 		stb.append('/').append(properties.getHereApiVersion());
@@ -145,7 +140,7 @@ public class Here {
 	 * @throws HereException If we could not access the coordinates
 	 */
 	@SuppressWarnings("unchecked")
-	private Geo getGeoFromStr(final String data) throws HereException {
+	private Geo getGeoFromStr(final String data, final String text) throws HereException {
 		Geo geo = null;
 		try {
 			log.info(data);
@@ -176,7 +171,7 @@ public class Here {
 										}
 									}
 								} else {
-									final String message = String.format("Could not geocode accurately '%s'", this.text);
+									final String message = String.format("Could not geocode accurately '%s'", text);
 									throw new HereException(message);
 								}
 							}
@@ -199,8 +194,8 @@ public class Here {
 	 * @return A Geo
 	 * @throws HereException If we could not access the coordinates
 	 */
-	public final Geo getGeolocation() throws HereException {
-		final String data = connectUrl(urlBuilder());
-		return getGeoFromStr(data);
+	public final Geo getGeolocation(final String text) throws HereException {
+		final String data = connectUrl(urlBuilder(text));
+		return getGeoFromStr(data, text);
 	}
 }

@@ -1,11 +1,9 @@
 package com.epickur.api.rest;
 
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.User;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.helper.EntityGenerator;
 import com.epickur.api.service.UserService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,8 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginControllerTest {
@@ -30,18 +28,12 @@ public class LoginControllerTest {
 	@InjectMocks
 	private LoginController controller;
 
-	@Before
-	public void setUp() {
-		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
-	}
-
 	@Test
 	public void testLogin() throws EpickurException {
 		// Given
 		User user = EntityGenerator.generateRandomUserWithId();
 		User userAfterCreate = EntityGenerator.mockUserAfterCreate(user);
-		given(userBusiness.login(anyString(), anyString())).willReturn(userAfterCreate);
+		given(userBusiness.login(any(String.class), any(String.class))).willReturn(userAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.login(user.getEmail(), user.getPassword());

@@ -6,11 +6,13 @@ import com.epickur.api.exception.EpickurException;
 import com.epickur.api.exception.EpickurParsingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +31,11 @@ import static com.epickur.api.dao.CollectionsName.ORDER_COLL;
 @Log4j2
 @Repository
 public class OrderDAO extends CrudDAO<Order> {
+
+	@Autowired
+	public OrderDAO(final MongoDatabase db) {
+		super(db);
+	}
 
 	@PostConstruct
 	protected void initCollection() {

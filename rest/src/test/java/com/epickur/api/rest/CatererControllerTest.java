@@ -14,15 +14,12 @@ import com.epickur.api.service.DishService;
 import com.epickur.api.service.OrderService;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.report.Report;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +32,10 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
 
-@PowerMockIgnore("javax.management.*")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(CatererController.class)
+@RunWith(MockitoJUnitRunner.class)
 public class CatererControllerTest {
 
 	@Mock
@@ -71,7 +65,7 @@ public class CatererControllerTest {
 		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
-		given(catererService.create(isA(Caterer.class))).willReturn(catererAfterCreate);
+		given(catererService.create(any(Caterer.class))).willReturn(catererAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.create(caterer);
@@ -88,7 +82,7 @@ public class CatererControllerTest {
 		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
-		given(catererService.read(anyString())).willReturn(Optional.of(catererAfterCreate));
+		given(catererService.read(any())).willReturn(Optional.of(catererAfterCreate));
 
 		// When
 		ResponseEntity<?> actual = controller.read(catererAfterCreate.getId().toHexString());
@@ -105,7 +99,7 @@ public class CatererControllerTest {
 		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithoutId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
-		given(catererService.read(anyString())).willReturn(Optional.empty());
+		given(catererService.read(any())).willReturn(Optional.empty());
 
 		// When
 		ResponseEntity<?> actual = controller.read(catererAfterCreate.getId().toHexString());
@@ -147,7 +141,7 @@ public class CatererControllerTest {
 		Dish dish = EntityGenerator.generateRandomDish();
 		List<Dish> dishes = new ArrayList<>();
 		dishes.add(dish);
-		given(dishService.searchDishesForOneCaterer(anyString())).willReturn(dishes);
+		given(dishService.searchDishesForOneCaterer(any())).willReturn(dishes);
 
 		// When
 		ResponseEntity<?> actual = controller.readDishes(caterer.getId().toHexString());
@@ -166,7 +160,7 @@ public class CatererControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		Caterer catererAfterCreate = EntityGenerator.mockCatererAfterCreate(caterer);
 		catererAfterCreate.setDescription("new desc");
-		given(catererService.update(isA(Caterer.class))).willReturn(catererAfterCreate);
+		given(catererService.update(any(Caterer.class))).willReturn(catererAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.update(caterer.getId().toHexString(), caterer);
@@ -184,7 +178,7 @@ public class CatererControllerTest {
 	public void testDelete() throws EpickurException {
 		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
-		given(catererService.delete(anyString())).willReturn(true);
+		given(catererService.delete(any())).willReturn(true);
 
 		// When
 		ResponseEntity<?> actual = controller.delete(caterer.getId().toHexString());
@@ -202,7 +196,7 @@ public class CatererControllerTest {
 	public void testDeleteCatererNotFound() throws EpickurException {
 		// Given
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
-		given(catererService.delete(anyString())).willReturn(false);
+		given(catererService.delete(any())).willReturn(false);
 
 		// When
 		ResponseEntity<?> actual = controller.delete(caterer.getId().toHexString());
@@ -224,13 +218,9 @@ public class CatererControllerTest {
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		List<Order> orders = new ArrayList<>();
 		orders.add(order);
-		given(catererService.read(anyString())).willReturn(Optional.of(catererAfterCreate));
-		given(orderService.readAllWithCatererId(anyString(), isA(DateTime.class), isA(DateTime.class))).willReturn(orders);
-		given(catererService.getTotalAmountSuccessful(isA(List.class))).willReturn(150);
-		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
+		given(catererService.read(any())).willReturn(Optional.of(catererAfterCreate));
+		given(catererService.getTotalAmountSuccessful(any(List.class))).willReturn(150);
 		given(context.getContentType()).willReturn(MediaType.APPLICATION_XML.toString());
-		given(report.getReport()).willReturn(new byte[10]);
 
 		// When
 		ResponseEntity<?> actual = controller.paymentInfo(catererAfterCreate.getId().toHexString(), null, null, null);
@@ -251,13 +241,10 @@ public class CatererControllerTest {
 		Order order = EntityGenerator.generateRandomOrderWithId();
 		List<Order> orders = new ArrayList<>();
 		orders.add(order);
-		given(catererService.read(anyString())).willReturn(Optional.of(catererAfterCreate));
-		given(orderService.readAllWithCatererId(anyString(), isA(DateTime.class), isA(DateTime.class))).willReturn(orders);
-		given(catererService.getTotalAmountSuccessful(isA(List.class))).willReturn(150);
+		given(catererService.read(any())).willReturn(Optional.of(catererAfterCreate));
+		given(catererService.getTotalAmountSuccessful(any(List.class))).willReturn(150);
 		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
 		given(context.getContentType()).willReturn(MediaType.APPLICATION_JSON.toString());
-		given(report.getReport()).willReturn(new byte[10]);
 
 		// When
 		ResponseEntity<?> actual = controller.paymentInfo(catererAfterCreate.getId().toHexString(), "01/01/2015", "01/01/2016", "MM/dd/yyyy");

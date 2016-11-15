@@ -16,9 +16,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KeyServiceTest {
@@ -33,7 +32,7 @@ public class KeyServiceTest {
 		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterCreate = EntityGenerator.mockKeyAfterCreate(key);
-		given(keyDAOMock.create(isA(Key.class))).willReturn(keyAfterCreate);
+		given(keyDAOMock.create(any(Key.class))).willReturn(keyAfterCreate);
 
 		// When
 		Key actual = keyBusiness.create(key);
@@ -51,7 +50,7 @@ public class KeyServiceTest {
 		// Given
 		Key key = EntityGenerator.generateRandomAdminKey();
 		Key keyAfterRead = EntityGenerator.mockKeyAfterCreate(key);
-		given(keyDAOMock.readWithName(anyString())).willReturn(keyAfterRead);
+		given(keyDAOMock.readWithName(any(String.class))).willReturn(keyAfterRead);
 
 		// When
 		Key actual = keyBusiness.readWithName(EntityGenerator.generateRandomString());
@@ -63,7 +62,7 @@ public class KeyServiceTest {
 	@Test
 	public void testDelete() throws EpickurException {
 		// Given
-		given(keyDAOMock.delete(anyString())).willReturn(true);
+		given(keyDAOMock.delete(any(String.class))).willReturn(true);
 
 		// When
 		boolean actual = keyBusiness.delete(EntityGenerator.generateRandomString());
@@ -75,7 +74,7 @@ public class KeyServiceTest {
 	@Test
 	public void testDeleteWithKey() throws EpickurException {
 		// Given
-		given(keyDAOMock.deleteWithKey(anyString())).willReturn(true);
+		given(keyDAOMock.deleteWithKey(any(String.class))).willReturn(true);
 
 		// When
 		boolean actual = keyBusiness.deleteWithKey(EntityGenerator.generateRandomString());

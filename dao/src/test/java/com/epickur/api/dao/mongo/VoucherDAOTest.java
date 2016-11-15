@@ -55,6 +55,7 @@ public class VoucherDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		given(db.getCollection(VOUCHER_COLL)).willReturn(collection);
+		dao.initCollection();
 	}
 
 	@Test

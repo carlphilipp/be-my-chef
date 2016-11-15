@@ -15,9 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,20 +25,16 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
 
-@PowerMockIgnore("javax.management.*")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(DishService.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DishServiceTest {
 
 	@Mock
-	private DishDAO dishDAOMock;
+	private DishDAO dishDAO;
 	@Mock
-	private GeocoderHereImpl geoCoder;
+	private GeocoderHereImpl geocoderHere;
 	@Mock
 	private Geo geo;
 	@InjectMocks
@@ -64,7 +58,7 @@ public class DishServiceTest {
 		// Given
 		Dish dish = EntityGenerator.generateRandomDish();
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
-		given(dishDAOMock.create(isA(Dish.class))).willReturn(dishAfterCreate);
+		given(dishDAO.create(any(Dish.class))).willReturn(dishAfterCreate);
 
 		// When
 		Dish actual = dishService.create(dish);
@@ -82,7 +76,7 @@ public class DishServiceTest {
 		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
-		given(dishDAOMock.read(anyString())).willReturn(Optional.of(dishAfterRead));
+		given(dishDAO.read(any(String.class))).willReturn(Optional.of(dishAfterRead));
 
 		// When
 		Optional<Dish> actual = dishService.read(dish.getId().toHexString());
@@ -98,7 +92,7 @@ public class DishServiceTest {
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
-		given(dishDAOMock.readAll()).willReturn(listDishes);
+		given(dishDAO.readAll()).willReturn(listDishes);
 
 		// When
 		List<Dish> listActual = dishService.readAll();
@@ -115,8 +109,8 @@ public class DishServiceTest {
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		Dish dishAfterUpdate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterUpdate.setName("new name");
-		given(dishDAOMock.read(anyString())).willReturn(Optional.of(dishAfterRead));
-		given(dishDAOMock.update(isA(Dish.class))).willReturn(dishAfterUpdate);
+		given(dishDAO.read(any(String.class))).willReturn(Optional.of(dishAfterRead));
+		given(dishDAO.update(any(Dish.class))).willReturn(dishAfterUpdate);
 
 		// When
 		Dish actual = dishService.update(dish);
@@ -131,8 +125,8 @@ public class DishServiceTest {
 		// Given
 		Dish dish = EntityGenerator.generateRandomDishWithId();
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
-		given(dishDAOMock.read(anyString())).willReturn(Optional.of(dishAfterRead));
-		given(dishDAOMock.delete(dish.getId().toHexString())).willReturn(true);
+		given(dishDAO.read(any(String.class))).willReturn(Optional.of(dishAfterRead));
+		given(dishDAO.delete(dish.getId().toHexString())).willReturn(true);
 
 		// When
 		boolean actual = dishService.delete(dish.getId().toHexString());
@@ -148,7 +142,7 @@ public class DishServiceTest {
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
-		given(dishDAOMock.searchWithCatererId(anyString())).willReturn(listDishes);
+		given(dishDAO.searchWithCatererId(any(String.class))).willReturn(listDishes);
 
 		// When
 		List<Dish> listActual = dishService.searchDishesForOneCaterer(UUID.randomUUID().toString());
@@ -165,9 +159,9 @@ public class DishServiceTest {
 		Dish dishAfterRead = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> listDishes = new ArrayList<>();
 		listDishes.add(dishAfterRead);
-		given(dishDAOMock.search(anyString(), anyInt(), isA(List.class), anyInt(), isA(Geo.class), anyInt())).willReturn(listDishes);
-		//givenNew(GeocoderHereImpl.class).withNoArguments().willReturn(geoCoder);
-		given(geoCoder.getPosition(anyString())).willReturn(geo);
+		given(dishDAO.search(any(String.class), any(), any(List.class), any(), any(Geo.class), any())).willReturn(listDishes);
+		//givenNew(GeocoderHereImpl.class).withNoArguments().willReturn(geocoderHere);
+		given(geocoderHere.getPosition(any(String.class))).willReturn(geo);
 
 		// When
 		List<Dish> listActual = dishService.search("", 0, new ArrayList<>(), 0, new Geo(), "", 0);

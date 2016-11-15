@@ -20,7 +20,7 @@ public class EmailConfigTest {
 
 	@Bean
 	public Utils utils() {
-		return new Utils();
+		return new Utils(epickurProperties());
 	}
 
 	@Bean

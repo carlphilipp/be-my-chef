@@ -9,6 +9,8 @@ import com.epickur.api.service.VoucherService;
 import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.web.ResponseError;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +35,16 @@ import static com.epickur.api.enumeration.Operation.READ;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @RestController
 @RequestMapping(value = "/vouchers")
 public class VoucherController {
 
-	/**
-	 * Context
-	 */
-	@Autowired
+	@NonNull
 	private HttpServletRequest context;
-	/**
-	 * User Service
-	 */
-	@Autowired
+	@NonNull
 	private VoucherService voucherService;
-	@Autowired
+	@NonNull
 	private Utils utils;
 
 	// @formatter:off

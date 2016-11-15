@@ -49,7 +49,7 @@ public class StripePaymentIT {
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
 		Token token = Token.create(tokenParams);
-		StripePayment payment = new StripePayment();
+		StripePayment payment = new StripePayment(new ChargeWrapper());
 
 		// When
 		Charge charge = payment.chargeCard(token.getId(), 1500, Currency.AUD);
@@ -70,7 +70,7 @@ public class StripePaymentIT {
 		cardParams.put("cvc", "314");
 		tokenParams.put("card", cardParams);
 		Token token = Token.create(tokenParams);
-		StripePayment payment = new StripePayment();
+		StripePayment payment = new StripePayment(new ChargeWrapper());
 
 		// When
 		payment.chargeCard(token.getId(), -1500, Currency.AUD);

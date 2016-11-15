@@ -15,6 +15,8 @@ import com.epickur.api.utils.ErrorConstants;
 import com.epickur.api.utils.Utils;
 import com.epickur.api.utils.report.Report;
 import com.epickur.api.web.ResponseError;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -36,19 +38,20 @@ import static com.epickur.api.enumeration.Operation.*;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @RestController
 @RequestMapping(value = "/caterers")
 public class CatererController {
 
-	@Autowired
+	@NonNull
 	private HttpServletRequest request;
-	@Autowired
+	@NonNull
 	private CatererService catererService;
-	@Autowired
+	@NonNull
 	private OrderService orderService;
-	@Autowired
+	@NonNull
 	private DishService dishService;
-	@Autowired
+	@NonNull
 	private Utils utils;
 
 	// @formatter:off

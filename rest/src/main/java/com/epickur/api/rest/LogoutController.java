@@ -3,6 +3,8 @@ package com.epickur.api.rest;
 import com.epickur.api.entity.message.SuccessMessage;
 import com.epickur.api.exception.EpickurException;
 import com.epickur.api.service.KeyService;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,21 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @RestController
 @RequestMapping(value = "/logout")
 public class LogoutController {
-	
-	@Autowired
+
+	@NonNull
 	private KeyService keyService;
 
 	// @formatter:off
-	/** 
-	 * 
+	/**
+	 *
 	 * @api {get} /logout Logout
 	 * @apiVersion 1.0.0
 	 * @apiName Logout
 	 * @apiGroup Connection
-	 * 
+	 *
 	 * @apiParam (Request: URL Parameter) {String} key API key.
 	 *
 	 * @apiSuccess (Response: JSON Object) {String} result Success.

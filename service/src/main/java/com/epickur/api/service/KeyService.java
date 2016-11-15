@@ -3,6 +3,8 @@ package com.epickur.api.service;
 import com.epickur.api.dao.mongo.KeyDAO;
 import com.epickur.api.entity.Key;
 import com.epickur.api.exception.EpickurException;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +16,14 @@ import java.util.List;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Service
 public class KeyService {
 
 	/**
 	 * Key dao
 	 */
-	@Autowired
+	@NonNull
 	private KeyDAO keyDao;
 
 	/**

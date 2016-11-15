@@ -2,7 +2,6 @@ package com.epickur.api.rest;
 
 import com.epickur.api.entity.Caterer;
 import com.epickur.api.entity.Dish;
-import com.epickur.api.entity.Key;
 import com.epickur.api.entity.message.DeletedMessage;
 import com.epickur.api.entity.message.ErrorMessage;
 import com.epickur.api.exception.EpickurException;
@@ -11,7 +10,6 @@ import com.epickur.api.service.CatererService;
 import com.epickur.api.service.DishService;
 import com.epickur.api.utils.Utils;
 import org.bson.types.ObjectId;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -28,11 +26,9 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DishControllerTest {
@@ -48,12 +44,6 @@ public class DishControllerTest {
 	@InjectMocks
 	private DishController controller;
 
-	@Before
-	public void setUp() {
-		Key key = EntityGenerator.generateRandomAdminKey();
-		given(context.getAttribute("key")).willReturn(key);
-	}
-
 	@Test
 	public void testCreate() throws EpickurException {
 		// Given
@@ -62,8 +52,7 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
-		given(catererService.read(anyString())).willReturn(Optional.of(caterer));
-		given(dishService.create(isA(Dish.class))).willReturn(dishAfterCreate);
+		given(dishService.create(any(Dish.class))).willReturn(dishAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.create(dish);
@@ -83,7 +72,7 @@ public class DishControllerTest {
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
-		given(dishService.read(anyString())).willReturn(Optional.of(dishAfterCreate));
+		given(dishService.read(any())).willReturn(Optional.of(dishAfterCreate));
 
 		// When
 		ResponseEntity actual = controller.read(new ObjectId().toHexString());
@@ -102,7 +91,7 @@ public class DishControllerTest {
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
-		given(dishService.read(anyString())).willReturn(Optional.empty());
+		given(dishService.read(any())).willReturn(Optional.empty());
 
 		// When
 		ResponseEntity actual = controller.read(new ObjectId().toHexString());
@@ -124,7 +113,7 @@ public class DishControllerTest {
 		dish.setCaterer(caterer);
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 		dishAfterCreate.setDescription("desc");
-		given(dishService.update(isA(Dish.class))).willReturn(dishAfterCreate);
+		given(dishService.update(any(Dish.class))).willReturn(dishAfterCreate);
 
 		// When
 		ResponseEntity<?> actual = controller.update(dish.getId().toHexString(), dish);
@@ -144,7 +133,7 @@ public class DishControllerTest {
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
-		given(dishService.delete(anyString())).willReturn(true);
+		given(dishService.delete(any())).willReturn(true);
 
 		// When
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
@@ -165,7 +154,7 @@ public class DishControllerTest {
 		dish.getCaterer().setId(null);
 		Caterer caterer = EntityGenerator.generateRandomCatererWithId();
 		dish.setCaterer(caterer);
-		given(dishService.delete(anyString())).willReturn(false);
+		given(dishService.delete(any())).willReturn(false);
 
 		// When
 		ResponseEntity<?> actual = controller.delete(dish.getId().toHexString());
@@ -190,8 +179,7 @@ public class DishControllerTest {
 		Dish dishAfterCreate = EntityGenerator.mockDishAfterCreate(dish);
 		List<Dish> dishes = new ArrayList<>();
 		dishes.add(dishAfterCreate);
-		given(dishService.search(anyString(), anyInt(), isA(List.class), anyInt(), anyObject(), anyString(), anyInt()))
-			.willReturn(dishes);
+		given(dishService.search(any(String.class), any(Integer.class), any(), any(Integer.class), isNull(), any(String.class), any(Integer.class))).willReturn(dishes);
 
 		// When
 		ResponseEntity<?> actual = controller

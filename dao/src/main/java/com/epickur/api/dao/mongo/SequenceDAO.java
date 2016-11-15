@@ -24,10 +24,14 @@ import static com.epickur.api.dao.CollectionsName.SEQUENCE_COLL;
 @Repository
 public class SequenceDAO {
 
-	@Autowired
-	private MongoDatabase db;
+	private final MongoDatabase db;
 
 	private MongoCollection<Document> coll;
+
+	@Autowired
+	public SequenceDAO(final MongoDatabase db) {
+		this.db = db;
+	}
 
 	/**
 	 * Post construct

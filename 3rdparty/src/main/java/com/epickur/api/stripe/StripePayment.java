@@ -3,7 +3,10 @@ package com.epickur.api.stripe;
 import com.epickur.api.enumeration.Currency;
 import com.stripe.exception.*;
 import com.stripe.model.Charge;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +17,12 @@ import java.util.Map;
  * @author cph
  * @version 1.0
  */
+@AllArgsConstructor(onConstructor = @_(@Autowired))
 @Log4j2
 public class StripePayment {
+
+	@NonNull
+	private final ChargeWrapper chargeWrapper;
 
 	/**
 	 * Charge card
@@ -34,7 +41,7 @@ public class StripePayment {
 			chargeMap.put("amount", amount);
 			chargeMap.put("currency", currency.getCode());
 			chargeMap.put("card", cardToken);
-			charge = Charge.create(chargeMap);
+			charge = chargeWrapper.createCharge(chargeMap);
 			log.debug("Charge customer: " + charge.toString());
 		} catch (CardException e) {
 			// Since it's a decline, CardException will be caught

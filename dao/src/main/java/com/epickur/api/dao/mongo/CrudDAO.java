@@ -10,10 +10,10 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.result.DeleteResult;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -30,8 +30,13 @@ public abstract class CrudDAO<T extends AbstractEntity> implements ICrudDAO<T> {
 	/**
 	 * Database
 	 */
-	@Autowired
+	@NonNull
 	private MongoDatabase db;
+
+	public CrudDAO(final MongoDatabase db) {
+		this.db = db;
+	}
+
 	/**
 	 * Database collection
 	 */

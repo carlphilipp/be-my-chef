@@ -2,9 +2,11 @@ package com.epickur.api.dao.mongo;
 
 import com.epickur.api.entity.Log;
 import com.epickur.api.exception.EpickurException;
+import com.mongodb.client.MongoDatabase;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -22,6 +24,11 @@ import static com.epickur.api.dao.CollectionsName.LOG_COLL;
 @Log4j2
 @Repository
 public class LogDAO extends CrudDAO<Log> {
+
+	@Autowired
+	public LogDAO(final MongoDatabase db) {
+		super(db);
+	}
 
 	@PostConstruct
 	protected void initCollection() {
